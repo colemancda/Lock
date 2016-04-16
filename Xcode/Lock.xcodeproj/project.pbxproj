@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6EA899701CC2E3F0005FC225 /* GATTProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA8996F1CC2E3F0005FC225 /* GATTProfile.swift */; };
 		6EE605961CC21941008EF0EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE605951CC21941008EF0EE /* AppDelegate.swift */; };
 		6EE605981CC21941008EF0EE /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE605971CC21941008EF0EE /* ViewController.swift */; };
 		6EE6059A1CC21942008EF0EE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EE605991CC21942008EF0EE /* Assets.xcassets */; };
@@ -46,6 +47,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		6EA8996F1CC2E3F0005FC225 /* GATTProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTProfile.swift; sourceTree = "<group>"; };
 		6EE605921CC21941008EF0EE /* LockDaemon.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LockDaemon.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EE605951CC21941008EF0EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6EE605971CC21941008EF0EE /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -162,6 +164,7 @@
 		6EE605CF1CC21D24008EF0EE /* CoreLock */ = {
 			isa = PBXGroup;
 			children = (
+				6EA8996F1CC2E3F0005FC225 /* GATTProfile.swift */,
 			);
 			name = CoreLock;
 			path = ../Sources/CoreLock;
@@ -225,9 +228,9 @@
 			productReference = 6EE605A81CC21C1A008EF0EE /* Cerradura.app */;
 			productType = "com.apple.product-type.application";
 		};
-		6EE605BE1CC21C81008EF0EE /* CoreLock */ = {
+		6EE605BE1CC21C81008EF0EE /* CoreLock OS X */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 6EE605C81CC21C81008EF0EE /* Build configuration list for PBXNativeTarget "CoreLock" */;
+			buildConfigurationList = 6EE605C81CC21C81008EF0EE /* Build configuration list for PBXNativeTarget "CoreLock OS X" */;
 			buildPhases = (
 				6EE605BA1CC21C81008EF0EE /* Sources */,
 				6EE605BB1CC21C81008EF0EE /* Frameworks */,
@@ -238,7 +241,7 @@
 			);
 			dependencies = (
 			);
-			name = CoreLock;
+			name = "CoreLock OS X";
 			productName = CoreLock;
 			productReference = 6EE605BF1CC21C81008EF0EE /* CoreLock.framework */;
 			productType = "com.apple.product-type.framework";
@@ -279,7 +282,7 @@
 			targets = (
 				6EE605911CC21941008EF0EE /* LockDaemon */,
 				6EE605A71CC21C1A008EF0EE /* Cerradura */,
-				6EE605BE1CC21C81008EF0EE /* CoreLock */,
+				6EE605BE1CC21C81008EF0EE /* CoreLock OS X */,
 			);
 		};
 /* End PBXProject section */
@@ -336,6 +339,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6EA899701CC2E3F0005FC225 /* GATTProfile.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -344,7 +348,7 @@
 /* Begin PBXTargetDependency section */
 		6EE605C51CC21C81008EF0EE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 6EE605BE1CC21C81008EF0EE /* CoreLock */;
+			target = 6EE605BE1CC21C81008EF0EE /* CoreLock OS X */;
 			targetProxy = 6EE605C41CC21C81008EF0EE /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -466,6 +470,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				FRAMEWORK_SEARCH_PATHS = $SRCROOT/../Carthage/Build/Mac;
 				INFOPLIST_FILE = LockDaemon/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.colemancda.LockDaemon;
@@ -478,6 +484,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				FRAMEWORK_SEARCH_PATHS = $SRCROOT/../Carthage/Build/Mac;
 				INFOPLIST_FILE = LockDaemon/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.colemancda.LockDaemon;
@@ -490,6 +498,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = $SRCROOT/../Carthage/Build/iOS;
 				INFOPLIST_FILE = Cerradura/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.colemancda.Cerradura;
@@ -504,6 +513,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = $SRCROOT/../Carthage/Build/iOS;
 				INFOPLIST_FILE = Cerradura/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.colemancda.Cerradura;
@@ -517,20 +527,23 @@
 		6EE605C91CC21C81008EF0EE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = $SRCROOT/../Carthage/Build/Mac;
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = CoreLock/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.colemancda.CoreLock;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = CoreLock;
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -539,19 +552,21 @@
 		6EE605CA1CC21C81008EF0EE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = $SRCROOT/../Carthage/Build/Mac;
 				FRAMEWORK_VERSION = A;
 				INFOPLIST_FILE = CoreLock/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.colemancda.CoreLock;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = CoreLock;
 				SKIP_INSTALL = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -586,14 +601,16 @@
 				6EE605B91CC21C1A008EF0EE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
-		6EE605C81CC21C81008EF0EE /* Build configuration list for PBXNativeTarget "CoreLock" */ = {
+		6EE605C81CC21C81008EF0EE /* Build configuration list for PBXNativeTarget "CoreLock OS X" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				6EE605C91CC21C81008EF0EE /* Debug */,
 				6EE605CA1CC21C81008EF0EE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

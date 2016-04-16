@@ -7,18 +7,24 @@
 //
 
 import Cocoa
+import GATT
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
 
 
-
     func applicationDidFinishLaunching(aNotification: NSNotification) {
         // Insert code here to initialize your application
+        
+        let peripheral = PeripheralManager()
+        
+        
     }
 
     func applicationWillTerminate(aNotification: NSNotification) {
         // Insert code here to tear down your application
+        
+        
     }
 
 

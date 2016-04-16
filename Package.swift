@@ -4,6 +4,7 @@ let package = Package(
     name: "Lock",
     dependencies: [
         .Package(url: "https://github.com/PureSwift/GATT.git", majorVersion: 1)
+        .Package(url: "https://github.com/ColemanCDA/CryptoSwift", majorVersion: 1)
     ],
     targets: [
         Target(
