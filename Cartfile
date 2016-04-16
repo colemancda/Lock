@@ -1,1 +1,2 @@
 github "PureSwift/GATT" "master"
+github "krzyzanowskim/CryptoSwift"

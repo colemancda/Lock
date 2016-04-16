@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:LockDaemon.xcodeproj">
+      location = "self:/Users/coleman/Developer/Lock/Xcode/Lock.xcodeproj">
    </FileRef>
 </Workspace>

@@ -4,6 +4,16 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>Cerradura.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
+		<key>CoreLock.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
 		<key>LockDaemon.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -13,6 +23,16 @@
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
 		<key>6EE605911CC21941008EF0EE</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>6EE605A71CC21C1A008EF0EE</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>6EE605BE1CC21C81008EF0EE</key>
 		<dict>
 			<key>primary</key>
 			<true/>
