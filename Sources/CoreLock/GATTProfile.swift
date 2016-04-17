@@ -238,18 +238,29 @@ public struct LockProfile: GATTProfile {
         public struct Nonce: GATTProfileCharacteristic {
             
             public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "09CDA3BA-044D-11E6-B15B-09AB70D5A8C7")!)
+            
+            public var nonce: CoreLock.Nonce
+            
+            public init?(bigEndian: Data) {
+                
+                guard let nonce = CoreLock.Nonce(data: bigEndian)
+                    else { return nil }
+                
+                self.nonce = nonce
+            }
+            
+            public func toBigEndian() -> Data {
+                
+                return nonce.data
+            }
         }
         
-        /// Key encrypted by nonce (write-only)
+        /// IV + encrypt(nonce, iv, key) (write-only)
         public struct Key: GATTProfileCharacteristic {
             
             public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "129E401C-044D-11E6-8FA9-09AB70D5A8C7")!)
-        }
-        
-        /// Boolean indicating end of operation (1 byte) (write-only)
-        public struct Finished: GATTProfileCharacteristic {
             
-            public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "1B338D86-044D-11E6-B3C2-09AB70D5A8C7")!)
+            
         }
     }
     
