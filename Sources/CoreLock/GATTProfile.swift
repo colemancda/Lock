@@ -26,6 +26,24 @@ public protocol GATTProfileCharacteristic {
     //func toBigEndian() -> Data
 }
 
+public protocol AuthenticatedCharacteristic: GATTProfileCharacteristic {
+    
+    var nonce: Nonce { get }
+    
+    /// HMAC of key and nonce
+    var authentication: Data { get }
+}
+
+public extension AuthenticatedCharacteristic {
+    
+    func authenticated(with key: KeyData) -> Bool {
+        
+        let hmac = HMAC(key: key, message: nonce)
+        
+        return hmac == authentication
+    }
+}
+
 public struct LockProfile: GATTProfile {
     
     public struct LockService: GATTProfileService {
@@ -165,7 +183,7 @@ public struct LockProfile: GATTProfile {
         /// Used to change lock's mode. 
         ///
         /// action + nonce + HMAC(key, nonce) (1 + 16 + 64 bytes) (write-only)
-        public struct Action: GATTProfileCharacteristic {
+        public struct Action: AuthenticatedCharacteristic {
             
             public static let length = 1 + Nonce.length + 64
             
@@ -178,7 +196,7 @@ public struct LockProfile: GATTProfile {
             /// HMAC of key and nonce
             public let authentication: Data
             
-            public init(action: CoreLock.Action, nonce: Nonce = Nonce(), key: Key) {
+            public init(action: CoreLock.Action, nonce: Nonce = Nonce(), key: KeyData) {
                 
                 self.action = action
                 self.nonce = nonce
@@ -220,47 +238,58 @@ public struct LockProfile: GATTProfile {
                 
                 return Data(byteValue: bytes)
             }
-            
-            public func authenticated(with key: Key) -> Bool {
-                
-                let hmac = HMAC(key: key, message: nonce)
-                
-                return hmac == authentication
-            }
         }
     }
     
     public struct SetupService: GATTProfileService {
         
         public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "04A51B0C-044D-11E6-B449-09AB70D5A8C7")!)
-        
-        /// Nonce, only retrievable by one peer (16 bytes) (read-only)
-        public struct Nonce: GATTProfileCharacteristic {
+                
+        /// IV + encrypt(salt, iv, newKey) (write-only)
+        public struct Key: GATTProfileCharacteristic {
             
-            public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "09CDA3BA-044D-11E6-B15B-09AB70D5A8C7")!)
+            public static let length = IVSize + 80
             
-            public var nonce: CoreLock.Nonce
+            /// The private key used to encrypt and decrypt new keys. (512 bits)
+            private static let salt = "RgaGxxZ4nSHmE5HjeZhbcjjb8CMWoFrjU9azM8Sqo8QUI9xmhCiaIs4MN7Myo2zA".toUTF8Data()
+            
+            public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "129E401C-044D-11E6-8FA9-09AB70D5A8C7")!)
+            
+            public let value: KeyData
+            
+            public init(value: KeyData) {
+                
+                self.value = value
+            }
             
             public init?(bigEndian: Data) {
                 
-                guard let nonce = CoreLock.Nonce(data: bigEndian)
+                let bytes = bigEndian.byteValue
+                
+                guard bytes.count == self.dynamicType.length
                     else { return nil }
                 
-                self.nonce = nonce
+                let ivBytes = Array(bytes.prefix(IVSize))
+                
+                let iv = InitializationVector(data: Data(byteValue: ivBytes))!
+                
+                let encryptedBytes = Array(bytes.suffix(80))
+                
+                let decryptedData = decrypt(key: Key.salt, iv: iv, data: Data(byteValue: encryptedBytes))
+                
+                assert(decryptedData.byteValue.count == KeyData.length)
+                
+                self.value = KeyData(data: decryptedData)!
             }
             
             public func toBigEndian() -> Data {
                 
-                return nonce.data
+                let (encryptedKey, iv) = encrypt(key: Key.salt, data: value.data)
+                
+                let bytes = iv.data.byteValue + encryptedKey.byteValue
+                
+                return Data(byteValue: bytes)
             }
-        }
-        
-        /// IV + encrypt(nonce, iv, key) (write-only)
-        public struct Key: GATTProfileCharacteristic {
-            
-            public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "129E401C-044D-11E6-8FA9-09AB70D5A8C7")!)
-            
-            
         }
     }
     
@@ -271,9 +300,52 @@ public struct LockProfile: GATTProfile {
         /// Used to unlock door.
         ///
         /// nonce + HMAC(key, nonce) (16 + 64 bytes) (write-only)
-        public struct Unlock: GATTProfileCharacteristic {
+        public struct Unlock: AuthenticatedCharacteristic {
+            
+            public static let length = Nonce.length + HMACSize
             
             public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "265B3EC0-044D-11E6-90F2-09AB70D5A8C7")!)
+            
+            public let nonce: Nonce
+            
+            /// HMAC of key and nonce
+            public let authentication: Data
+            
+            public init(nonce: Nonce = Nonce(), key: KeyData) {
+                
+                self.nonce = nonce
+                self.authentication = HMAC(key: key, message: nonce)
+                
+                assert(authentication.byteValue.count == HMACSize)
+            }
+            
+            public init?(bigEndian: Data) {
+                
+                let bytes = bigEndian.byteValue
+                
+                guard bytes.count == self.dynamicType.length
+                    else { return nil }
+                
+                let nonceBytes = Array(bytes[0 ..< Nonce.length])
+                
+                assert(nonceBytes.count == Nonce.length)
+                
+                let hmac = Array(bytes.suffix(from: Nonce.length))
+                
+                assert(hmac.count == HMACSize)
+                
+                self.nonce = Nonce(data: Data(byteValue: nonceBytes))!
+                self.authentication =  Data(byteValue: hmac)
+            }
+            
+            public func toBigEndian() -> Data {
+                
+                let bytes = nonce.data.byteValue + authentication.byteValue
+                
+                assert(bytes.count == self.dynamicType.length)
+                
+                return Data(byteValue: bytes)
+            }
         }
     }
     

@@ -29,4 +29,65 @@ public func == <T: SecureData> (lhs: T, rhs: T) -> Bool {
     return lhs.data == rhs.data
 }
 
+/// A lock's key used for unlocking and actions.
+public struct KeyData: SecureData {
+    
+    public static let length = 512 / 8 // 64
+    
+    public let data: Data
+    
+    public init?(data: Data) {
+        
+        guard data.byteValue.count == self.dynamicType.length
+            else { return nil }
+        
+        self.data = data
+    }
+    
+    /// Initializes a `Key` with a random value.
+    public init() {
+        
+        self.data = random(self.dynamicType.length)
+    }
+}
 
+/// Cryptographic nonce
+public struct Nonce: SecureData {
+    
+    public static let length = 16
+    
+    public let data: Data
+    
+    public init?(data: Data) {
+        
+        guard data.byteValue.count == self.dynamicType.length
+            else { return nil }
+        
+        self.data = data
+    }
+    
+    public init() {
+        
+        self.data = random(self.dynamicType.length)
+    }
+}
+
+public struct InitializationVector: SecureData {
+    
+    public static let length = IVSize
+    
+    public let data: Data
+    
+    public init?(data: Data) {
+        
+        guard data.byteValue.count == self.dynamicType.length
+            else { return nil }
+        
+        self.data = data
+    }
+    
+    public init() {
+        
+        self.data = random(self.dynamicType.length)
+    }
+}

@@ -20,7 +20,7 @@ public func random(_ size: Int) -> Data {
 public let HMACSize = 64
 
 /// Performs HMAC with the specified key and message.
-public func HMAC(key: Key, message: Nonce) -> Data {
+public func HMAC(key: KeyData, message: Nonce) -> Data {
     
     let hmac = try! Authenticator.HMAC(key: key.data.byteValue, variant: .sha512).authenticate(message.data.byteValue)
     
@@ -29,12 +29,14 @@ public func HMAC(key: Key, message: Nonce) -> Data {
     return Data(byteValue: hmac)
 }
 
+let IVSize = AES.blockSize
+
 /// Encrypt data
-public func encrypt(key: Data, data: Data) -> (encrypted: Data, IV: Data) {
+public func encrypt(key: Data, data: Data) -> (encrypted: Data, iv: InitializationVector) {
     
-    let iv = random(AES.blockSize)
+    let iv = InitializationVector()
     
-    let crypto = try! AES(key: key.byteValue, iv: iv.byteValue)
+    let crypto = try! AES(key: key.byteValue, iv: iv.data.byteValue)
     
     let byteValue = try! crypto.encrypt(data.byteValue)
     
@@ -42,11 +44,11 @@ public func encrypt(key: Data, data: Data) -> (encrypted: Data, IV: Data) {
 }
 
 /// Decrypt data
-public func decrypt(key: Data, IV: Data, data: Data) -> Data {
+public func decrypt(key: Data, iv: InitializationVector, data: Data) -> Data {
     
-    assert(IV.byteValue.count == AES.blockSize)
+    assert(iv.data.byteValue.count == IVSize)
     
-    let crypto = try! AES(key: key.byteValue, iv: IV.byteValue)
+    let crypto = try! AES(key: key.byteValue, iv: iv.data.byteValue)
     
     let byteValue = try! crypto.decrypt(data.byteValue)
     

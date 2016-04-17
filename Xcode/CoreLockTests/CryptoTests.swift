@@ -14,7 +14,7 @@ final class CryptoTests: XCTestCase {
     
     func testHMAC() {
         
-        let key = Key()
+        let key = KeyData()
         
         let nonce = Nonce()
         
@@ -25,29 +25,44 @@ final class CryptoTests: XCTestCase {
     
     func testEncrypt() {
         
-        let key = Key()
+        let key = KeyData()
         
         let nonce = Nonce()
         
         let (encryptedData, iv) = encrypt(key: key.data, data: nonce.data)
         
-        let decryptedData = decrypt(key: key.data, IV: iv, data: encryptedData)
+        let decryptedData = decrypt(key: key.data, iv: iv, data: encryptedData)
         
         XCTAssert(nonce.data == decryptedData)
     }
     
     func testFailEncrypt() {
         
-        let key = Key()
+        let key = KeyData()
         
-        let key2 = Key()
+        let key2 = KeyData()
         
         let nonce = Nonce()
         
         let (encryptedData, iv) = encrypt(key: key.data, data: nonce.data)
         
-        let decryptedData = decrypt(key: key2.data, IV: iv, data: encryptedData)
+        let decryptedData = decrypt(key: key2.data, iv: iv, data: encryptedData)
         
         XCTAssert(nonce.data != decryptedData)
+    }
+    
+    func testEncryptKeyData() {
+        
+        let key = KeyData()
+        
+        let salt = KeyData()
+        
+        let (encryptedData, iv) = encrypt(key: salt.data, data: key.data)
+        
+        print("Encrypted key is \(encryptedData.byteValue.count) bytes")
+        
+        let decryptedData = decrypt(key: salt.data, iv: iv, data: encryptedData)
+        
+        XCTAssert(decryptedData == key.data)
     }
 }

@@ -48,7 +48,7 @@ final class GATTProfileTests: XCTestCase {
         
         // write action
         
-        let key = Key()
+        let key = KeyData()
         
         let nonce = Nonce()
         
@@ -64,6 +64,24 @@ final class GATTProfileTests: XCTestCase {
         XCTAssert(deserialized.action == action)
         XCTAssert(deserialized.nonce == nonce)
         XCTAssert(deserialized.authenticated(with: key))
-        XCTAssert(deserialized.authenticated(with: Key()) == false)
+        XCTAssert(deserialized.authenticated(with: KeyData()) == false)
+    }
+    
+    func testLockSetup() {
+        
+        // lock setup
+        
+        let requestType = LockProfile.SetupService.Key.self
+        
+        let key = KeyData()
+        
+        let request = requestType.init(value: key)
+        
+        let requestData = request.toBigEndian()
+        
+        guard let deserialized = requestType.init(bigEndian: requestData)
+            else { XCTFail(); return }
+        
+        XCTAssert(deserialized.value == key)
     }
 }
