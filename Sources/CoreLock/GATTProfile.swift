@@ -20,6 +20,10 @@ public protocol GATTProfileService {
 public protocol GATTProfileCharacteristic {
     
     static var UUID: Bluetooth.UUID { get }
+    
+    //init?(bigEndian: Data)
+    
+    //func toBigEndian() -> Data
 }
 
 public struct LockProfile: GATTProfile {
@@ -32,32 +36,184 @@ public struct LockProfile: GATTProfile {
         public struct Identifier: GATTProfileCharacteristic {
             
             public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "EB1BA354-044C-11E6-BDFD-09AB70D5A8C7")!)
+            
+            public var value: SwiftFoundation.UUID
+            
+            public init(value: SwiftFoundation.UUID) {
+                
+                self.value = value
+            }
+            
+            public init?(bigEndian: Data) {
+                
+                let bytes = isBigEndian ? bigEndian.byteValue : bigEndian.byteValue.reversed()
+                
+                guard let value = SwiftFoundation.UUID(data: Data(byteValue: bytes))
+                    else { return nil }
+                
+                self.value = value
+            }
+            
+            public func toBigEndian() -> Data {
+                
+                let bytes = isBigEndian ? value.toData().byteValue : value.toData().byteValue.reversed()
+                
+                return Data(byteValue: bytes)
+            }
         }
         
         /// The lock model. (1 byte) (read-only)
         public struct Model: GATTProfileCharacteristic {
             
+            public static let length = 1
+            
             public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "AD96F330-0497-11E6-9EB3-E72D62A5198D")!)
+            
+            public var value: CoreLock.Model
+            
+            public init(value: CoreLock.Model) {
+                
+                self.value = value
+            }
+            
+            public init?(bigEndian: Data) {
+                
+                guard let byte = bigEndian.byteValue.first where bigEndian.byteValue.count == 1,
+                    let value = CoreLock.Model(rawValue: byte)
+                    else { return nil }
+                
+                self.value = value
+            }
+            
+            public func toBigEndian() -> Data {
+                
+                return Data(byteValue: [value.rawValue])
+            }
         }
         
-        /// The lock software version. (Variable size String) (read-only)
+        /// The lock software version. (64 bits / 8 byte) (read-only)
         public struct Version: GATTProfileCharacteristic {
             
+            public static let length = sizeof(Int64.self)
+            
             public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "F28A0E1E-044C-11E6-9032-09AB70D5A8C7")!)
+            
+            public var value: Int64
+            
+            public init(value: Int64) {
+                
+                self.value = value
+            }
+            
+            public init?(bigEndian: Data) {
+                
+                let length = Version.length
+                
+                guard bigEndian.byteValue.count == length
+                    else { return nil }
+                
+                var value: Int64 = 0
+                
+                var dataCopy = bigEndian
+                
+                withUnsafeMutablePointer(&value) { memcpy($0, &dataCopy, length) }
+                
+                self.value = value.bigEndian
+            }
+            
+            public func toBigEndian() -> Data {
+                
+                let length = Version.length
+                
+                var bigEndianValue = value.bigEndian
+                
+                var bytes = [UInt8](repeating: 0, count: length)
+                
+                withUnsafePointer(&bigEndianValue) { memcpy(&bytes, $0, length) }
+                
+                return Data(byteValue: bytes)
+            }
         }
         
         /// The lock's current status (1 byte) (read-only)
         public struct Status: GATTProfileCharacteristic {
             
             public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "F868B290-044C-11E6-BD3B-09AB70D5A8C7")!)
+            
+            public var value: CoreLock.Status
+            
+            public init(value: CoreLock.Status) {
+                
+                self.value = value
+            }
+            
+            public init?(bigEndian: Data) {
+                
+                guard let byte = bigEndian.byteValue.first where bigEndian.byteValue.count == 1,
+                    let value = CoreLock.Status(rawValue: byte)
+                    else { return nil }
+                
+                self.value = value
+            }
+            
+            public func toBigEndian() -> Data {
+                
+                return Data(byteValue: [value.rawValue])
+            }
         }
         
         /// Used to change lock's mode. 
         ///
-        /// nonce + HMAC(key, nonce) (16 + 64 bytes) (write-only)
+        /// action + nonce + HMAC(key, nonce) (1 + 16 + 64 bytes) (write-only)
         public struct Action: GATTProfileCharacteristic {
             
+            public static let length = 1 + Nonce.length + 64
+            
             public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "FF0E91BE-044C-11E6-97B4-09AB70D5A8C7")!)
+            
+            public let action: CoreLock.Action
+            
+            public let nonce: Nonce
+            
+            /// HMAC of key and nonce
+            public let authentication: Data
+            
+            public init(action: CoreLock.Action, nonce: Nonce = Nonce(), key: Key) {
+                
+                self.action = action
+                self.nonce = nonce
+                self.authentication = HMAC(key: key, message: nonce)
+                
+                assert(authentication.byteValue.count == HMACSize)
+            }
+            
+            public init?(bigEndian: Data) {
+                
+                let bytes = bigEndian.byteValue
+                
+                guard bytes.count == self.dynamicType.length
+                    else { return nil }
+                
+                let actionByte = bytes[0]
+                
+                let nonceBytes = Array(bytes[1 ..< 1 + Nonce.length])
+                
+                assert(nonceBytes.count == Nonce.length)
+                
+                let hmac = Array(bytes.suffix(from: 1 + Nonce.length))
+                
+                guard let action = CoreLock.Action(rawValue: actionByte)
+                    else { return nil }
+                
+                self.action = action
+                self.nonce = Nonce(data: Data(byteValue: nonceBytes))!
+                self.authentication =  Data(byteValue: hmac)
+            }
+            
+            public func toBigEndian() -> Data {
+                
+                return Data(byteValue: [value.rawValue])
+            }
         }
     }
     

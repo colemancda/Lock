@@ -12,6 +12,17 @@ import CoreLock
 
 final class CryptoTests: XCTestCase {
     
+    func testHMAC() {
+        
+        let key = Key()
+        
+        let nonce = Nonce()
+        
+        let hmac = HMAC(key: key, message: nonce)
+        
+        XCTAssert(hmac == HMAC(key: key, message: nonce))
+    }
+    
     func testEncrypt() {
         
         let key = Key()
