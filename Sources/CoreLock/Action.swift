@@ -1,5 +1,5 @@
 //
-//  Status.swift
+//  Action.swift
 //  Lock
 //
 //  Created by Alsey Coleman Miller on 4/16/16.
@@ -8,11 +8,8 @@
 
 import SwiftFoundation
 
-/// Lock status
-public enum Status: UInt8 {
-    
-    /// Initial Status
-    case Setup
+/// Lock Action
+public enum Action: UInt8 {
     
     /// Idle / Unlock Mode status
     case Unlock
@@ -24,7 +21,7 @@ public enum Status: UInt8 {
     case Update
 }
 
-extension Status: DataConvertible {
+extension Action: DataConvertible {
     
     public init?(data: Data) {
         

@@ -10,5 +10,5 @@ import SwiftFoundation
 
 struct Configuration {
     
-    
+    let identifier: UUID
 }

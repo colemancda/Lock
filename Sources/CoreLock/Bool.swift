@@ -1,5 +1,5 @@
 //
-//  Status.swift
+//  Bool.swift
 //  Lock
 //
 //  Created by Alsey Coleman Miller on 4/16/16.
@@ -8,23 +8,26 @@
 
 import SwiftFoundation
 
-/// Lock status
-public enum Status: UInt8 {
+public enum BluetoothBool: UInt8 {
     
-    /// Initial Status
-    case Setup
+    case False  = 0x00
     
-    /// Idle / Unlock Mode status
-    case Unlock
+    case True   = 0x01
     
-    /// New Key being added to database status
-    case NewKey
-    
-    /// Lock software updating
-    case Update
+    public init(_ bool: Bool) {
+        
+        if bool {
+            
+            self = .True
+            
+        } else {
+            
+            self = .False
+        }
+    }
 }
 
-extension Status: DataConvertible {
+extension BluetoothBool: DataConvertible {
     
     public init?(data: Data) {
         
