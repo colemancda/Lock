@@ -84,7 +84,7 @@ public struct LockProfile: GATTProfile {
         
         /// Used to unlock door.
         ///
-        /// message(date, nonce) + HMAC(key, message) (16 + 64 bytes) (write-only)
+        /// nonce + HMAC(key, nonce) (16 + 64 bytes) (write-only)
         public struct Unlock: GATTProfileCharacteristic {
             
             public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "265B3EC0-044D-11E6-90F2-09AB70D5A8C7")!)
