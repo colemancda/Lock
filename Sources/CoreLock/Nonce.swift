@@ -1,5 +1,5 @@
 //
-//  Key.swift
+//  Nonce.swift
 //  Lock
 //
 //  Created by Alsey Coleman Miller on 4/16/16.
@@ -8,10 +8,10 @@
 
 import SwiftFoundation
 
-/// A lock's key used for unlocking and actions.
-public struct Key: SecureData {
+/// Cryptographic nonce
+public struct Nonce: SecureData {
     
-    public static let length = 256
+    public static let length = 16
     
     public let data: Data
     
@@ -23,7 +23,6 @@ public struct Key: SecureData {
         self.data = data
     }
     
-    /// Initializes a `Key` with a random value.
     public init() {
         
         self.data = random(self.dynamicType.length)

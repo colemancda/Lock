@@ -28,16 +28,21 @@ public struct LockProfile: GATTProfile {
         
         public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "5DD45496-042E-11E6-BEBD-79ED61A5198D")!)
         
+        /// The UUID lock identifier (16 bytes) (read-only)
         public struct Identifier: GATTProfileCharacteristic {
             
             public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "40A2203C-041B-11E6-B64E-79ED61A5198D")!)
         }
         
+        /// The lock's current status (1 byte) (read-only)
         public struct Status: GATTProfileCharacteristic {
             
             public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "98DD5380-042E-11E6-8139-79ED61A5198D")!)
         }
         
+        /// Used to change lock's mode. 
+        ///
+        /// nonce + HMAC(key, nonce) (16 + 64 bytes) (write-only)
         public struct Action: GATTProfileCharacteristic {
             
             public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "98DD5380-042E-11E6-8139-79ED61A5198D")!)
@@ -48,16 +53,19 @@ public struct LockProfile: GATTProfile {
         
         public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "BE7CE5FC-0428-11E6-83A0-A0B770D5A8C7")!)
         
+        /// Nonce, only retrievable by one peer (16 bytes) (read-only)
         public struct Nonce: GATTProfileCharacteristic {
             
             public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "48251DAE-043A-11E6-8E62-09AB70D5A8C7")!)
         }
         
+        /// Key encrypted by nonce (write-only)
         public struct Key: GATTProfileCharacteristic {
             
             public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "242296CC-0429-11E6-99F3-A0B770D5A8C7")!)
         }
         
+        /// Boolean indicating end of operation (1 byte) (write-only)
         public struct Finished: GATTProfileCharacteristic {
             
             public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "F6FAD362-042D-11E6-9104-79ED61A5198D")!)
@@ -68,11 +76,9 @@ public struct LockProfile: GATTProfile {
         
         public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "D00EBFA6-041A-11E6-B1B0-79ED61A5198D")!)
         
-        public struct Nonce: GATTProfileCharacteristic {
-            
-            public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "48251DAE-043A-11E6-8E62-09AB70D5A8C7")!)
-        }
-        
+        /// Used to unlock door.
+        ///
+        /// message(date, nonce) + HMAC(key, message) (16 + 64 bytes) (write-only)
         public struct Unlock: GATTProfileCharacteristic {
             
             public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "011E87F6-041C-11E6-B530-79ED61A5198D")!)
