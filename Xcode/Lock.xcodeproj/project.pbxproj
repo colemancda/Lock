@@ -13,6 +13,23 @@
 		6E729C421CC32F890018A848 /* SecureData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E729C411CC32F890018A848 /* SecureData.swift */; };
 		6E729C461CC33C6E0018A848 /* HMAC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E729C451CC33C6E0018A848 /* HMAC.swift */; };
 		6E729C481CC33ECB0018A848 /* Encrypt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E729C471CC33ECB0018A848 /* Encrypt.swift */; };
+		6E729C4C1CC3B8220018A848 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E729C4B1CC3B8220018A848 /* Model.swift */; };
+		6E729C4F1CC3B94C0018A848 /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E729C4E1CC3B94C0018A848 /* Version.swift */; };
+		6E729C571CC3BC030018A848 /* CryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E729C561CC3BC030018A848 /* CryptoTests.swift */; };
+		6E729C591CC3BC030018A848 /* CoreLock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EE605BF1CC21C81008EF0EE /* CoreLock.framework */; };
+		6E729C701CC3BC760018A848 /* Bluetooth.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 6E729C611CC3BC330018A848 /* Bluetooth.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E729C711CC3BC760018A848 /* BluetoothLinux.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 6E729C631CC3BC330018A848 /* BluetoothLinux.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E729C721CC3BC760018A848 /* CryptoSwift.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 6E729C651CC3BC330018A848 /* CryptoSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E729C731CC3BC760018A848 /* GATT.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 6E729C671CC3BC330018A848 /* GATT.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E729C741CC3BC760018A848 /* JSON.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 6E729C6B1CC3BC330018A848 /* JSON.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E729C751CC3BC760018A848 /* SwiftFoundation.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 6E729C6D1CC3BC330018A848 /* SwiftFoundation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E729C761CC3BC820018A848 /* Bluetooth.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E729C611CC3BC330018A848 /* Bluetooth.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E729C771CC3BC820018A848 /* BluetoothLinux.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E729C631CC3BC330018A848 /* BluetoothLinux.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E729C781CC3BC820018A848 /* CryptoSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E729C651CC3BC330018A848 /* CryptoSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E729C791CC3BC820018A848 /* GATT.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E729C671CC3BC330018A848 /* GATT.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E729C7A1CC3BC820018A848 /* JSON.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E729C6B1CC3BC330018A848 /* JSON.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E729C7B1CC3BC820018A848 /* SwiftFoundation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E729C6D1CC3BC330018A848 /* SwiftFoundation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6E729C7E1CC3C3FC0018A848 /* ProfileCommunicationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E729C7D1CC3C3FC0018A848 /* ProfileCommunicationTests.swift */; };
 		6EA899701CC2E3F0005FC225 /* GATTProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA8996F1CC2E3F0005FC225 /* GATTProfile.swift */; };
 		6EB4132B1CC2ECD7005AB1E2 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB4132A1CC2ECD7005AB1E2 /* main.swift */; };
 		6EB4132D1CC2EE68005AB1E2 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB4132C1CC2EE68005AB1E2 /* Configuration.swift */; };
@@ -34,6 +51,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		6E729C5A1CC3BC030018A848 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6EE6058A1CC21941008EF0EE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6EE605BE1CC21C81008EF0EE;
+			remoteInfo = "CoreLock OS X";
+		};
 		6EE605C41CC21C81008EF0EE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6EE6058A1CC21941008EF0EE /* Project object */;
@@ -44,6 +68,22 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		6E729C6F1CC3BC6E0018A848 /* Copy Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				6E729C701CC3BC760018A848 /* Bluetooth.framework in Copy Frameworks */,
+				6E729C711CC3BC760018A848 /* BluetoothLinux.framework in Copy Frameworks */,
+				6E729C721CC3BC760018A848 /* CryptoSwift.framework in Copy Frameworks */,
+				6E729C731CC3BC760018A848 /* GATT.framework in Copy Frameworks */,
+				6E729C741CC3BC760018A848 /* JSON.framework in Copy Frameworks */,
+				6E729C751CC3BC760018A848 /* SwiftFoundation.framework in Copy Frameworks */,
+			);
+			name = "Copy Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6EE605CB1CC21C81008EF0EE /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -51,6 +91,12 @@
 			dstSubfolderSpec = 10;
 			files = (
 				6EE605C71CC21C81008EF0EE /* CoreLock.framework in Embed Frameworks */,
+				6E729C761CC3BC820018A848 /* Bluetooth.framework in Embed Frameworks */,
+				6E729C771CC3BC820018A848 /* BluetoothLinux.framework in Embed Frameworks */,
+				6E729C781CC3BC820018A848 /* CryptoSwift.framework in Embed Frameworks */,
+				6E729C791CC3BC820018A848 /* GATT.framework in Embed Frameworks */,
+				6E729C7A1CC3BC820018A848 /* JSON.framework in Embed Frameworks */,
+				6E729C7B1CC3BC820018A848 /* SwiftFoundation.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -64,6 +110,18 @@
 		6E729C411CC32F890018A848 /* SecureData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecureData.swift; sourceTree = "<group>"; };
 		6E729C451CC33C6E0018A848 /* HMAC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HMAC.swift; sourceTree = "<group>"; };
 		6E729C471CC33ECB0018A848 /* Encrypt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Encrypt.swift; sourceTree = "<group>"; };
+		6E729C4B1CC3B8220018A848 /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		6E729C4E1CC3B94C0018A848 /* Version.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Version.swift; path = ../../../../.Trash/Version.swift; sourceTree = "<group>"; };
+		6E729C541CC3BC030018A848 /* CoreLockTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoreLockTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6E729C561CC3BC030018A848 /* CryptoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CryptoTests.swift; path = ../../Xcode/CoreLockTests/CryptoTests.swift; sourceTree = "<group>"; };
+		6E729C581CC3BC030018A848 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6E729C611CC3BC330018A848 /* Bluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Bluetooth.framework; sourceTree = "<group>"; };
+		6E729C631CC3BC330018A848 /* BluetoothLinux.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = BluetoothLinux.framework; sourceTree = "<group>"; };
+		6E729C651CC3BC330018A848 /* CryptoSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CryptoSwift.framework; sourceTree = "<group>"; };
+		6E729C671CC3BC330018A848 /* GATT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GATT.framework; sourceTree = "<group>"; };
+		6E729C6B1CC3BC330018A848 /* JSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JSON.framework; sourceTree = "<group>"; };
+		6E729C6D1CC3BC330018A848 /* SwiftFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SwiftFoundation.framework; sourceTree = "<group>"; };
+		6E729C7D1CC3C3FC0018A848 /* ProfileCommunicationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileCommunicationTests.swift; sourceTree = "<group>"; };
 		6EA8996F1CC2E3F0005FC225 /* GATTProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTProfile.swift; sourceTree = "<group>"; };
 		6EB4132A1CC2ECD7005AB1E2 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		6EB4132C1CC2EE68005AB1E2 /* Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
@@ -91,6 +149,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		6E729C511CC3BC030018A848 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6E729C591CC3BC030018A848 /* CoreLock.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6EE6058F1CC21941008EF0EE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -116,15 +182,56 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6E729C551CC3BC030018A848 /* CoreLockTests */ = {
+			isa = PBXGroup;
+			children = (
+				6E729C581CC3BC030018A848 /* Info.plist */,
+			);
+			path = CoreLockTests;
+			sourceTree = "<group>";
+		};
+		6E729C5F1CC3BC200018A848 /* Dependencies */ = {
+			isa = PBXGroup;
+			children = (
+				6E729C601CC3BC330018A848 /* Mac */,
+			);
+			name = Dependencies;
+			sourceTree = "<group>";
+		};
+		6E729C601CC3BC330018A848 /* Mac */ = {
+			isa = PBXGroup;
+			children = (
+				6E729C611CC3BC330018A848 /* Bluetooth.framework */,
+				6E729C631CC3BC330018A848 /* BluetoothLinux.framework */,
+				6E729C651CC3BC330018A848 /* CryptoSwift.framework */,
+				6E729C671CC3BC330018A848 /* GATT.framework */,
+				6E729C6B1CC3BC330018A848 /* JSON.framework */,
+				6E729C6D1CC3BC330018A848 /* SwiftFoundation.framework */,
+			);
+			name = Mac;
+			path = ../Carthage/Build/Mac;
+			sourceTree = "<group>";
+		};
+		6E729C7C1CC3BD4A0018A848 /* UnitTests */ = {
+			isa = PBXGroup;
+			children = (
+				6E729C561CC3BC030018A848 /* CryptoTests.swift */,
+				6E729C7D1CC3C3FC0018A848 /* ProfileCommunicationTests.swift */,
+			);
+			path = UnitTests;
+			sourceTree = "<group>";
+		};
 		6EE605891CC21941008EF0EE = {
 			isa = PBXGroup;
 			children = (
+				6E729C5F1CC3BC200018A848 /* Dependencies */,
 				6EE605CD1CC21CB5008EF0EE /* Cartfile */,
 				6EE605CE1CC21CC2008EF0EE /* Package.swift */,
 				6EE605CC1CC21C8F008EF0EE /* Sources */,
 				6EE605941CC21941008EF0EE /* LockDaemon */,
 				6EE605A91CC21C1A008EF0EE /* Cerradura */,
 				6EE605C01CC21C81008EF0EE /* CoreLock */,
+				6E729C551CC3BC030018A848 /* CoreLockTests */,
 				6EE605931CC21941008EF0EE /* Products */,
 			);
 			sourceTree = "<group>";
@@ -135,6 +242,7 @@
 				6EE605921CC21941008EF0EE /* LockDaemon.app */,
 				6EE605A81CC21C1A008EF0EE /* Cerradura.app */,
 				6EE605BF1CC21C81008EF0EE /* CoreLock.framework */,
+				6E729C541CC3BC030018A848 /* CoreLockTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -176,6 +284,7 @@
 		6EE605CC1CC21C8F008EF0EE /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				6E729C7C1CC3BD4A0018A848 /* UnitTests */,
 				6EE605CF1CC21D24008EF0EE /* CoreLock */,
 				6EE605D01CC21D24008EF0EE /* lockd */,
 			);
@@ -186,6 +295,7 @@
 		6EE605CF1CC21D24008EF0EE /* CoreLock */ = {
 			isa = PBXGroup;
 			children = (
+				6E729C4E1CC3B94C0018A848 /* Version.swift */,
 				6EA8996F1CC2E3F0005FC225 /* GATTProfile.swift */,
 				6EB413301CC30084005AB1E2 /* Status.swift */,
 				6E729C3B1CC325A60018A848 /* Action.swift */,
@@ -196,6 +306,7 @@
 				6E729C3F1CC32E8D0018A848 /* Random.swift */,
 				6E729C451CC33C6E0018A848 /* HMAC.swift */,
 				6E729C471CC33ECB0018A848 /* Encrypt.swift */,
+				6E729C4B1CC3B8220018A848 /* Model.swift */,
 			);
 			name = CoreLock;
 			path = ../Sources/CoreLock;
@@ -225,6 +336,25 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		6E729C531CC3BC030018A848 /* CoreLockTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6E729C5C1CC3BC030018A848 /* Build configuration list for PBXNativeTarget "CoreLockTests" */;
+			buildPhases = (
+				6E729C501CC3BC030018A848 /* Sources */,
+				6E729C511CC3BC030018A848 /* Frameworks */,
+				6E729C521CC3BC030018A848 /* Resources */,
+				6E729C6F1CC3BC6E0018A848 /* Copy Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6E729C5B1CC3BC030018A848 /* PBXTargetDependency */,
+			);
+			name = CoreLockTests;
+			productName = CoreLockTests;
+			productReference = 6E729C541CC3BC030018A848 /* CoreLockTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		6EE605911CC21941008EF0EE /* LockDaemon */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6EE605A11CC21942008EF0EE /* Build configuration list for PBXNativeTarget "LockDaemon" */;
@@ -289,6 +419,9 @@
 				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = ColemanCDA;
 				TargetAttributes = {
+					6E729C531CC3BC030018A848 = {
+						CreatedOnToolsVersion = 7.3;
+					};
 					6EE605911CC21941008EF0EE = {
 						CreatedOnToolsVersion = 7.3;
 					};
@@ -313,14 +446,22 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				6EE605911CC21941008EF0EE /* LockDaemon */,
 				6EE605A71CC21C1A008EF0EE /* Cerradura */,
+				6EE605911CC21941008EF0EE /* LockDaemon */,
 				6EE605BE1CC21C81008EF0EE /* CoreLock OS X */,
+				6E729C531CC3BC030018A848 /* CoreLockTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		6E729C521CC3BC030018A848 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6EE605901CC21941008EF0EE /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -350,6 +491,15 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		6E729C501CC3BC030018A848 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6E729C7E1CC3C3FC0018A848 /* ProfileCommunicationTests.swift in Sources */,
+				6E729C571CC3BC030018A848 /* CryptoTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6EE6058E1CC21941008EF0EE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -380,7 +530,9 @@
 				6E729C3E1CC32E750018A848 /* Nonce.swift in Sources */,
 				6E729C401CC32E8D0018A848 /* Random.swift in Sources */,
 				6EB413331CC317A3005AB1E2 /* Bool.swift in Sources */,
+				6E729C4C1CC3B8220018A848 /* Model.swift in Sources */,
 				6E729C421CC32F890018A848 /* SecureData.swift in Sources */,
+				6E729C4F1CC3B94C0018A848 /* Version.swift in Sources */,
 				6E729C481CC33ECB0018A848 /* Encrypt.swift in Sources */,
 				6E729C461CC33C6E0018A848 /* HMAC.swift in Sources */,
 				6EB413341CC31AA7005AB1E2 /* Key.swift in Sources */,
@@ -390,6 +542,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		6E729C5B1CC3BC030018A848 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6EE605BE1CC21C81008EF0EE /* CoreLock OS X */;
+			targetProxy = 6E729C5A1CC3BC030018A848 /* PBXContainerItemProxy */;
+		};
 		6EE605C51CC21C81008EF0EE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 6EE605BE1CC21C81008EF0EE /* CoreLock OS X */;
@@ -425,6 +582,32 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		6E729C5D1CC3BC030018A848 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = $SRCROOT/../Carthage/Build/Mac;
+				INFOPLIST_FILE = CoreLockTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_BUNDLE_IDENTIFIER = com.colemancda.CoreLockTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		6E729C5E1CC3BC030018A848 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = $SRCROOT/../Carthage/Build/Mac;
+				INFOPLIST_FILE = CoreLockTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_BUNDLE_IDENTIFIER = com.colemancda.CoreLockTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		6EE6059F1CC21942008EF0EE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -620,6 +803,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		6E729C5C1CC3BC030018A848 /* Build configuration list for PBXNativeTarget "CoreLockTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6E729C5D1CC3BC030018A848 /* Debug */,
+				6E729C5E1CC3BC030018A848 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		6EE6058D1CC21941008EF0EE /* Build configuration list for PBXProject "Lock" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

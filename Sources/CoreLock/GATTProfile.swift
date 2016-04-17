@@ -34,6 +34,12 @@ public struct LockProfile: GATTProfile {
             public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "EB1BA354-044C-11E6-BDFD-09AB70D5A8C7")!)
         }
         
+        /// The lock model. (1 byte) (read-only)
+        public struct Model: GATTProfileCharacteristic {
+            
+            public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "AD96F330-0497-11E6-9EB3-E72D62A5198D")!)
+        }
+        
         /// The lock software version. (Variable size String) (read-only)
         public struct Version: GATTProfileCharacteristic {
             

@@ -28,7 +28,26 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "6E729C531CC3BC030018A848"
+               BuildableName = "CoreLockTests.xctest"
+               BlueprintName = "CoreLockTests"
+               ReferencedContainer = "container:Lock.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "6EE605BE1CC21C81008EF0EE"
+            BuildableName = "CoreLock.framework"
+            BlueprintName = "CoreLock OS X"
+            ReferencedContainer = "container:Lock.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>

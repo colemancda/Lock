@@ -10,19 +10,23 @@ import SwiftFoundation
 import CryptoSwift
 
 /// Encrypt data
-public func Encrypt(key: Data, data: Data) -> Data {
+public func encrypt(key: Data, data: Data) -> (encrypted: Data, IV: Data) {
     
-    let crypto = try! AES(key: key.byteValue)
+    let iv = random(AES.blockSize)
+    
+    let crypto = try! AES(key: key.byteValue, iv: iv.byteValue)
     
     let byteValue = try! crypto.encrypt(data.byteValue)
     
-    return Data(byteValue: byteValue)
+    return (Data(byteValue: byteValue), iv)
 }
 
 /// Decrypt data
-public func Decrypt(key: Data, data: Data) -> Data {
+public func decrypt(key: Data, IV: Data, data: Data) -> Data {
     
-    let crypto = try! AES(key: key.byteValue)
+    assert(IV.byteValue.count == AES.blockSize)
+    
+    let crypto = try! AES(key: key.byteValue, iv: IV.byteValue)
     
     let byteValue = try! crypto.decrypt(data.byteValue)
     

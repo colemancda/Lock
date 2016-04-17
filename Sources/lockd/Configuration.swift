@@ -11,4 +11,6 @@ import SwiftFoundation
 struct Configuration {
     
     let identifier: UUID
+    
+    let version = Version
 }
