@@ -202,6 +202,8 @@ public struct LockProfile: GATTProfile {
                 
                 let hmac = Array(bytes.suffix(from: 1 + Nonce.length))
                 
+                assert(hmac.count == HMACSize)
+                
                 guard let action = CoreLock.Action(rawValue: actionByte)
                     else { return nil }
                 
@@ -212,7 +214,18 @@ public struct LockProfile: GATTProfile {
             
             public func toBigEndian() -> Data {
                 
-                return Data(byteValue: [value.rawValue])
+                let bytes = [action.rawValue] + nonce.data.byteValue + authentication.byteValue
+                
+                assert(bytes.count == self.dynamicType.length)
+                
+                return Data(byteValue: bytes)
+            }
+            
+            public func authenticated(with key: Key) -> Bool {
+                
+                let hmac = HMAC(key: key, message: nonce)
+                
+                return hmac == authentication
             }
         }
     }

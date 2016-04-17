@@ -11,7 +11,7 @@ import SwiftFoundation
 /// A lock's key used for unlocking and actions.
 public struct Key: SecureData {
     
-    public static let length = 512 / 8
+    public static let length = 512 / 8 // 64
     
     public let data: Data
     

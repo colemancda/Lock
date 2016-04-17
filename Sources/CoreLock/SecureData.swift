@@ -9,7 +9,7 @@
 import SwiftFoundation
 
 /// Secure Data Protocol. 
-public protocol SecureData {
+public protocol SecureData: Equatable {
     
     /// The data length. 
     static var length: Int { get }
@@ -22,5 +22,11 @@ public protocol SecureData {
     
     /// Initialize with random value.
     init()
-    
 }
+
+public func == <T: SecureData> (lhs: T, rhs: T) -> Bool {
+    
+    return lhs.data == rhs.data
+}
+
+
