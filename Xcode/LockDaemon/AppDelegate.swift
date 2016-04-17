@@ -10,15 +10,12 @@ import Cocoa
 import GATT
 
 @NSApplicationMain
-class AppDelegate: NSObject, NSApplicationDelegate {
-
+final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(aNotification: NSNotification) {
         // Insert code here to initialize your application
         
-        let peripheral = PeripheralManager()
-        
-        
+        LockDaemonMain()
     }
 
     func applicationWillTerminate(aNotification: NSNotification) {
