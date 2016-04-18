@@ -11,9 +11,6 @@ import SwiftFoundation
 /// Lock Action
 public enum Action: UInt8 {
     
-    /// Idle / Unlock Mode status
-    case Unlock
-    
     /// New Key being added to database status
     case NewKey
     

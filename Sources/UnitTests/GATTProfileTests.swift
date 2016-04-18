@@ -12,6 +12,8 @@ import CoreLock
 
 final class GATTProfileTests: XCTestCase {
     
+    static let allTests: [(String, GATTProfileTests -> () throws -> Void)] = [("testLockIdentifier", testLockIdentifier), ("testLockAction", testLockAction), ("testLockSetup", testLockSetup)]
+    
     func testLockIdentifier() {
         
         let UUID = SwiftFoundation.UUID()
@@ -52,7 +54,7 @@ final class GATTProfileTests: XCTestCase {
         
         let nonce = Nonce()
         
-        let action = Action.Unlock
+        let action = Action.NewKey
         
         let actionRequest = LockProfile.LockService.Action(action: action, nonce: nonce, key: key)
         

@@ -10,17 +10,6 @@ import SwiftFoundation
 import GATT
 import CoreLock
 
-func LockDaemonMain() {
-    
-    print("Starting Lock Daemon...")
-    
-    let peripheral = PeripheralManager()
-    
-    try! peripheral.start()
-    
-    peripheral
-    
-    
-}
+print("Starting Lock Daemon...")
 
-LockDaemonMain()
+LockController.sharedController

@@ -15,7 +15,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(aNotification: NSNotification) {
         // Insert code here to initialize your application
         
-        LockDaemonMain()
+        print("Starting Lock Daemon...")
+        
+        LockController.sharedController
     }
 
     func applicationWillTerminate(aNotification: NSNotification) {

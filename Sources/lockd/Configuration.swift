@@ -7,10 +7,18 @@
 //
 
 import SwiftFoundation
+import CoreLock
 
 struct Configuration {
     
     let identifier: UUID
     
-    let version = Version
+    let model: Model
+    
+    init() {
+        
+        self.identifier = SwiftFoundation.UUID()
+        
+        self.model = Model.Test
+    }
 }

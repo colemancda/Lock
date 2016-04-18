@@ -12,6 +12,8 @@ import CoreLock
 
 final class CryptoTests: XCTestCase {
     
+    static let allTests: [(String, CryptoTests -> () throws -> Void)] = [("testHMAC", testHMAC), ("testEncrypt", testEncrypt), ("testFailEncrypt", testFailEncrypt), ("testEncryptKeyData", testEncryptKeyData)]
+    
     func testHMAC() {
         
         let key = KeyData()
