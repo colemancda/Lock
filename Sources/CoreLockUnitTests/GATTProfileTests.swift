@@ -12,7 +12,7 @@ import CoreLock
 
 final class GATTProfileTests: XCTestCase {
     
-    static let allTests: [(String, GATTProfileTests -> () throws -> Void)] = [("testLockIdentifier", testLockIdentifier), ("testLockAction", testLockAction), ("testLockSetup", testLockSetup)]
+    static let allTests: [(String, GATTProfileTests -> () throws -> Void)] = [("testLockIdentifier", testLockIdentifier), ("testLockAction", testLockAction), ("testLockSetup", testLockSetup), ("testUnlock", testUnlock)]
     
     func testLockIdentifier() {
         
@@ -85,5 +85,27 @@ final class GATTProfileTests: XCTestCase {
             else { XCTFail(); return }
         
         XCTAssert(deserialized.value == key)
+    }
+    
+    func testUnlock() {
+        
+        // lock setup
+        
+        let requestType = LockProfile.UnlockService.Unlock.self
+        
+        let key = KeyData()
+        
+        let nonce = Nonce()
+        
+        let request = requestType.init(nonce: nonce, key: key)
+        
+        let requestData = request.toBigEndian()
+        
+        guard let deserialized = requestType.init(bigEndian: requestData)
+            else { XCTFail(); return }
+        
+        XCTAssert(deserialized.nonce == nonce)
+        XCTAssert(deserialized.authenticated(with: key))
+        XCTAssert(deserialized.authenticated(with: KeyData()) == false)
     }
 }
