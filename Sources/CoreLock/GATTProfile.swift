@@ -6,6 +6,10 @@
 //  Copyright © 2016 ColemanCDA. All rights reserved.
 //
 
+#if os(Linux)
+    import Glibc
+#endif
+
 import SwiftFoundation
 import Bluetooth
 
@@ -116,9 +120,9 @@ public struct LockProfile: GATTProfile {
             
             public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "F28A0E1E-044C-11E6-9032-09AB70D5A8C7")!)
             
-            public var value: Int64
+            public var value: UInt64
             
-            public init(value: Int64) {
+            public init(value: UInt64) {
                 
                 self.value = value
             }
@@ -130,7 +134,7 @@ public struct LockProfile: GATTProfile {
                 guard bigEndian.byteValue.count == length
                     else { return nil }
                 
-                var value: Int64 = 0
+                var value: UInt64 = 0
                 
                 var dataCopy = bigEndian
                 

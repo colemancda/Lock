@@ -9,7 +9,11 @@
 import SwiftFoundation
 import GATT
 import CoreLock
+import Foundation
+import CoreFoundation
 
 print("Starting Lock Daemon...")
 
 LockController.sharedController
+
+while true { }

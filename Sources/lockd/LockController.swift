@@ -35,9 +35,13 @@ final class LockController {
         
         addLockService()
         
+        loadStatus()
+        
+        peripheral.log = { print("Peripheral: " + $0) }
+        
         try! peripheral.start()
         
-        loadStatus()
+        
     }
     
     // MARK: - Methods
@@ -53,7 +57,7 @@ final class LockController {
         let modelValue = LockProfile.LockService.Model(value: configuration.model).toBigEndian()
         
         let model = Characteristic(UUID: LockProfile.LockService.Model.UUID, value: modelValue, permissions: [.Read], properties: [.Read])
-        
+                
         let versionValue = LockProfile.LockService.Version(value: CoreLockVersion).toBigEndian()
         
         let version = Characteristic(UUID: LockProfile.LockService.Version.UUID, value: versionValue, permissions: [.Read], properties: [.Read])

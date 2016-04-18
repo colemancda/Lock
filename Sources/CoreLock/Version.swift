@@ -7,4 +7,4 @@
 //
 
 /// CoreLock version
-public let CoreLockVersion: Int64 = 1
+public let CoreLockVersion: UInt64 = 1
