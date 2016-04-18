@@ -12,6 +12,10 @@ let package = Package(
             dependencies: [.Target(name: "CoreLock")]
         ),
         Target(
+            name: "CoreLockUnitTests",
+            dependencies: [.Target(name: "CoreLock")]
+        ),
+        Target(
             name: "CoreLock"
         )
     ],

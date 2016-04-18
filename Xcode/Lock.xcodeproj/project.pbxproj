@@ -10,9 +10,9 @@
 		6E646CF21CC449770029A4B3 /* LockController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E646CF11CC449770029A4B3 /* LockController.swift */; };
 		6E646CF41CC4A5730029A4B3 /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E646CF31CC4A5730029A4B3 /* Version.swift */; };
 		6E646CF61CC4A8780029A4B3 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E646CF51CC4A8780029A4B3 /* main.swift */; };
+		6E646CF81CC4AB580029A4B3 /* CryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E646CF71CC4AB580029A4B3 /* CryptoTests.swift */; };
 		6E729C421CC32F890018A848 /* SecureData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E729C411CC32F890018A848 /* SecureData.swift */; };
 		6E729C4C1CC3B8220018A848 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E729C4B1CC3B8220018A848 /* Model.swift */; };
-		6E729C571CC3BC030018A848 /* CryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E729C561CC3BC030018A848 /* CryptoTests.swift */; };
 		6E729C591CC3BC030018A848 /* CoreLock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EE605BF1CC21C81008EF0EE /* CoreLock.framework */; };
 		6E729C701CC3BC760018A848 /* Bluetooth.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 6E729C611CC3BC330018A848 /* Bluetooth.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6E729C711CC3BC760018A848 /* BluetoothLinux.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 6E729C631CC3BC330018A848 /* BluetoothLinux.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -104,11 +104,11 @@
 		6E646CF11CC449770029A4B3 /* LockController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockController.swift; sourceTree = "<group>"; };
 		6E646CF31CC4A5730029A4B3 /* Version.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
 		6E646CF51CC4A8780029A4B3 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		6E646CF71CC4AB580029A4B3 /* CryptoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CryptoTests.swift; sourceTree = "<group>"; };
 		6E729C3B1CC325A60018A848 /* Action.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
 		6E729C411CC32F890018A848 /* SecureData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecureData.swift; sourceTree = "<group>"; };
 		6E729C4B1CC3B8220018A848 /* Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		6E729C541CC3BC030018A848 /* CoreLockTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoreLockTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		6E729C561CC3BC030018A848 /* CryptoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CryptoTests.swift; path = ../../Xcode/CoreLockTests/CryptoTests.swift; sourceTree = "<group>"; };
 		6E729C581CC3BC030018A848 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6E729C611CC3BC330018A848 /* Bluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Bluetooth.framework; sourceTree = "<group>"; };
 		6E729C631CC3BC330018A848 /* BluetoothLinux.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = BluetoothLinux.framework; sourceTree = "<group>"; };
@@ -211,10 +211,11 @@
 			isa = PBXGroup;
 			children = (
 				6E646CF51CC4A8780029A4B3 /* main.swift */,
-				6E729C561CC3BC030018A848 /* CryptoTests.swift */,
+				6E646CF71CC4AB580029A4B3 /* CryptoTests.swift */,
 				6E729C7D1CC3C3FC0018A848 /* GATTProfileTests.swift */,
 			);
-			path = UnitTests;
+			name = UnitTests;
+			path = CoreLockUnitTests;
 			sourceTree = "<group>";
 		};
 		6EE605891CC21941008EF0EE = {
@@ -489,7 +490,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6E729C7E1CC3C3FC0018A848 /* GATTProfileTests.swift in Sources */,
-				6E729C571CC3BC030018A848 /* CryptoTests.swift in Sources */,
+				6E646CF81CC4AB580029A4B3 /* CryptoTests.swift in Sources */,
 				6E646CF61CC4A8780029A4B3 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
