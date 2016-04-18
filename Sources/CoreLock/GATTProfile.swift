@@ -252,10 +252,10 @@ public struct LockProfile: GATTProfile {
         /// IV + encrypt(salt, iv, newKey) (write-only)
         public struct Key: GATTProfileCharacteristic {
             
-            public static let length = IVSize + 80
+            public static let length = IVSize + 48
             
-            /// The private key used to encrypt and decrypt new keys. (512 bits)
-            private static let salt = "RgaGxxZ4nSHmE5HjeZhbcjjb8CMWoFrjU9azM8Sqo8QUI9xmhCiaIs4MN7Myo2zA".toUTF8Data()
+            /// The private key used to encrypt and decrypt new keys. (256 bits)
+            private static let salt = "p3R1pf9AmQxYlVAixSh6Yr0DRGSc4xST".toUTF8Data()
             
             public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "129E401C-044D-11E6-8FA9-09AB70D5A8C7")!)
             
@@ -277,7 +277,7 @@ public struct LockProfile: GATTProfile {
                 
                 let iv = InitializationVector(data: Data(byteValue: ivBytes))!
                 
-                let encryptedBytes = Array(bytes.suffix(80))
+                let encryptedBytes = Array(bytes.suffix(48))
                 
                 let decryptedData = decrypt(key: Key.salt, iv: iv, data: Data(byteValue: encryptedBytes))
                 

@@ -32,7 +32,7 @@ public func == <T: SecureData> (lhs: T, rhs: T) -> Bool {
 /// A lock's key used for unlocking and actions.
 public struct KeyData: SecureData {
     
-    public static let length = 512 / 8 // 64
+    public static let length = 256 / 8 // 32
     
     public let data: Data
     
