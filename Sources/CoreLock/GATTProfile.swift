@@ -249,21 +249,28 @@ public struct LockProfile: GATTProfile {
         
         public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "04A51B0C-044D-11E6-B449-09AB70D5A8C7")!)
                 
-        /// IV + encrypt(salt, iv, newKey) (write-only)
-        public struct Key: GATTProfileCharacteristic {
+        /// nonce + IV + encrypt(salt, iv, newKey) + HMAC(salt, nonce) (write-only)
+        public struct Key: AuthenticatedCharacteristic {
             
-            public static let length = IVSize + 48
+            public static let length = Nonce.length + IVSize + 48 + HMACSize
             
-            /// The private key used to encrypt and decrypt new keys. (256 bits)
-            private static let salt = "p3R1pf9AmQxYlVAixSh6Yr0DRGSc4xST".toUTF8Data()
+            /// The private key used to encrypt and decrypt new keys.
+            public static let salt = KeyData(data: "p3R1pf9AmQxYlVAixSh6Yr0DRGSc4xST".toUTF8Data())!
             
             public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "129E401C-044D-11E6-8FA9-09AB70D5A8C7")!)
             
             public let value: KeyData
             
-            public init(value: KeyData) {
+            public let nonce: Nonce
+            
+            /// HMAC of key and nonce
+            public let authentication: Data
+            
+            public init(value: KeyData, nonce: Nonce = Nonce()) {
                 
                 self.value = value
+                self.nonce = nonce
+                self.authentication = HMAC(key: Key.salt, message: nonce)
             }
             
             public init?(bigEndian: Data) {
@@ -273,24 +280,34 @@ public struct LockProfile: GATTProfile {
                 guard bytes.count == self.dynamicType.length
                     else { return nil }
                 
-                let ivBytes = Array(bytes.prefix(IVSize))
+                let nonceBytes = Array(bytes[0 ..< Nonce.length])
+                
+                self.nonce = Nonce(data: Data(byteValue: nonceBytes))!
+                
+                let ivBytes = Array(bytes[Nonce.length ..< Nonce.length + IVSize])
                 
                 let iv = InitializationVector(data: Data(byteValue: ivBytes))!
                 
-                let encryptedBytes = Array(bytes.suffix(48))
+                let encryptedBytes = Array(bytes[Nonce.length + IVSize ..< Nonce.length + IVSize + 48])
                 
-                let decryptedData = decrypt(key: Key.salt, iv: iv, data: Data(byteValue: encryptedBytes))
+                let decryptedData = decrypt(key: Key.salt.data, iv: iv, data: Data(byteValue: encryptedBytes))
                 
                 assert(decryptedData.byteValue.count == KeyData.length)
                 
                 self.value = KeyData(data: decryptedData)!
+                
+                let hmac = Array(bytes.suffix(from: Nonce.length + IVSize + 48))
+                
+                assert(hmac.count == HMACSize)
+                
+                self.authentication = Data(byteValue: hmac)
             }
             
             public func toBigEndian() -> Data {
                 
-                let (encryptedKey, iv) = encrypt(key: Key.salt, data: value.data)
+                let (encryptedKey, iv) = encrypt(key: Key.salt.data, data: value.data)
                 
-                let bytes = iv.data.byteValue + encryptedKey.byteValue
+                let bytes = nonce.data.byteValue + iv.data.byteValue + encryptedKey.byteValue + authentication.byteValue
                 
                 return Data(byteValue: bytes)
             }

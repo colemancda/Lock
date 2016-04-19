@@ -77,7 +77,9 @@ final class GATTProfileTests: XCTestCase {
         
         let key = KeyData()
         
-        let request = requestType.init(value: key)
+        let nonce = Nonce()
+        
+        let request = requestType.init(value: key, nonce: nonce)
         
         let requestData = request.toBigEndian()
         
@@ -85,6 +87,9 @@ final class GATTProfileTests: XCTestCase {
             else { XCTFail(); return }
         
         XCTAssert(deserialized.value == key)
+        XCTAssert(deserialized.nonce == nonce)
+        XCTAssert(deserialized.authenticated(with: LockProfile.SetupService.Key.salt))
+        XCTAssert(deserialized.authenticated(with: KeyData()) == false)
     }
     
     func testUnlock() {
