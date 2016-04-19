@@ -255,7 +255,7 @@ public struct LockProfile: GATTProfile {
             public static let length = Nonce.length + IVSize + 48 + HMACSize
             
             /// The private key used to encrypt and decrypt new keys.
-            public static let salt = KeyData(data: "p3R1pf9AmQxYlVAixSh6Yr0DRGSc4xST".toUTF8Data())!
+            private static let salt = KeyData(data: "p3R1pf9AmQxYlVAixSh6Yr0DRGSc4xST".toUTF8Data())!
             
             public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "129E401C-044D-11E6-8FA9-09AB70D5A8C7")!)
             
@@ -310,6 +310,11 @@ public struct LockProfile: GATTProfile {
                 let bytes = nonce.data.byteValue + iv.data.byteValue + encryptedKey.byteValue + authentication.byteValue
                 
                 return Data(byteValue: bytes)
+            }
+            
+            public func authenticatedWithSalt() -> Bool {
+                
+                return authenticated(with: Key.salt)
             }
         }
     }

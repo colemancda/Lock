@@ -88,7 +88,7 @@ final class GATTProfileTests: XCTestCase {
         
         XCTAssert(deserialized.value == key)
         XCTAssert(deserialized.nonce == nonce)
-        XCTAssert(deserialized.authenticated(with: LockProfile.SetupService.Key.salt))
+        XCTAssert(deserialized.authenticatedWithSalt())
         XCTAssert(deserialized.authenticated(with: KeyData()) == false)
     }
     

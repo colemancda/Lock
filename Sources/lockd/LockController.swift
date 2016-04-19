@@ -52,7 +52,7 @@ final class LockController {
         
         addLockService()
         
-        try! peripheral.start()
+        loadKeys()
         
         if keys.first == nil {
             
@@ -63,6 +63,7 @@ final class LockController {
             unlockMode()
         }
         
+        try! peripheral.start()
     }
     
     // MARK: - Methods
@@ -99,6 +100,11 @@ final class LockController {
         print("Status \(oldValue) -> \(status)")
         
         peripheral[characteristic: LockProfile.LockService.Status.UUID] = LockProfile.LockService.Status(value: self.status).toBigEndian()
+    }
+    
+    private func loadKeys() {
+        
+        
     }
     
     private func setupMode() {
@@ -142,19 +148,55 @@ final class LockController {
             
             assert(status == .Setup, "Setup Service should not exist when the lock is not in Setup mode")
             
-            // new value cannot be longer than expected
-            guard newValue.newValue.byteValue.count <= LockProfile.SetupService.Key.length
-                else { return ATT.Error.WriteNotPermitted }
-            
             // continue writing
             guard newValue.newValue.byteValue.count == LockProfile.SetupService.Key.length
                 else { return nil }
             
             // deserialize
-            guard let key = LockProfile.SetupService.Key.init(bigEndian: newValue.newValue)
+            let key = LockProfile.SetupService.Key.init(bigEndian: newValue.newValue)!
+            
+            // validate authentication
+            guard key.authenticatedWithSalt()
                 else { return ATT.Error.WriteNotPermitted }
             
+            // set key
+            self.keys = [key.value]
             
+            print("Lock setup by central \(central.identifier)")
+            
+            unlockMode()
+            
+            return nil
+            
+        case LockProfile.UnlockService.Unlock.UUID:
+            
+            assert(status != .Setup, "Should not be in setup mode")
+            
+            // continue writing
+            guard newValue.newValue.byteValue.count == LockProfile.UnlockService.Unlock.length
+                else { return nil }
+            
+            // deserialize
+            let unlock = LockProfile.UnlockService.Unlock.init(bigEndian: newValue.newValue)!
+            
+            var authenticatedKey: KeyData!
+            
+            for key in keys {
+                
+                if unlock.authenticated(with: key) {
+                    
+                    authenticatedKey = key
+                    
+                    break
+                }
+            }
+            
+            /// not authenticated
+            guard authenticatedKey != nil else { return ATT.Error.WriteNotPermitted }
+            
+            print("Unlocked by central \(central.identifier)")
+            
+            return nil
             
         default: fatalError("Writing to characteristic \(UUID)")
         }
