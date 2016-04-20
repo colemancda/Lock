@@ -8,5 +8,6 @@
 
 import Foundation
 import UIKit
+import GATT
 
 UIApplicationMain(Process.argc, nil, nil, NSStringFromClass(AppDelegate))

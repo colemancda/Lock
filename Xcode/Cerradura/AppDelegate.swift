@@ -8,7 +8,6 @@
 
 import Foundation
 import UIKit
-import GATT
 
 //@UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -17,9 +16,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
-        
-        
-        
+                
         return true
     }
 
@@ -47,8 +44,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     
     
 }
-
-//let central = CentralManager()
 
 func mainQueue(_ block: () -> ()) {
     

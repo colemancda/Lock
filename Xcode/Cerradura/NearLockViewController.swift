@@ -11,65 +11,30 @@ import UIKit
 import CoreBluetooth
 import SwiftFoundation
 import Bluetooth
-import GATT
 import CoreLock
+import GATT
 
 final class NearLockViewController: UIViewController {
     
     // MARK: - Properties
     
-    let scanDuration = 5
+    private lazy var central: CBCentralManager = CBCentralManager(delegate: unsafeBitCast(self, to: CBCentralManagerDelegate.self), queue: self.queue)
     
-    var central: CentralManager!
+    private lazy var queue: dispatch_queue_t = dispatch_queue_create("\(self.dynamicType) Internal Queue", nil)
     
-    private lazy var queue: dispatch_queue_t = dispatch_queue_create("\(self.dynamicType) Internal Queue", DISPATCH_QUEUE_SERIAL)
+    private var scanResults = [CBPeripheral]()
     
-    private var discoveredLockPeripheral: Peripheral?
+    private var discoveredLockPeripheral: CBPeripheral?
     
     // MARK: - Loading
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        central = CentralManager()
-        
-        central.log = { print("Central: " + $0) }
+        central.state
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        central.stateChanged = stateChanged
-        
-        if central.state == .poweredOn {
-            
-            startScan()
-            
-        } else {
-            
-            bluetoothDisabled()
-        }
-    }
-    
-    // MARK: - Private Methods
-    
-    /// Perform a task on the internal queue.
-    private func async(_ block: () -> ()) {
-        
-        dispatch_async(queue) { block() }
-    }
-    
-    private func stateChanged(state: CBCentralManagerState) {
-        
-        if state == .poweredOn {
-            
-            startScan()
-            
-        } else {
-            
-            bluetoothDisabled()
-        }
-    }
+    // MARK: - Methods
     
     private func bluetoothDisabled() {
         
@@ -82,38 +47,73 @@ final class NearLockViewController: UIViewController {
         
         print("Starting scan")
         
-        // update UI
+        scanResults = []
         
-        async { [weak self] in
+        central.scanForPeripherals(withServices: nil, options: nil)
+        
+        dispatch_async(queue) {
             
-            while self?.central.state == .poweredOn {
+            sleep(5)
+            
+            self.central.stopScan()
+            
+            print("Stopped scanning")
+            
+            for peripheral in self.scanResults {
                 
-                guard let controller = self else { return }
-                
-                print("Scanning for \(controller.scanDuration) seconds")
-                
-                let foundDevices = controller.central.scan(duration: controller.scanDuration)
-                
-                print("Found \(foundDevices.count) peripherals")
-                
-                for peripheral in foundDevices {
-                    
-                    do { try controller.central.connect(peripheral) }
-                        
-                    catch { print("Cound not connect to \(peripheral.identifier) (\(error))"); continue }
-                    
-                    guard let services = try? controller.central.discover(services: peripheral)
-                        else { continue }
-                    
-                    // found lock
-                    if services.contains({ $0.UUID == LockProfile.LockService.UUID }) {
-                        
-                        print("Found lock peripheral \(peripheral.identifier)")
-                        
-                        return
-                    }
-                }
+                self.central.connect(peripheral, options: nil)
             }
         }
+        
+        // update UI
+    }
+    
+    // MARK: - CBCentralManagerDelegate
+    
+    func centralManagerDidUpdateState(_ central: CBCentralManager) {
+        
+        print("Central State: \(central.state == .poweredOn ? "Powered On" : "\(central.state.rawValue)")")
+        
+        switch central.state {
+            
+        case .poweredOff, .unknown, .resetting, .unsupported, .unauthorized:
+            
+            bluetoothDisabled()
+            
+        case .poweredOn:
+            
+            startScan()
+        }
+    }
+    
+    func centralManager(_ central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
+        
+        print("Discovered peripheral \(peripheral.identifier.uuidString)")
+        
+        scanResults.append(peripheral)
+    }
+    
+    func centralManager(_ central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
+        
+        print("Connected to peripheral \(peripheral.identifier.uuidString)")
+        
+        peripheral.delegate = unsafeBitCast(self, to: CBPeripheralDelegate.self)
+        
+        peripheral.discoverServices([LockProfile.LockService.UUID.toFoundation()])
+    }
+    
+    // MARK: - CBPeripheralDelegate
+    
+    func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: NSError?) {
+        
+        if let error = error {
+            
+            print("\(error.localizedDescription)")
+            return
+        }
+        
+        print("Discovered services of peripheral \(peripheral.identifier.uuidString)")
+        
+        
     }
 }
