@@ -2,17 +2,17 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "NFC Checkpoint Filled.png",
+      "filename" : "NearSelected.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "NFC Checkpoint Filled@2x.png",
+      "filename" : "NearSelected@2x.png",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
-      "filename" : "NFC Checkpoint Filled@3x.png",
+      "filename" : "NearSelected@3x.png",
       "scale" : "3x"
     }
   ],

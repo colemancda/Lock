@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "6EF45F8F1CC6CAF9001F7A39"
-               BuildableName = "CoreLock iOS.framework"
+               BuildableName = "CoreLock.framework"
                BlueprintName = "CoreLock iOS"
                ReferencedContainer = "container:Lock.xcodeproj">
             </BuildableReference>
@@ -46,7 +46,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6EF45F8F1CC6CAF9001F7A39"
-            BuildableName = "CoreLock iOS.framework"
+            BuildableName = "CoreLock.framework"
             BlueprintName = "CoreLock iOS"
             ReferencedContainer = "container:Lock.xcodeproj">
          </BuildableReference>
@@ -64,7 +64,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "6EF45F8F1CC6CAF9001F7A39"
-            BuildableName = "CoreLock iOS.framework"
+            BuildableName = "CoreLock.framework"
             BlueprintName = "CoreLock iOS"
             ReferencedContainer = "container:Lock.xcodeproj">
          </BuildableReference>

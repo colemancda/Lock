@@ -32,6 +32,12 @@
 		6EA899701CC2E3F0005FC225 /* GATTProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA8996F1CC2E3F0005FC225 /* GATTProfile.swift */; };
 		6EB4132D1CC2EE68005AB1E2 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB4132C1CC2EE68005AB1E2 /* Configuration.swift */; };
 		6EB413331CC317A3005AB1E2 /* Bool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB413321CC317A3005AB1E2 /* Bool.swift */; };
+		6ED338651CC7C1A800DF1461 /* Permission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED338641CC7C1A800DF1461 /* Permission.swift */; };
+		6ED338661CC7C1A800DF1461 /* Permission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED338641CC7C1A800DF1461 /* Permission.swift */; };
+		6ED338681CC7C39200DF1461 /* NearLockViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED338671CC7C39200DF1461 /* NearLockViewController.swift */; };
+		6ED3386A1CC7C7CB00DF1461 /* ErrorAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED338691CC7C7CB00DF1461 /* ErrorAlert.swift */; };
+		6ED3386D1CC7D1EE00DF1461 /* CoreLock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EF45FA01CC6CAF9001F7A39 /* CoreLock.framework */; };
+		6ED3386E1CC7D1EE00DF1461 /* CoreLock.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6EF45FA01CC6CAF9001F7A39 /* CoreLock.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6EDC70131CC3E2260085180A /* Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB413301CC30084005AB1E2 /* Status.swift */; };
 		6EE605961CC21941008EF0EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE605951CC21941008EF0EE /* AppDelegate.swift */; };
 		6EE605981CC21941008EF0EE /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE605971CC21941008EF0EE /* ViewController.swift */; };
@@ -64,6 +70,13 @@
 			remoteGlobalIDString = 6EE605BE1CC21C81008EF0EE;
 			remoteInfo = "CoreLock OS X";
 		};
+		6ED3386F1CC7D1EE00DF1461 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6EE6058A1CC21941008EF0EE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6EF45F8F1CC6CAF9001F7A39;
+			remoteInfo = "CoreLock iOS";
+		};
 		6EE605C41CC21C81008EF0EE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6EE6058A1CC21941008EF0EE /* Project object */;
@@ -88,6 +101,17 @@
 				6E729C751CC3BC760018A848 /* SwiftFoundation.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6ED338711CC7D1EE00DF1461 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				6ED3386E1CC7D1EE00DF1461 /* CoreLock.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		6EE605CB1CC21C81008EF0EE /* Embed Frameworks */ = {
@@ -132,6 +156,9 @@
 		6EB4132C1CC2EE68005AB1E2 /* Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		6EB413301CC30084005AB1E2 /* Status.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Status.swift; sourceTree = "<group>"; };
 		6EB413321CC317A3005AB1E2 /* Bool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bool.swift; sourceTree = "<group>"; };
+		6ED338641CC7C1A800DF1461 /* Permission.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Permission.swift; sourceTree = "<group>"; };
+		6ED338671CC7C39200DF1461 /* NearLockViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NearLockViewController.swift; sourceTree = "<group>"; };
+		6ED338691CC7C7CB00DF1461 /* ErrorAlert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorAlert.swift; sourceTree = "<group>"; };
 		6EE605921CC21941008EF0EE /* LockDaemon.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LockDaemon.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EE605951CC21941008EF0EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6EE605971CC21941008EF0EE /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -174,6 +201,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6ED3386D1CC7D1EE00DF1461 /* CoreLock.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -238,9 +266,9 @@
 		6EE605891CC21941008EF0EE = {
 			isa = PBXGroup;
 			children = (
-				6E729C5F1CC3BC200018A848 /* Dependencies */,
 				6EE605CD1CC21CB5008EF0EE /* Cartfile */,
 				6EE605CE1CC21CC2008EF0EE /* Package.swift */,
+				6E729C5F1CC3BC200018A848 /* Dependencies */,
 				6EE605CC1CC21C8F008EF0EE /* Sources */,
 				6EE605941CC21941008EF0EE /* LockDaemon */,
 				6EE605A91CC21C1A008EF0EE /* Cerradura */,
@@ -279,6 +307,8 @@
 			children = (
 				6EF45FD11CC72F58001F7A39 /* main.swift */,
 				6EE605AA1CC21C1A008EF0EE /* AppDelegate.swift */,
+				6ED338671CC7C39200DF1461 /* NearLockViewController.swift */,
+				6ED338691CC7C7CB00DF1461 /* ErrorAlert.swift */,
 				6EE605AE1CC21C1A008EF0EE /* Main.storyboard */,
 				6EE605B11CC21C1A008EF0EE /* Assets.xcassets */,
 				6EE605B31CC21C1A008EF0EE /* LaunchScreen.storyboard */,
@@ -318,6 +348,7 @@
 				6E729C411CC32F890018A848 /* SecureData.swift */,
 				6E729C811CC3C6930018A848 /* Crypto.swift */,
 				6E729C4B1CC3B8220018A848 /* Model.swift */,
+				6ED338641CC7C1A800DF1461 /* Permission.swift */,
 			);
 			name = CoreLock;
 			path = ../Sources/CoreLock;
@@ -401,10 +432,13 @@
 				6EE605A41CC21C1A008EF0EE /* Sources */,
 				6EE605A51CC21C1A008EF0EE /* Frameworks */,
 				6EE605A61CC21C1A008EF0EE /* Resources */,
+				6ED3386C1CC7D1DA00DF1461 /* Copy Frameworks */,
+				6ED338711CC7D1EE00DF1461 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				6ED338701CC7D1EE00DF1461 /* PBXTargetDependency */,
 			);
 			name = Cerradura;
 			productName = Cerradura;
@@ -469,6 +503,9 @@
 					};
 					6EE605BE1CC21C81008EF0EE = {
 						CreatedOnToolsVersion = 7.3;
+					};
+					6EF45F8F1CC6CAF9001F7A39 = {
+						DevelopmentTeam = 4W79SG34MW;
 					};
 				};
 			};
@@ -537,6 +574,28 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		6ED3386C1CC7D1DA00DF1461 /* Copy Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/../Carthage/Build/iOS/SwiftFoundation.framework",
+				"$(SRCROOT)/../Carthage/Build/iOS/Bluetooth.framework",
+				"$(SRCROOT)/../Carthage/Build/iOS/JSON.framework",
+				"$(SRCROOT)/../Carthage/Build/iOS/CryptoSwift.framework",
+				"$(SRCROOT)/../Carthage/Build/iOS/GATT.framework",
+			);
+			name = "Copy Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		6E729C501CC3BC030018A848 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -563,6 +622,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6ED338681CC7C39200DF1461 /* NearLockViewController.swift in Sources */,
+				6ED3386A1CC7C7CB00DF1461 /* ErrorAlert.swift in Sources */,
 				6EF45FD21CC72F58001F7A39 /* main.swift in Sources */,
 				6EE605AB1CC21C1A008EF0EE /* AppDelegate.swift in Sources */,
 			);
@@ -577,6 +638,7 @@
 				6E729C841CC3C77E0018A848 /* Action.swift in Sources */,
 				6EB413331CC317A3005AB1E2 /* Bool.swift in Sources */,
 				6E729C4C1CC3B8220018A848 /* Model.swift in Sources */,
+				6ED338651CC7C1A800DF1461 /* Permission.swift in Sources */,
 				6E729C421CC32F890018A848 /* SecureData.swift in Sources */,
 				6E646CF41CC4A5730029A4B3 /* Version.swift in Sources */,
 				6E729C821CC3C6930018A848 /* Crypto.swift in Sources */,
@@ -592,6 +654,7 @@
 				6EF45F931CC6CAF9001F7A39 /* Action.swift in Sources */,
 				6EF45F941CC6CAF9001F7A39 /* Bool.swift in Sources */,
 				6EF45F951CC6CAF9001F7A39 /* Model.swift in Sources */,
+				6ED338661CC7C1A800DF1461 /* Permission.swift in Sources */,
 				6EF45F961CC6CAF9001F7A39 /* SecureData.swift in Sources */,
 				6EF45F971CC6CAF9001F7A39 /* Version.swift in Sources */,
 				6EF45F981CC6CAF9001F7A39 /* Crypto.swift in Sources */,
@@ -605,6 +668,11 @@
 			isa = PBXTargetDependency;
 			target = 6EE605BE1CC21C81008EF0EE /* CoreLock OS X */;
 			targetProxy = 6E729C5A1CC3BC030018A848 /* PBXContainerItemProxy */;
+		};
+		6ED338701CC7D1EE00DF1461 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6EF45F8F1CC6CAF9001F7A39 /* CoreLock iOS */;
+			targetProxy = 6ED3386F1CC7D1EE00DF1461 /* PBXContainerItemProxy */;
 		};
 		6EE605C51CC21C81008EF0EE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -788,6 +856,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				FRAMEWORK_SEARCH_PATHS = $SRCROOT/../Carthage/Build/iOS;
 				INFOPLIST_FILE = Cerradura/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -804,6 +873,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				FRAMEWORK_SEARCH_PATHS = $SRCROOT/../Carthage/Build/iOS;
 				INFOPLIST_FILE = Cerradura/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -869,6 +939,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
@@ -896,6 +967,7 @@
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;

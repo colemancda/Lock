@@ -164,6 +164,8 @@ final class LockController {
             
             print("Lock setup by central \(central.identifier)")
             
+            peripheral.remove(service: setupServiceID!)
+            
             unlockMode()
             
             return nil
