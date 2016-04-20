@@ -14,6 +14,11 @@
 			<key>orderHint</key>
 			<integer>2</integer>
 		</dict>
+		<key>CoreLock iOS.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>3</integer>
+		</dict>
 		<key>LockDaemon.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -38,6 +43,11 @@
 			<true/>
 		</dict>
 		<key>6EE605BE1CC21C81008EF0EE</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>6EF45F8F1CC6CAF9001F7A39</key>
 		<dict>
 			<key>primary</key>
 			<true/>

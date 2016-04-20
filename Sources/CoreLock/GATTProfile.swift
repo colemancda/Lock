@@ -379,44 +379,20 @@ public struct LockProfile: GATTProfile {
         
         public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "2C12F862-044D-11E6-9032-09AB70D5A8C7")!)
         
-        /// Nonce, only retrievable by parent peer (16 bytes) (read-only)
-        public struct ParentNonce: GATTProfileCharacteristic {
-            
-            public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "3280D052-044D-11E6-8535-09AB70D5A8C7")!)
-        }
-        
-        /// Parent Shared Secret confirmation (write-only)
+        /// Parent Shared Secret (write-only)
         ///
-        /// encrypt(nonce, shared secret) + HMac(parentKey, parentNonce)
+        /// nonce + IV + encrypt(parentKey, iv, sharedSecret) + HMAC(parentKey, nonce)
         public struct ParentSharedSecret: GATTProfileCharacteristic {
             
             public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "3A9EE5A8-044D-11E6-90F2-09AB70D5A8C7")!)
         }
         
-        /// Boolean indicating end of parent operation (1 byte) (write-only)
-        public struct ParentFinished: GATTProfileCharacteristic {
-            
-            public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "404BB300-044D-11E6-BDFD-09AB70D5A8C7")!)
-        }
-        
-        /// Nonce, only retrievable by child peer (16 bytes) (read-only)
-        public struct ChildNonce: GATTProfileCharacteristic {
-            
-            public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "465DDCFA-044D-11E6-B8D9-09AB70D5A8C7")!)
-        }
-        
-        /// Child Shared Secret confirmation (read-only)
+        /// Child Shared Secret (read-only)
         ///
-        /// encrypt(child nonce + shared secret, childKey)
+        /// nonce + IV + encrypt(sharedSecret, iv, childKey) + HMAC(sharedSecret, nonce)
         public struct ChildKey: GATTProfileCharacteristic {
             
             public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "4CC3B5BA-044D-11E6-A956-09AB70D5A8C7")!)
-        }
-        
-        /// Boolean indicating end of child operation (1 byte) (write-only)
-        public struct ChildFinished: GATTProfileCharacteristic {
-            
-            public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "506494FA-044D-11E6-9F11-09AB70D5A8C7")!)
         }
     }
 }
