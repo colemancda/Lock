@@ -47,6 +47,8 @@ final class NearLockViewController: UIViewController {
         
         print("Starting scan")
         
+        discoveredLockPeripheral = nil
+        
         scanResults = []
         
         central.scanForPeripherals(withServices: nil, options: nil)
@@ -68,9 +70,18 @@ final class NearLockViewController: UIViewController {
         // update UI
     }
     
+    private func foundLock(peripheral: CBPeripheral) {
+        
+        print("Found lock peripheral \(peripheral.identifier.uuidString)")
+        
+        self.discoveredLockPeripheral = peripheral
+        
+        // update UI
+    }
+    
     // MARK: - CBCentralManagerDelegate
     
-    func centralManagerDidUpdateState(_ central: CBCentralManager) {
+    @objc func centralManagerDidUpdateState(_ central: CBCentralManager) {
         
         print("Central State: \(central.state == .poweredOn ? "Powered On" : "\(central.state.rawValue)")")
         
@@ -86,25 +97,27 @@ final class NearLockViewController: UIViewController {
         }
     }
     
-    func centralManager(_ central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
+    @objc func centralManager(_ central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
         
         print("Discovered peripheral \(peripheral.identifier.uuidString)")
         
         scanResults.append(peripheral)
     }
     
-    func centralManager(_ central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
+    @objc func centralManager(_ central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
         
         print("Connected to peripheral \(peripheral.identifier.uuidString)")
         
         peripheral.delegate = unsafeBitCast(self, to: CBPeripheralDelegate.self)
         
-        peripheral.discoverServices([LockProfile.LockService.UUID.toFoundation()])
+        peripheral.discoverServices(nil)
     }
     
     // MARK: - CBPeripheralDelegate
     
-    func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: NSError?) {
+    @objc func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: NSError?) {
+        
+        guard discoveredLockPeripheral == nil else { return }
         
         if let error = error {
             
@@ -114,6 +127,12 @@ final class NearLockViewController: UIViewController {
         
         print("Discovered services of peripheral \(peripheral.identifier.uuidString)")
         
+        let services: [CBService] = peripheral.services ?? []
         
+        if services.contains({ $0.uuid == LockProfile.LockService.UUID.toFoundation() }) {
+            
+            foundLock(peripheral: peripheral)
+            return
+        }
     }
 }
