@@ -80,11 +80,48 @@ final class NearLockViewController: UIViewController {
             
         case .setup:
             
-            sender.isEnabled = false
-            
-            async {
+            // ask for name
+            requestLockName { (lockName) in
                 
-                self.central.write()
+                guard let name = lockName else { return }
+                
+                sender.isEnabled = false
+                
+                self.async {
+                    
+                    print("Setting up lock \(lock.UUID) (\(name))")
+                    
+                    let key = KeyData()
+                    
+                    let setup = LockProfile.SetupService.Key.init(value: key)
+                    
+                    do {
+                        
+                        let characteristics = try self.central.discoverCharacteristics(for: LockProfile.SetupService.UUID, peripheral: lock.peripheral)
+                        
+                        guard characteristics.contains({ $0.UUID == LockProfile.SetupService.Key.UUID })
+                            else { mainQueue { self.actionError("Setup characteristic not found") }; return }
+                        
+                        try self.central.write(data: setup.toBigEndian(), response: true, characteristic: LockProfile.SetupService.Key.UUID, service: LockProfile.SetupService.UUID, peripheral: lock.peripheral)
+                        
+                        let statusValue = try self.central.read(characteristic: LockProfile.LockService.Status.UUID, service: LockProfile.LockService.UUID, peripheral: lock.peripheral)
+                        
+                        guard let status = LockProfile.LockService.Status.init(bigEndian: statusValue)
+                            else { mainQueue { self.actionError("Invalid status value") }; return }
+                        
+                        self.foundLock!.status = status.value
+                    }
+                        
+                    catch { mainQueue { self.actionError("\(error)") }; return }
+                    
+                    // save key + name
+                    print("Successfully setup lock \(lock.UUID) (\(name))")
+                    
+                    
+                    
+                    // update UI (should go to unlock mode)
+                    self.updateUI()
+                }
             }
             
         case .unlock: break
@@ -127,19 +164,7 @@ final class NearLockViewController: UIViewController {
         self.foundLock = nil
         
         // update UI
-        
-        setTitle("Error")
-        
-        let image1 = UIImage(named: "bluetoothLogo")!
-        let image2 = UIImage(named: "bluetoothLogoDisabled")!
-        
-        self.actionImageView.isHidden = false
-        self.actionButton.setImage(nil, for: UIControlState(rawValue: 0))
-        self.actionImageView.animationImages = [image1, image2]
-        self.actionImageView.animationDuration = 2.0
-        self.actionImageView.startAnimating()
-        
-        self.showErrorAlert(localizedText: "Bluetooth disabled")
+        self.updateUI()
     }
     
     private func startScan() {
@@ -149,18 +174,7 @@ final class NearLockViewController: UIViewController {
         self.foundLock = nil
         
         // update UI
-        setTitle("Scanning...")
-        
-        let image1 = UIImage(named: "scan1")!
-        let image2 = UIImage(named: "scan2")!
-        let image3 = UIImage(named: "scan3")!
-        let image4 = UIImage(named: "scan4")!
-        
-        self.actionImageView.isHidden = false
-        self.actionButton.setImage(nil, for: UIControlState(rawValue: 0))
-        self.actionImageView.animationImages = [image1, image2, image3, image4]
-        self.actionImageView.animationDuration = 2.0
-        self.actionImageView.startAnimating()
+        self.updateUI()
         
         async { [weak self] in
             
@@ -176,11 +190,11 @@ final class NearLockViewController: UIViewController {
                 
                 for peripheral in foundDevices {
                     
-                    do { try controller.central.connect(peripheral) }
+                    do { try controller.central.connect(to: peripheral) }
                         
                     catch { print("Cound not connect to \(peripheral.identifier) (\(error))"); continue }
                     
-                    guard let services = try? controller.central.discover(services: peripheral)
+                    guard let services = try? controller.central.discoverServices(for: peripheral)
                         else { continue }
                     
                     // found lock
@@ -210,96 +224,57 @@ final class NearLockViewController: UIViewController {
                 
                 // get lock status
                 
-                let services = try controller.central.discover(services: peripheral)
+                let services = try controller.central.discoverServices(for: peripheral)
                 
                 guard services.contains({ $0.UUID == LockProfile.LockService.UUID })
-                    else { controller.foundLockError("Lock service not found"); return }
+                    else { controller.actionError("Lock service not found"); return }
                 
-                let characteristics = try controller.central.discover(characteristics: LockProfile.LockService.UUID, peripheral: peripheral)
+                let characteristics = try controller.central.discoverCharacteristics(for: LockProfile.LockService.UUID, peripheral: peripheral)
                 
                 guard characteristics.contains({ $0.UUID == LockProfile.LockService.Status.UUID })
-                    else { controller.foundLockError("Status characteristic not found"); return }
+                    else { controller.actionError("Status characteristic not found"); return }
                 
                 let statusValue = try controller.central.read(characteristic: LockProfile.LockService.Status.UUID, service: LockProfile.LockService.UUID, peripheral: peripheral)
                 
                 guard let status = LockProfile.LockService.Status.init(bigEndian: statusValue)
-                    else { controller.foundLockError("Invalid data for Lock status"); return }
+                    else { controller.actionError("Invalid data for Lock status"); return }
                 
                 lockStatus = status.value
                 
                 // get lock UUID
                 
                 guard characteristics.contains({ $0.UUID == LockProfile.LockService.Identifier.UUID })
-                    else { controller.foundLockError("Identifier characteristic not found"); return }
+                    else { controller.actionError("Identifier characteristic not found"); return }
                 
                 let identifierValue = try controller.central.read(characteristic: LockProfile.LockService.Identifier.UUID, service: LockProfile.LockService.UUID, peripheral: peripheral)
                 
                 guard let identifier = LockProfile.LockService.Identifier.init(bigEndian: identifierValue)
-                    else { controller.foundLockError("Invalid data for Lock identifier"); return }
+                    else { controller.actionError("Invalid data for Lock identifier"); return }
                 
                 lockUUID = identifier.value
             }
             
-            catch { controller.foundLockError("\(error)"); return }
+            catch { controller.actionError("\(error)"); return }
             
             print("Lock UUID: \(lockUUID)")
             print("Lock status: \(lockStatus)")
             
             controller.foundLock = (peripheral, lockUUID, lockStatus)
             
-            mainQueue {
-                
-                switch lockStatus! {
-                    
-                case .setup:
-                    
-                    // setup UI
-                    
-                    controller.setTitle("New Lock")
-                    
-                    controller.actionImageView.stopAnimating()
-                    controller.actionImageView.animationImages = nil
-                    controller.actionImageView.isHidden = true
-                    controller.actionButton.setImage(UIImage(named: "setupLock")!, for: UIControlState(rawValue: 0))
-                    controller.actionButton.setImage(UIImage(named: "setupLockSelected")!, for: UIControlState.highlighted)
-                    
-                    break
-                    
-                case .unlock:
-                    
-                    // Unlock UI (if possible)
-                    
-                    // set lock name (if any)
-                    let lockName = controller.lockName(lockUUID) ?? "Lock"
-                    controller.setTitle(lockName)
-                    
-                    
-                    
-                    break
-                    
-                case .newKey:
-                    
-                    // new key UI
-                    
-                    controller.actionImageView.stopAnimating()
-                    controller.actionImageView.animationImages = nil
-                    controller.actionImageView.isHidden = true
-                    controller.actionButton.setImage(UIImage(named: "setupKey")!, for: UIControlState(rawValue: 0))
-                    controller.actionButton.setImage(UIImage(named: "setupKeySelected")!, for: UIControlState.highlighted)
-                    
-                    break
-                    
-                default: fatalError("not implemented")
-                }
-            }
+            mainQueue { controller.updateUI() }
         }
     }
     
-    private func foundLockError(_ error: String) {
+    private func actionError(_ error: String) {
         
-        print("Found lock error: " + error)
+        print(error)
         
         // update UI
+        setTitle("Error")
+        
+        self.actionButton.isEnabled = true
+        
+        showErrorAlert(localizedText: error, okHandler: { self.startScan() })
     }
     
     private func setTitle(_ title: String) {
@@ -310,5 +285,113 @@ final class NearLockViewController: UIViewController {
     private func lockName(_ UUID: SwiftFoundation.UUID) -> String? {
         
         return nil
+    }
+    
+    private func updateUI() {
+        
+        // No lock
+        guard let lock = foundLock else {
+            
+            if central.state == .poweredOn {
+                
+                setTitle("Scanning...")
+                
+                let image1 = UIImage(named: "scan1")!
+                let image2 = UIImage(named: "scan2")!
+                let image3 = UIImage(named: "scan3")!
+                let image4 = UIImage(named: "scan4")!
+                
+                self.actionImageView.isHidden = false
+                self.actionButton.setImage(nil, for: UIControlState(rawValue: 0))
+                self.actionImageView.animationImages = [image1, image2, image3, image4]
+                self.actionImageView.animationDuration = 2.0
+                self.actionImageView.startAnimating()
+                
+            } else {
+                
+                self.setTitle("Error")
+                
+                let image1 = UIImage(named: "bluetoothLogo")!
+                let image2 = UIImage(named: "bluetoothLogoDisabled")!
+                
+                self.actionImageView.isHidden = false
+                self.actionButton.setImage(nil, for: UIControlState(rawValue: 0))
+                self.actionImageView.animationImages = [image1, image2]
+                self.actionImageView.animationDuration = 2.0
+                self.actionImageView.startAnimating()
+                
+                self.showErrorAlert(localizedText: "Bluetooth disabled")
+            }
+            
+            return
+        }
+        
+        switch lock.status {
+            
+        case .setup:
+            
+            // setup UI
+            
+            self.setTitle("New Lock")
+            
+            self.actionImageView.stopAnimating()
+            self.actionImageView.animationImages = nil
+            self.actionImageView.isHidden = true
+            self.actionButton.setImage(UIImage(named: "setupLock")!, for: UIControlState(rawValue: 0))
+            self.actionButton.setImage(UIImage(named: "setupLockSelected")!, for: UIControlState.highlighted)
+            
+        case .unlock:
+            
+            // Unlock UI (if possible)
+            
+            // set lock name (if any)
+            let lockName = self.lockName(lock.UUID) ?? "Lock"
+            self.setTitle(lockName)
+            
+            
+            
+        case .newKey:
+            
+            // new key UI
+            
+            // set lock name (if any)
+            let lockName = self.lockName(lock.UUID) ?? "New Key"
+            self.setTitle(lockName)
+            
+            self.actionImageView.stopAnimating()
+            self.actionImageView.animationImages = nil
+            self.actionImageView.isHidden = true
+            self.actionButton.setImage(UIImage(named: "setupKey")!, for: UIControlState(rawValue: 0))
+            self.actionButton.setImage(UIImage(named: "setupKeySelected")!, for: UIControlState.highlighted)
+            
+        default: fatalError("not implemented")
+        }
+    }
+    
+    /// Ask's the user for the lock's name.
+    private func requestLockName(_ completion: String? -> ()) {
+        
+        let alert = UIAlertController(title: NSLocalizedString("Lock Name", comment: "LockName"),
+                                      message: "Type a user friendly name for the lock.",
+                                      preferredStyle: UIAlertControllerStyle.alert)
+        
+        alert.addTextField { $0.text = "New Lock" }
+        
+        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "OK"), style: UIAlertActionStyle.`default`, handler: { (UIAlertAction) -> Void in
+            
+            completion(alert.textFields![0].text)
+            
+            alert.dismiss(animated: true) {  }
+            
+        }))
+        
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: UIAlertActionStyle.destructive, handler: { (UIAlertAction) -> Void in
+            
+            completion(nil)
+            
+            alert.dismiss(animated: true) {  }
+        }))
+        
+        self.present(alert, animated: true, completion: nil)
     }
 }
