@@ -16,17 +16,23 @@ import CoreLock
 
 final class NearLockViewController: UIViewController {
     
+    // MARK: - IB Outlets
+    
+    @IBOutlet weak var actionButton: UIButton!
+    
+    @IBOutlet weak var actionImageView: UIImageView!
+    
     // MARK: - Properties
     
     let scanDuration = 5
     
     var central: CentralManager!
     
+    var centralStateLoaded = false
+    
     private lazy var queue: dispatch_queue_t = dispatch_queue_create("\(self.dynamicType) Internal Queue", DISPATCH_QUEUE_SERIAL)
     
-    private var discoveredLockPeripheral: Peripheral?
-    
-    private var lockUUID: SwiftFoundation.UUID?
+    private var lockInfo: (UUID: SwiftFoundation.UUID, status: Status)?
     
     // MARK: - Loading
     
@@ -38,18 +44,64 @@ final class NearLockViewController: UIViewController {
         central.log = { print("Central: " + $0) }
         
         central.stateChanged = stateChanged
+        
+        self.startScan()
+        
+        async {
+            
+            sleep(5)
+            
+            mainQueue {
+                
+                if self.centralStateLoaded == false {
+                    
+                    self.centralStateLoaded = true
+                    
+                    if self.central.state == .poweredOn {
+                        
+                        
+                        
+                    } else {
+                        
+                        self.bluetoothDisabled()
+                    }
+                }
+            }
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if central.state == .poweredOn {
+        if centralStateLoaded {
             
-            startScan()
+            if central.state == .poweredOn {
+                
+                startScan()
+                
+            } else {
+                
+                bluetoothDisabled()
+            }
+        }
+        
+    }
+    
+    // MARK: - Actions
+    
+    @IBAction func actionButton(_ sender: UIButton) {
+        
+        guard let lock = self.lockInfo else { return }
+        
+        switch lock.status {
             
-        } else {
+        case .setup: break
             
-            bluetoothDisabled()
+        case .unlock: break
+            
+        case .newKey: break
+            
+        case .update: break
         }
     }
     
@@ -62,6 +114,8 @@ final class NearLockViewController: UIViewController {
     }
     
     private func stateChanged(state: CBCentralManagerState) {
+        
+        centralStateLoaded = true
         
         if state == .poweredOn {
             
@@ -77,24 +131,35 @@ final class NearLockViewController: UIViewController {
         
         print("Bluetooth disabled")
         
-        discoveredLockPeripheral = nil
+        self.lockInfo = nil
         
         // update UI
+        
+        setTitle("Scanning...")
+        
+        let image1 = UIImage(named: "bluetoothLogo")!
+        let image2 = UIImage(named: "bluetoothLogoDisabled")!
+        
+        self.actionButton.setImage(nil, for: UIControlState(rawValue: 0))
+        self.actionImageView.animationImages = [image1, image2]
+        self.actionImageView.animationDuration = 2.0
+        self.actionImageView.startAnimating()
+        
+        self.showErrorAlert(localizedText: "Enable Bluetooth")
     }
     
     private func startScan() {
         
         print("Starting scan")
         
-        self.discoveredLockPeripheral = nil
-        self.lockUUID = nil
+        self.lockInfo = nil
         
         // update UI
-        
+        setTitle("Scanning...")
         
         async { [weak self] in
             
-            while self?.central.state == .poweredOn && self?.discoveredLockPeripheral == nil {
+            while self?.central.state == .poweredOn && self?.lockInfo == nil {
                 
                 guard let controller = self else { return }
                 
@@ -127,8 +192,6 @@ final class NearLockViewController: UIViewController {
     private func foundLock(peripheral: Peripheral) {
         
         print("Found lock peripheral \(peripheral.identifier)")
-        
-        self.discoveredLockPeripheral = peripheral
         
         async { [weak self] in
             
@@ -177,6 +240,8 @@ final class NearLockViewController: UIViewController {
             print("Lock UUID: \(lockUUID)")
             print("Lock status: \(lockStatus)")
             
+            controller.lockInfo = (lockUUID, lockStatus)
+            
             mainQueue {
                 
                 switch lockStatus! {
@@ -185,11 +250,21 @@ final class NearLockViewController: UIViewController {
                     
                     // setup UI
                     
+                    controller.setTitle("New Lock")
+                    
+                    
+                    
                     break
                     
                 case .unlock:
                     
                     // Unlock UI (if possible)
+                    
+                    // set lock name (if any)
+                    let lockName = controller.lockName(lockUUID) ?? "Lock"
+                    controller.setTitle(lockName)
+                    
+                    
                     
                     break
                     
@@ -210,5 +285,15 @@ final class NearLockViewController: UIViewController {
         print("Found lock error: " + error)
         
         // update UI
+    }
+    
+    private func setTitle(_ title: String) {
+        
+        self.navigationItem.title = title
+    }
+    
+    private func lockName(_ UUID: SwiftFoundation.UUID) -> String? {
+        
+        return nil
     }
 }

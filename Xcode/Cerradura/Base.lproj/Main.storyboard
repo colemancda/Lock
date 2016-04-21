@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="4xr-Qk-lLq">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="4xr-Qk-lLq">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
     </dependencies>
     <scenes>
         <!--Tab Bar Controller-->
@@ -21,22 +22,22 @@
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rvK-Zs-dtd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-446" y="15"/>
+            <point key="canvasLocation" x="-237.86666666666667" y="14.199999999999999"/>
         </scene>
         <!--Keys-->
         <scene sceneID="qLt-Ge-WqH">
             <objects>
                 <tableViewController id="NlA-6F-PBa" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="ezx-pe-0wi">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="78" sectionHeaderHeight="28" sectionFooterHeight="28" id="ezx-pe-0wi">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="tWO-y7-q9x">
-                                <rect key="frame" x="0.0" y="92" width="600" height="44"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="78" id="tWO-y7-q9x">
+                                <rect key="frame" x="0.0" y="92" width="320" height="78"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="tWO-y7-q9x" id="gA0-9Q-4bk">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="77.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
@@ -52,7 +53,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="unJ-VA-cYn" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1176" y="-303"/>
+            <point key="canvasLocation" x="627" y="-287"/>
         </scene>
         <!--Keys-->
         <scene sceneID="2Sd-fP-hxQ">
@@ -69,7 +70,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BSH-0n-db3" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="334" y="-303"/>
+            <point key="canvasLocation" x="178.13333333333333" y="-286.83999999999997"/>
         </scene>
         <!--Near Me-->
         <scene sceneID="XWn-sF-46l">
@@ -86,9 +87,9 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fFJ-hj-wNA" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="334" y="497"/>
+            <point key="canvasLocation" x="178.13333333333333" y="470.49333333333334"/>
         </scene>
-        <!--Near Lock View Controller-->
+        <!--Scanning...-->
         <scene sceneID="3Rp-BW-rOh">
             <objects>
                 <viewController id="vjl-60-bvf" customClass="NearLockViewController" customModule="Cerradura" customModuleProvider="target" sceneMemberID="viewController">
@@ -97,15 +98,54 @@
                         <viewControllerLayoutGuide type="bottom" id="5Id-g2-CKh"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="dI8-A3-mpM">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="esc-wY-aDT" userLabel="Action View">
+                                <rect key="frame" x="45" y="169" width="230" height="230"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8hs-BD-ECX">
+                                        <rect key="frame" x="0.0" y="0.0" width="230" height="230"/>
+                                        <connections>
+                                            <action selector="actionButton:" destination="vjl-60-bvf" eventType="touchUpInside" id="6zo-MT-8BJ"/>
+                                        </connections>
+                                    </button>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="scan4" translatesAutoresizingMaskIntoConstraints="NO" id="hzc-5x-U7W">
+                                        <rect key="frame" x="0.0" y="0.0" width="230" height="230"/>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="hzc-5x-U7W" secondAttribute="bottom" id="2ZU-Sx-Dzl"/>
+                                    <constraint firstItem="8hs-BD-ECX" firstAttribute="top" secondItem="esc-wY-aDT" secondAttribute="top" id="5Fp-Z2-DUo"/>
+                                    <constraint firstItem="8hs-BD-ECX" firstAttribute="leading" secondItem="esc-wY-aDT" secondAttribute="leading" id="EMG-k6-0J5"/>
+                                    <constraint firstAttribute="bottom" secondItem="8hs-BD-ECX" secondAttribute="bottom" id="XRm-3P-xfO"/>
+                                    <constraint firstItem="hzc-5x-U7W" firstAttribute="top" secondItem="esc-wY-aDT" secondAttribute="top" id="YKE-az-U8v"/>
+                                    <constraint firstAttribute="trailing" secondItem="hzc-5x-U7W" secondAttribute="trailing" id="cRi-E9-bP2"/>
+                                    <constraint firstAttribute="width" constant="230" id="m2Z-4a-v2Z"/>
+                                    <constraint firstAttribute="trailing" secondItem="8hs-BD-ECX" secondAttribute="trailing" id="o0J-ng-GTM"/>
+                                    <constraint firstAttribute="width" secondItem="esc-wY-aDT" secondAttribute="height" multiplier="1:1" id="thx-51-MKV"/>
+                                    <constraint firstItem="hzc-5x-U7W" firstAttribute="leading" secondItem="esc-wY-aDT" secondAttribute="leading" id="vVW-RW-1lr"/>
+                                </constraints>
+                            </view>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="esc-wY-aDT" firstAttribute="centerY" secondItem="dI8-A3-mpM" secondAttribute="centerY" id="Va2-6b-ZPo"/>
+                            <constraint firstItem="esc-wY-aDT" firstAttribute="centerX" secondItem="dI8-A3-mpM" secondAttribute="centerX" id="lSj-8E-dh4"/>
+                        </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="c1h-MI-HB3"/>
+                    <navigationItem key="navigationItem" title="Scanning..." id="c1h-MI-HB3">
+                        <barButtonItem key="backBarButtonItem" title=" " id="E9O-BU-NKn"/>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="actionButton" destination="8hs-BD-ECX" id="2HR-8a-g1R"/>
+                        <outlet property="actionImageView" destination="hzc-5x-U7W" id="bFs-iI-jdU"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6XU-Ju-4QF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1176" y="497"/>
+            <point key="canvasLocation" x="627" y="470"/>
         </scene>
     </scenes>
     <resources>
@@ -113,5 +153,6 @@
         <image name="LockTabBarIconSelected" width="25" height="25"/>
         <image name="Near" width="25" height="25"/>
         <image name="NearSelected" width="25" height="25"/>
+        <image name="scan4" width="230" height="230"/>
     </resources>
 </document>
