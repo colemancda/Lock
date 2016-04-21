@@ -24,7 +24,7 @@ final class NearLockViewController: UIViewController {
     
     // MARK: - Properties
     
-    let scanDuration = 5
+    let scanDuration = 2
     
     var central: CentralManager!
     
@@ -32,7 +32,7 @@ final class NearLockViewController: UIViewController {
     
     private lazy var queue: dispatch_queue_t = dispatch_queue_create("\(self.dynamicType) Internal Queue", DISPATCH_QUEUE_SERIAL)
     
-    private var lockInfo: (UUID: SwiftFoundation.UUID, status: Status)?
+    private var foundLock: (peripheral: Peripheral, UUID: SwiftFoundation.UUID, status: Status)?
     
     // MARK: - Loading
     
@@ -41,37 +41,20 @@ final class NearLockViewController: UIViewController {
         
         central = CentralManager()
         
-        central.log = { print("Central: " + $0) }
-        
         central.stateChanged = stateChanged
         
-        self.startScan()
+        central.log = { print("Central: " + $0) }
         
-        async {
+        if central.state == .poweredOn {
             
-            sleep(5)
-            
-            mainQueue {
-                
-                if self.centralStateLoaded == false {
-                    
-                    self.centralStateLoaded = true
-                    
-                    if self.central.state == .poweredOn {
-                        
-                        
-                        
-                    } else {
-                        
-                        self.bluetoothDisabled()
-                    }
-                }
-            }
+            startScan()
         }
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
+        actionButton.isEnabled = true
         
         if centralStateLoaded {
             
@@ -91,11 +74,18 @@ final class NearLockViewController: UIViewController {
     
     @IBAction func actionButton(_ sender: UIButton) {
         
-        guard let lock = self.lockInfo else { return }
+        guard let lock = self.foundLock else { return }
         
         switch lock.status {
             
-        case .setup: break
+        case .setup:
+            
+            sender.isEnabled = false
+            
+            async {
+                
+                self.central.write()
+            }
             
         case .unlock: break
             
@@ -115,15 +105,18 @@ final class NearLockViewController: UIViewController {
     
     private func stateChanged(state: CBCentralManagerState) {
         
-        centralStateLoaded = true
-        
-        if state == .poweredOn {
+        mainQueue {
             
-            startScan()
+            self.centralStateLoaded = true
             
-        } else {
-            
-            bluetoothDisabled()
+            if state == .poweredOn {
+                
+                self.startScan()
+                
+            } else {
+                
+                self.bluetoothDisabled()
+            }
         }
     }
     
@@ -131,35 +124,47 @@ final class NearLockViewController: UIViewController {
         
         print("Bluetooth disabled")
         
-        self.lockInfo = nil
+        self.foundLock = nil
         
         // update UI
         
-        setTitle("Scanning...")
+        setTitle("Error")
         
         let image1 = UIImage(named: "bluetoothLogo")!
         let image2 = UIImage(named: "bluetoothLogoDisabled")!
         
+        self.actionImageView.isHidden = false
         self.actionButton.setImage(nil, for: UIControlState(rawValue: 0))
         self.actionImageView.animationImages = [image1, image2]
         self.actionImageView.animationDuration = 2.0
         self.actionImageView.startAnimating()
         
-        self.showErrorAlert(localizedText: "Enable Bluetooth")
+        self.showErrorAlert(localizedText: "Bluetooth disabled")
     }
     
     private func startScan() {
         
         print("Starting scan")
         
-        self.lockInfo = nil
+        self.foundLock = nil
         
         // update UI
         setTitle("Scanning...")
         
+        let image1 = UIImage(named: "scan1")!
+        let image2 = UIImage(named: "scan2")!
+        let image3 = UIImage(named: "scan3")!
+        let image4 = UIImage(named: "scan4")!
+        
+        self.actionImageView.isHidden = false
+        self.actionButton.setImage(nil, for: UIControlState(rawValue: 0))
+        self.actionImageView.animationImages = [image1, image2, image3, image4]
+        self.actionImageView.animationDuration = 2.0
+        self.actionImageView.startAnimating()
+        
         async { [weak self] in
             
-            while self?.central.state == .poweredOn && self?.lockInfo == nil {
+            while self?.central.state == .poweredOn && self?.foundLock == nil {
                 
                 guard let controller = self else { return }
                 
@@ -240,7 +245,7 @@ final class NearLockViewController: UIViewController {
             print("Lock UUID: \(lockUUID)")
             print("Lock status: \(lockStatus)")
             
-            controller.lockInfo = (lockUUID, lockStatus)
+            controller.foundLock = (peripheral, lockUUID, lockStatus)
             
             mainQueue {
                 
@@ -252,7 +257,11 @@ final class NearLockViewController: UIViewController {
                     
                     controller.setTitle("New Lock")
                     
-                    
+                    controller.actionImageView.stopAnimating()
+                    controller.actionImageView.animationImages = nil
+                    controller.actionImageView.isHidden = true
+                    controller.actionButton.setImage(UIImage(named: "setupLock")!, for: UIControlState(rawValue: 0))
+                    controller.actionButton.setImage(UIImage(named: "setupLockSelected")!, for: UIControlState.highlighted)
                     
                     break
                     
@@ -271,6 +280,12 @@ final class NearLockViewController: UIViewController {
                 case .newKey:
                     
                     // new key UI
+                    
+                    controller.actionImageView.stopAnimating()
+                    controller.actionImageView.animationImages = nil
+                    controller.actionImageView.isHidden = true
+                    controller.actionButton.setImage(UIImage(named: "setupKey")!, for: UIControlState(rawValue: 0))
+                    controller.actionButton.setImage(UIImage(named: "setupKeySelected")!, for: UIControlState.highlighted)
                     
                     break
                     
