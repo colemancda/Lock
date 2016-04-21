@@ -12,10 +12,10 @@ import SwiftFoundation
 public enum Action: UInt8 {
     
     /// New Key being added to database status
-    case NewKey
+    case newKey
     
     /// Lock software updating
-    case Update
+    case update
 }
 
 extension Action: DataConvertible {

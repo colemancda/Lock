@@ -9,7 +9,7 @@
 /// Lock hardware model. 
 public enum Model: UInt8 {
     
-    case Test
+    case test
     
-    case Uno
+    case uno
 }

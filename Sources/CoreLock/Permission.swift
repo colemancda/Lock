@@ -10,14 +10,14 @@
 public enum Permission {
     
     /// This key belongs to the owner of the lock and has unlimited rights.
-    case Owner
+    case owner
     
     /// This key can create new keys, and has anytime access. 
-    case Admin
+    case admin
     
     /// This key has anytime access.
-    case Anytime
+    case anytime
     
     /// This key has scheduled access.
-    case Limited
+    case limited
 }

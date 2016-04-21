@@ -20,7 +20,7 @@ final class LockController {
     
     let peripheral: PeripheralManager
     
-    var status: CoreLock.Status = .Setup {
+    var status: CoreLock.Status = .setup {
         
         didSet { didChangeStatus(oldValue: oldValue) }
     }
@@ -111,7 +111,7 @@ final class LockController {
         
         assert(setupServiceID == nil)
         
-        status = .Setup
+        status = .setup
         
         let characteristic = Characteristic(UUID: LockProfile.SetupService.Key.UUID, permissions: [.Write], properties: [.Write])
         
@@ -124,7 +124,7 @@ final class LockController {
         
         assert(setupServiceID == nil)
         
-        status = .Unlock
+        status = .unlock
         
         guard unlockServiceID == nil else { return }
         
@@ -146,7 +146,7 @@ final class LockController {
             
         case LockProfile.SetupService.Key.UUID:
             
-            assert(status == .Setup, "Setup Service should not exist when the lock is not in Setup mode")
+            assert(status == .setup, "Setup Service should not exist when the lock is not in Setup mode")
             
             // continue writing
             guard newValue.newValue.byteValue.count == LockProfile.SetupService.Key.length
@@ -172,7 +172,7 @@ final class LockController {
             
         case LockProfile.UnlockService.Unlock.UUID:
             
-            assert(status != .Setup, "Should not be in setup mode")
+            assert(status != .setup, "Should not be in setup mode")
             
             // continue writing
             guard newValue.newValue.byteValue.count == LockProfile.UnlockService.Unlock.length

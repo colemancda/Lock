@@ -12,16 +12,16 @@ import SwiftFoundation
 public enum Status: UInt8 {
     
     /// Initial Status
-    case Setup
+    case setup
     
     /// Idle / Unlock Mode status
-    case Unlock
+    case unlock
     
     /// New Key being added to database status
-    case NewKey
+    case newKey
     
     /// Lock software updating
-    case Update
+    case update
 }
 
 extension Status: DataConvertible {
