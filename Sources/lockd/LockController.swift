@@ -29,11 +29,11 @@ final class LockController {
     
     var keys = [KeyData]()
     
-    private var lockServiceID: Int?
+    private var lockServiceID: PeripheralManager.ServiceIdentifier?
     
-    private var setupServiceID: Int?
+    private var setupServiceID: PeripheralManager.ServiceIdentifier?
     
-    private var unlockServiceID: Int?
+    private var unlockServiceID: PeripheralManager.ServiceIdentifier?
     
     // MARK: - Intialization
     
@@ -49,6 +49,7 @@ final class LockController {
         
         peripheral.willWrite = willWrite
         peripheral.willRead = willRead
+        peripheral.didWrite = didWrite
         
         addLockService()
         
@@ -135,12 +136,12 @@ final class LockController {
         unlockServiceID = try! peripheral.add(service: service)
     }
     
-    private func willRead(central: Central, UUID: Bluetooth.UUID, value: SwiftFoundation.Data, offset: Int) -> Bluetooth.ATT.Error? {
+    private func willRead(central: Central, UUID: Bluetooth.UUID, value: Data, offset: Int) -> Bluetooth.ATT.Error? {
         
         return nil
     }
     
-    private func willWrite(central: Central, UUID: Bluetooth.UUID, value: SwiftFoundation.Data, newValue: (newValue: SwiftFoundation.Data, newBytes: SwiftFoundation.Data, offset: Int)) -> Bluetooth.ATT.Error? {
+    private func willWrite(central: Central, UUID: Bluetooth.UUID, value: Data, newValue: Data) -> Bluetooth.ATT.Error? {
         
         switch UUID {
             
@@ -148,29 +149,11 @@ final class LockController {
             
             assert(status == .setup, "Setup Service should not exist when the lock is not in Setup mode")
             
-            print("Offset: \(newValue.offset)")
-            print("newBytes: \(newValue.newBytes.byteValue)")
-            print("newValue: \(newValue.newValue.byteValue)")
+            guard let key = LockProfile.SetupService.Key.init(bigEndian: newValue)
+                else { return ATT.Error.InvalidAttributeValueLength }
             
-            // continue writing
-            guard newValue.newValue.byteValue.count == LockProfile.SetupService.Key.length
-                else { return nil }
-            
-            // deserialize
-            let key = LockProfile.SetupService.Key.init(bigEndian: newValue.newValue)!
-            
-            // validate authentication
             guard key.authenticatedWithSalt()
                 else { return ATT.Error.WriteNotPermitted }
-            
-            // set key
-            self.keys = [key.value]
-            
-            print("Lock setup by central \(central.identifier)")
-            
-            peripheral.remove(service: setupServiceID!)
-            
-            unlockMode()
             
             return nil
             
@@ -178,12 +161,9 @@ final class LockController {
             
             assert(status != .setup, "Should not be in setup mode")
             
-            // continue writing
-            guard newValue.newValue.byteValue.count == LockProfile.UnlockService.Unlock.length
-                else { return nil }
-            
             // deserialize
-            let unlock = LockProfile.UnlockService.Unlock.init(bigEndian: newValue.newValue)!
+            guard let unlock = LockProfile.UnlockService.Unlock.init(bigEndian: newValue)
+                else { return ATT.Error.InvalidAttributeValueLength }
             
             var authenticatedKey: KeyData!
             
@@ -198,11 +178,41 @@ final class LockController {
             }
             
             /// not authenticated
-            guard authenticatedKey != nil else { return ATT.Error.WriteNotPermitted }
+            guard authenticatedKey != nil
+                else { return ATT.Error.WriteNotPermitted }
             
             print("Unlocked by central \(central.identifier)")
             
             return nil
+            
+        default: fatalError("Writing to characteristic \(UUID)")
+        }
+    }
+    
+    private func didWrite(central: Central, UUID: Bluetooth.UUID, value: SwiftFoundation.Data, newValue: SwiftFoundation.Data){
+        
+        switch UUID {
+            
+        case LockProfile.SetupService.Key.UUID:
+            
+            // deserialize
+            let key = LockProfile.SetupService.Key.init(bigEndian: newValue)!
+            
+            // validate authentication
+            guard key.authenticatedWithSalt()
+                else { fatalError("Wrote unauthenticated setup key") }
+            
+            // set key
+            self.keys = [key.value]
+            
+            print("Lock setup by central \(central.identifier)")
+            
+            peripheral.remove(service: setupServiceID!)
+            setupServiceID = nil
+            
+            unlockMode()
+            
+        case LockProfile.UnlockService.Unlock.UUID: break
             
         default: fatalError("Writing to characteristic \(UUID)")
         }
