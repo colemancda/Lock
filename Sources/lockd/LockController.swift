@@ -40,7 +40,7 @@ final class LockController {
     private init() {
         
         #if os(Linux)
-            peripheral = PeripheralManager(maximumTransmissionUnit: ATT.MTU.LowEnergy.Maximum)
+            peripheral = PeripheralManager()
         #else
             peripheral = PeripheralManager(localName: "Test Lock")
         #endif
@@ -147,6 +147,10 @@ final class LockController {
         case LockProfile.SetupService.Key.UUID:
             
             assert(status == .setup, "Setup Service should not exist when the lock is not in Setup mode")
+            
+            print("Offset: \(newValue.offset)")
+            print("newBytes: \(newValue.newBytes.byteValue)")
+            print("newValue: \(newValue.newValue.byteValue)")
             
             // continue writing
             guard newValue.newValue.byteValue.count == LockProfile.SetupService.Key.length

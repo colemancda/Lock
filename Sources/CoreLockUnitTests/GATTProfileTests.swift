@@ -54,7 +54,7 @@ final class GATTProfileTests: XCTestCase {
         
         let nonce = Nonce()
         
-        let action = Action.NewKey
+        let action = Action.newKey
         
         let actionRequest = LockProfile.LockService.Action(action: action, nonce: nonce, key: key)
         
