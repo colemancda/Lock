@@ -102,37 +102,62 @@ final class NearLockViewController: UIViewController {
                     
                     print("Setting up lock \(lock.UUID) (\(name))")
                     
-                    let key = KeyData()
+                    let key = Key(data: KeyData(), permission: .owner)
                     
-                    let setup = LockProfile.SetupService.Key.init(value: key)
+                    let setup = LockService.Setup.init(value: key.data)
                     
                     do {
                         
-                        let characteristics = try self.central.discoverCharacteristics(for: LockProfile.SetupService.UUID, peripheral: lock.peripheral)
+                        // write to setup service
                         
-                        guard characteristics.contains({ $0.UUID == LockProfile.SetupService.Key.UUID })
+                        let setupCharacteristics = try self.central.discoverCharacteristics(for: LockService.UUID, peripheral: lock.peripheral)
+                        
+                        guard setupCharacteristics.contains({ $0.UUID == LockService.Setup.UUID })
                             else { mainQueue { self.actionError("Setup characteristic not found") }; return }
                         
-                        try self.central.write(data: setup.toBigEndian(), response: true, characteristic: LockProfile.SetupService.Key.UUID, service: LockProfile.SetupService.UUID, peripheral: lock.peripheral)
+                        try self.central.write(data: setup.toBigEndian(), response: true, characteristic: LockService.Setup.UUID, service: LockService.UUID, peripheral: lock.peripheral)
                         
-                        let statusValue = try self.central.read(characteristic: LockProfile.LockService.Status.UUID, service: LockProfile.LockService.UUID, peripheral: lock.peripheral)
+                        // read lock service values
                         
-                        guard let status = LockProfile.LockService.Status.init(bigEndian: statusValue)
+                        let modelValue = try self.central.read(characteristic: LockService.Model.UUID, service: LockService.UUID, peripheral: lock.peripheral)
+                        
+                        guard let model = LockService.Model.init(bigEndian: modelValue)
+                            else { mainQueue { self.actionError("Invalid Model value") }; return }
+                        
+                        let versionValue = try self.central.read(characteristic: LockService.Version.UUID, service: LockService.UUID, peripheral: lock.peripheral)
+                        
+                        guard let version = LockService.Version.init(bigEndian: versionValue)
+                            else { mainQueue { self.actionError("Invalid Version value") }; return }
+                        
+                        let statusValue = try self.central.read(characteristic: LockService.Status.UUID, service: LockService.UUID, peripheral: lock.peripheral)
+                        
+                        guard let status = LockService.Status.init(bigEndian: statusValue)
                             else { mainQueue { self.actionError("Invalid status value") }; return }
                         
                         guard status.value == .unlock
                             else { mainQueue { self.actionError("Could not setup new lock") }; return }
                         
-                        self.foundLock!.status = status.value
+                        // save in Store
+                        let newLock = Lock(identifier: lock.UUID, name: name, model: model.value, version: version.value, key: key)
+                        
+                        Store.shared[lock.UUID] = newLock
+                            
+                        print("Successfully setup lock \(lock.UUID) (\(name))")
+                        
+                        mainQueue {
+                            
+                            // in case the user left the VC
+                            if self.foundLock?.UUID == lock.UUID {
+                                
+                                self.foundLock!.status = status.value
+                                
+                                // update UI (should go to unlock mode)
+                                mainQueue { self.updateUI() }
+                            }
+                        }
                     }
                         
                     catch { mainQueue { self.actionError("\(error)") }; return }
-                    
-                    // save key + name
-                    print("Successfully setup lock \(lock.UUID) (\(name))")
-                    
-                    // update UI (should go to unlock mode)
-                    mainQueue { self.updateUI() }
                 }
             }
             
@@ -142,9 +167,33 @@ final class NearLockViewController: UIViewController {
             
             sender.isEnabled = false
             
+            guard let cachedLock = Store.shared[lock.UUID]
+                else { self.actionError("No stored key for lock"); return }
+            
+            let unlock = LockService.Unlock.init(key: cachedLock.key.data)
+            
             self.async {
                 
+                do {
+                    
+                    let services = try self.central.discoverServices(for: lock.peripheral)
+                    
+                    guard services.contains({ $0.UUID == LockService.UUID })
+                        else { mainQueue { self.actionError("Unlock service not found") }; return }
+                    
+                    // write to unlock service
+                    
+                    let characteristics = try self.central.discoverCharacteristics(for: LockService.UUID, peripheral: lock.peripheral)
+                    
+                    guard characteristics.contains({ $0.UUID == LockService.Unlock.UUID })
+                        else { mainQueue { self.actionError("Unlock characteristic not found") }; return }
+                    
+                    try self.central.write(data: unlock.toBigEndian(), response: true, characteristic: LockService.Unlock.UUID, service: LockService.UUID, peripheral: lock.peripheral)
+                }
                 
+                catch { mainQueue { self.actionError("\(error)") }; return }
+                
+                print("Successfully unlocked lock \(lock.UUID)")
             }
             
         case .newKey: break
@@ -217,7 +266,7 @@ final class NearLockViewController: UIViewController {
                         else { continue }
                     
                     // found lock
-                    if services.contains({ $0.UUID == LockProfile.LockService.UUID }) {
+                    if services.contains({ $0.UUID == LockService.UUID }) {
                         
                         controller.foundLock(peripheral: peripheral)
                         return
@@ -245,29 +294,29 @@ final class NearLockViewController: UIViewController {
                 
                 let services = try controller.central.discoverServices(for: peripheral)
                 
-                guard services.contains({ $0.UUID == LockProfile.LockService.UUID })
+                guard services.contains({ $0.UUID == LockService.UUID })
                     else { controller.actionError("Lock service not found"); return }
                 
-                let characteristics = try controller.central.discoverCharacteristics(for: LockProfile.LockService.UUID, peripheral: peripheral)
+                let characteristics = try controller.central.discoverCharacteristics(for: LockService.UUID, peripheral: peripheral)
                 
-                guard characteristics.contains({ $0.UUID == LockProfile.LockService.Status.UUID })
+                guard characteristics.contains({ $0.UUID == LockService.Status.UUID })
                     else { controller.actionError("Status characteristic not found"); return }
                 
-                let statusValue = try controller.central.read(characteristic: LockProfile.LockService.Status.UUID, service: LockProfile.LockService.UUID, peripheral: peripheral)
+                let statusValue = try controller.central.read(characteristic: LockService.Status.UUID, service: LockService.UUID, peripheral: peripheral)
                 
-                guard let status = LockProfile.LockService.Status.init(bigEndian: statusValue)
+                guard let status = LockService.Status.init(bigEndian: statusValue)
                     else { controller.actionError("Invalid data for Lock status"); return }
                 
                 lockStatus = status.value
                 
                 // get lock UUID
                 
-                guard characteristics.contains({ $0.UUID == LockProfile.LockService.Identifier.UUID })
+                guard characteristics.contains({ $0.UUID == LockService.Identifier.UUID })
                     else { controller.actionError("Identifier characteristic not found"); return }
                 
-                let identifierValue = try controller.central.read(characteristic: LockProfile.LockService.Identifier.UUID, service: LockProfile.LockService.UUID, peripheral: peripheral)
+                let identifierValue = try controller.central.read(characteristic: LockService.Identifier.UUID, service: LockService.UUID, peripheral: peripheral)
                 
-                guard let identifier = LockProfile.LockService.Identifier.init(bigEndian: identifierValue)
+                guard let identifier = LockService.Identifier.init(bigEndian: identifierValue)
                     else { controller.actionError("Invalid data for Lock identifier"); return }
                 
                 lockUUID = identifier.value
@@ -375,7 +424,7 @@ final class NearLockViewController: UIViewController {
             self.actionImageView.animationImages = nil
             self.actionImageView.isHidden = true
             self.actionButton.isHidden = false
-            self.actionButton.isEnabled = true
+            self.actionButton.isEnabled = (Store.shared[lock.UUID] != nil)
             self.actionButton.setImage(UIImage(named: "unlockButton")!, for: UIControlState(rawValue: 0))
             self.actionButton.setImage(UIImage(named: "unlockButtonSelected")!, for: UIControlState.highlighted)
             

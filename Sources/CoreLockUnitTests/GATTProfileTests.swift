@@ -18,7 +18,7 @@ final class GATTProfileTests: XCTestCase {
         
         let UUID = SwiftFoundation.UUID()
         
-        let characteristic = LockProfile.LockService.Identifier.init(value: UUID)
+        let characteristic = LockService.Identifier.init(value: UUID)
         
         if isBigEndian {
             
@@ -33,16 +33,16 @@ final class GATTProfileTests: XCTestCase {
         
         if isBigEndian {
             
-            XCTAssert(LockProfile.LockService.Identifier.init(bigEndian: UUID.toData())?.value == UUID)
+            XCTAssert(LockService.Identifier.init(bigEndian: UUID.toData())?.value == UUID)
             
         } else {
             
-            XCTAssert(LockProfile.LockService.Identifier.init(bigEndian: UUID.toData())?.value != UUID)
+            XCTAssert(LockService.Identifier.init(bigEndian: UUID.toData())?.value != UUID)
             
             /// correct data on little endian
             let correctedData = Data(byteValue: UUID.toData().byteValue.reversed())
             
-            XCTAssert(LockProfile.LockService.Identifier.init(bigEndian: correctedData)?.value == UUID)
+            XCTAssert(LockService.Identifier.init(bigEndian: correctedData)?.value == UUID)
         }
     }
     
@@ -56,11 +56,11 @@ final class GATTProfileTests: XCTestCase {
         
         let action = Action.newKey
         
-        let actionRequest = LockProfile.LockService.Action(action: action, nonce: nonce, key: key)
+        let actionRequest = LockService.Action(action: action, nonce: nonce, key: key)
         
         let requestData = actionRequest.toBigEndian()
         
-        guard let deserialized = LockProfile.LockService.Action.init(bigEndian: requestData)
+        guard let deserialized = LockService.Action.init(bigEndian: requestData)
             else { XCTFail(); return }
         
         XCTAssert(deserialized.action == action)
@@ -73,7 +73,7 @@ final class GATTProfileTests: XCTestCase {
         
         // lock setup
         
-        let requestType = LockProfile.SetupService.Key.self
+        let requestType = LockService.Setup.self
         
         let key = KeyData()
         
@@ -96,7 +96,7 @@ final class GATTProfileTests: XCTestCase {
         
         // lock setup
         
-        let requestType = LockProfile.UnlockService.Unlock.self
+        let requestType = LockService.Unlock.self
         
         let key = KeyData()
         

@@ -14,7 +14,7 @@
 		6E1F60601CCB2C0C001914E7 /* CoreDataEncodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F605D1CCB2C0C001914E7 /* CoreDataEncodable.swift */; };
 		6E1F60611CCB2C0C001914E7 /* CoreDataDecodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F605E1CCB2C0C001914E7 /* CoreDataDecodable.swift */; };
 		6E1F60621CCB2C0C001914E7 /* EntityController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F605F1CCB2C0C001914E7 /* EntityController.swift */; };
-		6E1F60651CCB2D0A001914E7 /* Lock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F60641CCB2D0A001914E7 /* Lock.swift */; };
+		6E1F60651CCB2D0A001914E7 /* LockCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F60641CCB2D0A001914E7 /* LockCache.swift */; };
 		6E1F60671CCB3885001914E7 /* CoreDataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F60661CCB3885001914E7 /* CoreDataExtensions.swift */; };
 		6E2A5D7C1CC8899D00BA7E15 /* LockSetup.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E2A5D7B1CC8899D00BA7E15 /* LockSetup.storyboard */; };
 		6E646CF21CC449770029A4B3 /* LockController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E646CF11CC449770029A4B3 /* LockController.swift */; };
@@ -150,7 +150,7 @@
 		6E1F605D1CCB2C0C001914E7 /* CoreDataEncodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataEncodable.swift; sourceTree = "<group>"; };
 		6E1F605E1CCB2C0C001914E7 /* CoreDataDecodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataDecodable.swift; sourceTree = "<group>"; };
 		6E1F605F1CCB2C0C001914E7 /* EntityController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityController.swift; sourceTree = "<group>"; };
-		6E1F60641CCB2D0A001914E7 /* Lock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Lock.swift; sourceTree = "<group>"; };
+		6E1F60641CCB2D0A001914E7 /* LockCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockCache.swift; sourceTree = "<group>"; };
 		6E1F60661CCB3885001914E7 /* CoreDataExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataExtensions.swift; sourceTree = "<group>"; };
 		6E2A5D7B1CC8899D00BA7E15 /* LockSetup.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LockSetup.storyboard; sourceTree = "<group>"; };
 		6E646CF11CC449770029A4B3 /* LockController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockController.swift; sourceTree = "<group>"; };
@@ -246,7 +246,7 @@
 			children = (
 				6E1F60571CCB1D37001914E7 /* Model.xcdatamodeld */,
 				6E1F604A1CCAF290001914E7 /* Store.swift */,
-				6E1F60641CCB2D0A001914E7 /* Lock.swift */,
+				6E1F60641CCB2D0A001914E7 /* LockCache.swift */,
 				6E1F60661CCB3885001914E7 /* CoreDataExtensions.swift */,
 				6E1F605D1CCB2C0C001914E7 /* CoreDataEncodable.swift */,
 				6E1F605E1CCB2C0C001914E7 /* CoreDataDecodable.swift */,
@@ -646,6 +646,7 @@
 				"$(SRCROOT)/../Carthage/Build/iOS/JSON.framework",
 				"$(SRCROOT)/../Carthage/Build/iOS/CryptoSwift.framework",
 				"$(SRCROOT)/../Carthage/Build/iOS/GATT.framework",
+				"$(SRCROOT)/../Carthage/Build/iOS/KeychainAccess.framework",
 			);
 			name = "Copy Frameworks";
 			outputPaths = (
@@ -689,7 +690,7 @@
 				6ED3386A1CC7C7CB00DF1461 /* ErrorAlert.swift in Sources */,
 				6E1F60611CCB2C0C001914E7 /* CoreDataDecodable.swift in Sources */,
 				6E1F60601CCB2C0C001914E7 /* CoreDataEncodable.swift in Sources */,
-				6E1F60651CCB2D0A001914E7 /* Lock.swift in Sources */,
+				6E1F60651CCB2D0A001914E7 /* LockCache.swift in Sources */,
 				6EF45FD21CC72F58001F7A39 /* main.swift in Sources */,
 				6EE605AB1CC21C1A008EF0EE /* AppDelegate.swift in Sources */,
 				6E1F60591CCB1D37001914E7 /* Model.xcdatamodeld in Sources */,

@@ -31,9 +31,9 @@ final class LockController {
     
     private var lockServiceID: PeripheralManager.ServiceIdentifier?
     
-    private var setupServiceID: PeripheralManager.ServiceIdentifier?
+    private var LockServiceID: PeripheralManager.ServiceIdentifier?
     
-    private var unlockServiceID: PeripheralManager.ServiceIdentifier?
+    private var LockServiceID: PeripheralManager.ServiceIdentifier?
     
     // MARK: - Intialization
     
@@ -73,25 +73,25 @@ final class LockController {
         
         assert(lockServiceID == nil)
         
-        let identifierValue = LockProfile.LockService.Identifier(value: configuration.identifier).toBigEndian()
+        let identifierValue = LockService.Identifier(value: configuration.identifier).toBigEndian()
         
-        let identifier = Characteristic(UUID: LockProfile.LockService.Identifier.UUID, value: identifierValue, permissions: [.Read], properties: [.Read])
+        let identifier = Characteristic(UUID: LockService.Identifier.UUID, value: identifierValue, permissions: [.Read], properties: [.Read])
         
-        let modelValue = LockProfile.LockService.Model(value: configuration.model).toBigEndian()
+        let modelValue = LockService.Model(value: configuration.model).toBigEndian()
         
-        let model = Characteristic(UUID: LockProfile.LockService.Model.UUID, value: modelValue, permissions: [.Read], properties: [.Read])
+        let model = Characteristic(UUID: LockService.Model.UUID, value: modelValue, permissions: [.Read], properties: [.Read])
                 
-        let versionValue = LockProfile.LockService.Version(value: CoreLockVersion).toBigEndian()
+        let versionValue = LockService.Version(value: CoreLockVersion).toBigEndian()
         
-        let version = Characteristic(UUID: LockProfile.LockService.Version.UUID, value: versionValue, permissions: [.Read], properties: [.Read])
+        let version = Characteristic(UUID: LockService.Version.UUID, value: versionValue, permissions: [.Read], properties: [.Read])
         
-        let statusValue = LockProfile.LockService.Status(value: self.status).toBigEndian()
+        let statusValue = LockService.Status(value: self.status).toBigEndian()
         
-        let status = Characteristic(UUID: LockProfile.LockService.Status.UUID, value: statusValue, permissions: [.Read], properties: [.Read])
+        let status = Characteristic(UUID: LockService.Status.UUID, value: statusValue, permissions: [.Read], properties: [.Read])
         
-        let action = Characteristic(UUID: LockProfile.LockService.Action.UUID, permissions: [.Write], properties: [.Write])
+        let action = Characteristic(UUID: LockService.Action.UUID, permissions: [.Write], properties: [.Write])
         
-        let lockService = Service(UUID: LockProfile.LockService.UUID, primary: true, characteristics: [identifier, model, version, status, action])
+        let lockService = Service(UUID: LockService.UUID, primary: true, characteristics: [identifier, model, version, status, action])
         
         lockServiceID = try! peripheral.add(service: lockService)
     }
@@ -100,7 +100,7 @@ final class LockController {
         
         print("Status \(oldValue) -> \(status)")
         
-        peripheral[characteristic: LockProfile.LockService.Status.UUID] = LockProfile.LockService.Status(value: self.status).toBigEndian()
+        peripheral[characteristic: LockService.Status.UUID] = LockService.Status(value: self.status).toBigEndian()
     }
     
     private func loadKeys() {
@@ -110,30 +110,30 @@ final class LockController {
     
     private func setupMode() {
         
-        assert(setupServiceID == nil)
+        assert(LockServiceID == nil)
         
         status = .setup
         
-        let characteristic = Characteristic(UUID: LockProfile.SetupService.Key.UUID, permissions: [.Write], properties: [.Write])
+        let characteristic = Characteristic(UUID: LockService.Setup.UUID, permissions: [.Write], properties: [.Write])
         
-        let service = Service(UUID: LockProfile.SetupService.UUID, primary: true, characteristics: [characteristic])
+        let service = Service(UUID: LockService.UUID, primary: true, characteristics: [characteristic])
         
-        setupServiceID = try! peripheral.add(service: service)
+        LockServiceID = try! peripheral.add(service: service)
     }
     
     private func unlockMode() {
         
-        assert(setupServiceID == nil)
+        assert(LockServiceID == nil)
         
         status = .unlock
         
-        guard unlockServiceID == nil else { return }
+        guard LockServiceID == nil else { return }
         
-        let characteristic = Characteristic(UUID: LockProfile.UnlockService.Unlock.UUID, permissions: [.Write], properties: [.Write])
+        let characteristic = Characteristic(UUID: LockService.Unlock.UUID, permissions: [.Write], properties: [.Write])
         
-        let service = Service(UUID: LockProfile.UnlockService.UUID, primary: true, characteristics: [characteristic])
+        let service = Service(UUID: LockService.UUID, primary: true, characteristics: [characteristic])
         
-        unlockServiceID = try! peripheral.add(service: service)
+        LockServiceID = try! peripheral.add(service: service)
     }
     
     private func willRead(central: Central, UUID: Bluetooth.UUID, value: Data, offset: Int) -> Bluetooth.ATT.Error? {
@@ -145,11 +145,11 @@ final class LockController {
         
         switch UUID {
             
-        case LockProfile.SetupService.Key.UUID:
+        case LockService.Setup.UUID:
             
             assert(status == .setup, "Setup Service should not exist when the lock is not in Setup mode")
             
-            guard let key = LockProfile.SetupService.Key.init(bigEndian: newValue)
+            guard let key = LockService.Setup.init(bigEndian: newValue)
                 else { return ATT.Error.InvalidAttributeValueLength }
             
             guard key.authenticatedWithSalt()
@@ -157,12 +157,12 @@ final class LockController {
             
             return nil
             
-        case LockProfile.UnlockService.Unlock.UUID:
+        case LockService.Unlock.UUID:
             
             assert(status != .setup, "Should not be in setup mode")
             
             // deserialize
-            guard let unlock = LockProfile.UnlockService.Unlock.init(bigEndian: newValue)
+            guard let unlock = LockService.Unlock.init(bigEndian: newValue)
                 else { return ATT.Error.InvalidAttributeValueLength }
             
             var authenticatedKey: Key!
@@ -204,10 +204,10 @@ final class LockController {
         
         switch UUID {
             
-        case LockProfile.SetupService.Key.UUID:
+        case LockService.Setup.UUID:
             
             // deserialize
-            let key = LockProfile.SetupService.Key.init(bigEndian: newValue)!
+            let key = LockService.Setup.init(bigEndian: newValue)!
             
             // validate authentication
             guard key.authenticatedWithSalt()
@@ -218,12 +218,12 @@ final class LockController {
             
             print("Lock setup by central \(central.identifier)")
             
-            peripheral.remove(service: setupServiceID!)
-            setupServiceID = nil
+            peripheral.remove(service: LockServiceID!)
+            LockServiceID = nil
             
             unlockMode()
             
-        case LockProfile.UnlockService.Unlock.UUID: break
+        case LockService.Unlock.UUID: break
             
         default: fatalError("Writing to characteristic \(UUID)")
         }

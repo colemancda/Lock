@@ -75,4 +75,25 @@ public extension NSManagedObjectContext {
         
         return resource
     }
+    
+    func find<T: NSManagedObject>(entity: NSEntityDescription, resourceID: String, identifierProperty: String) throws -> T? {
+        
+        // get cached resource...
+        
+        let fetchRequest = NSFetchRequest(entityName: entity.name!)
+        
+        fetchRequest.fetchLimit = 1
+        
+        fetchRequest.includesSubentities = false
+        
+        // create predicate
+        
+        fetchRequest.predicate = NSComparisonPredicate(leftExpression: NSExpression(forKeyPath: identifierProperty), rightExpression: NSExpression(forConstantValue: resourceID), modifier: NSComparisonPredicateModifier.directPredicateModifier, type: NSPredicateOperatorType.equalToPredicateOperatorType, options: NSComparisonPredicateOptions.normalizedPredicateOption)
+        
+        fetchRequest.returnsObjectsAsFaults = false
+        
+        // fetch
+        
+        return (try self.fetch(fetchRequest) as! [T]).first
+    }
 }

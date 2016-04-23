@@ -9,6 +9,7 @@
 import SwiftFoundation
 import CoreLock
 import CoreData
+import KeychainAccess
 
 /// Store for saving and retrieving lock keys.
 final class Store {
@@ -21,6 +22,8 @@ final class Store {
     /// A convenience variable for the managed object model.
     let managedObjectModel: NSManagedObjectModel
     
+    private let keychain = Keychain()
+    
     private init() {
         
         self.managedObjectModel = LoadManagedObjectModel()
@@ -28,39 +31,102 @@ final class Store {
         self.managedObjectContext.name = "\(self.dynamicType) Managed Object Context"
         self.managedObjectContext.undoManager = nil
         self.managedObjectContext.persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
-        
-        
-    }
-    
-    /// Add a new key / lock pair to the database, along with its cached info.
-    func add(lock: Lock, key: KeyData) {
-        
-        
-    }
-    
-    func update(name: String) {
-        
-        
     }
     
     /// Remove the specified key / lock pair from the database, along with its cached info.
     func remove(_ UUID: SwiftFoundation.UUID) {
         
+        // remove from CoreData
+        let entity = managedObjectContext.persistentStoreCoordinator!.managedObjectModel.entitiesByName[LockCache.entityName]!
         
+        guard let managedObject = try! managedObjectContext.find(entity: entity, resourceID: UUID.rawValue, identifierProperty: LockCache.Property.identifier.rawValue)
+            else { fatalError("Tried to remove nonexistent lock \(UUID)") }
+        
+        managedObjectContext.delete(managedObject)
+        
+        try! managedObjectContext.save()
+        
+        // remove from Keychain
+        try! keychain.remove(key: UUID.rawValue)
     }
     
-    /// Get the cached lock info.
-    subscript (lock UUID: SwiftFoundation.UUID) -> Lock {
+    /// Get the key data and cached lock info for the specified lock.
+    subscript (UUID: SwiftFoundation.UUID) -> Lock? {
         
-        fatalError()
-    }
-    
-    /// Get the key data for the specified lock.
-    subscript (key UUID: SwiftFoundation.UUID) -> KeyData {
+        get {
+            
+            let entity = managedObjectContext.persistentStoreCoordinator!.managedObjectModel.entitiesByName[LockCache.entityName]!
+            
+            guard let keyData = try! keychain.getData(key: UUID.rawValue),
+                let key = KeyData(data: Data(foundation: keyData)),
+                let managedObject = try! managedObjectContext.find(entity: entity, resourceID: UUID.rawValue, identifierProperty: LockCache.Property.identifier.rawValue)
+                else { return nil }
+            
+            let lockCache = LockCache(managedObject: managedObject)
+            
+            return Lock(keyData: key, lockCache: lockCache)
+        }
         
-        fatalError()
+        set {
+            
+            guard let lock = newValue
+                else { remove(UUID); return }
+            
+            let lockCache = LockCache(lock)
+            
+            try! lockCache.save(context: managedObjectContext)
+            
+            try! keychain.set(value: lock.key.data.data.toFoundation(), key: UUID.rawValue)
+        }
     }
 }
+
+// MARK: - Supporting Types
+
+struct Lock {
+    
+    let identifier: UUID
+    
+    var name: String
+    
+    let model: Model
+    
+    let version: UInt64
+    
+    let key: Key
+    
+    private init(keyData: KeyData, lockCache: LockCache) {
+        
+        self.key = Key(data: keyData, permission: lockCache.permission)
+        self.identifier = lockCache.identifier
+        self.name = lockCache.name
+        self.version = lockCache.version
+        self.model = lockCache.model
+    }
+    
+    init(identifier: UUID, name: String, model: Model, version: UInt64, key: Key) {
+        
+        self.identifier = identifier
+        self.name = name
+        self.model = model
+        self.version = version
+        self.key = key
+    }
+}
+
+private extension LockCache {
+    
+    init(_ lock: Lock) {
+        
+        self.identifier = lock.identifier
+        self.name = lock.name
+        self.model = lock.model
+        self.version = lock.version
+        self.permission = lock.key.permission
+    }
+}
+
+// MARK: - Persistance
 
 private func LoadManagedObjectModel() -> NSManagedObjectModel {
     
