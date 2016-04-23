@@ -17,7 +17,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         
         print("Starting Lock Daemon...")
         
-        LockController.sharedController
+        LockController.shared
     }
 
     func applicationWillTerminate(aNotification: NSNotification) {

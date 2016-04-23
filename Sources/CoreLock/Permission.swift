@@ -6,6 +6,10 @@
 //  Copyright © 2016 ColemanCDA. All rights reserved.
 //
 
+#if os(Linux)
+    import Glibc
+#endif
+
 import SwiftFoundation
 
 /// A Key's permission level.

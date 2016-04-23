@@ -20,24 +20,29 @@ final class LockController {
     
     let peripheral: PeripheralManager
     
-    var status: CoreLock.Status = .setup {
+    var status: CoreLock.Status {
         
         didSet { didChangeStatus(oldValue: oldValue) }
     }
     
     let configuration: Configuration = Configuration()
     
-    var keys = [Key]()
-    
-    private var lockServiceID: PeripheralManager.ServiceIdentifier?
-    
-    private var LockServiceID: PeripheralManager.ServiceIdentifier?
-    
-    private var LockServiceID: PeripheralManager.ServiceIdentifier?
+    var keys: [Key]
     
     // MARK: - Intialization
     
     private init() {
+        
+        self.keys = loadKeys()
+        
+        if keys.first == nil {
+            
+            status = .setup
+            
+        } else {
+            
+            status = .unlock
+        }
         
         #if os(Linux)
             peripheral = PeripheralManager()
@@ -53,25 +58,12 @@ final class LockController {
         
         addLockService()
         
-        loadKeys()
-        
-        if keys.first == nil {
-            
-            setupMode()
-            
-        } else {
-            
-            unlockMode()
-        }
-        
         try! peripheral.start()
     }
     
     // MARK: - Methods
     
     private func addLockService() {
-        
-        assert(lockServiceID == nil)
         
         let identifierValue = LockService.Identifier(value: configuration.identifier).toBigEndian()
         
@@ -91,9 +83,17 @@ final class LockController {
         
         let action = Characteristic(UUID: LockService.Action.UUID, permissions: [.Write], properties: [.Write])
         
-        let lockService = Service(UUID: LockService.UUID, primary: true, characteristics: [identifier, model, version, status, action])
+        let setup = Characteristic(UUID: LockService.Setup.UUID, permissions: [.Write], properties: [.Write])
         
-        lockServiceID = try! peripheral.add(service: lockService)
+        let unlock = Characteristic(UUID: LockService.Unlock.UUID, permissions: [.Write], properties: [.Write])
+        
+        let newKeyParent = Characteristic(UUID: LockService.NewKeyParentSharedSecret.UUID, permissions: [.Write], properties: [.Write])
+        
+        let newKeyChild = Characteristic(UUID: LockService.NewKeyChildKey.UUID, value: Data(), permissions: [.Read], properties: [.Read])
+        
+        let lockService = Service(UUID: LockService.UUID, primary: true, characteristics: [identifier, model, version, status, action, setup, unlock, newKeyParent, newKeyChild])
+        
+        try! peripheral.add(service: lockService)
     }
     
     private func didChangeStatus(oldValue: Status) {
@@ -101,39 +101,6 @@ final class LockController {
         print("Status \(oldValue) -> \(status)")
         
         peripheral[characteristic: LockService.Status.UUID] = LockService.Status(value: self.status).toBigEndian()
-    }
-    
-    private func loadKeys() {
-        
-        
-    }
-    
-    private func setupMode() {
-        
-        assert(LockServiceID == nil)
-        
-        status = .setup
-        
-        let characteristic = Characteristic(UUID: LockService.Setup.UUID, permissions: [.Write], properties: [.Write])
-        
-        let service = Service(UUID: LockService.UUID, primary: true, characteristics: [characteristic])
-        
-        LockServiceID = try! peripheral.add(service: service)
-    }
-    
-    private func unlockMode() {
-        
-        assert(LockServiceID == nil)
-        
-        status = .unlock
-        
-        guard LockServiceID == nil else { return }
-        
-        let characteristic = Characteristic(UUID: LockService.Unlock.UUID, permissions: [.Write], properties: [.Write])
-        
-        let service = Service(UUID: LockService.UUID, primary: true, characteristics: [characteristic])
-        
-        LockServiceID = try! peripheral.add(service: service)
     }
     
     private func willRead(central: Central, UUID: Bluetooth.UUID, value: Data, offset: Int) -> Bluetooth.ATT.Error? {
@@ -147,7 +114,8 @@ final class LockController {
             
         case LockService.Setup.UUID:
             
-            assert(status == .setup, "Setup Service should not exist when the lock is not in Setup mode")
+            guard status == .setup
+                else { return ATT.Error.WriteNotPermitted }
             
             guard let key = LockService.Setup.init(bigEndian: newValue)
                 else { return ATT.Error.InvalidAttributeValueLength }
@@ -159,7 +127,8 @@ final class LockController {
             
         case LockService.Unlock.UUID:
             
-            assert(status != .setup, "Should not be in setup mode")
+            guard status == .unlock
+                else { return ATT.Error.WriteNotPermitted }
             
             // deserialize
             guard let unlock = LockService.Unlock.init(bigEndian: newValue)
@@ -218,12 +187,11 @@ final class LockController {
             
             print("Lock setup by central \(central.identifier)")
             
-            peripheral.remove(service: LockServiceID!)
-            LockServiceID = nil
+            status = .unlock
             
-            unlockMode()
+        case LockService.Unlock.UUID:
             
-        case LockService.Unlock.UUID: break
+            assert(status != .setup)
             
         default: fatalError("Writing to characteristic \(UUID)")
         }
