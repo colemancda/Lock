@@ -11,10 +11,11 @@
 		6E1F604E1CCB0130001914E7 /* Key.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F604D1CCB0130001914E7 /* Key.swift */; };
 		6E1F604F1CCB0130001914E7 /* Key.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F604D1CCB0130001914E7 /* Key.swift */; };
 		6E1F60591CCB1D37001914E7 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F60571CCB1D37001914E7 /* Model.xcdatamodeld */; };
-		6E1F60601CCB2C0C001914E7 /* Encode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F605D1CCB2C0C001914E7 /* Encode.swift */; };
-		6E1F60611CCB2C0C001914E7 /* Decode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F605E1CCB2C0C001914E7 /* Decode.swift */; };
+		6E1F60601CCB2C0C001914E7 /* CoreDataEncodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F605D1CCB2C0C001914E7 /* CoreDataEncodable.swift */; };
+		6E1F60611CCB2C0C001914E7 /* CoreDataDecodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F605E1CCB2C0C001914E7 /* CoreDataDecodable.swift */; };
 		6E1F60621CCB2C0C001914E7 /* EntityController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F605F1CCB2C0C001914E7 /* EntityController.swift */; };
 		6E1F60651CCB2D0A001914E7 /* Lock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F60641CCB2D0A001914E7 /* Lock.swift */; };
+		6E1F60671CCB3885001914E7 /* CoreDataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F60661CCB3885001914E7 /* CoreDataExtensions.swift */; };
 		6E2A5D7C1CC8899D00BA7E15 /* LockSetup.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E2A5D7B1CC8899D00BA7E15 /* LockSetup.storyboard */; };
 		6E646CF21CC449770029A4B3 /* LockController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E646CF11CC449770029A4B3 /* LockController.swift */; };
 		6E646CF41CC4A5730029A4B3 /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E646CF31CC4A5730029A4B3 /* Version.swift */; };
@@ -146,10 +147,11 @@
 		6E1F604A1CCAF290001914E7 /* Store.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		6E1F604D1CCB0130001914E7 /* Key.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Key.swift; sourceTree = "<group>"; };
 		6E1F60581CCB1D37001914E7 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
-		6E1F605D1CCB2C0C001914E7 /* Encode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Encode.swift; sourceTree = "<group>"; };
-		6E1F605E1CCB2C0C001914E7 /* Decode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Decode.swift; sourceTree = "<group>"; };
+		6E1F605D1CCB2C0C001914E7 /* CoreDataEncodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataEncodable.swift; sourceTree = "<group>"; };
+		6E1F605E1CCB2C0C001914E7 /* CoreDataDecodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataDecodable.swift; sourceTree = "<group>"; };
 		6E1F605F1CCB2C0C001914E7 /* EntityController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityController.swift; sourceTree = "<group>"; };
 		6E1F60641CCB2D0A001914E7 /* Lock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Lock.swift; sourceTree = "<group>"; };
+		6E1F60661CCB3885001914E7 /* CoreDataExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataExtensions.swift; sourceTree = "<group>"; };
 		6E2A5D7B1CC8899D00BA7E15 /* LockSetup.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LockSetup.storyboard; sourceTree = "<group>"; };
 		6E646CF11CC449770029A4B3 /* LockController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockController.swift; sourceTree = "<group>"; };
 		6E646CF31CC4A5730029A4B3 /* Version.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
@@ -242,12 +244,13 @@
 		6E1F605A1CCB1DE0001914E7 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				6E1F605D1CCB2C0C001914E7 /* Encode.swift */,
-				6E1F605E1CCB2C0C001914E7 /* Decode.swift */,
-				6E1F605F1CCB2C0C001914E7 /* EntityController.swift */,
+				6E1F60571CCB1D37001914E7 /* Model.xcdatamodeld */,
 				6E1F604A1CCAF290001914E7 /* Store.swift */,
 				6E1F60641CCB2D0A001914E7 /* Lock.swift */,
-				6E1F60571CCB1D37001914E7 /* Model.xcdatamodeld */,
+				6E1F60661CCB3885001914E7 /* CoreDataExtensions.swift */,
+				6E1F605D1CCB2C0C001914E7 /* CoreDataEncodable.swift */,
+				6E1F605E1CCB2C0C001914E7 /* CoreDataDecodable.swift */,
+				6E1F605F1CCB2C0C001914E7 /* EntityController.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -680,11 +683,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				6E1F604C1CCB00DB001914E7 /* Store.swift in Sources */,
+				6E1F60671CCB3885001914E7 /* CoreDataExtensions.swift in Sources */,
 				6ED338681CC7C39200DF1461 /* NearLockViewController.swift in Sources */,
 				6E1F60621CCB2C0C001914E7 /* EntityController.swift in Sources */,
 				6ED3386A1CC7C7CB00DF1461 /* ErrorAlert.swift in Sources */,
-				6E1F60611CCB2C0C001914E7 /* Decode.swift in Sources */,
-				6E1F60601CCB2C0C001914E7 /* Encode.swift in Sources */,
+				6E1F60611CCB2C0C001914E7 /* CoreDataDecodable.swift in Sources */,
+				6E1F60601CCB2C0C001914E7 /* CoreDataEncodable.swift in Sources */,
 				6E1F60651CCB2D0A001914E7 /* Lock.swift in Sources */,
 				6EF45FD21CC72F58001F7A39 /* main.swift in Sources */,
 				6EE605AB1CC21C1A008EF0EE /* AppDelegate.swift in Sources */,

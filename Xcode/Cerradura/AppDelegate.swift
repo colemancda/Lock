@@ -21,16 +21,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         print("Launching Cerradura v\(AppVersion) Build \(AppBuild)")
         
         // add NSPersistentStore to Cerradura.Store
-        do { try LoadPersistentStore() }
-        catch {
-            
-            print("Could not load persistent store. \(error)")
+        try! LoadPersistentStore()
                         
-            try! RemovePersistentStore()
-            
-            fatalError("Could not load persistent store.")
-        }
-                
         return true
     }
 

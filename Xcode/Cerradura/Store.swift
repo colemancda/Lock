@@ -33,7 +33,7 @@ final class Store {
     }
     
     /// Add a new key / lock pair to the database, along with its cached info.
-    func add(key: Key, lock: (UUID: UUID, name: String, model: Model, version: UInt64)) {
+    func add(lock: Lock, key: KeyData) {
         
         
     }
@@ -52,13 +52,13 @@ final class Store {
     /// Get the cached lock info.
     subscript (lock UUID: SwiftFoundation.UUID) -> Lock {
         
-        
+        fatalError()
     }
     
     /// Get the key data for the specified lock.
     subscript (key UUID: SwiftFoundation.UUID) -> KeyData {
         
-        
+        fatalError()
     }
 }
 
