@@ -27,7 +27,7 @@ final class LockController {
     
     let configuration: Configuration = Configuration()
     
-    var keys = [KeyData]()
+    var keys = [Key]()
     
     private var lockServiceID: PeripheralManager.ServiceIdentifier?
     
@@ -165,11 +165,11 @@ final class LockController {
             guard let unlock = LockProfile.UnlockService.Unlock.init(bigEndian: newValue)
                 else { return ATT.Error.InvalidAttributeValueLength }
             
-            var authenticatedKey: KeyData!
+            var authenticatedKey: Key!
             
             for key in keys {
                 
-                if unlock.authenticated(with: key) {
+                if unlock.authenticated(with: key.data) {
                     
                     authenticatedKey = key
                     
@@ -177,9 +177,19 @@ final class LockController {
                 }
             }
             
-            /// not authenticated
+            // not authenticated
             guard authenticatedKey != nil
                 else { return ATT.Error.WriteNotPermitted }
+            
+            // verify permission
+            switch authenticatedKey.permission {
+                
+            case .owner, .admin, .anytime: break // can open
+                
+            case let .scheduled(schedule):
+                
+                
+            }
             
             print("Unlocked by central \(central.identifier)")
             
@@ -200,10 +210,10 @@ final class LockController {
             
             // validate authentication
             guard key.authenticatedWithSalt()
-                else { fatalError("Wrote unauthenticated setup key") }
+                else { fatalError("Unauthenticated setup key") }
             
             // set key
-            self.keys = [key.value]
+            self.keys = [Key(data: key.value, permission: .owner)]
             
             print("Lock setup by central \(central.identifier)")
             

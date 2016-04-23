@@ -136,7 +136,16 @@ final class NearLockViewController: UIViewController {
                 }
             }
             
-        case .unlock: break
+        case .unlock:
+            
+            print("Unlocking")
+            
+            sender.isEnabled = false
+            
+            self.async {
+                
+                
+            }
             
         case .newKey: break
             
@@ -362,6 +371,14 @@ final class NearLockViewController: UIViewController {
             let lockName = self.lockName(lock.UUID) ?? "Lock"
             self.setTitle(lockName)
             
+            self.actionImageView.stopAnimating()
+            self.actionImageView.animationImages = nil
+            self.actionImageView.isHidden = true
+            self.actionButton.isHidden = false
+            self.actionButton.isEnabled = true
+            self.actionButton.setImage(UIImage(named: "unlockButton")!, for: UIControlState(rawValue: 0))
+            self.actionButton.setImage(UIImage(named: "unlockButtonSelected")!, for: UIControlState.highlighted)
+            
         case .newKey:
             
             // new key UI
@@ -391,7 +408,7 @@ final class NearLockViewController: UIViewController {
         
         alert.addTextField { $0.text = "New Lock" }
         
-        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "OK"), style: UIAlertActionStyle.`default`, handler: { (UIAlertAction) -> Void in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "OK"), style: UIAlertActionStyle.`default`, handler: { (UIAlertAction) in
             
             completion(alert.textFields![0].text)
             
@@ -399,7 +416,7 @@ final class NearLockViewController: UIViewController {
             
         }))
         
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: UIAlertActionStyle.destructive, handler: { (UIAlertAction) -> Void in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: UIAlertActionStyle.destructive, handler: { (UIAlertAction) in
             
             completion(nil)
             

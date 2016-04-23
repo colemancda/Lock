@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6E2A5D7A1CC87C9D00BA7E15 /* KeyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E2A5D791CC87C9D00BA7E15 /* KeyStore.swift */; };
+		6E1F604C1CCB00DB001914E7 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F604A1CCAF290001914E7 /* Store.swift */; };
+		6E1F604E1CCB0130001914E7 /* Key.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F604D1CCB0130001914E7 /* Key.swift */; };
+		6E1F604F1CCB0130001914E7 /* Key.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F604D1CCB0130001914E7 /* Key.swift */; };
 		6E2A5D7C1CC8899D00BA7E15 /* LockSetup.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E2A5D7B1CC8899D00BA7E15 /* LockSetup.storyboard */; };
 		6E646CF21CC449770029A4B3 /* LockController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E646CF11CC449770029A4B3 /* LockController.swift */; };
 		6E646CF41CC4A5730029A4B3 /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E646CF31CC4A5730029A4B3 /* Version.swift */; };
@@ -136,7 +138,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		6E2A5D791CC87C9D00BA7E15 /* KeyStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyStore.swift; sourceTree = "<group>"; };
+		6E1F604A1CCAF290001914E7 /* Store.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
+		6E1F604D1CCB0130001914E7 /* Key.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Key.swift; sourceTree = "<group>"; };
 		6E2A5D7B1CC8899D00BA7E15 /* LockSetup.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LockSetup.storyboard; sourceTree = "<group>"; };
 		6E646CF11CC449770029A4B3 /* LockController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockController.swift; sourceTree = "<group>"; };
 		6E646CF31CC4A5730029A4B3 /* Version.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
@@ -318,7 +321,7 @@
 				6EE605AA1CC21C1A008EF0EE /* AppDelegate.swift */,
 				6ED338671CC7C39200DF1461 /* NearLockViewController.swift */,
 				6ED338691CC7C7CB00DF1461 /* ErrorAlert.swift */,
-				6E2A5D791CC87C9D00BA7E15 /* KeyStore.swift */,
+				6E1F604A1CCAF290001914E7 /* Store.swift */,
 			);
 			path = Cerradura;
 			sourceTree = "<group>";
@@ -354,6 +357,7 @@
 				6E729C411CC32F890018A848 /* SecureData.swift */,
 				6E729C811CC3C6930018A848 /* Crypto.swift */,
 				6E729C4B1CC3B8220018A848 /* Model.swift */,
+				6E1F604D1CCB0130001914E7 /* Key.swift */,
 				6ED338641CC7C1A800DF1461 /* Permission.swift */,
 			);
 			name = CoreLock;
@@ -629,11 +633,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E1F604C1CCB00DB001914E7 /* Store.swift in Sources */,
 				6ED338681CC7C39200DF1461 /* NearLockViewController.swift in Sources */,
 				6ED3386A1CC7C7CB00DF1461 /* ErrorAlert.swift in Sources */,
 				6EF45FD21CC72F58001F7A39 /* main.swift in Sources */,
 				6EE605AB1CC21C1A008EF0EE /* AppDelegate.swift in Sources */,
-				6E2A5D7A1CC87C9D00BA7E15 /* KeyStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -642,6 +646,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6EA899701CC2E3F0005FC225 /* GATTProfile.swift in Sources */,
+				6E1F604E1CCB0130001914E7 /* Key.swift in Sources */,
 				6EDC70131CC3E2260085180A /* Status.swift in Sources */,
 				6E729C841CC3C77E0018A848 /* Action.swift in Sources */,
 				6EB413331CC317A3005AB1E2 /* Bool.swift in Sources */,
@@ -658,6 +663,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6EF45F911CC6CAF9001F7A39 /* GATTProfile.swift in Sources */,
+				6E1F604F1CCB0130001914E7 /* Key.swift in Sources */,
 				6EF45F921CC6CAF9001F7A39 /* Status.swift in Sources */,
 				6EF45F931CC6CAF9001F7A39 /* Action.swift in Sources */,
 				6EF45F941CC6CAF9001F7A39 /* Bool.swift in Sources */,
