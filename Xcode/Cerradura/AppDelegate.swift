@@ -16,6 +16,20 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
+        
+        // print app info
+        print("Launching Cerradura v\(AppVersion) Build \(AppBuild)")
+        
+        // add NSPersistentStore to Cerradura.Store
+        do { try LoadPersistentStore() }
+        catch {
+            
+            print("Could not load persistent store. \(error)")
+                        
+            try! RemovePersistentStore()
+            
+            fatalError("Could not load persistent store.")
+        }
                 
         return true
     }
@@ -49,3 +63,9 @@ func mainQueue(_ block: () -> ()) {
     
     NSOperationQueue.main().addOperation(block)
 }
+
+/** Version of the app. */
+public let AppVersion = NSBundle.main().infoDictionary!["CFBundleShortVersionString"] as! String
+
+/** Build of the app. */
+public let AppBuild = NSBundle.main().infoDictionary!["CFBundleVersion"] as! String

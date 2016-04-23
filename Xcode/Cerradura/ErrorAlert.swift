@@ -17,7 +17,7 @@ public extension UIViewController {
             message: localizedText,
             preferredStyle: UIAlertControllerStyle.alert)
         
-        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "OK"), style: UIAlertActionStyle.`default`, handler: { (UIAlertAction) -> Void in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "OK"), style: UIAlertActionStyle.`default`, handler: { (UIAlertAction) in
             
             okHandler?()
             
@@ -28,7 +28,7 @@ public extension UIViewController {
         
         if retryHandler != nil {
             
-            alert.addAction(UIAlertAction(title: NSLocalizedString("Retry", comment: "Retry"), style: UIAlertActionStyle.`default`, handler: { (UIAlertAction) -> Void in
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Retry", comment: "Retry"), style: UIAlertActionStyle.`default`, handler: { (UIAlertAction) in
                 
                 retryHandler!()
                 

@@ -16,7 +16,7 @@ final class LockController {
     
     // MARK: - Properties
     
-    static let sharedController = LockController()
+    static let shared = LockController()
     
     let peripheral: PeripheralManager
     
@@ -188,7 +188,8 @@ final class LockController {
                 
             case let .scheduled(schedule):
                 
-                
+                guard schedule.valid()
+                    else { return ATT.Error.WriteNotPermitted }
             }
             
             print("Unlocked by central \(central.identifier)")
