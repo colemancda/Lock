@@ -10,8 +10,13 @@ import Foundation
 import UIKit
 import CoreData
 import CoreLock
+import GATT
 
-final class KeysViewController: UITableViewController /* NSFetchedResultsControllerDelegate */ {
+final class KeysViewController: UIViewController {
+    
+    // MARK: - IB Outlets
+    
+    @IBOutlet weak var tableView: UITableView!
     
     // MARK: - Properties
     
@@ -26,7 +31,7 @@ final class KeysViewController: UITableViewController /* NSFetchedResultsControl
         return controller
     }()
     
-    private lazy var controller: Controller = Controller(tableView: self.tableView, fetchedResultsController: self.fetchedResultsController)
+    private lazy var queue: dispatch_queue_t = dispatch_queue_create("\(self.dynamicType) Internal Queue", DISPATCH_QUEUE_SERIAL)
     
     // MARK: - Loading
     
@@ -34,173 +39,268 @@ final class KeysViewController: UITableViewController /* NSFetchedResultsControl
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-        fetchedResultsController.delegate = unsafeBitCast(self.controller, to: NSFetchedResultsControllerDelegate.self)
-        tableView.dataSource = unsafeBitCast(self.controller, to: UITableViewDataSource.self)
-        tableView.delegate = unsafeBitCast(self.controller, to: UITableViewDelegate.self)
+        fetchedResultsController.delegate = unsafeBitCast(self, to: NSFetchedResultsControllerDelegate.self)
+        tableView.dataSource = unsafeBitCast(self, to: UITableViewDataSource.self)
+        tableView.delegate = unsafeBitCast(self, to: UITableViewDelegate.self)
         
         try! fetchedResultsController.performFetch()
     }
-}
-
-private extension KeysViewController {
     
-    @objc private final class Controller: NSObject {
+    // MARK: - Methods
+    
+    private func item(at indexPath: NSIndexPath) -> LockCache {
         
-        weak var tableView: UITableView!
+        let managedObject = fetchedResultsController.object(at: indexPath) as! NSManagedObject
         
-        weak var fetchedResultsController: NSFetchedResultsController!
+        let lock = LockCache(managedObject: managedObject)
         
-        private init(tableView: UITableView, fetchedResultsController: NSFetchedResultsController) {
+        return lock
+    }
+    
+    private func configure(cell: KeyTableViewCell, at indexPath: NSIndexPath) {
+        
+        let lock = item(at: indexPath)
+        
+        let permissionImage: UIImage
+        
+        let permissionText: String
+        
+        switch lock.permission {
             
-            self.tableView = tableView
-            self.fetchedResultsController = fetchedResultsController
+        case .owner:
+            
+            permissionImage = UIImage(named: "permissionBadgeOwner")!
+            
+            permissionText = "Owner"
+            
+        case .admin:
+            
+            permissionImage = UIImage(named: "permissionBadgeAdmin")!
+            
+            permissionText = "Admin"
+            
+        case .anytime:
+            
+            permissionImage = UIImage(named: "permissionBadgeAnytime")!
+            
+            permissionText = "Anytime"
+            
+        case let .scheduled(schedule):
+            
+            permissionImage = UIImage(named: "permissionBadgeScheduled")!
+            
+            permissionText = "Scheduled" // FIXME
         }
         
-        private func item(at indexPath: NSIndexPath) -> LockCache {
+        cell.lockNameLabel.text = lock.name
+        
+        cell.permissionImageView.image = permissionImage
+        
+        cell.permissionLabel.text = permissionText
+    }
+    
+    /// Perform a task on the internal queue.
+    private func async(_ block: () -> ()) {
+        
+        dispatch_async(queue) { block() }
+    }
+    
+    // MARK: - UITableViewDatasource
+    
+    @objc func numberOfSectionsInTableView(_ tableView: UITableView) -> Int {
+        
+        return 1
+    }
+    
+    @objc func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        return fetchedResultsController.fetchedObjects?.count ?? 0
+    }
+    
+    @objc func tableView(_ tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: KeyTableViewCell.resuseIdentifier, for: indexPath) as! KeyTableViewCell
+        
+        configure(cell: cell, at: indexPath)
+        
+        return cell
+    }
+    
+    // MARK: - UITableViewDelegate
+    
+    /*
+     @objc func tableView(_ tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+     
+     let lock = item(at: indexPath)
+     
+     Store.shared.remove(lock.identifier)
+     }
+     
+     @objc func tableView(_ tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
+     
+     return .delete
+     }*/
+    
+    func tableView(_ tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [UITableViewRowAction]? {
+        
+        var actions = [UITableViewRowAction]()
+        
+        let lockCache = self.item(at: indexPath)
+        
+        let delete = UITableViewRowAction(style: UITableViewRowActionStyle.destructive, title: "Delete") {
             
-            let managedObject = fetchedResultsController.object(at: indexPath) as! NSManagedObject
+            assert($0.1 == indexPath)
             
-            let lock = LockCache(managedObject: managedObject)
+            let alert = UIAlertController(title: NSLocalizedString("Confirmation", comment: "DeletionConfirmation"),
+                                          message: "Are you sure you want to delete this key?",
+                                          preferredStyle: UIAlertControllerStyle.alert)
             
-            return lock
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Delete", comment: "Delete"), style: UIAlertActionStyle.destructive, handler: { (UIAlertAction) in
+                
+                Store.shared.remove(lockCache.identifier)
+                
+                alert.dismiss(animated: true, completion: nil)
+            }))
+            
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: UIAlertActionStyle.`default`, handler: { (UIAlertAction) in
+                
+                alert.dismiss(animated: true, completion: nil)
+            }))
+            
+           self.present(alert, animated: true, completion: nil)
         }
         
-        private func configure(cell: KeyTableViewCell, at indexPath: NSIndexPath) {
+        actions.append(delete)
+        
+        let unlock = UITableViewRowAction(style: UITableViewRowActionStyle.normal, title: "Unlock") { (action, index) in
             
-            let lock = item(at: indexPath)
+            let key = Store.shared[key: lockCache.identifier]!
             
-            let permissionImage: UIImage
+            print("Unlocking \"\(lockCache.name)\"...")
             
-            let permissionText: String
+            self.async {
+                
+                let central = CentralManager()
+                
+                central.log = { print($0) }
+                
+                central.waitForPoweredOn() // Timeout?
+                
+                let peripherals = central.scan(duration: 1)
+                
+                var lockPeripheral: Peripheral!
+                
+                for peripheral in peripherals {
+                    
+                    do {
+                        
+                        try central.connect(to: peripheral)
+                        
+                        let services = try central.discoverServices(for: peripheral)
+                        
+                        guard services.contains({ $0.UUID == LockService.UUID })
+                            else { continue }
+                        
+                        let characteristics = try central.discoverCharacteristics(for: LockService.UUID, peripheral: peripheral)
+                        
+                        guard characteristics.contains({ $0.UUID == LockService.Identifier.UUID }) &&
+                            characteristics.contains({ $0.UUID == LockService.Unlock.UUID })
+                            else { continue }
+                        
+                        let identifierValue = try central.read(characteristic: LockService.Identifier.UUID, service: LockService.UUID, peripheral: peripheral)
+                        
+                        // validate identifier
+                        guard let identifier = LockService.Identifier.init(bigEndian: identifierValue)
+                            where identifier.value == lockCache.identifier
+                            else { continue }
+                        
+                        lockPeripheral = peripheral
+                        break
+                    }
+                        
+                    catch { continue }
+                }
+                
+                guard lockPeripheral != nil
+                    else { /*mainQueue { self.showErrorAlert("Could not find lock") };*/ return }
+                
+                // write to unlock characteristic
+                
+                let unlock = LockService.Unlock.init(key: key)
+                
+                do { try central.write(data: unlock.toBigEndian(), response: true, characteristic: LockService.Unlock.UUID, service: LockService.UUID, peripheral: lockPeripheral) }
+                    
+                catch { mainQueue { /*self.showErrorAlert("Could not unlock. (\(error))")*/ }; return }
+                
+                print("Successfully unlocked \"\(lockCache.name)\"")
+            }
+        }
+        
+        // validate
+        if case let .scheduled(schedule) = lockCache.permission where schedule.valid() {
             
-            switch lock.permission {
-                
-            case .owner:
-                
-                permissionImage = UIImage(named: "permissionBadgeOwner")!
-                
-                permissionText = "Owner"
-                
-            case .admin:
-                
-                permissionImage = UIImage(named: "permissionBadgeAdmin")!
-                
-                permissionText = "Admin"
-                
-            case .anytime:
-                
-                permissionImage = UIImage(named: "permissionBadgeAnytime")!
-                
-                permissionText = "Anytime"
-                
-            case let .scheduled(schedule):
-                
-                permissionImage = UIImage(named: "permissionBadgeScheduled")!
-                
-                permissionText = "Scheduled" // FIXME
+            actions.append(unlock)
+            
+        } else {
+            
+            actions.append(unlock)
+        }
+        
+        return actions
+    }
+    
+    // MARK: - NSFetchedResultsControllerDelegate
+    
+    @objc func controllerWillChangeContent(_ controller: NSFetchedResultsController) {
+        
+        tableView.beginUpdates()
+    }
+    
+    @objc func controllerDidChangeContent(_ controller: NSFetchedResultsController) {
+        
+        tableView.endUpdates()
+    }
+    
+    @objc func controller(_ controller: NSFetchedResultsController,
+                          didChangeObject anObject: AnyObject,
+                          atIndexPath indexPath: NSIndexPath?,
+                          forChangeType type: NSFetchedResultsChangeType,
+                          newIndexPath: NSIndexPath?) {
+        
+        sleep(1)
+        
+        switch type {
+            
+        case .insert:
+            
+            if let newIndexPath = newIndexPath {
+                tableView.insertRows(at: [newIndexPath], with: .automatic)
             }
             
-            cell.lockNameLabel.text = lock.name
+        case .delete:
             
-            cell.permissionImageView.image = permissionImage
+            if let indexPath = indexPath {
+                tableView.deleteRows(at: [indexPath], with: .automatic)
+            }
             
-            cell.permissionLabel.text = permissionText
-        }
-        
-        // MARK: - UITableViewDatasource
-        
-        @objc func numberOfSectionsInTableView(_ tableView: UITableView) -> Int {
+        case .update:
             
-            return 1
-        }
-        
-        @objc func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-            
-            return fetchedResultsController.fetchedObjects?.count ?? 0
-        }
-        
-        @objc func tableView(_ tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-            
-            let cell = tableView.dequeueReusableCell(withIdentifier: KeyTableViewCell.resuseIdentifier, for: indexPath) as! KeyTableViewCell
-            
-            configure(cell: cell, at: indexPath)
-            
-            return cell
-        }
-        
-        // MARK: - UITableViewDelegate
-        
-        /*
-        @objc func tableView(_ tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-            
-            let lock = item(at: indexPath)
-            
-            Store.shared.remove(lock.identifier)
-        }
-        
-        @objc func tableView(_ tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
-            
-            return .delete
-        }*/
-        
-        func tableView(_ tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [UITableViewRowAction]? {
-            
-            
-        }
-        
-        // MARK: - NSFetchedResultsControllerDelegate
-        
-        @objc func controllerWillChangeContent(_ controller: NSFetchedResultsController) {
-            
-            tableView.beginUpdates()
-        }
-        
-        @objc func controllerDidChangeContent(_ controller: NSFetchedResultsController) {
-            
-            tableView.endUpdates()
-        }
-        
-        @objc func controller(_ controller: NSFetchedResultsController,
-                              didChangeObject anObject: AnyObject,
-                              atIndexPath indexPath: NSIndexPath?,
-                              forChangeType type: NSFetchedResultsChangeType,
-                              newIndexPath: NSIndexPath?) {
-            
-            sleep(1)
-            
-            switch type {
+            if let indexPath = indexPath {
                 
-            case .insert:
+                if let cell = tableView.cellForRow(at: indexPath) as? KeyTableViewCell {
+                    
+                    self.configure(cell: cell, at: indexPath)
+                }
+            }
+            
+        case .move:
+            
+            if let indexPath = indexPath {
                 
                 if let newIndexPath = newIndexPath {
-                    tableView.insertRows(at: [newIndexPath], with: .automatic)
-                }
-                
-            case .delete:
-                
-                if let indexPath = indexPath {
+                    
                     tableView.deleteRows(at: [indexPath], with: .automatic)
-                }
-                
-            case .update:
-                
-                if let indexPath = indexPath {
-                    
-                    if let cell = tableView.cellForRow(at: indexPath) as? KeyTableViewCell {
-                        
-                        self.configure(cell: cell, at: indexPath)
-                    }
-                }
-                
-            case .move:
-                
-                if let indexPath = indexPath {
-                    
-                    if let newIndexPath = newIndexPath {
-                        
-                        tableView.deleteRows(at: [indexPath], with: .automatic)
-                        tableView.insertRows(at: [newIndexPath], with: .automatic)
-                    }
+                    tableView.insertRows(at: [newIndexPath], with: .automatic)
                 }
             }
         }
@@ -216,6 +316,6 @@ final class KeyTableViewCell: UITableViewCell {
     @IBOutlet weak var permissionImageView: UIImageView!
     
     @IBOutlet weak var lockNameLabel: UILabel!
-        
+    
     @IBOutlet weak var permissionLabel: UILabel!
 }

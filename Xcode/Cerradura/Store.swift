@@ -79,6 +79,15 @@ final class Store {
             try! keychain.set(value: lock.key.data.data.toFoundation(), key: UUID.rawValue)
         }
     }
+    
+    /// Subscript to get key.
+    subscript (key UUID:  SwiftFoundation.UUID) -> KeyData? {
+        
+        guard let data = try! keychain.getData(key: UUID.rawValue)
+            else { return nil }
+        
+        return KeyData(data: Data(foundation: data))
+    }
 }
 
 // MARK: - Supporting Types
