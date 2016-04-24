@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import CoreData
+import CoreBluetooth
 import CoreLock
 import GATT
 
@@ -42,6 +43,7 @@ final class KeysViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
         
         central.log = { print($0) }
+        central.stateChanged = stateChanged
         
         fetchedResultsController.delegate = unsafeBitCast(self, to: NSFetchedResultsControllerDelegate.self)
         tableView.dataSource = unsafeBitCast(self, to: UITableViewDataSource.self)
@@ -51,6 +53,14 @@ final class KeysViewController: UIViewController {
     }
     
     // MARK: - Methods
+    
+    private func stateChanged(_ state: CBCentralManagerState) {
+        
+        mainQueue {
+            
+            self.tableView.setEditing(false, animated: true)
+        }
+    }
     
     private func item(at indexPath: NSIndexPath) -> LockCache {
         

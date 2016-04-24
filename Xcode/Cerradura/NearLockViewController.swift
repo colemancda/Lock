@@ -26,11 +26,11 @@ final class NearLockViewController: UIViewController {
     
     let scanDuration = 2
     
-    var central: CentralManager!
+    private var central: CentralManager!
     
-    var centralStateLoaded = false
+    private var centralStateLoaded = false
     
-    var visible = false
+    private var visible = false
     
     private lazy var queue: dispatch_queue_t = dispatch_queue_create("\(self.dynamicType) Internal Queue", DISPATCH_QUEUE_SERIAL)
     

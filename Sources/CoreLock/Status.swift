@@ -14,14 +14,11 @@ public enum Status: UInt8 {
     /// Initial Status
     case setup
     
-    /// Idle / Unlock Mode status
+    /// Idle / Unlock Mode
     case unlock
     
-    /// New Key being added to database status
+    /// New Key being added to database.
     case newKey
-    
-    /// Lock software updating
-    case update
 }
 
 extension Status: DataConvertible {

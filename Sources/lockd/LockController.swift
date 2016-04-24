@@ -161,6 +161,9 @@ final class LockController {
                     else { return ATT.Error.WriteNotPermitted }
             }
             
+            guard ArduinoSendByte()
+                else { return ATT.Error.UnlikelyError }
+            
             print("Unlocked by central \(central.identifier)")
             
             return nil
