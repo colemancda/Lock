@@ -4,6 +4,7 @@
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--Tab Bar Controller-->
@@ -22,24 +23,82 @@
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rvK-Zs-dtd" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-237.86666666666667" y="14.199999999999999"/>
+            <point key="canvasLocation" x="-318" y="12"/>
         </scene>
         <!--Keys-->
         <scene sceneID="qLt-Ge-WqH">
             <objects>
-                <tableViewController id="NlA-6F-PBa" sceneMemberID="viewController">
+                <tableViewController id="NlA-6F-PBa" customClass="KeysViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="78" sectionHeaderHeight="28" sectionFooterHeight="28" id="ezx-pe-0wi">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="78" id="tWO-y7-q9x">
-                                <rect key="frame" x="0.0" y="92" width="320" height="78"/>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="KeyTableViewCell" rowHeight="68" id="P9G-Zv-P5B" customClass="KeyTableViewCell" customModule="Cerradura" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="92" width="320" height="68"/>
                                 <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="tWO-y7-q9x" id="gA0-9Q-4bk">
-                                    <rect key="frame" x="0.0" y="0.0" width="320" height="77.5"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="P9G-Zv-P5B" id="vCS-4K-scQ">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="67.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Anytime" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6i6-Iq-oVm">
+                                            <rect key="frame" x="67" y="39" width="245" height="17"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="o2B-0F-YhD" customClass="UIImageView">
+                                            <rect key="frame" x="8" y="8" width="51" height="51"/>
+                                            <subviews>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="foc-jz-Uid">
+                                                    <rect key="frame" x="0.0" y="0.0" width="51" height="51"/>
+                                                </imageView>
+                                            </subviews>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                            <constraints>
+                                                <constraint firstAttribute="bottom" secondItem="foc-jz-Uid" secondAttribute="bottom" id="4dl-8R-Bny"/>
+                                                <constraint firstItem="foc-jz-Uid" firstAttribute="top" secondItem="o2B-0F-YhD" secondAttribute="top" id="87c-u4-CwT"/>
+                                                <constraint firstItem="foc-jz-Uid" firstAttribute="leading" secondItem="o2B-0F-YhD" secondAttribute="leading" id="hwi-Wv-qpe"/>
+                                                <constraint firstAttribute="trailing" secondItem="foc-jz-Uid" secondAttribute="trailing" id="nLV-08-gae"/>
+                                                <constraint firstAttribute="width" secondItem="o2B-0F-YhD" secondAttribute="height" multiplier="1:1" id="vpa-NQ-Nx8"/>
+                                            </constraints>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="string" keyPath="canvasName" value="PermissionBadgeAnytime"/>
+                                            </userDefinedRuntimeAttributes>
+                                        </view>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Lock Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eb2-or-INf" userLabel="Lock Name Label">
+                                            <rect key="frame" x="67" y="8" width="245" height="23"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="19"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="6i6-Iq-oVm" firstAttribute="leading" secondItem="o2B-0F-YhD" secondAttribute="trailing" constant="20" id="MeM-0j-iY4"/>
+                                        <constraint firstItem="o2B-0F-YhD" firstAttribute="leading" secondItem="vCS-4K-scQ" secondAttribute="leading" constant="8" id="SKL-Jp-B75"/>
+                                        <constraint firstItem="o2B-0F-YhD" firstAttribute="top" secondItem="vCS-4K-scQ" secondAttribute="topMargin" id="Zx7-C8-cmO"/>
+                                        <constraint firstItem="6i6-Iq-oVm" firstAttribute="top" secondItem="eb2-or-INf" secondAttribute="bottom" constant="8" id="jgD-0F-t6f"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="6i6-Iq-oVm" secondAttribute="trailing" id="kmR-Ba-gxk"/>
+                                        <constraint firstItem="eb2-or-INf" firstAttribute="trailing" secondItem="6i6-Iq-oVm" secondAttribute="trailing" id="l8S-R0-ep8"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="eb2-or-INf" secondAttribute="trailing" id="lrZ-bg-FY9"/>
+                                        <constraint firstItem="eb2-or-INf" firstAttribute="top" secondItem="vCS-4K-scQ" secondAttribute="topMargin" id="oRi-Kv-Hv3"/>
+                                        <constraint firstAttribute="bottomMargin" secondItem="o2B-0F-YhD" secondAttribute="bottom" id="rm8-LJ-SJq"/>
+                                        <constraint firstItem="eb2-or-INf" firstAttribute="leading" secondItem="o2B-0F-YhD" secondAttribute="trailing" constant="8" id="tll-LC-dcX"/>
+                                        <constraint firstItem="eb2-or-INf" firstAttribute="leading" secondItem="6i6-Iq-oVm" secondAttribute="leading" id="yL7-TW-D2a"/>
+                                    </constraints>
+                                    <variation key="default">
+                                        <mask key="constraints">
+                                            <exclude reference="kmR-Ba-gxk"/>
+                                            <exclude reference="MeM-0j-iY4"/>
+                                        </mask>
+                                    </variation>
                                 </tableViewCellContentView>
+                                <inset key="separatorInset" minX="67" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                <connections>
+                                    <outlet property="lockNameLabel" destination="eb2-or-INf" id="HxM-dX-lre"/>
+                                    <outlet property="permissionImageView" destination="o2B-0F-YhD" id="HYn-QT-JV1"/>
+                                    <outlet property="permissionLabel" destination="6i6-Iq-oVm" id="SQ8-ig-OQm"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
