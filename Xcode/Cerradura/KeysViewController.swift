@@ -33,11 +33,15 @@ final class KeysViewController: UIViewController {
     
     private lazy var queue: dispatch_queue_t = dispatch_queue_create("\(self.dynamicType) Internal Queue", DISPATCH_QUEUE_SERIAL)
     
+    private let central = CentralManager()
+    
     // MARK: - Loading
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+        central.log = { print($0) }
         
         fetchedResultsController.delegate = unsafeBitCast(self, to: NSFetchedResultsControllerDelegate.self)
         tableView.dataSource = unsafeBitCast(self, to: UITableViewDataSource.self)
@@ -178,15 +182,11 @@ final class KeysViewController: UIViewController {
             
             print("Unlocking \"\(lockCache.name)\"...")
             
+            tableView.setEditing(false, animated: true)
+            
             self.async {
                 
-                let central = CentralManager()
-                
-                central.log = { print($0) }
-                
-                central.waitForPoweredOn() // Timeout?
-                
-                let peripherals = central.scan(duration: 1)
+                let peripherals = self.central.scan(duration: 2)
                 
                 var lockPeripheral: Peripheral!
                 
@@ -194,20 +194,20 @@ final class KeysViewController: UIViewController {
                     
                     do {
                         
-                        try central.connect(to: peripheral)
+                        try self.central.connect(to: peripheral)
                         
-                        let services = try central.discoverServices(for: peripheral)
+                        let services = try self.central.discoverServices(for: peripheral)
                         
                         guard services.contains({ $0.UUID == LockService.UUID })
                             else { continue }
                         
-                        let characteristics = try central.discoverCharacteristics(for: LockService.UUID, peripheral: peripheral)
+                        let characteristics = try self.central.discoverCharacteristics(for: LockService.UUID, peripheral: peripheral)
                         
                         guard characteristics.contains({ $0.UUID == LockService.Identifier.UUID }) &&
                             characteristics.contains({ $0.UUID == LockService.Unlock.UUID })
                             else { continue }
                         
-                        let identifierValue = try central.read(characteristic: LockService.Identifier.UUID, service: LockService.UUID, peripheral: peripheral)
+                        let identifierValue = try self.central.read(characteristic: LockService.Identifier.UUID, service: LockService.UUID, peripheral: peripheral)
                         
                         // validate identifier
                         guard let identifier = LockService.Identifier.init(bigEndian: identifierValue)
@@ -222,28 +222,31 @@ final class KeysViewController: UIViewController {
                 }
                 
                 guard lockPeripheral != nil
-                    else { /*mainQueue { self.showErrorAlert("Could not find lock") };*/ return }
+                    else { mainQueue { self.showErrorAlert("Could not find lock") }; return }
                 
                 // write to unlock characteristic
                 
                 let unlock = LockService.Unlock.init(key: key)
                 
-                do { try central.write(data: unlock.toBigEndian(), response: true, characteristic: LockService.Unlock.UUID, service: LockService.UUID, peripheral: lockPeripheral) }
+                do { try self.central.write(data: unlock.toBigEndian(), response: true, characteristic: LockService.Unlock.UUID, service: LockService.UUID, peripheral: lockPeripheral) }
                     
-                catch { mainQueue { /*self.showErrorAlert("Could not unlock. (\(error))")*/ }; return }
+                catch { mainQueue { self.showErrorAlert("Could not unlock. (\(error))") }; return }
                 
                 print("Successfully unlocked \"\(lockCache.name)\"")
             }
         }
         
-        // validate
-        if case let .scheduled(schedule) = lockCache.permission where schedule.valid() {
+        if central.state == .poweredOn {
             
-            actions.append(unlock)
-            
-        } else {
-            
-            actions.append(unlock)
+            // validate permission
+            if case let .scheduled(schedule) = lockCache.permission where schedule.valid() {
+                
+                actions.append(unlock)
+                
+            } else {
+                
+                actions.append(unlock)
+            }
         }
         
         return actions

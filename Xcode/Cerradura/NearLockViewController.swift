@@ -336,7 +336,7 @@ final class NearLockViewController: UIViewController {
         
         self.actionButton.isEnabled = true
         
-        showErrorAlert(localizedText: error, okHandler: { self.startScan() })
+        showErrorAlert(error, okHandler: { self.startScan() })
     }
     
     private func setTitle(_ title: String) {
@@ -379,7 +379,7 @@ final class NearLockViewController: UIViewController {
                 self.actionImageView.animationDuration = 2.0
                 self.actionImageView.startAnimating()
                 
-                self.showErrorAlert(localizedText: "Bluetooth disabled")
+                self.showErrorAlert("Bluetooth disabled")
             }
             
             return

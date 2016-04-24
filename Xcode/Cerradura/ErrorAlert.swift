@@ -11,7 +11,7 @@ import UIKit
 public extension UIViewController {
     
     /** Presents an error alert controller with the specified completion handlers.  */
-    func showErrorAlert(localizedText: String, okHandler: (() -> ())? = nil, retryHandler: (()-> ())? = nil) {
+    func showErrorAlert(_ localizedText: String, okHandler: (() -> ())? = nil, retryHandler: (()-> ())? = nil) {
         
         let alert = UIAlertController(title: NSLocalizedString("Error", comment: "Error"),
             message: localizedText,
