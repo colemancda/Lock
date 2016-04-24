@@ -28,8 +28,8 @@
         <!--Keys-->
         <scene sceneID="qLt-Ge-WqH">
             <objects>
-                <tableViewController id="NlA-6F-PBa" customClass="KeysViewController" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="78" sectionHeaderHeight="28" sectionFooterHeight="28" id="ezx-pe-0wi">
+                <tableViewController id="NlA-6F-PBa" customClass="KeysViewController" customModule="Cerradura" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="68" sectionHeaderHeight="28" sectionFooterHeight="28" id="ezx-pe-0wi">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -47,7 +47,7 @@
                                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="o2B-0F-YhD" customClass="UIImageView">
+                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="o2B-0F-YhD">
                                             <rect key="frame" x="8" y="8" width="51" height="51"/>
                                             <subviews>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="foc-jz-Uid">
@@ -62,9 +62,6 @@
                                                 <constraint firstAttribute="trailing" secondItem="foc-jz-Uid" secondAttribute="trailing" id="nLV-08-gae"/>
                                                 <constraint firstAttribute="width" secondItem="o2B-0F-YhD" secondAttribute="height" multiplier="1:1" id="vpa-NQ-Nx8"/>
                                             </constraints>
-                                            <userDefinedRuntimeAttributes>
-                                                <userDefinedRuntimeAttribute type="string" keyPath="canvasName" value="PermissionBadgeAnytime"/>
-                                            </userDefinedRuntimeAttributes>
                                         </view>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Lock Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eb2-or-INf" userLabel="Lock Name Label">
                                             <rect key="frame" x="67" y="8" width="245" height="23"/>
@@ -96,7 +93,7 @@
                                 <inset key="separatorInset" minX="67" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 <connections>
                                     <outlet property="lockNameLabel" destination="eb2-or-INf" id="HxM-dX-lre"/>
-                                    <outlet property="permissionImageView" destination="o2B-0F-YhD" id="HYn-QT-JV1"/>
+                                    <outlet property="permissionImageView" destination="foc-jz-Uid" id="HaZ-W6-oCw"/>
                                     <outlet property="permissionLabel" destination="6i6-Iq-oVm" id="SQ8-ig-OQm"/>
                                 </connections>
                             </tableViewCell>
