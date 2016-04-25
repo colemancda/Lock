@@ -22,9 +22,9 @@ public protocol GATTProfileCharacteristic {
     
     static var UUID: Bluetooth.UUID { get }
     
-    //init?(bigEndian: Data)
+    init?(bigEndian: Data)
     
-    //func toBigEndian() -> Data
+    func toBigEndian() -> Data
 }
 
 public protocol AuthenticatedCharacteristic: GATTProfileCharacteristic {
@@ -361,16 +361,38 @@ public struct LockService: GATTProfileService {
     
     /// Parent Shared Secret (write-only)
     ///
-    /// nonce + IV + encrypt(parentKey, iv, sharedSecret) + HMAC(parentKey, nonce)
-    public struct NewKeyParentSharedSecret: GATTProfileCharacteristic {
+    /// nonce + IV + encrypt(parentKey, iv, sharedSecret) + HMAC(parentKey, nonce) + permission
+    public struct NewKeyParentSharedSecret {
         
         public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "3A9EE5A8-044D-11E6-90F2-09AB70D5A8C7")!)
+        
+        public static let length = Nonce.length + IVSize + 48 + HMACSize
+        
+        public let sharedSecret: SharedSecret
+        
+        public let parentKey: KeyData
+        
+        public let permission: Permission
+        
+        public let nonce: Nonce
+        
+        /// HMAC of key and nonce
+        public let authentication: Data
+        
+        public init(sharedSecret: SharedSecret, parentKey: KeyData, permission: Permission, nonce: Nonce = Nonce()) {
+            
+            self.sharedSecret = sharedSecret
+            self.parentKey = parentKey
+            self.permission = permission
+            self.nonce = nonce
+            self.authentication = HMAC(key: parentKey, message: nonce)
+        }
     }
     
     /// Child Shared Secret (read-only)
     ///
     /// nonce + IV + encrypt(sharedSecret, iv, childKey) + HMAC(sharedSecret, nonce)
-    public struct NewKeyChildKey: GATTProfileCharacteristic {
+    public struct NewKeyChildKey {
         
         public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "4CC3B5BA-044D-11E6-A956-09AB70D5A8C7")!)
     }

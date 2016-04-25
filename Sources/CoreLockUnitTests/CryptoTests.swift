@@ -67,4 +67,19 @@ final class CryptoTests: XCTestCase {
         
         XCTAssert(decryptedData == key.data)
     }
+    
+    func testEncryptSharedKey() {
+        
+        let key = KeyData()
+        
+        let salt = KeyData()
+        
+        let (encryptedData, iv) = encrypt(key: salt.data, data: key.data)
+        
+        print("Encrypted key is \(encryptedData.byteValue.count) bytes")
+        
+        let decryptedData = decrypt(key: salt.data, iv: iv, data: encryptedData)
+        
+        XCTAssert(decryptedData == key.data)
+    }
 }

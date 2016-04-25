@@ -39,7 +39,7 @@ public enum Permission {
         }
     }
     
-    public static let length = 1 + sizeof(Int64.self) + (2 * sizeof(UInt16)) // 13
+    public static let length = 1 + sizeof(Int64.self) + (2 * sizeof(UInt16)) + Schedule.Weekdays.length // 20
     
     public func toBigEndian() -> Data {
         
@@ -57,7 +57,9 @@ public enum Permission {
             
             let endBytes = schedule.interval.rawValue.endIndex.bigEndian.bytes
             
-            let bytes = [self.byte] + expiryBytes + [startBytes.0, startBytes.1, endBytes.0, endBytes.1]
+            let weekdaysBytes = schedule.weekdays.toData().byteValue
+            
+            let bytes = [self.byte] + expiryBytes + [startBytes.0, startBytes.1, endBytes.0, endBytes.1] + weekdaysBytes
             
             return Data(byteValue: bytes)
         
@@ -108,7 +110,12 @@ public enum Permission {
             guard let interval = Schedule.Interval(rawValue: start ... end)
                 else { return nil }
             
-            let schedule = Schedule(expiry: Date(since1970: TimeInterval(dateValue)), interval: interval)
+            let weekdaysBytes = Array(byteValue[sizeof(Int64) + 5 ... sizeof(Int64) + 5])
+            
+            guard let weekdays = Schedule.Weekdays(data: Data(byteValue: weekdaysBytes))
+                else { return nil }
+            
+            let schedule = Schedule(expiry: Date(since1970: TimeInterval(dateValue)), interval: interval, weekdays: weekdays)
             
             self = .scheduled(schedule)
             
@@ -129,10 +136,14 @@ public extension Permission {
         /// The minute interval range the lock can be unlocked.
         public var interval: Interval
         
-        public init(expiry: Date, interval: Interval = Interval.anytime) {
+        /// The days of the week the permission is valid
+        public var weekdays: Weekdays
+        
+        public init(expiry: Date, interval: Interval = Interval.anytime, weekdays: Weekdays) {
             
             self.expiry = expiry
             self.interval = interval
+            self.weekdays = weekdays
         }
         
         /// Verify that the specified date is valid for this schedule.
@@ -147,6 +158,10 @@ public extension Permission {
             
             guard interval.rawValue.contains(minutesValue)
                 else { return false }
+            
+            let canOpenOnDay = weekdays[Int(dateComponents.weekday)]
+            
+            guard canOpenOnDay else { return false }
             
             return true
         }
@@ -173,6 +188,112 @@ public extension Permission.Schedule {
                 else { return nil }
             
             self.rawValue = rawValue
+        }
+    }
+}
+
+public extension Permission.Schedule {
+    
+    public struct Weekdays: DataConvertible {
+        
+        public static let length = 7
+        
+        public var sunday: Bool
+        public var monday: Bool
+        public var tuesday: Bool
+        public var wednesday: Bool
+        public var thursday: Bool
+        public var friday: Bool
+        public var saturday: Bool
+        
+        public init(sunday: Bool,
+                    monday: Bool,
+                    tuesday: Bool,
+                    wednesday: Bool,
+                    thursday: Bool,
+                    friday: Bool,
+                    saturday: Bool) {
+            
+            self.sunday = sunday
+            self.monday = monday
+            self.tuesday = tuesday
+            self.wednesday = wednesday
+            self.thursday = thursday
+            self.friday = friday
+            self.saturday = saturday
+        }
+        
+        public subscript (weekday: Int) -> Bool {
+            
+            get {
+                
+                switch weekday {
+                    
+                case 1: return sunday
+                case 2: return monday
+                case 3: return tuesday
+                case 4: return wednesday
+                case 5: return thursday
+                case 6: return friday
+                case 7: return saturday
+                    
+                default: fatalError("Invalid weekday \(weekday)")
+                }
+            }
+            
+            set {
+                
+                switch weekday {
+                    
+                case 1: sunday = newValue
+                case 2: monday = newValue
+                case 3: tuesday = newValue
+                case 4: wednesday = newValue
+                case 5: thursday = newValue
+                case 6: friday = newValue
+                case 7: saturday = newValue
+                    
+                default: fatalError("Invalid weekday \(weekday)")
+                }
+            }
+        }
+        
+        public init?(data: Data) {
+            
+            guard data.byteValue.count == Weekdays.length
+                else { return nil }
+            
+            guard let sunday = BluetoothBool(rawValue: data.byteValue[0])?.boolValue,
+                let monday = BluetoothBool(rawValue: data.byteValue[1])?.boolValue,
+                let tuesday = BluetoothBool(rawValue: data.byteValue[2])?.boolValue,
+                let wednesday = BluetoothBool(rawValue: data.byteValue[3])?.boolValue,
+                let thursday = BluetoothBool(rawValue: data.byteValue[4])?.boolValue,
+                let friday = BluetoothBool(rawValue: data.byteValue[5])?.boolValue,
+                let saturday = BluetoothBool(rawValue: data.byteValue[6])?.boolValue
+                else { return nil }
+            
+            self.sunday = sunday
+            self.monday = monday
+            self.tuesday = tuesday
+            self.wednesday = wednesday
+            self.thursday = thursday
+            self.friday = friday
+            self.saturday = saturday
+        }
+        
+        public func toData() -> Data {
+            
+            var bytes = [UInt8](repeating: 0, count: Weekdays.length)
+            
+            bytes[0] = BluetoothBool(sunday).rawValue
+            bytes[1] = BluetoothBool(monday).rawValue
+            bytes[2] = BluetoothBool(tuesday).rawValue
+            bytes[3] = BluetoothBool(wednesday).rawValue
+            bytes[4] = BluetoothBool(thursday).rawValue
+            bytes[5] = BluetoothBool(friday).rawValue
+            bytes[6] = BluetoothBool(saturday).rawValue
+            
+            return Data(byteValue: bytes)
         }
     }
 }
