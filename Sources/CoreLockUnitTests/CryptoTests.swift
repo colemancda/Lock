@@ -12,7 +12,7 @@ import CoreLock
 
 final class CryptoTests: XCTestCase {
     
-    static let allTests: [(String, CryptoTests -> () throws -> Void)] = [("testHMAC", testHMAC), ("testEncrypt", testEncrypt), ("testFailEncrypt", testFailEncrypt), ("testEncryptKeyData", testEncryptKeyData)]
+    static let allTests: [(String, CryptoTests -> () throws -> Void)] = [("testHMAC", testHMAC), ("testEncrypt", testEncrypt), ("testFailEncrypt", testFailEncrypt), ("testEncryptKeyData", testEncryptKeyData), ("testEncryptChildKeyData", testEncryptChildKeyData)]
     
     func testHMAC() {
         
@@ -83,5 +83,22 @@ final class CryptoTests: XCTestCase {
         let decryptedData = decrypt(key: parentKey.data, iv: iv, data: encryptedData)
         
         XCTAssert(decryptedData == sharedSecret.toData())
+    }
+    
+    func testEncryptChildKeyData() {
+        
+        let childKey = KeyData()
+        
+        let sharedSecret = SharedSecret()
+        
+        let sharedSecretKey = sharedSecret.toKeyData()
+        
+        let (encryptedData, iv) = encrypt(key: sharedSecretKey.data, data: childKey.data)
+        
+        print("Encrypted Child Key (4 repetitions) is \(encryptedData.byteValue.count) bytes")
+        
+        let decryptedData = decrypt(key: sharedSecretKey.data, iv: iv, data: encryptedData)
+        
+        XCTAssert(decryptedData == childKey.data)
     }
 }

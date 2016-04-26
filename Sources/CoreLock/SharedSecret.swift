@@ -11,11 +11,11 @@ import SwiftFoundation
 /// A shared secret for creating new keys.
 public struct SharedSecret: DataConvertible {
     
-    public static let length = 6
+    public static let length = 8
     
-    public var value: (Digit, Digit, Digit, Digit, Digit, Digit)
+    public var value: (Digit, Digit, Digit, Digit, Digit, Digit, Digit, Digit)
     
-    public init(value: (Digit, Digit, Digit, Digit, Digit, Digit)) {
+    public init(value: (Digit, Digit, Digit, Digit, Digit, Digit, Digit, Digit)) {
         
         self.value = value
     }
@@ -23,7 +23,7 @@ public struct SharedSecret: DataConvertible {
     /// Generates a random shared secret.
     public init() {
         
-        self.value = (Digit(), Digit(), Digit(), Digit(), Digit(), Digit())
+        self.value = (Digit(), Digit(), Digit(), Digit(), Digit(), Digit(), Digit(), Digit())
     }
     
     public init?(data: Data) {
@@ -36,10 +36,12 @@ public struct SharedSecret: DataConvertible {
             let d3 = Digit(rawValue: data.byteValue[2]),
             let d4 = Digit(rawValue: data.byteValue[3]),
             let d5 = Digit(rawValue: data.byteValue[4]),
-            let d6 = Digit(rawValue: data.byteValue[5])
+            let d6 = Digit(rawValue: data.byteValue[5]),
+            let d7 = Digit(rawValue: data.byteValue[6]),
+            let d8 = Digit(rawValue: data.byteValue[7])
             else { return nil }
         
-        self.value = (d1, d2, d3, d4, d5, d6)
+        self.value = (d1, d2, d3, d4, d5, d6, d7, d8)
     }
     
     public func toData() -> Data {
@@ -49,7 +51,9 @@ public struct SharedSecret: DataConvertible {
                                 value.2.rawValue,
                                 value.3.rawValue,
                                 value.4.rawValue,
-                                value.5.rawValue])
+                                value.5.rawValue,
+                                value.6.rawValue,
+                                value.7.rawValue])
     }
 }
 
@@ -107,4 +111,42 @@ public func == (lhs: SharedSecret, rhs: SharedSecret) -> Bool {
         && lhs.value.3 == rhs.value.3
         && lhs.value.4 == rhs.value.4
         && lhs.value.5 == rhs.value.5
+}
+
+// MARK: - KeyData conversion
+
+public extension SharedSecret {
+    
+    public init?(keyData: KeyData) {
+        
+        let bytes = keyData.data.byteValue
+        
+        func sharedSecretBytes(_ index: Int) -> [UInt8] {
+            
+            return Array(bytes[SharedSecret.length * index ..< SharedSecret.length * (index + 1)])
+        }
+        
+        let secretBytes = sharedSecretBytes(0)
+        
+        guard let sharedSecret = SharedSecret(data: Data(byteValue: secretBytes))
+            else { return nil }
+        
+        // 4 repetitions of same value
+        guard secretBytes == sharedSecretBytes(1)
+            && secretBytes == sharedSecretBytes(2)
+            && secretBytes == sharedSecretBytes(3)
+            else { return nil }
+        
+        self = sharedSecret
+    }
+    
+    public func toKeyData() -> KeyData {
+        
+        let secretBytes = self.toData().byteValue
+        
+        // 4 repetitions of same value
+        let keyBytes = secretBytes + secretBytes + secretBytes + secretBytes
+        
+        return KeyData(data: Data(byteValue: keyBytes))!
+    }
 }

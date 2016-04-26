@@ -91,7 +91,7 @@ final class GATTProfileTests: XCTestCase {
         XCTAssert(deserialized.authenticated(with: KeyData()) == false)
     }
     
-    func testShareKey() {
+    func testNewChildKey() {
         
         let parentRequestType = LockService.NewKeyParentSharedSecret.self
         
@@ -119,15 +119,18 @@ final class GATTProfileTests: XCTestCase {
         
         let parentRequestData = parentRequest.toBigEndian()
         
-        guard let parentDeserialized = parentRequestType.init(bigEndian: parentRequestData, parentKey: parentKey)
+        guard let parentDeserialized = parentRequestType.init(bigEndian: parentRequestData)
+            else { XCTFail(); return }
+        
+        guard let decryptedSharedSecret = parentDeserialized.decrypt(key: parentKey)
             else { XCTFail(); return }
         
         XCTAssert(parentDeserialized.nonce == parentNonce)
         XCTAssert(parentDeserialized.authenticated(with: parentKey))
         XCTAssert(parentDeserialized.authenticated(with: KeyData()) == false)
         XCTAssert(parentDeserialized.permission == permission, "\(parentDeserialized.permission) == \(permission)")
-        XCTAssert(parentDeserialized.parentKey == parentKey)
-        XCTAssert(parentDeserialized.sharedSecret == sharedSecret, "\(parentDeserialized.sharedSecret.toData().byteValue) == \(sharedSecret.toData().byteValue)")
+        XCTAssert(decryptedSharedSecret == sharedSecret)
+        
         
     }
 }

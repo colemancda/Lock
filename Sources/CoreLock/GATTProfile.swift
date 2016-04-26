@@ -310,10 +310,6 @@ public struct LockService: GATTProfileService {
         
         public static let length = Nonce.length + IVSize + 16 + HMACSize + Permission.length
         
-        public let parentKey: KeyData
-        
-        public let sharedSecret: SharedSecret
-        
         public let permission: Permission
                 
         public let nonce: Nonce
@@ -321,16 +317,23 @@ public struct LockService: GATTProfileService {
         /// HMAC of key and nonce
         public let authentication: Data
         
+        public let encryptedSharedSecret: Data
+        
+        public let initializationVector: InitializationVector
+        
         public init(nonce: Nonce = Nonce(), sharedSecret: SharedSecret, parentKey: KeyData, permission: Permission) {
             
-            self.parentKey = parentKey
-            self.sharedSecret = sharedSecret
             self.permission = permission
             self.nonce = nonce
             self.authentication = HMAC(key: parentKey, message: nonce)
+            
+            let (encryptedSharedSecret, iv) = encrypt(key: parentKey.data, data: sharedSecret.toData())
+            
+            self.initializationVector = iv
+            self.encryptedSharedSecret = encryptedSharedSecret
         }
         
-        public init?(bigEndian: Data, parentKey: KeyData) {
+        public init?(bigEndian: Data) {
             
             let bytes = bigEndian.byteValue
             
@@ -343,19 +346,10 @@ public struct LockService: GATTProfileService {
             
             let ivBytes = Array(bytes[Nonce.length ..< Nonce.length + IVSize])
             
-            let iv = InitializationVector(data: Data(byteValue: ivBytes))!
+            self.initializationVector = InitializationVector(data: Data(byteValue: ivBytes))!
             
-            let encryptedBytes = Array(bytes[Nonce.length + IVSize ..< Nonce.length + IVSize + 16])
-            
-            let decryptedData = decrypt(key: parentKey.data, iv: iv, data: Data(byteValue: encryptedBytes))
-            
-            assert(decryptedData.byteValue.count == SharedSecret.length)
-            
-            guard let sharedSecret = SharedSecret(data: decryptedData)
-                else { return nil }
-            
-            self.sharedSecret = sharedSecret
-            
+            self.encryptedSharedSecret = Data(byteValue: Array(bytes[Nonce.length + IVSize ..< Nonce.length + IVSize + 16]))
+                        
             let hmac = Array(bytes[Nonce.length + IVSize + 16 ..< Nonce.length + IVSize + 16 + HMACSize])
             
             assert(hmac.count == HMACSize)
@@ -368,18 +362,33 @@ public struct LockService: GATTProfileService {
                 else { return nil }
             
             self.permission = permission
-            self.parentKey = parentKey
+            
+            //assert(self.encryptedSharedSecret.byteValue.count == 16)
         }
         
         public func toBigEndian() -> Data {
-            
-            let (encryptedKey, iv) = encrypt(key: parentKey.data, data: sharedSecret.toData())
-            
-            let bytes = nonce.data.byteValue + iv.data.byteValue + encryptedKey.byteValue + authentication.byteValue + permission.toBigEndian().byteValue
+                        
+            let bytes = nonce.data.byteValue + initializationVector.data.byteValue + encryptedSharedSecret.byteValue + authentication.byteValue + permission.toBigEndian().byteValue
             
             assert(bytes.count == self.dynamicType.length)
             
             return Data(byteValue: bytes)
+        }
+        
+        public func decrypt(key parentKey: KeyData) -> SharedSecret? {
+            
+            // make sure its authenticated
+            guard authenticated(with: parentKey)
+                else { return nil }
+            
+            let decryptedData = CoreLock.decrypt(key: parentKey.data, iv: initializationVector, data: encryptedSharedSecret)
+            
+            assert(decryptedData.byteValue.count == SharedSecret.length)
+            
+            guard let sharedSecret = SharedSecret.init(data: decryptedData)
+                else { return nil }
+            
+            return sharedSecret
         }
     }
     
