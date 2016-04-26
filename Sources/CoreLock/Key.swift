@@ -8,7 +8,7 @@
 
 import SwiftFoundation
 
-public struct Key {
+public struct Key: Equatable {
     
     public let data: KeyData
     
@@ -19,4 +19,10 @@ public struct Key {
         self.data = data
         self.permission = permission
     }
+}
+
+public func == (lhs: Key, rhs: Key) -> Bool {
+    
+    return lhs.data == rhs.data
+        && lhs.permission == rhs.permission
 }

@@ -301,7 +301,7 @@ public struct LockService: GATTProfileService {
         }
     }
     
-    /// Parent Shared Secret (write-only)
+    /// New Key Parent Shared Secret (write-only)
     ///
     /// nonce + IV + encrypt(parentKey, iv, sharedSecret) + HMAC(parentKey, nonce) + permission
     public struct NewKeyParentSharedSecret: AuthenticatedCharacteristic {
@@ -385,19 +385,103 @@ public struct LockService: GATTProfileService {
             
             assert(decryptedData.byteValue.count == SharedSecret.length)
             
-            guard let sharedSecret = SharedSecret.init(data: decryptedData)
+            guard let sharedSecret = SharedSecret(data: decryptedData)
                 else { return nil }
             
             return sharedSecret
         }
     }
     
-    /// Child Shared Secret (read-only)
+    /// New Key Child Shared Secret (read-only)
     ///
-    /// nonce + IV + encrypt(sharedSecret, iv, childKey) + HMAC(sharedSecret, nonce)
-    public struct NewKeyChildKey {
+    /// nonce + IV + encrypt((sharedSecret * 4), iv, childKey) + HMAC(sharedSecret, nonce) + permission
+    public struct NewKeyChildSharedSecret: AuthenticatedCharacteristic {
         
         public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "4CC3B5BA-044D-11E6-A956-09AB70D5A8C7")!)
+        
+        public static let length = Nonce.length + IVSize + 48 + HMACSize + Permission.length
+        
+        public let permission: Permission
+        
+        public let nonce: Nonce
+        
+        /// HMAC of key and nonce
+        public let authentication: Data
+        
+        public let encryptedNewKey: Data
+        
+        public let initializationVector: InitializationVector
+        
+        public init(nonce: Nonce = Nonce(), sharedSecret: SharedSecret, newKey: Key) {
+            
+            self.permission = newKey.permission
+            self.nonce = nonce
+            self.authentication = HMAC(key: sharedSecret.toKeyData(), message: nonce)
+            
+            let (encryptedNewKey, iv) = encrypt(key: sharedSecret.toKeyData().data, data: newKey.data.data)
+            
+            self.initializationVector = iv
+            self.encryptedNewKey = encryptedNewKey
+        }
+        
+        public init?(bigEndian: Data) {
+            
+            let bytes = bigEndian.byteValue
+            
+            guard bytes.count == self.dynamicType.length
+                else { return nil }
+            
+            let nonceBytes = Array(bytes[0 ..< Nonce.length])
+            
+            self.nonce = Nonce(data: Data(byteValue: nonceBytes))!
+            
+            let ivBytes = Array(bytes[Nonce.length ..< Nonce.length + IVSize])
+            
+            self.initializationVector = InitializationVector(data: Data(byteValue: ivBytes))!
+            
+            self.encryptedNewKey = Data(byteValue: Array(bytes[Nonce.length + IVSize ..< Nonce.length + IVSize + 48]))
+            
+            let hmac = Array(bytes[Nonce.length + IVSize + 48 ..< Nonce.length + IVSize + 48 + HMACSize])
+            
+            assert(hmac.count == HMACSize)
+            
+            self.authentication = Data(byteValue: hmac)
+            
+            let permissionBytes = Array(bytes[Nonce.length + IVSize + 48 + HMACSize ..< Nonce.length + IVSize + 48 + HMACSize + Permission.length])
+            
+            guard let permission = Permission(bigEndian: Data(byteValue: permissionBytes))
+                else { return nil }
+            
+            self.permission = permission
+            
+            //assert(self.encryptedSharedSecret.byteValue.count == 48)
+        }
+        
+        public func toBigEndian() -> Data {
+            
+            let bytes = nonce.data.byteValue + initializationVector.data.byteValue + encryptedNewKey.byteValue + authentication.byteValue + permission.toBigEndian().byteValue
+            
+            assert(bytes.count == self.dynamicType.length)
+            
+            return Data(byteValue: bytes)
+        }
+        
+        public func decrypt(sharedSecret: SharedSecret) -> Key? {
+            
+            let sharedSecretKey = sharedSecret.toKeyData()
+            
+            // make sure its authenticated
+            guard authenticated(with: sharedSecretKey)
+                else { return nil }
+            
+            let decryptedData = CoreLock.decrypt(key: sharedSecretKey.data, iv: initializationVector, data: encryptedNewKey)
+            
+            assert(decryptedData.byteValue.count == KeyData.length)
+            
+            let keyData = KeyData(data: decryptedData)!
+            
+            return Key(data: keyData, permission: permission)
+        }
     }
 }
 

@@ -12,7 +12,7 @@ import CoreLock
 
 final class GATTProfileTests: XCTestCase {
     
-    static let allTests: [(String, GATTProfileTests -> () throws -> Void)] = [("testLockIdentifier", testLockIdentifier), ("testLockSetup", testLockSetup), ("testUnlock", testUnlock)]
+    static let allTests: [(String, GATTProfileTests -> () throws -> Void)] = [("testLockIdentifier", testLockIdentifier), ("testLockSetup", testLockSetup), ("testUnlock", testUnlock), ("testNewChildKey", testNewChildKey)]
     
     func testLockIdentifier() {
         
@@ -103,9 +103,9 @@ final class GATTProfileTests: XCTestCase {
                                                          friday: true,
                                                          saturday: false)
         
-        let date = Date(sinceReferenceDate: TimeInterval(Int(TimeIntervalSinceReferenceDate() + (60 * 60))))
+        let expiry = Date(sinceReferenceDate: TimeInterval(Int(TimeIntervalSinceReferenceDate() + (60 * 60))))
         
-        let schedule = Permission.Schedule(expiry: date, weekdays: weekdays)
+        let schedule = Permission.Schedule(expiry: expiry, weekdays: weekdays)
         
         let permission = Permission.scheduled(schedule)
         
@@ -131,6 +131,26 @@ final class GATTProfileTests: XCTestCase {
         XCTAssert(parentDeserialized.permission == permission, "\(parentDeserialized.permission) == \(permission)")
         XCTAssert(decryptedSharedSecret == sharedSecret)
         
+        let childRequestType = LockService.NewKeyChildSharedSecret.self
         
+        let childNonce = Nonce()
+        
+        let newKey = Key(data: KeyData(), permission: permission)
+        
+        let childRequest = childRequestType.init(nonce: childNonce, sharedSecret: sharedSecret, newKey: newKey)
+        
+        let childRequestData = childRequest.toBigEndian()
+        
+        guard let childDeserialized = childRequestType.init(bigEndian: childRequestData)
+            else { XCTFail(); return }
+        
+        guard let decryptedNewKey = childDeserialized.decrypt(sharedSecret: sharedSecret)
+            else { XCTFail(); return }
+        
+        XCTAssert(childDeserialized.nonce == childNonce)
+        XCTAssert(childDeserialized.authenticated(with: sharedSecret.toKeyData()))
+        XCTAssert(childDeserialized.authenticated(with: KeyData()) == false)
+        XCTAssert(childDeserialized.permission == permission)
+        XCTAssert(decryptedNewKey == newKey)
     }
 }
