@@ -9,7 +9,9 @@
 import SwiftFoundation
 
 /// A shared secret for creating new keys.
-public struct SharedSecret {
+public struct SharedSecret: DataConvertible {
+    
+    public static let length = 6
     
     public var value: (Digit, Digit, Digit, Digit, Digit, Digit)
     
@@ -23,12 +25,38 @@ public struct SharedSecret {
         
         self.value = (Digit(), Digit(), Digit(), Digit(), Digit(), Digit())
     }
+    
+    public init?(data: Data) {
+        
+        guard data.byteValue.count == SharedSecret.length
+            else { return nil }
+        
+        guard let d1 = Digit(rawValue: data.byteValue[0]),
+            let d2 = Digit(rawValue: data.byteValue[1]),
+            let d3 = Digit(rawValue: data.byteValue[2]),
+            let d4 = Digit(rawValue: data.byteValue[3]),
+            let d5 = Digit(rawValue: data.byteValue[4]),
+            let d6 = Digit(rawValue: data.byteValue[5])
+            else { return nil }
+        
+        self.value = (d1, d2, d3, d4, d5, d6)
+    }
+    
+    public func toData() -> Data {
+        
+        return Data(byteValue: [value.0.rawValue,
+                                value.1.rawValue,
+                                value.2.rawValue,
+                                value.3.rawValue,
+                                value.4.rawValue,
+                                value.5.rawValue])
+    }
 }
 
 public extension SharedSecret {
     
     /// A Digit 0 ... 9
-    public struct Digit: RawRepresentable {
+    public struct Digit: RawRepresentable, Equatable {
         
         public static let min = Digit(0)
         
@@ -47,19 +75,36 @@ public extension SharedSecret {
         
         private init(_ unsafeValue: UInt8) {
             
-            assert(Digit(rawValue: unsafeValue) != nil, "Invalid unsafe value \(unsafeValue)")
-            
             self.rawValue = unsafeValue
         }
         
         /// Generates a random digit.
         public init() {
             
-            srand(UInt32(time(nil)))
+            @inline(__always)
+            func arc4random_uniform(_ upperBound: UInt32) -> UInt32 {
+                #if os(Linux)
+                    return _swift_stdlib_cxx11_mt19937_uniform(upperBound)
+                #else
+                    return Darwin.arc4random_uniform(upperBound)
+                #endif
+            }
             
-            let randomNumber = rand() % 10
+            let randomValue = UInt8(arc4random_uniform(10))
             
-            self.init(UInt8(randomNumber))
+            assert(randomValue <= Digit.max.rawValue)
+            
+            self.rawValue = randomValue
         }
     }
+}
+
+public func == (lhs: SharedSecret, rhs: SharedSecret) -> Bool {
+    
+    return lhs.value.0 == rhs.value.0
+        && lhs.value.1 == rhs.value.1
+        && lhs.value.2 == rhs.value.2
+        && lhs.value.3 == rhs.value.3
+        && lhs.value.4 == rhs.value.4
+        && lhs.value.5 == rhs.value.5
 }

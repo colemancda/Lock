@@ -13,7 +13,7 @@
 import SwiftFoundation
 
 /// A Key's permission level.
-public enum Permission {
+public enum Permission: Equatable {
     
     /// This key belongs to the owner of the lock and has unlimited rights.
     case owner
@@ -61,6 +61,8 @@ public enum Permission {
             
             let bytes = [self.byte] + expiryBytes + [startBytes.0, startBytes.1, endBytes.0, endBytes.1] + weekdaysBytes
             
+            assert(bytes.count == self.dynamicType.length)
+            
             return Data(byteValue: bytes)
         
         case .owner, .admin, .anytime:
@@ -107,10 +109,10 @@ public enum Permission {
             
             guard start <= end else { return nil }
             
-            guard let interval = Schedule.Interval(rawValue: start ... end)
+            guard let interval = Schedule.Interval(rawValue: start ..< end)
                 else { return nil }
             
-            let weekdaysBytes = Array(byteValue[sizeof(Int64) + 5 ... sizeof(Int64) + 5])
+            let weekdaysBytes = Array(byteValue[sizeof(Int64) + 5 ..< sizeof(Int64) + 5 + Schedule.Weekdays.length])
             
             guard let weekdays = Schedule.Weekdays(data: Data(byteValue: weekdaysBytes))
                 else { return nil }
@@ -125,10 +127,25 @@ public enum Permission {
     }
 }
 
+public func == (lhs: Permission, rhs: Permission) -> Bool {
+    
+    switch (lhs, rhs) {
+        
+    case (.owner, .owner): return true
+    case (.admin, .admin): return true
+    case (.anytime, .anytime): return true
+    case let (.scheduled(lhsSchedule), .scheduled(rhsSchedule)): return lhsSchedule == rhsSchedule
+        
+    default: return false
+    }
+}
+
+// MARK: - Schedule
+
 public extension Permission {
     
     /// Specifies the time and dates a permission is valid.
-    public struct Schedule {
+    public struct Schedule: Equatable {
         
         /// The date this permission becomes invalid.
         public var expiry: Date
@@ -168,17 +185,26 @@ public extension Permission {
     }
 }
 
+public func == (lhs: Permission.Schedule, rhs: Permission.Schedule) -> Bool {
+    
+    return lhs.expiry == rhs.expiry
+        && lhs.interval == rhs.interval
+        && lhs.weekdays == rhs.weekdays
+}
+
+// MARK: - Schedule Interval
+
 public extension Permission.Schedule {
     
     /// The minute interval range the lock can be unlocked.
-    public struct Interval: RawRepresentable {
+    public struct Interval: RawRepresentable, Equatable {
         
         public static let min: UInt16 = 0
         
         public static let max: UInt16 = 1440
         
         /// Interval for anytime access.
-        public static let anytime = Interval(rawValue: Interval.min ... Interval.max)!
+        public static let anytime = Interval(rawValue: Interval.min ..< Interval.max)!
         
         public let rawValue: Range<UInt16>
         
@@ -192,9 +218,11 @@ public extension Permission.Schedule {
     }
 }
 
+// MARK: - Schedule Weekdays
+
 public extension Permission.Schedule {
     
-    public struct Weekdays: DataConvertible {
+    public struct Weekdays: DataConvertible, Equatable {
         
         public static let length = 7
         
@@ -296,4 +324,15 @@ public extension Permission.Schedule {
             return Data(byteValue: bytes)
         }
     }
+}
+
+public func == (lhs: Permission.Schedule.Weekdays, rhs: Permission.Schedule.Weekdays) -> Bool {
+    
+    return lhs.sunday == rhs.sunday
+        && lhs.monday == rhs.monday
+        && lhs.tuesday == rhs.tuesday
+        && lhs.wednesday == rhs.wednesday
+        && lhs.thursday == rhs.thursday
+        && lhs.friday == rhs.friday
+        && lhs.saturday == rhs.saturday
 }

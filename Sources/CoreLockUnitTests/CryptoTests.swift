@@ -68,18 +68,20 @@ final class CryptoTests: XCTestCase {
         XCTAssert(decryptedData == key.data)
     }
     
-    func testEncryptSharedKey() {
+    func testEncryptSharedSecret() {
         
-        let key = KeyData()
+        let parentKey = KeyData()
         
-        let salt = KeyData()
+        let sharedSecret = SharedSecret()
         
-        let (encryptedData, iv) = encrypt(key: salt.data, data: key.data)
+        print("Shared Secret: \(sharedSecret.toData().byteValue)")
         
-        print("Encrypted key is \(encryptedData.byteValue.count) bytes")
+        let (encryptedData, iv) = encrypt(key: parentKey.data, data: sharedSecret.toData())
         
-        let decryptedData = decrypt(key: salt.data, iv: iv, data: encryptedData)
+        print("Encrypted shared secret is \(encryptedData.byteValue.count) bytes")
         
-        XCTAssert(decryptedData == key.data)
+        let decryptedData = decrypt(key: parentKey.data, iv: iv, data: encryptedData)
+        
+        XCTAssert(decryptedData == sharedSecret.toData())
     }
 }

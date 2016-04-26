@@ -12,7 +12,7 @@ import CoreLock
 
 final class GATTProfileTests: XCTestCase {
     
-    static let allTests: [(String, GATTProfileTests -> () throws -> Void)] = [("testLockIdentifier", testLockIdentifier), ("testLockAction", testLockAction), ("testLockSetup", testLockSetup), ("testUnlock", testUnlock)]
+    static let allTests: [(String, GATTProfileTests -> () throws -> Void)] = [("testLockIdentifier", testLockIdentifier), ("testLockSetup", testLockSetup), ("testUnlock", testUnlock)]
     
     func testLockIdentifier() {
         
@@ -44,29 +44,6 @@ final class GATTProfileTests: XCTestCase {
             
             XCTAssert(LockService.Identifier.init(bigEndian: correctedData)?.value == UUID)
         }
-    }
-    
-    func testLockAction() {
-        
-        // write action
-        
-        let key = KeyData()
-        
-        let nonce = Nonce()
-        
-        let action = Action.newKey
-        
-        let actionRequest = LockService.Action(action: action, nonce: nonce, key: key)
-        
-        let requestData = actionRequest.toBigEndian()
-        
-        guard let deserialized = LockService.Action.init(bigEndian: requestData)
-            else { XCTFail(); return }
-        
-        XCTAssert(deserialized.action == action)
-        XCTAssert(deserialized.nonce == nonce)
-        XCTAssert(deserialized.authenticated(with: key))
-        XCTAssert(deserialized.authenticated(with: KeyData()) == false)
     }
     
     func testLockSetup() {
@@ -112,5 +89,45 @@ final class GATTProfileTests: XCTestCase {
         XCTAssert(deserialized.nonce == nonce)
         XCTAssert(deserialized.authenticated(with: key))
         XCTAssert(deserialized.authenticated(with: KeyData()) == false)
+    }
+    
+    func testShareKey() {
+        
+        let parentRequestType = LockService.NewKeyParentSharedSecret.self
+        
+        let weekdays = Permission.Schedule.Weekdays.init(sunday: false,
+                                                         monday: true,
+                                                         tuesday: true,
+                                                         wednesday: true,
+                                                         thursday: true,
+                                                         friday: true,
+                                                         saturday: false)
+        
+        let date = Date(sinceReferenceDate: TimeInterval(Int(TimeIntervalSinceReferenceDate() + (60 * 60))))
+        
+        let schedule = Permission.Schedule(expiry: date, weekdays: weekdays)
+        
+        let permission = Permission.scheduled(schedule)
+        
+        let sharedSecret = SharedSecret()
+        
+        let parentKey = KeyData()
+        
+        let parentNonce = Nonce()
+        
+        let parentRequest = parentRequestType.init(nonce: parentNonce, sharedSecret: sharedSecret, parentKey: parentKey, permission: permission)
+        
+        let parentRequestData = parentRequest.toBigEndian()
+        
+        guard let parentDeserialized = parentRequestType.init(bigEndian: parentRequestData, parentKey: parentKey)
+            else { XCTFail(); return }
+        
+        XCTAssert(parentDeserialized.nonce == parentNonce)
+        XCTAssert(parentDeserialized.authenticated(with: parentKey))
+        XCTAssert(parentDeserialized.authenticated(with: KeyData()) == false)
+        XCTAssert(parentDeserialized.permission == permission, "\(parentDeserialized.permission) == \(permission)")
+        XCTAssert(parentDeserialized.parentKey == parentKey)
+        XCTAssert(parentDeserialized.sharedSecret == sharedSecret, "\(parentDeserialized.sharedSecret.toData().byteValue) == \(sharedSecret.toData().byteValue)")
+        
     }
 }

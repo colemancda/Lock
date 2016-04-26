@@ -22,9 +22,9 @@ public protocol GATTProfileCharacteristic {
     
     static var UUID: Bluetooth.UUID { get }
     
-    init?(bigEndian: Data)
+    //init?(bigEndian: Data)
     
-    func toBigEndian() -> Data
+    //func toBigEndian() -> Data
 }
 
 public protocol AuthenticatedCharacteristic: GATTProfileCharacteristic {
@@ -179,66 +179,6 @@ public struct LockService: GATTProfileService {
         }
     }
     
-    /// Used to change lock's mode.
-    ///
-    /// action + nonce + HMAC(key, nonce) (1 + 16 + 64 bytes) (write-only)
-    public struct Action: AuthenticatedCharacteristic {
-        
-        public static let length = 1 + Nonce.length + 64
-        
-        public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "FF0E91BE-044C-11E6-97B4-09AB70D5A8C7")!)
-        
-        public let action: CoreLock.Action
-        
-        public let nonce: Nonce
-        
-        /// HMAC of key and nonce
-        public let authentication: Data
-        
-        public init(action: CoreLock.Action, nonce: Nonce = Nonce(), key: KeyData) {
-            
-            self.action = action
-            self.nonce = nonce
-            self.authentication = HMAC(key: key, message: nonce)
-            
-            assert(authentication.byteValue.count == HMACSize)
-        }
-        
-        public init?(bigEndian: Data) {
-            
-            let bytes = bigEndian.byteValue
-            
-            guard bytes.count == self.dynamicType.length
-                else { return nil }
-            
-            let actionByte = bytes[0]
-            
-            let nonceBytes = Array(bytes[1 ..< 1 + Nonce.length])
-            
-            assert(nonceBytes.count == Nonce.length)
-            
-            let hmac = Array(bytes.suffix(from: 1 + Nonce.length))
-            
-            assert(hmac.count == HMACSize)
-            
-            guard let action = CoreLock.Action(rawValue: actionByte)
-                else { return nil }
-            
-            self.action = action
-            self.nonce = Nonce(data: Data(byteValue: nonceBytes))!
-            self.authentication =  Data(byteValue: hmac)
-        }
-        
-        public func toBigEndian() -> Data {
-            
-            let bytes = [action.rawValue] + nonce.data.byteValue + authentication.byteValue
-            
-            assert(bytes.count == self.dynamicType.length)
-            
-            return Data(byteValue: bytes)
-        }
-    }
-    
     /// nonce + IV + encrypt(salt, iv, newKey) + HMAC(salt, nonce) (write-only)
     public struct Setup: AuthenticatedCharacteristic {
         
@@ -298,6 +238,8 @@ public struct LockService: GATTProfileService {
             let (encryptedKey, iv) = encrypt(key: Setup.salt.data, data: value.data)
             
             let bytes = nonce.data.byteValue + iv.data.byteValue + encryptedKey.byteValue + authentication.byteValue
+            
+            assert(bytes.count == Setup.length)
             
             return Data(byteValue: bytes)
         }
@@ -362,30 +304,82 @@ public struct LockService: GATTProfileService {
     /// Parent Shared Secret (write-only)
     ///
     /// nonce + IV + encrypt(parentKey, iv, sharedSecret) + HMAC(parentKey, nonce) + permission
-    public struct NewKeyParentSharedSecret {
+    public struct NewKeyParentSharedSecret: AuthenticatedCharacteristic {
         
         public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "3A9EE5A8-044D-11E6-90F2-09AB70D5A8C7")!)
         
-        public static let length = Nonce.length + IVSize + 48 + HMACSize
-        
-        public let sharedSecret: SharedSecret
+        public static let length = Nonce.length + IVSize + 16 + HMACSize + Permission.length
         
         public let parentKey: KeyData
         
-        public let permission: Permission
+        public let sharedSecret: SharedSecret
         
+        public let permission: Permission
+                
         public let nonce: Nonce
         
         /// HMAC of key and nonce
         public let authentication: Data
         
-        public init(sharedSecret: SharedSecret, parentKey: KeyData, permission: Permission, nonce: Nonce = Nonce()) {
+        public init(nonce: Nonce = Nonce(), sharedSecret: SharedSecret, parentKey: KeyData, permission: Permission) {
             
-            self.sharedSecret = sharedSecret
             self.parentKey = parentKey
+            self.sharedSecret = sharedSecret
             self.permission = permission
             self.nonce = nonce
             self.authentication = HMAC(key: parentKey, message: nonce)
+        }
+        
+        public init?(bigEndian: Data, parentKey: KeyData) {
+            
+            let bytes = bigEndian.byteValue
+            
+            guard bytes.count == self.dynamicType.length
+                else { return nil }
+            
+            let nonceBytes = Array(bytes[0 ..< Nonce.length])
+            
+            self.nonce = Nonce(data: Data(byteValue: nonceBytes))!
+            
+            let ivBytes = Array(bytes[Nonce.length ..< Nonce.length + IVSize])
+            
+            let iv = InitializationVector(data: Data(byteValue: ivBytes))!
+            
+            let encryptedBytes = Array(bytes[Nonce.length + IVSize ..< Nonce.length + IVSize + 16])
+            
+            let decryptedData = decrypt(key: parentKey.data, iv: iv, data: Data(byteValue: encryptedBytes))
+            
+            assert(decryptedData.byteValue.count == SharedSecret.length)
+            
+            guard let sharedSecret = SharedSecret(data: decryptedData)
+                else { return nil }
+            
+            self.sharedSecret = sharedSecret
+            
+            let hmac = Array(bytes[Nonce.length + IVSize + 16 ..< Nonce.length + IVSize + 16 + HMACSize])
+            
+            assert(hmac.count == HMACSize)
+            
+            self.authentication = Data(byteValue: hmac)
+            
+            let permissionBytes = Array(bytes[Nonce.length + IVSize + 16 + HMACSize ..< Nonce.length + IVSize + 16 + HMACSize + Permission.length])
+            
+            guard let permission = Permission(bigEndian: Data(byteValue: permissionBytes))
+                else { return nil }
+            
+            self.permission = permission
+            self.parentKey = parentKey
+        }
+        
+        public func toBigEndian() -> Data {
+            
+            let (encryptedKey, iv) = encrypt(key: parentKey.data, data: sharedSecret.toData())
+            
+            let bytes = nonce.data.byteValue + iv.data.byteValue + encryptedKey.byteValue + authentication.byteValue + permission.toBigEndian().byteValue
+            
+            assert(bytes.count == self.dynamicType.length)
+            
+            return Data(byteValue: bytes)
         }
     }
     
