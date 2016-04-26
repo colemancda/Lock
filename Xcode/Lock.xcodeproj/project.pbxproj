@@ -16,7 +16,6 @@
 		6E1F60621CCB2C0C001914E7 /* EntityController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F605F1CCB2C0C001914E7 /* EntityController.swift */; };
 		6E1F60651CCB2D0A001914E7 /* LockCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F60641CCB2D0A001914E7 /* LockCache.swift */; };
 		6E1F60671CCB3885001914E7 /* CoreDataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F60661CCB3885001914E7 /* CoreDataExtensions.swift */; };
-		6E2A5D7C1CC8899D00BA7E15 /* LockSetup.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E2A5D7B1CC8899D00BA7E15 /* LockSetup.storyboard */; };
 		6E4E3F0C1CCBDBBD00196E39 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4E3F0B1CCBDBBD00196E39 /* Store.swift */; };
 		6E5269851CCC205500AB20A2 /* KeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5269841CCC205500AB20A2 /* KeysViewController.swift */; };
 		6E646CF21CC449770029A4B3 /* LockController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E646CF11CC449770029A4B3 /* LockController.swift */; };
@@ -155,7 +154,6 @@
 		6E1F605F1CCB2C0C001914E7 /* EntityController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityController.swift; sourceTree = "<group>"; };
 		6E1F60641CCB2D0A001914E7 /* LockCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockCache.swift; sourceTree = "<group>"; };
 		6E1F60661CCB3885001914E7 /* CoreDataExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataExtensions.swift; sourceTree = "<group>"; };
-		6E2A5D7B1CC8899D00BA7E15 /* LockSetup.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LockSetup.storyboard; sourceTree = "<group>"; };
 		6E4E3F0B1CCBDBBD00196E39 /* Store.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		6E5269841CCC205500AB20A2 /* KeysViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeysViewController.swift; sourceTree = "<group>"; };
 		6E646CF11CC449770029A4B3 /* LockController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockController.swift; sourceTree = "<group>"; };
@@ -355,7 +353,6 @@
 			children = (
 				6EE605B61CC21C1A008EF0EE /* Info.plist */,
 				6EE605AE1CC21C1A008EF0EE /* Main.storyboard */,
-				6E2A5D7B1CC8899D00BA7E15 /* LockSetup.storyboard */,
 				6EE605B11CC21C1A008EF0EE /* Assets.xcassets */,
 				6EE605B31CC21C1A008EF0EE /* LaunchScreen.storyboard */,
 				6EF45FD11CC72F58001F7A39 /* main.swift */,
@@ -607,7 +604,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				6EE605B51CC21C1A008EF0EE /* LaunchScreen.storyboard in Resources */,
-				6E2A5D7C1CC8899D00BA7E15 /* LockSetup.storyboard in Resources */,
 				6EE605B21CC21C1A008EF0EE /* Assets.xcassets in Resources */,
 				6EE605B01CC21C1A008EF0EE /* Main.storyboard in Resources */,
 			);

@@ -483,5 +483,10 @@ public struct LockService: GATTProfileService {
             return Key(data: keyData, permission: permission)
         }
     }
+    
+    public struct RemoveKey {
+        
+        
+    }
 }
 

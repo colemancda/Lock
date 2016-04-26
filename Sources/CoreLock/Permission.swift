@@ -28,14 +28,14 @@ public enum Permission: Equatable {
     case scheduled(Schedule)
     
     /// Byte value of the permission type.
-    public var byte: Byte {
+    public var type: PermissionType {
         
         switch self {
             
-        case .owner:        return 0x00
-        case .admin:        return 0x01
-        case .anytime:      return 0x02
-        case .scheduled(_): return 0x03
+        case .owner:        return .owner
+        case .admin:        return .admin
+        case .anytime:      return .anytime
+        case .scheduled(_): return .scheduled
         }
     }
     
@@ -59,7 +59,7 @@ public enum Permission: Equatable {
             
             let weekdaysBytes = schedule.weekdays.toData().byteValue
             
-            let bytes = [self.byte] + expiryBytes + [startBytes.0, startBytes.1, endBytes.0, endBytes.1] + weekdaysBytes
+            let bytes = [self.type.rawValue] + expiryBytes + [startBytes.0, startBytes.1, endBytes.0, endBytes.1] + weekdaysBytes
             
             assert(bytes.count == self.dynamicType.length)
             
@@ -69,7 +69,7 @@ public enum Permission: Equatable {
             
             var bytes = [UInt8](repeating: 0, count: Permission.length)
             
-            bytes[0] = self.byte
+            bytes[0] = self.type.rawValue
             
             return Data(byteValue: bytes)
         }
@@ -86,14 +86,14 @@ public enum Permission: Equatable {
         
         switch permissionTypeByte {
             
-        case Permission.owner.byte: self = .owner
+        case PermissionType.owner.rawValue: self = .owner
             
-        case Permission.admin.byte: self = .admin
+        case PermissionType.admin.rawValue: self = .admin
             
-        case Permission.anytime.byte: self = .anytime
+        case PermissionType.anytime.rawValue: self = .anytime
             
         // scheduled
-        case 0x03:
+        case PermissionType.scheduled.rawValue:
             
             var dateBytes = Array(byteValue[1 ..< 1 + sizeof(Int64)])
             
@@ -125,6 +125,14 @@ public enum Permission: Equatable {
         default: return nil
         }
     }
+}
+
+public enum PermissionType: UInt8 {
+    
+    case owner
+    case admin
+    case anytime
+    case scheduled
 }
 
 public func == (lhs: Permission, rhs: Permission) -> Bool {

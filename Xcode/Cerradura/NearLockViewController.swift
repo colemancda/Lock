@@ -171,8 +171,6 @@ final class NearLockViewController: UIViewController {
             }
             
         case .newKey: break
-            
-        case .update: break
         }
     }
     
@@ -304,13 +302,10 @@ final class NearLockViewController: UIViewController {
                 guard characteristics.contains({ $0.UUID == LockService.Unlock.UUID })
                     else { mainQueue{ controller.actionError("Unlock characteristic not found") }; return }
                 
-                guard characteristics.contains({ $0.UUID == LockService.Action.UUID })
-                    else { mainQueue{ controller.actionError("Action characteristic not found") }; return }
-                
                 guard characteristics.contains({ $0.UUID == LockService.NewKeyParentSharedSecret.UUID })
                     else { mainQueue{ controller.actionError("Parent Shared Secret characteristic not found") }; return }
                 
-                guard characteristics.contains({ $0.UUID == LockService.NewKeyChildKey.UUID })
+                guard characteristics.contains({ $0.UUID == LockService.NewKeyChildSharedSecret.UUID })
                     else { mainQueue { controller.actionError("Child Key characteristic not found") }; return }
                 
                 mainQueue {
