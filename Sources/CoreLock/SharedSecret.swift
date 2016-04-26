@@ -6,6 +6,13 @@
 //  Copyright © 2016 ColemanCDA. All rights reserved.
 //
 
+#if os(Linux)
+    import Glibc
+    import SwiftShims
+#else
+    import Darwin
+#endif
+
 import SwiftFoundation
 
 /// A shared secret for creating new keys.

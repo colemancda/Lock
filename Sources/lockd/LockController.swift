@@ -81,17 +81,15 @@ final class LockController {
         
         let status = Characteristic(UUID: LockService.Status.UUID, value: statusValue, permissions: [.Read], properties: [.Read])
         
-        let action = Characteristic(UUID: LockService.Action.UUID, permissions: [.Write], properties: [.Write])
-        
         let setup = Characteristic(UUID: LockService.Setup.UUID, permissions: [.Write], properties: [.Write])
         
         let unlock = Characteristic(UUID: LockService.Unlock.UUID, permissions: [.Write], properties: [.Write])
         
         let newKeyParent = Characteristic(UUID: LockService.NewKeyParentSharedSecret.UUID, permissions: [.Write], properties: [.Write])
         
-        let newKeyChild = Characteristic(UUID: LockService.NewKeyChildKey.UUID, value: Data(), permissions: [.Read], properties: [.Read])
+        let newKeyChild = Characteristic(UUID: LockService.NewKeyChildSharedSecret.UUID, value: Data(), permissions: [.Read], properties: [.Read])
         
-        let lockService = Service(UUID: LockService.UUID, primary: true, characteristics: [identifier, model, version, status, action, setup, unlock, newKeyParent, newKeyChild])
+        let lockService = Service(UUID: LockService.UUID, primary: true, characteristics: [identifier, model, version, status, setup, unlock, newKeyParent, newKeyChild])
         
         try! peripheral.add(service: lockService)
     }
