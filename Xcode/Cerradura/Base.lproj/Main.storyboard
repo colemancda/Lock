@@ -266,7 +266,7 @@
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" image="permissionBadgeAdmin" translatesAutoresizingMaskIntoConstraints="NO" id="Xa5-lH-OJX">
                                                     <rect key="frame" x="8" y="8" width="83" height="83.5"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="83.5" id="9om-NX-rr3"/>
+                                                        <constraint firstAttribute="height" constant="83" id="9om-NX-rr3"/>
                                                         <constraint firstAttribute="width" secondItem="Xa5-lH-OJX" secondAttribute="height" multiplier="1:1" id="lSD-3z-bDQ"/>
                                                         <constraint firstAttribute="width" constant="83" id="s9w-e7-9Ra"/>
                                                     </constraints>
@@ -324,6 +324,11 @@
                     </view>
                     <navigationItem key="navigationItem" title="Select key type" id="QKq-Rh-Pll">
                         <barButtonItem key="backBarButtonItem" title=" " id="Hvg-Im-Tp7"/>
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="QlN-AM-Sf2">
+                            <connections>
+                                <action selector="cancel:" destination="DkW-4h-x0o" id="nUZ-Eg-iCi"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="tableView" destination="GK5-Jl-Ba2" id="KVD-qI-s6v"/>
@@ -483,7 +488,18 @@
                             <constraint firstItem="qfb-xr-h0G" firstAttribute="centerY" secondItem="lmd-Rs-EUi" secondAttribute="centerY" id="uhd-Fj-3JF"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="New Key" id="n7B-HX-HrE"/>
+                    <navigationItem key="navigationItem" title="New Key" id="n7B-HX-HrE">
+                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="0Kl-ts-UOU">
+                            <connections>
+                                <action selector="done:" destination="yvH-GR-Cyh" id="DVD-y3-ZLf"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="activityIndicatorView" destination="Cue-Bg-pTt" id="lyj-H8-QFc"/>
+                        <outlet property="codeLabel" destination="qfb-xr-h0G" id="2UC-uj-nbL"/>
+                        <outlet property="doneBarItem" destination="0Kl-ts-UOU" id="DlY-c2-mVa"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="CtA-0E-OM0" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

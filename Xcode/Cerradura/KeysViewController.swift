@@ -35,7 +35,7 @@ final class KeysViewController: UIViewController {
     private lazy var queue: dispatch_queue_t = dispatch_queue_create("\(self.dynamicType) Internal Queue", DISPATCH_QUEUE_SERIAL)
     
     private let central = CentralManager()
-    
+        
     // MARK: - Loading
     
     override func viewDidLoad() {

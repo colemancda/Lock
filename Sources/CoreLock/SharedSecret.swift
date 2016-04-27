@@ -16,7 +16,7 @@
 import SwiftFoundation
 
 /// A shared secret for creating new keys.
-public struct SharedSecret: DataConvertible {
+public struct SharedSecret: DataConvertible, Equatable, CustomStringConvertible {
     
     public static let length = 8
     
@@ -31,6 +31,16 @@ public struct SharedSecret: DataConvertible {
     public init() {
         
         self.value = (Digit(), Digit(), Digit(), Digit(), Digit(), Digit(), Digit(), Digit())
+    }
+    
+    public var description: String {
+        
+        return value.0.description
+            + value.1.description
+            + value.2.description
+            + value.3.description
+            + value.4.description
+            + value.5.description
     }
     
     public init?(data: Data) {
@@ -67,7 +77,7 @@ public struct SharedSecret: DataConvertible {
 public extension SharedSecret {
     
     /// A Digit 0 ... 9
-    public struct Digit: RawRepresentable, Equatable {
+    public struct Digit: RawRepresentable, Equatable, CustomStringConvertible {
         
         public static let min = Digit(0)
         
@@ -106,6 +116,11 @@ public extension SharedSecret {
             assert(randomValue <= Digit.max.rawValue)
             
             self.rawValue = randomValue
+        }
+        
+        public var description: String {
+            
+            return "\(rawValue)"
         }
     }
 }

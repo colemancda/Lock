@@ -32,6 +32,13 @@ final class NewKeySelectPermissionViewController: UIViewController {
         self.tableView.rowHeight = UITableViewAutomaticDimension
     }
     
+    // MARK: - Actions
+    
+    @IBAction func cancel(_ sender: AnyObject?) {
+        
+        self.dismiss(animated: true, completion: nil)
+    }
+    
     // MARK: - Methods
     
     private func configure(cell: PermissionTypeTableViewCell, at indexPath: NSIndexPath) {
@@ -141,18 +148,6 @@ final class NewKeySelectPermissionViewController: UIViewController {
 }
 
 // MARK: - Supporting Types
-
-private extension NewKeySelectPermissionViewController {
-    
-    struct Option {
-        
-        let type: PermissionType
-        
-        let name: String
-        
-        let description: String
-    }
-}
 
 final class PermissionTypeTableViewCell: UITableViewCell {
     
