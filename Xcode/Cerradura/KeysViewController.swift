@@ -259,6 +259,27 @@ final class KeysViewController: UIViewController {
             }
         }
         
+        let newKey = UITableViewRowAction(style: UITableViewRowActionStyle.normal, title: "New key") { (action, index) in
+            
+            tableView.setEditing(false, animated: true)
+            
+            let navigationController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "newKeyNavigationStack") as! UINavigationController
+            
+            let destinationViewController = navigationController.viewControllers.first! as! NewKeySelectPermissionViewController
+            
+            destinationViewController.lockIdentifier = lockCache.identifier
+            
+            self.present(navigationController, animated: true, completion: nil)
+        }
+        
+        newKey.backgroundColor = UIColor.green()
+        
+        // Bluetooth must be on and only Admin and Owner can create keys
+        if central.state == .poweredOn && (lockCache.permission == .owner || lockCache.permission == .admin) {
+            
+            actions.append(newKey)
+        }
+        
         return actions
     }
     

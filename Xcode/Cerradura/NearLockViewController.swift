@@ -83,6 +83,19 @@ final class NearLockViewController: UIViewController {
     
     // MARK: - Actions
     
+    @IBAction func newKey(_ sender: UITabBarItem) {
+        
+        guard let foundLock = self.foundLock else { return }
+        
+        let navigationController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "newKeyNavigationStack") as! UINavigationController
+        
+        let destinationViewController = navigationController.viewControllers.first! as! NewKeySelectPermissionViewController
+        
+        destinationViewController.lockIdentifier = foundLock.UUID
+        
+        self.present(navigationController, animated: true, completion: nil)
+    }
+    
     @IBAction func actionButton(_ sender: UIButton) {
         
         guard let foundLock = self.foundLock else { return }
@@ -341,6 +354,8 @@ final class NearLockViewController: UIViewController {
     
     private func updateUI() {
         
+        self.navigationItem.rightBarButtonItem = nil
+        
         // No lock
         guard let lock = foundLock else {
             
@@ -400,17 +415,25 @@ final class NearLockViewController: UIViewController {
             
             // Unlock UI (if possible)
             
+            let lockInfo = Store.shared[lock.UUID]
+            
             // set lock name (if any)
-            let lockName = Store.shared[lock.UUID]?.name ?? "Lock"
+            let lockName = lockInfo?.name ?? "Lock"
             self.setTitle(lockName)
             
             self.actionImageView.stopAnimating()
             self.actionImageView.animationImages = nil
             self.actionImageView.isHidden = true
             self.actionButton.isHidden = false
-            self.actionButton.isEnabled = (Store.shared[lock.UUID] != nil)
+            self.actionButton.isEnabled = (lockInfo != nil)
             self.actionButton.setImage(UIImage(named: "unlockButton")!, for: UIControlState(rawValue: 0))
             self.actionButton.setImage(UIImage(named: "unlockButtonSelected")!, for: UIControlState.highlighted)
+            
+            // enable creating ney keys
+            if lockInfo?.key.permission == .owner || lockInfo?.key.permission == .admin {
+                
+                self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(newKey))
+            }
             
         case .newKey:
             
@@ -427,8 +450,6 @@ final class NearLockViewController: UIViewController {
             self.actionButton.isEnabled = true
             self.actionButton.setImage(UIImage(named: "setupKey")!, for: UIControlState(rawValue: 0))
             self.actionButton.setImage(UIImage(named: "setupKeySelected")!, for: UIControlState.highlighted)
-            
-        default: fatalError("not implemented")
         }
     }
     
