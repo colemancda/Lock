@@ -161,6 +161,8 @@ public func == (lhs: SharedSecret, rhs: SharedSecret) -> Bool {
         && lhs.value.3 == rhs.value.3
         && lhs.value.4 == rhs.value.4
         && lhs.value.5 == rhs.value.5
+        && lhs.value.6 == rhs.value.6
+        && lhs.value.7 == rhs.value.7
 }
 
 // MARK: - KeyData conversion
