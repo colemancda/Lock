@@ -146,8 +146,9 @@ final class NewKeyParentViewController: UIViewController {
             mainQueue {
                 
                 self.doneBarItem.isEnabled = true
-                
+                self.codeLabel.isHidden = false
                 self.codeLabel.text = "\(sharedSecret)"
+                self.activityIndicatorView.stopAnimating()
             }
         }
     }

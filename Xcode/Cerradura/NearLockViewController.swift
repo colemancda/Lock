@@ -183,7 +183,48 @@ final class NearLockViewController: UIViewController {
                 mainQueue { self.updateUI() }
             }
             
-        case .newKey: break
+        case .newKey:
+            
+            requestNewKey { (textValues) in
+                
+                guard let textValues = textValues else { return }
+                
+                // build shared secret from text
+                guard let sharedSecret = SharedSecret(string: textValues.sharedSecret)
+                    else { self.actionError("Invalid PIN code"); return }
+                
+                sender.isEnabled = false
+                
+                self.async {
+                    
+                    do {
+                        
+                        // read new key child characteristic
+                        
+                        let newKeyChildValue = try self.central.read(characteristic: LockService.NewKeyChildSharedSecret.UUID, service: LockService.UUID, peripheral: foundLock.peripheral)
+                        
+                        guard let newKeyChild = LockService.NewKeyChildSharedSecret.init(bigEndian: newKeyChildValue)
+                            else { mainQueue { self.actionError("Invalid value for new key characteristic") }; return }
+                        
+                        guard let key = newKeyChild.decrypt(sharedSecret: sharedSecret)
+                            else { mainQueue { self.actionError("Invalid PIN code") }; return }
+                        
+                        // write confirmation value
+                        
+                        
+                        mainQueue {
+                            
+                            let lock = Lock(identifier: foundLock.UUID, name: textValues.name, model: foundLock.model, version: foundLock.version, key: key)
+                            
+                            Store.shared[foundLock.UUID] = lock
+                            
+                            print("Successfully added new key for lock \(textValues.name)")
+                        }
+                    }
+                    
+                    catch { mainQueue { self.actionError("\(error)") }; return }
+                }
+            }
         }
     }
     
@@ -437,12 +478,13 @@ final class NearLockViewController: UIViewController {
             
         case .newKey:
             
+            /// Cannot have duplicate keys for same lock.
+            guard Store.shared[key: lock.UUID] == nil
+                else { foundLock?.status = .unlock; updateUI(); return }
+            
             // new key UI
             
-            // set lock name (if any)
-            let lockName = Store.shared[lock.UUID]?.name ?? "New Key"
-            self.setTitle(lockName)
-            
+            self.setTitle("New Key")
             self.actionImageView.stopAnimating()
             self.actionImageView.animationImages = nil
             self.actionImageView.isHidden = true
@@ -465,6 +507,34 @@ final class NearLockViewController: UIViewController {
         alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "OK"), style: UIAlertActionStyle.`default`, handler: { (UIAlertAction) in
             
             completion(alert.textFields![0].text)
+            
+            alert.dismiss(animated: true) {  }
+            
+        }))
+        
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: UIAlertActionStyle.destructive, handler: { (UIAlertAction) in
+            
+            completion(nil)
+            
+            alert.dismiss(animated: true) {  }
+        }))
+        
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    private func requestNewKey(_ completion: (name: String, sharedSecret: String)? -> ()) {
+        
+        let alert = UIAlertController(title: NSLocalizedString("New Key", comment: "NewKeyTitle"),
+                                      message: "Type a user friendly name for the lock and enter the PIN code.",
+                                      preferredStyle: UIAlertControllerStyle.alert)
+        
+        alert.addTextField { $0.text = "Lock" }
+        
+        alert.addTextField { $0.placeholder = "PIN Code"; $0.keyboardType = .numberPad }
+        
+        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "OK"), style: UIAlertActionStyle.`default`, handler: { (UIAlertAction) in
+            
+            completion((name: alert.textFields![0].text ?? "", sharedSecret: alert.textFields![1].text ?? ""))
             
             alert.dismiss(animated: true) {  }
             

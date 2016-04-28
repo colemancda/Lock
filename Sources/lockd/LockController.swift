@@ -205,6 +205,8 @@ final class LockController {
             guard let _ = newKeyParent.decrypt(key: authenticatedKey.data)
                 else { return ATT.Error.WriteNotPermitted }
             
+            return nil
+            
         default: fatalError("Writing to characteristic \(UUID)")
         }
     }

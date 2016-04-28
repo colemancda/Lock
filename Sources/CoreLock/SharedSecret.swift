@@ -33,16 +33,6 @@ public struct SharedSecret: DataConvertible, Equatable, CustomStringConvertible 
         self.value = (Digit(), Digit(), Digit(), Digit(), Digit(), Digit(), Digit(), Digit())
     }
     
-    public var description: String {
-        
-        return value.0.description
-            + value.1.description
-            + value.2.description
-            + value.3.description
-            + value.4.description
-            + value.5.description
-    }
-    
     public init?(data: Data) {
         
         guard data.byteValue.count == SharedSecret.length
@@ -71,6 +61,36 @@ public struct SharedSecret: DataConvertible, Equatable, CustomStringConvertible 
                                 value.5.rawValue,
                                 value.6.rawValue,
                                 value.7.rawValue])
+    }
+    
+    public var description: String {
+        
+        return value.0.description
+            + value.1.description
+            + value.2.description
+            + value.3.description
+            + value.4.description
+            + value.5.description
+            + value.6.description
+            + value.7.description
+    }
+    
+    public init?(string: String) {
+        
+        guard string.utf8.count == SharedSecret.length
+            else { return nil }
+        
+        guard let d1 = Digit(string: string.substring(range: 0 ..< 1)!),
+            let d2 = Digit(string: string.substring(range: 1 ..< 2)!),
+            let d3 = Digit(string: string.substring(range: 2 ..< 3)!),
+            let d4 = Digit(string: string.substring(range: 3 ..< 4)!),
+            let d5 = Digit(string: string.substring(range: 4 ..< 5)!),
+            let d6 = Digit(string: string.substring(range: 5 ..< 6)!),
+            let d7 = Digit(string: string.substring(range: 6 ..< 7)!),
+            let d8 = Digit(string: string.substring(range: 7 ..< 8)!)
+            else { return nil }
+        
+        self.value = (d1, d2, d3, d4, d5, d6, d7, d8)
     }
 }
 
@@ -121,6 +141,14 @@ public extension SharedSecret {
         public var description: String {
             
             return "\(rawValue)"
+        }
+        
+        public init?(string: String) {
+            
+            guard let digit = Digit.RawValue.init(string)
+                else { return nil }
+            
+            self.rawValue = digit
         }
     }
 }

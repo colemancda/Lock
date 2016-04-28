@@ -484,6 +484,57 @@ public struct LockService: GATTProfileService {
         }
     }
     
+    /// Used to finish new key proccess door.
+    ///
+    /// nonce + HMAC(key, nonce) (16 + 64 bytes) (write-only)
+    public struct NewKeyFinish: AuthenticatedCharacteristic {
+        
+        public static let length = Nonce.length + HMACSize
+        
+        public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "265B3EC0-044D-11E6-90F2-09AB70D5A8C7")!)
+        
+        public let nonce: Nonce
+        
+        /// HMAC of key and nonce
+        public let authentication: Data
+        
+        public init(nonce: Nonce = Nonce(), key: KeyData) {
+            
+            self.nonce = nonce
+            self.authentication = HMAC(key: key, message: nonce)
+            
+            assert(authentication.byteValue.count == HMACSize)
+        }
+        
+        public init?(bigEndian: Data) {
+            
+            let bytes = bigEndian.byteValue
+            
+            guard bytes.count == self.dynamicType.length
+                else { return nil }
+            
+            let nonceBytes = Array(bytes[0 ..< Nonce.length])
+            
+            assert(nonceBytes.count == Nonce.length)
+            
+            let hmac = Array(bytes.suffix(from: Nonce.length))
+            
+            assert(hmac.count == HMACSize)
+            
+            self.nonce = Nonce(data: Data(byteValue: nonceBytes))!
+            self.authentication =  Data(byteValue: hmac)
+        }
+        
+        public func toBigEndian() -> Data {
+            
+            let bytes = nonce.data.byteValue + authentication.byteValue
+            
+            assert(bytes.count == self.dynamicType.length)
+            
+            return Data(byteValue: bytes)
+        }
+    }
+    
     public struct RemoveKey {
         
         
