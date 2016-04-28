@@ -89,7 +89,9 @@ final class LockController {
         
         let newKeyChild = Characteristic(UUID: LockService.NewKeyChildSharedSecret.UUID, value: Data(), permissions: [.Read], properties: [.Read])
         
-        let lockService = Service(UUID: LockService.UUID, primary: true, characteristics: [identifier, model, version, status, setup, unlock, newKeyParent, newKeyChild])
+        let newKeyFinish = Characteristic(UUID: LockService.NewKeyFinish.UUID, value: Data(), permissions: [.Write], properties: [.Write])
+        
+        let lockService = Service(UUID: LockService.UUID, primary: true, characteristics: [identifier, model, version, status, setup, unlock, newKeyParent, newKeyChild, newKeyFinish])
         
         try! peripheral.add(service: lockService)
     }
@@ -127,8 +129,6 @@ final class LockController {
             
             guard key.authenticatedWithSalt()
                 else { return ATT.Error.WriteNotPermitted }
-            
-            return nil
             
         case LockService.Unlock.UUID:
             
@@ -171,8 +171,6 @@ final class LockController {
             
             print("Unlocked by central \(central.identifier)")
             
-            return nil
-            
         case LockService.NewKeyParentSharedSecret.UUID:
             
             guard status == .unlock
@@ -205,10 +203,19 @@ final class LockController {
             guard let _ = newKeyParent.decrypt(key: authenticatedKey.data)
                 else { return ATT.Error.WriteNotPermitted }
             
-            return nil
+        case LockService.NewKeyFinish.UUID:
             
-        default: fatalError("Writing to characteristic \(UUID)")
+            guard status == .newKey
+                else { return ATT.Error.WriteNotPermitted }
+            
+            // deserialize
+            guard let _ = LockService.NewKeyFinish.init(bigEndian: newValue)
+                else { return ATT.Error.InvalidAttributeValueLength }
+            
+        default: fatalError("Writing to unknown characteristic \(UUID)")
         }
+        
+        return nil
     }
     
     private func didWrite(central: Central, UUID: Bluetooth.UUID, value: SwiftFoundation.Data, newValue: SwiftFoundation.Data){
@@ -266,6 +273,29 @@ final class LockController {
             let newKeyChild = LockService.NewKeyChildSharedSecret(sharedSecret: sharedSecret, newKey: newKey)
             
             peripheral[characteristic: LockService.NewKeyChildSharedSecret.UUID] = newKeyChild.toBigEndian()
+            
+        case LockService.NewKeyFinish.UUID:
+            
+            assert(status == .newKey)
+            
+            // deserialize
+            let newKeyFinish = LockService.NewKeyFinish.init(bigEndian: newValue)!
+            
+            guard let newKey = keys.last
+                else { fatalError("No keys") }
+            
+            self.status = .unlock
+            
+            guard newKeyFinish.authenticated(with: newKey.data) else {
+                
+                print("Invalid authentication for New Key confirmation, deleting new key")
+                
+                keys.removeLast()
+                
+                return
+            }
+            
+            print("Successfully created new \(newKey.permission) key")
             
         default: fatalError("Writing to characteristic \(UUID)")
         }

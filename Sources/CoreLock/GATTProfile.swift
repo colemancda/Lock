@@ -486,12 +486,12 @@ public struct LockService: GATTProfileService {
     
     /// Used to finish new key proccess door.
     ///
-    /// nonce + HMAC(key, nonce) (16 + 64 bytes) (write-only)
+    /// nonce + HMAC(newKey, nonce) (16 + 64 bytes) (write-only)
     public struct NewKeyFinish: AuthenticatedCharacteristic {
         
         public static let length = Nonce.length + HMACSize
         
-        public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "265B3EC0-044D-11E6-90F2-09AB70D5A8C7")!)
+        public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "C52B681E-0CE4-11E6-9998-AC69ADB65F8F")!)
         
         public let nonce: Nonce
         

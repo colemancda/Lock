@@ -357,10 +357,13 @@ final class NearLockViewController: UIViewController {
                     else { mainQueue{ controller.actionError("Unlock characteristic not found") }; return }
                 
                 guard characteristics.contains({ $0.UUID == LockService.NewKeyParentSharedSecret.UUID })
-                    else { mainQueue{ controller.actionError("Parent Shared Secret characteristic not found") }; return }
+                    else { mainQueue{ controller.actionError("New Key Parent characteristic not found") }; return }
                 
                 guard characteristics.contains({ $0.UUID == LockService.NewKeyChildSharedSecret.UUID })
-                    else { mainQueue { controller.actionError("Child Key characteristic not found") }; return }
+                    else { mainQueue { controller.actionError("New Key Child characteristic not found") }; return }
+                
+                guard characteristics.contains({ $0.UUID == LockService.NewKeyFinish.UUID })
+                    else { mainQueue { controller.actionError("New Key Confirmation characteristic not found") }; return }
                 
                 mainQueue {
                     
@@ -436,6 +439,30 @@ final class NearLockViewController: UIViewController {
             return
         }
         
+        func configureUnlockUI() {
+            
+            // Unlock UI (if possible)
+            let lockInfo = Store.shared[lock.UUID]
+            
+            // set lock name (if any)
+            let lockName = lockInfo?.name ?? "Lock"
+            self.setTitle(lockName)
+            
+            self.actionImageView.stopAnimating()
+            self.actionImageView.animationImages = nil
+            self.actionImageView.isHidden = true
+            self.actionButton.isHidden = false
+            self.actionButton.isEnabled = (lockInfo != nil)
+            self.actionButton.setImage(UIImage(named: "unlockButton")!, for: UIControlState(rawValue: 0))
+            self.actionButton.setImage(UIImage(named: "unlockButtonSelected")!, for: UIControlState.highlighted)
+            
+            // enable creating ney keys
+            if (lockInfo?.key.permission == .owner || lockInfo?.key.permission == .admin) && lock.status == .unlock {
+                
+                self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(newKey))
+            }
+        }
+        
         switch lock.status {
             
         case .setup:
@@ -454,33 +481,13 @@ final class NearLockViewController: UIViewController {
             
         case .unlock:
             
-            // Unlock UI (if possible)
-            
-            let lockInfo = Store.shared[lock.UUID]
-            
-            // set lock name (if any)
-            let lockName = lockInfo?.name ?? "Lock"
-            self.setTitle(lockName)
-            
-            self.actionImageView.stopAnimating()
-            self.actionImageView.animationImages = nil
-            self.actionImageView.isHidden = true
-            self.actionButton.isHidden = false
-            self.actionButton.isEnabled = (lockInfo != nil)
-            self.actionButton.setImage(UIImage(named: "unlockButton")!, for: UIControlState(rawValue: 0))
-            self.actionButton.setImage(UIImage(named: "unlockButtonSelected")!, for: UIControlState.highlighted)
-            
-            // enable creating ney keys
-            if lockInfo?.key.permission == .owner || lockInfo?.key.permission == .admin {
-                
-                self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(newKey))
-            }
+            configureUnlockUI()
             
         case .newKey:
             
             /// Cannot have duplicate keys for same lock.
             guard Store.shared[key: lock.UUID] == nil
-                else { foundLock?.status = .unlock; updateUI(); return }
+                else { configureUnlockUI(); return }
             
             // new key UI
             
