@@ -100,6 +100,31 @@ final class NearLockViewController: UIViewController {
         
         guard let foundLock = self.foundLock else { return }
         
+        func unlock() {
+            
+            print("Unlocking")
+            
+            sender.isEnabled = false
+            
+            guard let cachedLock = Store.shared[foundLock.UUID]
+                else { self.actionError("No stored key for lock"); return }
+            
+            let unlock = LockService.Unlock.init(key: cachedLock.key.data)
+            
+            async {
+                
+                // write to unlock characteristic
+                
+                do { try self.central.write(data: unlock.toBigEndian(), response: true, characteristic: LockService.Unlock.UUID, service: LockService.UUID, peripheral: foundLock.peripheral) }
+                    
+                catch { mainQueue { self.actionError("\(error)") }; return }
+                
+                print("Successfully unlocked lock \"\(foundLock.UUID)\"")
+                
+                mainQueue { self.updateUI() }
+            }
+        }
+        
         switch foundLock.status {
             
         case .setup:
@@ -161,29 +186,12 @@ final class NearLockViewController: UIViewController {
             
         case .unlock:
             
-            print("Unlocking")
-            
-            sender.isEnabled = false
-            
-            guard let cachedLock = Store.shared[foundLock.UUID]
-                else { self.actionError("No stored key for lock"); return }
-            
-            let unlock = LockService.Unlock.init(key: cachedLock.key.data)
-            
-            async {
-                
-                // write to unlock characteristic
-                
-                do { try self.central.write(data: unlock.toBigEndian(), response: true, characteristic: LockService.Unlock.UUID, service: LockService.UUID, peripheral: foundLock.peripheral) }
-                
-                catch { mainQueue { self.actionError("\(error)") }; return }
-                
-                print("Successfully unlocked lock \(foundLock.UUID)")
-                
-                mainQueue { self.updateUI() }
-            }
+            unlock()
             
         case .newKey:
+            
+            guard Store.shared[key: foundLock.UUID] == nil
+                else { unlock(); return }
             
             requestNewKey { (textValues) in
                 
@@ -211,6 +219,9 @@ final class NearLockViewController: UIViewController {
                         
                         // write confirmation value
                         
+                        let newKeyFinish = LockService.NewKeyFinish.init(key: key.data)
+                        
+                        try self.central.write(data: newKeyFinish.toBigEndian(), response: true, characteristic: LockService.NewKeyFinish.UUID, service: LockService.UUID, peripheral: foundLock.peripheral)
                         
                         mainQueue {
                             

@@ -21,7 +21,7 @@ final class NewKeySelectPermissionViewController: UIViewController {
     
     var lockIdentifier: SwiftFoundation.UUID!
     
-    private let permissionTypes: [PermissionType] = [.admin, .anytime, .scheduled]
+    private let permissionTypes: [PermissionType] = [.admin, .anytime /*, .scheduled*/]
     
     // MARK: - Loading
     
