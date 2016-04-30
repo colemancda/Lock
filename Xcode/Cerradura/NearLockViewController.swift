@@ -79,6 +79,8 @@ final class NearLockViewController: UIViewController {
         super.viewDidDisappear(animated)
         
         visible = false
+        
+        central.disconnectAll()
     }
     
     // MARK: - Actions
@@ -190,7 +192,7 @@ final class NearLockViewController: UIViewController {
             
         case .newKey:
             
-            guard Store.shared[key: foundLock.UUID] == nil
+            guard Store.shared[foundLock.UUID] == nil
                 else { unlock(); return }
             
             requestNewKey { (textValues) in
@@ -230,6 +232,15 @@ final class NearLockViewController: UIViewController {
                             Store.shared[foundLock.UUID] = lock
                             
                             print("Successfully added new key for lock \(textValues.name)")
+                            
+                            // in case the user left the VC
+                            if self.foundLock?.UUID == foundLock.UUID {
+                                
+                                self.foundLock!.status = .unlock
+                                
+                                // update UI (should go to unlock mode)
+                                mainQueue { self.updateUI() }
+                            }
                         }
                     }
                     
@@ -497,7 +508,7 @@ final class NearLockViewController: UIViewController {
         case .newKey:
             
             /// Cannot have duplicate keys for same lock.
-            guard Store.shared[key: lock.UUID] == nil
+            guard Store.shared[lock.UUID] == nil
                 else { configureUnlockUI(); return }
             
             // new key UI

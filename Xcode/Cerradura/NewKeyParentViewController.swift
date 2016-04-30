@@ -52,6 +52,12 @@ final class NewKeyParentViewController: UIViewController {
         }
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        central.disconnectAll()
+    }
+    
     // MARK: - Actions
     
     @IBAction func done(_ sender: AnyObject?) {

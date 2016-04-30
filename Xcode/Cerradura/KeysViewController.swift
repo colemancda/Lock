@@ -52,6 +52,12 @@ final class KeysViewController: UIViewController {
         try! fetchedResultsController.performFetch()
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        central.disconnectAll()
+    }
+    
     // MARK: - Methods
     
     private func stateChanged(_ state: CBCentralManagerState) {
