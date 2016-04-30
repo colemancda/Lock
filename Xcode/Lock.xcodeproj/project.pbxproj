@@ -46,6 +46,10 @@
 		6E9923791CCDE6CD00C0B92C /* SharedSecret.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9923781CCDE6CD00C0B92C /* SharedSecret.swift */; };
 		6E99237A1CCDE6CD00C0B92C /* SharedSecret.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9923781CCDE6CD00C0B92C /* SharedSecret.swift */; };
 		6EA899701CC2E3F0005FC225 /* GATTProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA8996F1CC2E3F0005FC225 /* GATTProfile.swift */; };
+		6EB2E9E61CD54721000CF975 /* Central.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB2E9E51CD54721000CF975 /* Central.swift */; };
+		6EB2E9E71CD54721000CF975 /* Central.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB2E9E51CD54721000CF975 /* Central.swift */; };
+		6EB2E9E91CD547CA000CF975 /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB2E9E81CD547CA000CF975 /* Observable.swift */; };
+		6EB2E9EA1CD547CA000CF975 /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB2E9E81CD547CA000CF975 /* Observable.swift */; };
 		6EB4132D1CC2EE68005AB1E2 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB4132C1CC2EE68005AB1E2 /* Configuration.swift */; };
 		6EB413331CC317A3005AB1E2 /* Bool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB413321CC317A3005AB1E2 /* Bool.swift */; };
 		6ED338651CC7C1A800DF1461 /* Permission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED338641CC7C1A800DF1461 /* Permission.swift */; };
@@ -180,6 +184,8 @@
 		6E9923761CCD268E00C0B92C /* Arduino.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Arduino.swift; sourceTree = "<group>"; };
 		6E9923781CCDE6CD00C0B92C /* SharedSecret.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedSecret.swift; sourceTree = "<group>"; };
 		6EA8996F1CC2E3F0005FC225 /* GATTProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTProfile.swift; sourceTree = "<group>"; };
+		6EB2E9E51CD54721000CF975 /* Central.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Central.swift; sourceTree = "<group>"; };
+		6EB2E9E81CD547CA000CF975 /* Observable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Observable.swift; sourceTree = "<group>"; };
 		6EB4132A1CC2ECD7005AB1E2 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		6EB4132C1CC2EE68005AB1E2 /* Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		6EB413301CC30084005AB1E2 /* Status.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Status.swift; sourceTree = "<group>"; };
@@ -403,6 +409,8 @@
 				6E729C4B1CC3B8220018A848 /* Model.swift */,
 				6E1F604D1CCB0130001914E7 /* Key.swift */,
 				6ED338641CC7C1A800DF1461 /* Permission.swift */,
+				6EB2E9E81CD547CA000CF975 /* Observable.swift */,
+				6EB2E9E51CD54721000CF975 /* Central.swift */,
 			);
 			name = CoreLock;
 			path = ../Sources/CoreLock;
@@ -725,7 +733,9 @@
 				6E729C4C1CC3B8220018A848 /* Model.swift in Sources */,
 				6ED338651CC7C1A800DF1461 /* Permission.swift in Sources */,
 				6E729C421CC32F890018A848 /* SecureData.swift in Sources */,
+				6EB2E9E91CD547CA000CF975 /* Observable.swift in Sources */,
 				6E646CF41CC4A5730029A4B3 /* Version.swift in Sources */,
+				6EB2E9E61CD54721000CF975 /* Central.swift in Sources */,
 				6E729C821CC3C6930018A848 /* Crypto.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -742,7 +752,9 @@
 				6EF45F951CC6CAF9001F7A39 /* Model.swift in Sources */,
 				6ED338661CC7C1A800DF1461 /* Permission.swift in Sources */,
 				6EF45F961CC6CAF9001F7A39 /* SecureData.swift in Sources */,
+				6EB2E9EA1CD547CA000CF975 /* Observable.swift in Sources */,
 				6EF45F971CC6CAF9001F7A39 /* Version.swift in Sources */,
+				6EB2E9E71CD54721000CF975 /* Central.swift in Sources */,
 				6EF45F981CC6CAF9001F7A39 /* Crypto.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
