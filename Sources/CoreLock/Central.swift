@@ -8,170 +8,189 @@
 
 #if os(OSX) || os(iOS) || os(watchOS)
     
-    import Foundation
-    import CoreBluetooth
     import SwiftFoundation
+    import GATT
+    import CoreBluetooth
     
-    public final class Central: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
+    public final class Central {
+        
+        // MARK: - Initialization
         
         public static let shared: Central = {
             
             let central = Central()
             
             // initialize lazy value
-            let _ = central.internalManager
+            let _ = central.internalManager.state
+            
+            // start scanning
+            central.startScan()
             
             return central
         }()
         
         // MARK: - Properties
         
-        public var log: (String -> ())?
+        public var log: (String -> ())? {
+            
+            get { return internalManager.log }
+            
+            set { internalManager.log = newValue }
+        }
         
-        public var scanInterval: TimeInterval = 3
+        public let scanDuration = 2
         
-        public var connectionTimeout: TimeInterval = 5
+        public let foundLock = Observable<(peripheral: Peripheral, UUID: SwiftFoundation.UUID, status: Status, model: Model, version: UInt64)?>()
         
-        public let lock = Observable<(UUID: SwiftFoundation.UUID, status: Status, model: Model, version: UInt64)?>()
-        
-        public lazy var state = Observable(CBCentralManagerState.unknown)
+        public let state = Observable(CBCentralManagerState.unknown)
         
         // MARK: - Private Properties
         
-        private var foundLock: (peripheral: CBPeripheral, UUID: SwiftFoundation.UUID, status: Status, model: Model, version: UInt64)? {
-            
-            didSet {
-                
-                guard let foundLock = self.foundLock
-                    else { lock.value = nil; return }
-                
-                lock.value = (UUID: foundLock.UUID, status: foundLock.status, foundLock.model, foundLock.version)
-            }
-        }
-        
-        private lazy var internalManager: CBCentralManager = CBCentralManager(delegate: self, queue: self.queue)
-        
         private lazy var queue: dispatch_queue_t = dispatch_queue_create("\(self.dynamicType) Internal Queue", DISPATCH_QUEUE_SERIAL)
         
-        private var finishScanTimer: NSTimer?
-        
-        private var connectTimer: NSTimer?
-        
-        private var scanPeripherals = [CBPeripheral]()
+        private lazy var internalManager: CentralManager = CentralManager()
         
         // MARK: - Methods
         
-        
+        /// Setup the connected lock
+        func setup() {
+            
+            guard let lock = self.foundLock.value
+                else { return }
+            
+            
+        }
         
         // MARK: - Private Methods
         
-        @objc private func endScan() {
+        /// Perform a task on the internal queue.
+        private func async(_ block: () -> ()) {
             
-            finishScanTimer = nil
-            
-            internalManager.stopScan()
-            
-            log?("Scanned peripherals \(scanPeripherals.map({ $0.identifier.uuidString }))")
-            
-            for peripheral in scanPeripherals {
-                
-                peripheral.delegate = self
-                
-                internalManager.connect(peripheral, options: nil)
-            }
-            
-            connectTimer = NSTimer.scheduledTimer(timeInterval: scanInterval, target: self, selector: #selector(endConnect), userInfo: nil, repeats: false)
+            dispatch_async(queue) { block() }
         }
         
-        @objc private func endConnect() {
+        private func stateChanged(state: CBCentralManagerState) {
             
-            connectTimer = nil
+            if foundLock.value != nil { foundLock.value = nil }
             
-            /// scan again
-            guard scanPeripherals.contains({ $0.state == .connected }) else {
+            if state == .poweredOn {
                 
-                internalManager.scanForPeripherals(withServices: nil, options: nil)
-                
-                finishScanTimer = NSTimer.scheduledTimer(timeInterval: scanInterval, target: self, selector: #selector(endScan), userInfo: nil, repeats: false)
-                
-                return
-            }
-            
-            /// discover services of connected peripherals
-            
-            for peripheral in scanPeripherals {
-                
-                guard peripheral.state == .connected else { continue }
-                
-                peripheral.discoverServices(nil)
+                self.startScan()
             }
         }
         
-        // MARK: - CBCentralManagerDelegate
-        
-        public func centralManagerDidUpdateState(_ central: CBCentralManager) {
+        /// Internal method to be called to start the scanning.
+        private func startScan() {
             
-            log?("Did update state (\(central.state == .poweredOn ? "Powered On" : "\(central.state.rawValue)"))")
+            log?("Scanning...")
             
-            /// reset found lock
-            if foundLock != nil { foundLock = nil }
+            if foundLock.value != nil { foundLock.value = nil }
             
-            state.value = central.state
-            
-            if central.state == .poweredOn {
+            async {
                 
-                central.scanForPeripherals(withServices: nil, options: nil)
-                
-                finishScanTimer = NSTimer.scheduledTimer(timeInterval: scanInterval, target: self, selector: #selector(endScan), userInfo: nil, repeats: false)
+                while self.internalManager.state == .poweredOn && self.foundLock.value == nil {
+                    
+                    let foundDevices = self.internalManager.scan(duration: self.scanDuration)
+                    
+                    if foundDevices.count > 0 { self.log?("Found \(foundDevices.count) peripherals") }
+                    
+                    for peripheral in foundDevices {
+                        
+                        do { try self.internalManager.connect(to: peripheral) }
+                            
+                        catch { print("Cound not connect to \(peripheral.identifier) (\(error))"); continue }
+                        
+                        guard let services = try? self.internalManager.discoverServices(for: peripheral)
+                            else { continue }
+                        
+                        // found lock
+                        if services.contains({ $0.UUID == LockService.UUID }) {
+                            
+                            self.foundLock(peripheral: peripheral)
+                            return
+                        }
+                    }
+                }
             }
         }
         
-        @objc(centralManager:didDiscoverPeripheral:advertisementData:RSSI:)
-        public func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : AnyObject], rssi RSSI: NSNumber) {
+        private func foundLock(peripheral: Peripheral) {
             
-            log?("Discovered peripheral \(peripheral.identifier.uuidString) (\(RSSI))")
+            log?("Found lock peripheral \(peripheral.identifier)")
             
-            scanPeripherals.append(peripheral)
-        }
-        
-        @objc(centralManager:didConnectPeripheral:)
-        public func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
-            
-            log?("Connected to peripheral \(peripheral.identifier.uuidString)")
-        }
-        
-        // MARK: - CBPeripheralDelegate
-        
-        public func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: NSError?) {
-            
-            if let error = error {
+            func foundLockError(_ error: String) {
                 
-                log?("Error discovering services (\(error))")
+                log?(error)
                 
-            } else {
-                
-                log?("Peripheral \(peripheral.identifier.uuidString) did discover \(peripheral.services?.count ?? 0) services")
+                startScan()
             }
             
-            guard let lockService = (peripheral.services ?? []).filter({ $0.uuid == LockService.UUID.toFoundation() }).first
-                else { return }
-            
-            peripheral.discoverCharacteristics(nil, for: lockService)
-        }
-        
-        @objc(peripheral:didDiscoverCharacteristicsForService:error:)
-        public func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: NSError?) {
-            
-            if let error = error {
+            async { [weak self] in
                 
-                log?("Error discovering characteristics (\(error))")
+                guard let controller = self else { return }
                 
-            } else {
-                
-                log?("Peripheral \(peripheral.identifier.uuidString) did discover \(service.characteristics?.count ?? 0) characteristics for service \(service.uuid.uuidString)")
+                do {
+                    
+                    // get lock status
+                    
+                    let characteristics = try controller.internalManager.discoverCharacteristics(for: LockService.UUID, peripheral: peripheral)
+                    
+                    guard characteristics.contains({ $0.UUID == LockService.Status.UUID })
+                        else { foundLockError("Status characteristic not found"); return }
+                    
+                    let statusValue = try controller.internalManager.read(characteristic: LockService.Status.UUID, service: LockService.UUID, peripheral: peripheral)
+                    
+                    guard let status = LockService.Status.init(bigEndian: statusValue)
+                        else { foundLockError("Invalid data for Lock status"); return }
+                    
+                    // get lock UUID
+                    
+                    guard characteristics.contains({ $0.UUID == LockService.Identifier.UUID })
+                        else { foundLockError("Identifier characteristic not found"); return }
+                    
+                    let identifierValue = try controller.internalManager.read(characteristic: LockService.Identifier.UUID, service: LockService.UUID, peripheral: peripheral)
+                    
+                    guard let identifier = LockService.Identifier.init(bigEndian: identifierValue)
+                        else { foundLockError("Invalid data for Lock identifier"); return }
+                    
+                    // get model
+                    
+                    let modelValue = try controller.internalManager.read(characteristic: LockService.Model.UUID, service: LockService.UUID, peripheral: peripheral)
+                    
+                    guard let model = LockService.Model.init(bigEndian: modelValue)
+                        else { foundLockError("Invalid Model value"); return }
+                    
+                    // get version
+                    
+                    let versionValue = try controller.internalManager.read(characteristic: LockService.Version.UUID, service: LockService.UUID, peripheral: peripheral)
+                    
+                    guard let version = LockService.Version.init(bigEndian: versionValue)
+                        else { foundLockError("Invalid Version value"); return }
+                    
+                    // validate other characteristics
+                    
+                    guard characteristics.contains({ $0.UUID == LockService.Setup.UUID })
+                        else { foundLockError("Setup characteristic not found"); return }
+                    
+                    guard characteristics.contains({ $0.UUID == LockService.Unlock.UUID })
+                        else { foundLockError("Unlock characteristic not found"); return }
+                    
+                    guard characteristics.contains({ $0.UUID == LockService.NewKeyParentSharedSecret.UUID })
+                        else { foundLockError("New Key Parent characteristic not found"); return }
+                    
+                    guard characteristics.contains({ $0.UUID == LockService.NewKeyChildSharedSecret.UUID })
+                        else { foundLockError("New Key Child characteristic not found"); return }
+                    
+                    guard characteristics.contains({ $0.UUID == LockService.NewKeyFinish.UUID })
+                        else { foundLockError("New Key Confirmation characteristic not found"); return }
+                    
+                    controller.log?("Lock \((peripheral, identifier.value, status.value, model.value, version.value))")
+                    
+                    controller.foundLock.value = (peripheral, identifier.value, status.value, model.value, version.value)
+                }
+                    
+                catch { foundLockError("\(error)"); return }
             }
-            
-            
         }
     }
     

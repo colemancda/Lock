@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import CoreLock
 
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -23,6 +24,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // add NSPersistentStore to Cerradura.Store
         try! LoadPersistentStore()
+        
+        Central.shared.log = { print("Central: " + $0) }
                         
         return true
     }

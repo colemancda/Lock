@@ -1,5 +1,5 @@
 //
-//  Notification.swift
+//  Observable.swift
 //  Lock
 //
 //  Created by Alsey Coleman Miller on 4/30/16.
