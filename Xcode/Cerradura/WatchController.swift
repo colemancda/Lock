@@ -8,6 +8,9 @@
 
 import Foundation
 import WatchConnectivity
+import SwiftFoundation
+import CoreLock
+import GATT
 
 @available(iOS 9.3, *)
 final class WatchController: NSObject, WCSessionDelegate {
@@ -24,8 +27,31 @@ final class WatchController: NSObject, WCSessionDelegate {
     
     func activate() {
         
+        LockManager.shared.foundLock.observe(foundLock)
         session.delegate = self
         session.activate()
+    }
+    
+    // MARK: - Private Methods
+    
+    private func foundLock(lock: (peripheral: Peripheral, UUID: SwiftFoundation.UUID, status: Status, model: Model, version: UInt64)?) {
+        
+        guard session.activationState == .activated else { return }
+        
+        let message: FoundLockNotification
+        
+        if let foundLock = lock, let cachedLock = Store.shared[foundLock.UUID] {
+            
+            message = FoundLockNotification(permission: cachedLock.key.permission.type)
+            
+        } else {
+            
+            message = FoundLockNotification()
+        }
+        
+        session.sendMessage(message.toMessage(),
+                            replyHandler: nil,
+                            errorHandler: { self.log?("Error \($0.localizedDescription)") })
     }
     
     // MARK: - WCSessionDelegate
@@ -54,7 +80,25 @@ final class WatchController: NSObject, WCSessionDelegate {
             
         case .UnlockRequest:
             
-            let message = UnlockRequest.ini
+            log?("Recieved unlock request")
+            
+            guard let _ = UnlockRequest(message: message)
+                else { replyHandler(UnlockResponse(error: "Bad communication with iPhone").toMessage()); return }
+            
+            guard let foundLock = LockManager.shared.foundLock.value
+                else { replyHandler(UnlockResponse(error: "Lock disconnected").toMessage()); return }
+            
+            guard let cachedLock = Store.shared[foundLock.UUID]
+                else { replyHandler(UnlockResponse(error: "No stored key for lock").toMessage()); return }
+            
+            do { try LockManager.shared.unlock(key: cachedLock.key.data) }
+            
+            catch { replyHandler(UnlockResponse(error: "\(error)").toMessage()); return }
+            
+            /// Success
+            replyHandler(UnlockResponse().toMessage())
+            
+            print("Unlocked from Watch")
             
         default: fatalError("Unexpected message: \(message)")
         }

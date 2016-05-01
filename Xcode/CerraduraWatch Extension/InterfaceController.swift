@@ -18,7 +18,12 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
     
     // MARK: - Properties
     
-    var session: WCSession!
+    private var session: WCSession!
+    
+    private var lock: PermissionType? {
+        
+        didSet { didFindLock() }
+    }
     
     // MARK: - Private Properties
     
@@ -49,9 +54,70 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
     
     // MARK: - Actions
     
-    @IBAction func action(_ sender: AnyObject?) {
+    @IBAction func action(_ sender: WKInterfaceButton) {
         
+        guard session.activationState == .activated else {
+            
+            button.setEnabled(true)
+            session.activate()
+            scanAnimation.startAnimating()
+            return
+        }
         
+        guard lock != nil else { return }
+        
+        sender.setEnabled(false)
+        
+        session.sendMessage(UnlockRequest().toMessage(),
+                            replyHandler: self.unlockResponse,
+                            errorHandler: { self.unlockError($0.localizedDescription) })
+        
+    }
+    
+    // MARK: - Private Functions
+    
+    private func didFindLock() {
+        
+        button.setEnabled(true)
+        
+        if let permission = self.lock {
+            
+            let imageName: String
+            
+            switch permission {
+            case .admin: imageName = "watchAdmin"
+            case .owner: imageName = "watchOwner"
+            case .anytime: imageName = "watchAnytime"
+            case .scheduled: imageName = "watchScheduled"
+            }
+            
+            self.button.setBackgroundImageNamed(imageName)
+            
+        } else {
+            
+            self.scanAnimation.startAnimating()
+        }
+    }
+    
+    private func unlockResponse(message: [String: AnyObject]) {
+        
+        guard let response = UnlockResponse(message: message)
+            else { fatalError("Invalid message: \(message)") }
+        
+        if let error = response.error {
+            
+            unlockError(error)
+            return
+        }
+        
+        button.setEnabled(true)
+    }
+    
+    private func unlockError(_ error: String) {
+        
+        let action = WKAlertAction(title: "OK", style: WKAlertActionStyle.`default`) { self.button.setEnabled(true) }
+        
+        self.presentAlert(withTitle: "Error", message: error, preferredStyle: .actionSheet, actions: [action])
     }
     
     // MARK: - WCSessionDelegate
@@ -76,5 +142,27 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
         }
         
         print("Session did activate")
+    }
+    
+    @objc(session:didReceiveMessage:)
+    func session(_ session: WCSession, didReceiveMessage message: [String : AnyObject]) {
+        
+        guard let identifierRawValue = message[WatchMessageIdentifierKey] as? WatchMessageType.RawValue,
+            let identifier = WatchMessageType(rawValue: identifierRawValue)
+            else { return }
+        
+        switch identifier {
+            
+        case .FoundLockNotification:
+            
+            print("Recieved found lock notification")
+            
+            guard let notification = FoundLockNotification(message: message)
+                else { fatalError("Invalid message: \(message)") }
+            
+            lock = notification.permission
+            
+        default: fatalError("Unexpected message: \(message)")
+        }
     }
 }

@@ -27,7 +27,7 @@ let WatchMessageIdentifierKey = "message"
 
 public enum WatchMessageType: UInt8 {
     
-    case FoundLock
+    case FoundLockNotification
     case UnlockRequest
     case UnlockResponse
 }
@@ -36,7 +36,7 @@ public struct FoundLockNotification: WatchMessage {
     
     enum Key: String { case permission }
     
-    public static let messageType = WatchMessageType.FoundLock
+    public static let messageType = WatchMessageType.FoundLockNotification
     
     public var permission: PermissionType?
     
@@ -78,6 +78,8 @@ public struct FoundLockNotification: WatchMessage {
 public struct UnlockRequest: WatchMessage {
     
     public static let messageType = WatchMessageType.UnlockRequest
+    
+    public init() { }
     
     public init?(message: [String: AnyObject]) {
         

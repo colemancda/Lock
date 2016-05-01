@@ -178,7 +178,7 @@ final class NearLockViewController: UIViewController {
         }
     }
     
-    private func foundLock(lock: (peripheral: Peripheral, UUID: SwiftFoundation.UUID, status: Status, model: Model, version: UInt64)?) -> () {
+    private func foundLock(lock: (peripheral: Peripheral, UUID: SwiftFoundation.UUID, status: Status, model: Model, version: UInt64)?) {
         
         mainQueue { self.updateUI() }
     }
