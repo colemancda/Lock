@@ -23,17 +23,27 @@ final class ComplicationController: NSObject, CLKComplicationDataSource {
     @objc(getSupportedTimeTravelDirectionsForComplication:withHandler:)
     func getSupportedTimeTravelDirections(for complication: CLKComplication, withHandler handler: CLKComplicationTimeTravelDirections -> ()) {
         
-        handler([])
+        handler([.backward])
     }
     
      @objc(getTimelineStartDateForComplication:withHandler:)
     func getTimelineStartDate(for complication: CLKComplication, withHandler handler: (NSDate?) -> ()) {
-        handler(nil)
+        
+        let date = History.shared.events.first?.date ?? NSDate()
+        
+        print("Complication timeline start date: \(date)")
+        
+        handler(date)
     }
     
     @objc(getTimelineEndDateForComplication:withHandler:)
     func getTimelineEndDate(for complication: CLKComplication, withHandler handler: (NSDate?) -> ()) {
-        handler(nil)
+        
+        let date = History.shared.events.last?.date ?? NSDate()
+        
+        print("Complication timeline end date: \(date)")
+        
+        handler(date)
     }
     
     @objc(getPrivacyBehaviorForComplication:withHandler:)
@@ -48,62 +58,66 @@ final class ComplicationController: NSObject, CLKComplicationDataSource {
     func getCurrentTimelineEntry(for complication: CLKComplication, withHandler handler: CLKComplicationTimelineEntry? -> ()) {
         // Call the handler with the current timeline entry
         
-        print("Updating current timeline entry for complication")
+        print("Complication current timeline entry")
         
-        switch complication.family {
-            
-        case .modularSmall:
-            
-            let image = UIImage(named: "modularSmallAdmin")!
-            
-            let complicationTemplate = CLKComplicationTemplateModularSmallSimpleImage()
-            
-            let imageProvider = CLKImageProvider(onePieceImage: image)
-            
-            imageProvider.tintColor = blueTintColor
-            
-            complicationTemplate.imageProvider = imageProvider
-            
-            handler(CLKComplicationTimelineEntry(date: NSDate(), complicationTemplate: complicationTemplate))
-            
-        default: fatalError("Complication family \(complication.family.rawValue) not supported")
-        }
+        let event = History.shared.events.last?.event ?? .foundLock(nil)
         
-        handler(nil)
+        let template = self.template(for: complication, event: event)
+        
+        handler(CLKComplicationTimelineEntry(date: NSDate(), complicationTemplate: template))
     }
     
     @objc(getTimelineEntriesForComplication:beforeDate:limit:withHandler:)
     func getTimelineEntries(for complication: CLKComplication, before date: NSDate, limit: Int, withHandler handler: (([CLKComplicationTimelineEntry]?) -> ())) {
-        // Call the handler with the timeline entries prior to the given date
-        handler(nil)
+        
+        print("Complication Timeline before \(date)")
+        
+        var events = History.shared.events.reversed().filter { $0.date.earlierDate(date) == $0.date }
+        
+        events = Array(events.prefix(limit))
+        
+        let entries = events.map { CLKComplicationTimelineEntry(date: $0.date, complicationTemplate: self.template(for: complication, event: $0.event)) }
+        
+        handler(entries)
     }
     
     @objc(getTimelineEntriesForComplication:afterDate:limit:withHandler:)
     func getTimelineEntries(for complication: CLKComplication, after date: NSDate, limit: Int, withHandler handler: (([CLKComplicationTimelineEntry]?) -> ())) {
-        // Call the handler with the timeline entries after to the given date
+        
         handler(nil)
     }
     
     // MARK: - Update Scheduling
     
     @objc(getNextRequestedUpdateDateWithHandler:)
-    func getNextRequestedUpdateDate(handler: (NSDate?) -> Void) {
+    func getNextRequestedUpdateDate(handler: (NSDate?) -> ()) {
         // Call the handler with the date when you would next like to be given the opportunity to update your complication content
-        
+        /*
         let futureDate = NSDate().addingTimeInterval(60*30)
         
         handler(futureDate);
         
         print("Next date complication will be updated: \(futureDate)")
+        */
+        handler(nil)
     }
     
     // MARK: - Placeholder Templates
     
     @objc(getPlaceholderTemplateForComplication:withHandler:)
-    func getPlaceholderTemplate(for complication: CLKComplication, withHandler handler: (CLKComplicationTemplate?) -> ()) {
+    func getPlaceholderTemplate(for complication: CLKComplication, withHandler handler: CLKComplicationTemplate? -> ()) {
         // This method will be called once per supported complication, and the results will be cached
         
         print("Providing placeholder template for complication")
+        
+        let template = self.template(for: complication, event: .foundLock(.admin))
+        
+        handler(template)
+    }
+    
+    // MARK: - Private Methods
+    
+    private func template(for complication: CLKComplication, event: Event) -> CLKComplicationTemplate {
         
         switch complication.family {
             
@@ -119,10 +133,9 @@ final class ComplicationController: NSObject, CLKComplicationDataSource {
             
             complicationTemplate.imageProvider = imageProvider
             
-            handler(complicationTemplate)
+            return complicationTemplate
             
         default: fatalError("Complication family \(complication.family.rawValue) not supported")
         }
     }
-    
 }

@@ -6,9 +6,10 @@
 //  Copyright © 2016 ColemanCDA. All rights reserved.
 //
 
+import Foundation
 import WatchKit
 import WatchConnectivity
-import Foundation
+import ClockKit
 
 final class InterfaceController: WKInterfaceController, WCSessionDelegate {
     
@@ -22,7 +23,7 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
     
     private var lock: PermissionType? {
         
-        didSet { didFindLock() }
+        didSet { didFindLock(oldValue) }
     }
     
     // MARK: - Private Properties
@@ -73,7 +74,7 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
             return
         }
         
-        guard lock != nil else {
+        guard let lock = self.lock else {
             
             // request current lock
             session.sendMessage(CurrentLockRequest().toMessage(),
@@ -90,13 +91,25 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
                             errorHandler: { (error) in mainQueue { self.showError(error.localizedDescription) } })
         
         print("Sent unlock message")
+        
+        History.shared.add(event: .unlock(lock))
+        
+        /// Inform complications of updates
+        let complicationServer = CLKComplicationServer.sharedInstance()
+        
+        for complication in (complicationServer.activeComplications ?? []) {
+            
+            complicationServer.extendTimeline(for: complication)
+        }
     }
     
     // MARK: - Private Functions
     
-    private func didFindLock() {
+    private func didFindLock(_ oldValue: PermissionType?) {
         
         print("Lock value \(self.lock)")
+        
+        // update UI
         
         button.setEnabled(true)
         
@@ -117,6 +130,20 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
         } else {
             
             self.scanAnimation.startAnimating()
+        }
+        
+        /// dont create event if nothing new was found
+        guard (oldValue == nil && self.lock == nil) == false
+            else { return }
+        
+        History.shared.add(event: .foundLock(self.lock))
+        
+        /// Inform complications of updates
+        let complicationServer = CLKComplicationServer.sharedInstance()
+        
+        for complication in (complicationServer.activeComplications ?? []) {
+            
+            complicationServer.extendTimeline(for: complication)
         }
     }
     

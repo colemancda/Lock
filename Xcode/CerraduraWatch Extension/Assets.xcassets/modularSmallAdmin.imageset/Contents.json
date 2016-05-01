@@ -1,17 +1,16 @@
 {
   "images" : [
     {
-      "idiom" : "watch",
-      "filename" : "watchModularSmallComplication38mmAdmin-1.pdf"
+      "idiom" : "watch"
     },
     {
       "idiom" : "watch",
-      "filename" : "watchModularSmallComplication38mmAdmin.pdf",
+      "filename" : "modularSmallAdmin38.pdf",
       "screen-width" : "<=145"
     },
     {
       "idiom" : "watch",
-      "filename" : "watchModularSmallComplication42mmAdmin.pdf",
+      "filename" : "modularSmallAdmin42.pdf",
       "screen-width" : ">145"
     }
   ],
