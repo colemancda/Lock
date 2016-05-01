@@ -175,9 +175,9 @@ public struct CurrentLockResponse: WatchMessage {
             else { return nil }
         
         /// optional value
-        if let permissionRawValue = message[Key.permission.rawValue] as? PermissionType.RawValue {
+        if let permissionRawValue = message[Key.permission.rawValue] as? NSNumber {
             
-            guard let permission = PermissionType(rawValue: permissionRawValue)
+            guard let permission = PermissionType(rawValue: permissionRawValue.uint8Value)
                 else { return nil }
             
             self.permission = permission

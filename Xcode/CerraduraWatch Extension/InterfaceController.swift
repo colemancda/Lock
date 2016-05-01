@@ -96,7 +96,7 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
     
     private func didFindLock() {
         
-        print("New lock value \(self.lock)")
+        print("Lock value \(self.lock)")
         
         button.setEnabled(true)
         
@@ -122,6 +122,8 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
     
     private func currentLockResponse(message: [String: AnyObject]) {
         
+        print("Recieved current lock response")
+        
         guard let response = CurrentLockResponse(message: message)
             else { fatalError("Invalid message: \(message)") }
         
@@ -129,6 +131,8 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
     }
     
     private func unlockResponse(message: [String: AnyObject]) {
+        
+        print("Recieved unlock response")
         
         guard let response = UnlockResponse(message: message)
             else { fatalError("Invalid message: \(message)") }
