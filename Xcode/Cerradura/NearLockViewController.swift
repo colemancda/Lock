@@ -75,6 +75,8 @@ final class NearLockViewController: UIViewController {
                 catch { mainQueue { self.actionError("\(error)") }; return }
                 
                 print("Successfully unlocked lock \"\(foundLock.UUID)\"")
+                
+                mainQueue { self.updateUI() }
             }
         }
         
@@ -203,6 +205,8 @@ final class NearLockViewController: UIViewController {
     private func updateUI() {
         
         self.navigationItem.rightBarButtonItem = nil
+        
+        self.actionButton.isEnabled = true
         
         // No lock
         guard let lock = LockManager.shared.foundLock.value else {

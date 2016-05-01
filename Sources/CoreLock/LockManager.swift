@@ -60,6 +60,8 @@
             
             log?("Scanning...")
             
+            internalManager.disconnectAll()
+            
             if foundLock.value != nil { foundLock.value = nil }
             
             async {

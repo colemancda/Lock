@@ -87,9 +87,6 @@ final class WatchController: NSObject, WCSessionDelegate {
             
             log?("Recieved unlock request")
             
-            guard let _ = UnlockRequest(message: message)
-                else { replyHandler(UnlockResponse(error: "Bad communication with iPhone").toMessage()); return }
-            
             guard let foundLock = LockManager.shared.foundLock.value
                 else { replyHandler(UnlockResponse(error: "Lock disconnected").toMessage()); return }
             
@@ -109,8 +106,10 @@ final class WatchController: NSObject, WCSessionDelegate {
             
             log?("Recieved current lock request")
             
-            guard let _ = CurrentLockRequest(message: message)
-                else { replyHandler(UnlockResponse(error: "Bad communication with iPhone").toMessage()); return }
+            if LockManager.shared.foundLock.value == nil {
+                
+                LockManager.shared.startScan()
+            }
             
             guard let foundLock = LockManager.shared.foundLock.value,
                 let cachedLock = Store.shared[foundLock.UUID]
