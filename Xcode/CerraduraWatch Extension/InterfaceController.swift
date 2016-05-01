@@ -7,9 +7,10 @@
 //
 
 import WatchKit
+import WatchConnectivity
 import Foundation
 
-final class InterfaceController: WKInterfaceController {
+final class InterfaceController: WKInterfaceController, WCSessionDelegate {
     
     // MARK: - IB Outlets
     
@@ -17,7 +18,11 @@ final class InterfaceController: WKInterfaceController {
     
     // MARK: - Properties
     
-    private lazy var scanAnimation: AnimatedButtonController = AnimatedButtonController.init(images: ["watchScan1", "watchScan2", "watchScan3", "watchScan4"], interval: 0.5, target: self.button)
+    var session: WCSession!
+    
+    // MARK: - Private Properties
+    
+    private lazy var scanAnimation: AnimatedButtonController = AnimatedButtonController(images: ["watchScan1", "watchScan2", "watchScan3", "watchScan4"], interval: 0.5, target: self.button)
     
     // MARK: - Loading
 
@@ -25,13 +30,16 @@ final class InterfaceController: WKInterfaceController {
         super.awake(withContext: context)
         
         scanAnimation.startAnimating()
+        
+        session = WCSession.defaultSession()
+        session?.delegate = self
     }
 
     override func willActivate() {
         // This method is called when watch view controller is about to be visible to user
         super.willActivate()
         
-        
+        session?.activate()
     }
 
     override func didDeactivate() {
@@ -42,6 +50,30 @@ final class InterfaceController: WKInterfaceController {
     // MARK: - Actions
     
     @IBAction func action(_ sender: AnyObject?) {
+        
+        
+    }
+    
+    // MARK: - WCSessionDelegate
+    
+    @objc(session:activationDidCompleteWithState:error:)
+    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: NSError?) {
+        
+        guard activationState == .activated else {
+            
+            var message = "Cannot communicate with iPhone. "
+            
+            if let error = error {
+                
+                message += "(\(error.localizedDescription))"
+            }
+            
+            let action = WKAlertAction(title: "OK", style: WKAlertActionStyle.`default`) { }
+            
+            self.presentAlert(withTitle: "Error", message: message, preferredStyle: .actionSheet, actions: [action])
+            
+            return
+        }
         
         
     }

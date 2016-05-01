@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import CoreLock
+import WatchConnectivity
 
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -26,6 +27,15 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         try! LoadPersistentStore()
         
         LockManager.shared.log = { print("LockManager: " + $0) }
+        
+        // Apple Watch support
+        if #available(iOS 9.3, *) {
+            
+            if WCSession.isSupported() {
+                
+                WatchController.shared.activate()
+            }
+        }
                         
         return true
     }
