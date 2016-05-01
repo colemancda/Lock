@@ -221,6 +221,19 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
                             errorHandler: { (error) in mainQueue { self.showError(error.localizedDescription) } })
     }
     
+    @objc(sessionReachabilityDidChange:)
+    func sessionReachabilityDidChange(_ session: WCSession) {
+        
+        guard session.isReachable else {
+            
+            print("iPhone is not reacheable.")
+            
+            mainQueue { self.lock = nil }
+            
+            return
+        }
+    }
+    
     @objc(session:didReceiveMessage:)
     func session(_ session: WCSession, didReceiveMessage message: [String : AnyObject]) {
         
