@@ -1,0 +1,28 @@
+{
+  "images" : [
+    {
+      "idiom" : "watch",
+      "filename" : "modularComplicationPlaceholder38mm-1.png",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "watch",
+      "filename" : "modularComplicationPlaceholder38mm.png",
+      "screen-width" : "<=145",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "watch",
+      "filename" : "modularComplicationPlaceholder42mm.png",
+      "screen-width" : ">145",
+      "scale" : "2x"
+    }
+  ],
+  "info" : {
+    "version" : 1,
+    "author" : "xcode"
+  },
+  "properties" : {
+    "template-rendering-intent" : "original"
+  }
+}
