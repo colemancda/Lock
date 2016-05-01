@@ -6,18 +6,7 @@
 //  Copyright © 2016 ColemanCDA. All rights reserved.
 //
 
-public protocol ObservableProtocol {
-    
-    associatedtype Value
-    
-    var value: Value { get }
-    
-    func add(_ observer: Value -> ()) -> Int
-    
-    func remove(_ observer: Int) -> Bool
-}
-
-public final class Observable<Value>: ObservableProtocol {
+public final class Observable<Value> {
     
     // MARK: - Properties
     
@@ -47,7 +36,7 @@ public final class Observable<Value>: ObservableProtocol {
     
     // MARK: - Methods
     
-    public func add(_ observer: Value -> ()) -> Int {
+    public func observe(_ observer: Value -> ()) -> Int {
         
         let identifier = nextID
         
@@ -63,7 +52,7 @@ public final class Observable<Value>: ObservableProtocol {
         return identifier
     }
     
-    public func remove(_ observer: Int) -> Bool {
+    public func remove(observer: Int) -> Bool {
         
         guard let index = observers.index(where: { $0.identifier == observer })
             else { return false }

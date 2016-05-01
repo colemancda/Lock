@@ -40,11 +40,23 @@
         
         private lazy var queue: dispatch_queue_t = dispatch_queue_create("\(self.dynamicType) Internal Queue", DISPATCH_QUEUE_SERIAL)
         
-        private lazy var internalManager: CentralManager = CentralManager()
+        private lazy var internalManager: CentralManager = {
+            
+            let central = CentralManager()
+            
+            // lazy initialization
+            let _ = central.state
+            
+            central.stateChanged = self.stateChanged
+            
+            central.didDisconnect = self.didDisconnect
+            
+            return central
+        }()
         
         // MARK: - Methods
         
-        /// Disconnnect from current lock (if any) and start scanning.
+        /// Disconnnect from current lock (if any) and start scanning. (Asyncronous)
         public func startScan() {
             
             log?("Scanning...")
@@ -103,6 +115,12 @@
             guard status.value == .unlock
                 else { throw LockManagerError.InvalidStatus(status.value) }
             
+            // update cached status
+            if self.foundLock.value?.UUID == foundLock.UUID {
+                
+                self.foundLock.value!.status = status.value
+            }
+            
             return key
         }
         
@@ -127,6 +145,12 @@
             let parentNewKey = LockService.NewKeyParentSharedSecret.init(sharedSecret: sharedSecret, parentKey: parentKey, permission: permission)
             
             try internalManager.write(data: parentNewKey.toBigEndian(), response: true, characteristic: LockService.NewKeyParentSharedSecret.UUID, service: LockService.UUID, peripheral: foundLock.peripheral)
+            
+            // update cached status
+            if self.foundLock.value?.UUID == foundLock.UUID {
+                
+                self.foundLock.value!.status = .newKey
+            }
         }
         
         public func recieveNewKey(sharedSecret: SharedSecret) throws -> Key {
@@ -150,6 +174,12 @@
             
             try internalManager.write(data: newKeyFinish.toBigEndian(), response: true, characteristic: LockService.NewKeyFinish.UUID, service: LockService.UUID, peripheral: foundLock.peripheral)
             
+            // update cached status
+            if self.foundLock.value?.UUID == foundLock.UUID {
+                
+                self.foundLock.value!.status = .unlock
+            }
+            
             return key
         }
         
@@ -168,6 +198,18 @@
             if state == .poweredOn {
                 
                 self.startScan()
+            }
+            
+            self.state.value = state
+        }
+        
+        private func didDisconnect(peripheral: Peripheral) {
+            
+            guard let foundLock = self.foundLock.value else { return }
+            
+            if peripheral.identifier == foundLock.peripheral.identifier {
+                
+                self.foundLock.value = nil
             }
         }
         

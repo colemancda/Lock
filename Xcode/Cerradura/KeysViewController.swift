@@ -34,16 +34,12 @@ final class KeysViewController: UIViewController {
     
     private lazy var queue: dispatch_queue_t = dispatch_queue_create("\(self.dynamicType) Internal Queue", DISPATCH_QUEUE_SERIAL)
     
-    private let central = CentralManager()
-        
     // MARK: - Loading
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
         
-        central.log = { print($0) }
-        central.stateChanged = stateChanged
+        LockManager.shared.state.observe(stateChanged)
         
         fetchedResultsController.delegate = unsafeBitCast(self, to: NSFetchedResultsControllerDelegate.self)
         tableView.dataSource = unsafeBitCast(self, to: UITableViewDataSource.self)
@@ -52,13 +48,13 @@ final class KeysViewController: UIViewController {
         try! fetchedResultsController.performFetch()
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        central.disconnectAll()
-    }
-    
     // MARK: - Methods
+    
+    /// Perform a task on the internal queue.
+    private func async(_ block: () -> ()) {
+        
+        dispatch_async(queue) { block() }
+    }
     
     private func stateChanged(_ state: CBCentralManagerState) {
         
@@ -119,12 +115,6 @@ final class KeysViewController: UIViewController {
         cell.permissionLabel.text = permissionText
     }
     
-    /// Perform a task on the internal queue.
-    private func async(_ block: () -> ()) {
-        
-        dispatch_async(queue) { block() }
-    }
-    
     // MARK: - UITableViewDatasource
     
     @objc func numberOfSectionsInTableView(_ tableView: UITableView) -> Int {
@@ -147,19 +137,6 @@ final class KeysViewController: UIViewController {
     }
     
     // MARK: - UITableViewDelegate
-    
-    /*
-     @objc func tableView(_ tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
-     
-     let lock = item(at: indexPath)
-     
-     Store.shared.remove(lock.identifier)
-     }
-     
-     @objc func tableView(_ tableView: UITableView, editingStyleForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCellEditingStyle {
-     
-     return .delete
-     }*/
     
     func tableView(_ tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [UITableViewRowAction]? {
         
@@ -202,49 +179,7 @@ final class KeysViewController: UIViewController {
             
             self.async {
                 
-                let peripherals = self.central.scan(duration: 2)
-                
-                var lockPeripheral: Peripheral!
-                
-                for peripheral in peripherals {
-                    
-                    do {
-                        
-                        try self.central.connect(to: peripheral)
-                        
-                        let services = try self.central.discoverServices(for: peripheral)
-                        
-                        guard services.contains({ $0.UUID == LockService.UUID })
-                            else { continue }
-                        
-                        let characteristics = try self.central.discoverCharacteristics(for: LockService.UUID, peripheral: peripheral)
-                        
-                        guard characteristics.contains({ $0.UUID == LockService.Identifier.UUID }) &&
-                            characteristics.contains({ $0.UUID == LockService.Unlock.UUID })
-                            else { continue }
-                        
-                        let identifierValue = try self.central.read(characteristic: LockService.Identifier.UUID, service: LockService.UUID, peripheral: peripheral)
-                        
-                        // validate identifier
-                        guard let identifier = LockService.Identifier.init(bigEndian: identifierValue)
-                            where identifier.value == lockCache.identifier
-                            else { continue }
-                        
-                        lockPeripheral = peripheral
-                        break
-                    }
-                        
-                    catch { continue }
-                }
-                
-                guard lockPeripheral != nil
-                    else { mainQueue { self.showErrorAlert("Could not find lock") }; return }
-                
-                // write to unlock characteristic
-                
-                let unlock = LockService.Unlock.init(key: key)
-                
-                do { try self.central.write(data: unlock.toBigEndian(), response: true, characteristic: LockService.Unlock.UUID, service: LockService.UUID, peripheral: lockPeripheral) }
+                do { try LockManager.shared.unlock(key: key) }
                     
                 catch { mainQueue { self.showErrorAlert("Could not unlock. (\(error))") }; return }
                 
@@ -252,9 +187,10 @@ final class KeysViewController: UIViewController {
             }
         }
         
-        if central.state == .poweredOn {
+        // Lock mus be connected for unlocking
+        if LockManager.shared.foundLock.value?.UUID == lockCache.identifier {
             
-            // validate permission
+            // validate permission for unlocking
             if case let .scheduled(schedule) = lockCache.permission where schedule.valid() {
                 
                 actions.append(unlock)
@@ -281,7 +217,8 @@ final class KeysViewController: UIViewController {
         newKey.backgroundColor = UIColor.green()
         
         // Bluetooth must be on and only Admin and Owner can create keys
-        if central.state == .poweredOn && (lockCache.permission == .owner || lockCache.permission == .admin) {
+        if LockManager.shared.state.value == .poweredOn
+            && (lockCache.permission == .owner || lockCache.permission == .admin) {
             
             actions.append(newKey)
         }

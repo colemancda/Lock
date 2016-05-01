@@ -24,70 +24,27 @@ final class NearLockViewController: UIViewController {
     
     // MARK: - Properties
     
-    let scanDuration = 2
-    
-    private var central: CentralManager!
-    
-    private var centralStateLoaded = false
-    
-    private var visible = false
-    
     private lazy var queue: dispatch_queue_t = dispatch_queue_create("\(self.dynamicType) Internal Queue", DISPATCH_QUEUE_SERIAL)
-    
-    private var foundLock: (peripheral: Peripheral, UUID: SwiftFoundation.UUID, status: Status, model: Model, version: UInt64)?
     
     // MARK: - Loading
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        visible = true
+        // start observing
+        LockManager.shared.foundLock.observe(foundLock)
         
-        central = CentralManager()
+        LockManager.shared.state.observe(stateChanged)
         
-        central.stateChanged = stateChanged
-        
-        central.log = { print("Central: " + $0) }
-        
-        if central.state == .poweredOn {
-            
-            startScan()
-        }
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        visible = true
-        
-        actionButton.isEnabled = true
-        
-        if centralStateLoaded {
-            
-            if central.state == .poweredOn {
-                
-                startScan()
-                
-            } else {
-                
-                bluetoothDisabled()
-            }
-        }
-    }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        
-        visible = false
-        
-        central.disconnectAll()
+        // update UI
+        self.updateUI()
     }
     
     // MARK: - Actions
     
-    @IBAction func newKey(_ sender: UITabBarItem) {
+    @IBAction func newKey(_ sender: AnyObject?) {
         
-        guard let foundLock = self.foundLock else { return }
+        guard let foundLock = LockManager.shared.foundLock.value else { return }
         
         let navigationController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "newKeyNavigationStack") as! UINavigationController
         
@@ -100,7 +57,7 @@ final class NearLockViewController: UIViewController {
     
     @IBAction func actionButton(_ sender: UIButton) {
         
-        guard let foundLock = self.foundLock else { return }
+        guard let foundLock = LockManager.shared.foundLock.value else { return }
         
         func unlock() {
             
@@ -111,19 +68,13 @@ final class NearLockViewController: UIViewController {
             guard let cachedLock = Store.shared[foundLock.UUID]
                 else { self.actionError("No stored key for lock"); return }
             
-            let unlock = LockService.Unlock.init(key: cachedLock.key.data)
-            
             async {
                 
-                // write to unlock characteristic
-                
-                do { try self.central.write(data: unlock.toBigEndian(), response: true, characteristic: LockService.Unlock.UUID, service: LockService.UUID, peripheral: foundLock.peripheral) }
+                do { try LockManager.shared.unlock(key: cachedLock.key.data) }
                     
                 catch { mainQueue { self.actionError("\(error)") }; return }
                 
                 print("Successfully unlocked lock \"\(foundLock.UUID)\"")
-                
-                mainQueue { self.updateUI() }
             }
         }
         
@@ -142,43 +93,20 @@ final class NearLockViewController: UIViewController {
                     
                     do {
                         
-                        // write to setup characteristic
-                        
                         print("Setting up lock \(foundLock.UUID) (\(name))")
                         
-                        let key = Key(data: KeyData(), permission: .owner)
-                        
-                        let setup = LockService.Setup.init(value: key.data)
-                        
-                        try self.central.write(data: setup.toBigEndian(), response: true, characteristic: LockService.Setup.UUID, service: LockService.UUID, peripheral: foundLock.peripheral)
-                        
-                        // read lock service values
-                        
-                        let statusValue = try self.central.read(characteristic: LockService.Status.UUID, service: LockService.UUID, peripheral: foundLock.peripheral)
-                        
-                        guard let status = LockService.Status.init(bigEndian: statusValue)
-                            else { mainQueue { self.actionError("Invalid status value") }; return }
-                        
-                        guard status.value == .unlock
-                            else { mainQueue { self.actionError("Could not setup new lock") }; return }
-                        
-                        // save in Store
-                        let newLock = Lock(identifier: foundLock.UUID, name: name, model: foundLock.model, version: foundLock.version, key: key)
-                        
-                        Store.shared[newLock.identifier] = newLock
-                            
-                        print("Successfully setup lock \(name) \(foundLock)")
+                        let key = try LockManager.shared.setup(name: name)
                         
                         mainQueue {
                             
-                            // in case the user left the VC
-                            if self.foundLock?.UUID == foundLock.UUID {
-                                
-                                self.foundLock!.status = status.value
-                                
-                                // update UI (should go to unlock mode)
-                                mainQueue { self.updateUI() }
-                            }
+                            // save in Store
+                            let newLock = Lock(identifier: foundLock.UUID, name: name, model: foundLock.model, version: foundLock.version, key: key)
+                            
+                            Store.shared[newLock.identifier] = newLock
+                            
+                            print("Successfully setup lock \(name) \(foundLock)")
+                            
+                            mainQueue { self.updateUI() }
                         }
                     }
                         
@@ -209,21 +137,7 @@ final class NearLockViewController: UIViewController {
                     
                     do {
                         
-                        // read new key child characteristic
-                        
-                        let newKeyChildValue = try self.central.read(characteristic: LockService.NewKeyChildSharedSecret.UUID, service: LockService.UUID, peripheral: foundLock.peripheral)
-                        
-                        guard let newKeyChild = LockService.NewKeyChildSharedSecret.init(bigEndian: newKeyChildValue)
-                            else { mainQueue { self.actionError("Invalid value for new key characteristic") }; return }
-                        
-                        guard let key = newKeyChild.decrypt(sharedSecret: sharedSecret)
-                            else { mainQueue { self.actionError("Invalid PIN code") }; return }
-                        
-                        // write confirmation value
-                        
-                        let newKeyFinish = LockService.NewKeyFinish.init(key: key.data)
-                        
-                        try self.central.write(data: newKeyFinish.toBigEndian(), response: true, characteristic: LockService.NewKeyFinish.UUID, service: LockService.UUID, peripheral: foundLock.peripheral)
+                        let key = try LockManager.shared.recieveNewKey(sharedSecret: sharedSecret)
                         
                         mainQueue {
                             
@@ -233,14 +147,7 @@ final class NearLockViewController: UIViewController {
                             
                             print("Successfully added new key for lock \(textValues.name)")
                             
-                            // in case the user left the VC
-                            if self.foundLock?.UUID == foundLock.UUID {
-                                
-                                self.foundLock!.status = .unlock
-                                
-                                // update UI (should go to unlock mode)
-                                mainQueue { self.updateUI() }
-                            }
+                            mainQueue { self.updateUI() }
                         }
                     }
                     
@@ -262,143 +169,18 @@ final class NearLockViewController: UIViewController {
         
         mainQueue {
             
-            self.centralStateLoaded = true
-            
             if state == .poweredOn {
                 
-                self.startScan()
-                
-            } else {
-                
-                self.bluetoothDisabled()
+                LockManager.shared.startScan()
             }
+            
+            self.updateUI()
         }
     }
     
-    private func bluetoothDisabled() {
+    private func foundLock(lock: (peripheral: Peripheral, UUID: SwiftFoundation.UUID, status: Status, model: Model, version: UInt64)?) -> () {
         
-        print("Bluetooth disabled")
-        
-        self.foundLock = nil
-        
-        // update UI
-        self.updateUI()
-    }
-    
-    private func startScan() {
-        
-        print("Scanning...")
-        
-        self.foundLock = nil
-        
-        // update UI
-        self.updateUI()
-        
-        async { [weak self] in
-            
-            while self?.central.state == .poweredOn && self?.foundLock == nil && self?.visible == true {
-                
-                guard let controller = self else { return }
-                
-                let foundDevices = controller.central.scan(duration: controller.scanDuration)
-                
-                if foundDevices.count > 0 { print("Found \(foundDevices.count) peripherals") }
-                
-                for peripheral in foundDevices {
-                    
-                    do { try controller.central.connect(to: peripheral) }
-                        
-                    catch { print("Cound not connect to \(peripheral.identifier) (\(error))"); continue }
-                    
-                    guard let services = try? controller.central.discoverServices(for: peripheral)
-                        else { continue }
-                    
-                    // found lock
-                    if services.contains({ $0.UUID == LockService.UUID }) {
-                        
-                        controller.foundLock(peripheral: peripheral)
-                        return
-                    }
-                }
-            }
-        }
-    }
-    
-    private func foundLock(peripheral: Peripheral) {
-        
-        print("Found lock peripheral \(peripheral.identifier)")
-        
-        async { [weak self] in
-            
-            guard let controller = self else { return }
-            
-            do {
-                
-                // get lock status
-                
-                let characteristics = try controller.central.discoverCharacteristics(for: LockService.UUID, peripheral: peripheral)
-                
-                guard characteristics.contains({ $0.UUID == LockService.Status.UUID })
-                    else { controller.actionError("Status characteristic not found"); return }
-                
-                let statusValue = try controller.central.read(characteristic: LockService.Status.UUID, service: LockService.UUID, peripheral: peripheral)
-                
-                guard let status = LockService.Status.init(bigEndian: statusValue)
-                    else { controller.actionError("Invalid data for Lock status"); return }
-                
-                // get lock UUID
-                
-                guard characteristics.contains({ $0.UUID == LockService.Identifier.UUID })
-                    else { controller.actionError("Identifier characteristic not found"); return }
-                
-                let identifierValue = try controller.central.read(characteristic: LockService.Identifier.UUID, service: LockService.UUID, peripheral: peripheral)
-                
-                guard let identifier = LockService.Identifier.init(bigEndian: identifierValue)
-                    else { controller.actionError("Invalid data for Lock identifier"); return }
-                
-                // get model
-                
-                let modelValue = try controller.central.read(characteristic: LockService.Model.UUID, service: LockService.UUID, peripheral: peripheral)
-                
-                guard let model = LockService.Model.init(bigEndian: modelValue)
-                    else { mainQueue { controller.actionError("Invalid Model value") }; return }
-                
-                // get version
-                
-                let versionValue = try controller.central.read(characteristic: LockService.Version.UUID, service: LockService.UUID, peripheral: peripheral)
-                
-                guard let version = LockService.Version.init(bigEndian: versionValue)
-                    else { mainQueue { controller.actionError("Invalid Version value") }; return }
-                
-                // validate other characteristics
-                
-                guard characteristics.contains({ $0.UUID == LockService.Setup.UUID })
-                    else { mainQueue{ controller.actionError("Setup characteristic not found") }; return }
-                
-                guard characteristics.contains({ $0.UUID == LockService.Unlock.UUID })
-                    else { mainQueue{ controller.actionError("Unlock characteristic not found") }; return }
-                
-                guard characteristics.contains({ $0.UUID == LockService.NewKeyParentSharedSecret.UUID })
-                    else { mainQueue{ controller.actionError("New Key Parent characteristic not found") }; return }
-                
-                guard characteristics.contains({ $0.UUID == LockService.NewKeyChildSharedSecret.UUID })
-                    else { mainQueue { controller.actionError("New Key Child characteristic not found") }; return }
-                
-                guard characteristics.contains({ $0.UUID == LockService.NewKeyFinish.UUID })
-                    else { mainQueue { controller.actionError("New Key Confirmation characteristic not found") }; return }
-                
-                mainQueue {
-                    
-                    controller.foundLock = (peripheral, identifier.value, status.value, model.value, version.value)
-                    
-                    print("Lock \(controller.foundLock!)")
-                    
-                    controller.updateUI()
-                }
-            }
-            
-            catch { mainQueue { controller.actionError("\(error)") }; return }
-        }
+        mainQueue { self.updateUI() }
     }
     
     private func actionError(_ error: String) {
@@ -410,7 +192,7 @@ final class NearLockViewController: UIViewController {
         
         self.actionButton.isEnabled = true
         
-        showErrorAlert(error, okHandler: { self.startScan() })
+        showErrorAlert(error, okHandler: { LockManager.shared.startScan() })
     }
     
     private func setTitle(_ title: String) {
@@ -423,11 +205,11 @@ final class NearLockViewController: UIViewController {
         self.navigationItem.rightBarButtonItem = nil
         
         // No lock
-        guard let lock = foundLock else {
+        guard let lock = LockManager.shared.foundLock.value else {
             
-            if central.state == .poweredOn {
+            if LockManager.shared.state.value == .poweredOn {
                 
-                setTitle("Scanning...")
+                self.setTitle("Scanning...")
                 
                 let image1 = UIImage(named: "scan1")!
                 let image2 = UIImage(named: "scan2")!
