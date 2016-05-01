@@ -6,7 +6,7 @@
 //  Copyright © 2016 ColemanCDA. All rights reserved.
 //
 
-#if os(OSX) || os(iOS) || os(watchOS)
+#if os(OSX) || os(iOS)
     
     import SwiftFoundation
     import Bluetooth
@@ -44,11 +44,10 @@
             
             let central = CentralManager()
             
-            // lazy initialization
+            // lazy initialization for CBCentralManager
             let _ = central.state
             
             central.stateChanged = self.stateChanged
-            
             central.didDisconnect = self.didDisconnect
             
             return central

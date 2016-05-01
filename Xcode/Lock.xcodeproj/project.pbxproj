@@ -21,6 +21,7 @@
 		6E30653D1CD04AD3007424E0 /* NewKeyParentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E30653C1CD04AD3007424E0 /* NewKeyParentViewController.swift */; };
 		6E4E3F0C1CCBDBBD00196E39 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4E3F0B1CCBDBBD00196E39 /* Store.swift */; };
 		6E5269851CCC205500AB20A2 /* KeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5269841CCC205500AB20A2 /* KeysViewController.swift */; };
+		6E60B9E31CD5C70C002D788D /* AnimatedButtonController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E60B9E21CD5C70C002D788D /* AnimatedButtonController.swift */; };
 		6E646CF21CC449770029A4B3 /* LockController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E646CF11CC449770029A4B3 /* LockController.swift */; };
 		6E646CF41CC4A5730029A4B3 /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E646CF31CC4A5730029A4B3 /* Version.swift */; };
 		6E646CF61CC4A8780029A4B3 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E646CF51CC4A8780029A4B3 /* main.swift */; };
@@ -42,6 +43,14 @@
 		6E729C7B1CC3BC820018A848 /* SwiftFoundation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E729C6D1CC3BC330018A848 /* SwiftFoundation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6E729C7E1CC3C3FC0018A848 /* GATTProfileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E729C7D1CC3C3FC0018A848 /* GATTProfileTests.swift */; };
 		6E729C821CC3C6930018A848 /* Crypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E729C811CC3C6930018A848 /* Crypto.swift */; };
+		6E778D9B1CD5B70300AED11E /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E778D991CD5B70300AED11E /* Interface.storyboard */; };
+		6E778D9D1CD5B70300AED11E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6E778D9C1CD5B70300AED11E /* Assets.xcassets */; };
+		6E778DA41CD5B70300AED11E /* CerraduraWatch Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 6E778DA31CD5B70300AED11E /* CerraduraWatch Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		6E778DA91CD5B70300AED11E /* InterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E778DA81CD5B70300AED11E /* InterfaceController.swift */; };
+		6E778DAB1CD5B70300AED11E /* ExtensionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E778DAA1CD5B70300AED11E /* ExtensionDelegate.swift */; };
+		6E778DAD1CD5B70300AED11E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6E778DAC1CD5B70300AED11E /* Assets.xcassets */; };
+		6E778DB11CD5B70300AED11E /* CerraduraWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 6E778D971CD5B70300AED11E /* CerraduraWatch.app */; };
+		6E778DBB1CD5BD0900AED11E /* WatchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E778DBA1CD5BD0900AED11E /* WatchController.swift */; };
 		6E9923771CCD268E00C0B92C /* Arduino.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9923761CCD268E00C0B92C /* Arduino.swift */; };
 		6E9923791CCDE6CD00C0B92C /* SharedSecret.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9923781CCDE6CD00C0B92C /* SharedSecret.swift */; };
 		6E99237A1CCDE6CD00C0B92C /* SharedSecret.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9923781CCDE6CD00C0B92C /* SharedSecret.swift */; };
@@ -88,6 +97,20 @@
 			remoteGlobalIDString = 6EE605BE1CC21C81008EF0EE;
 			remoteInfo = "CoreLock OS X";
 		};
+		6E778DA51CD5B70300AED11E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6EE6058A1CC21941008EF0EE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E778DA21CD5B70300AED11E;
+			remoteInfo = "CerraduraWatch Extension";
+		};
+		6E778DAF1CD5B70300AED11E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6EE6058A1CC21941008EF0EE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E778D961CD5B70300AED11E;
+			remoteInfo = CerraduraWatch;
+		};
 		6ED3386F1CC7D1EE00DF1461 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6EE6058A1CC21941008EF0EE /* Project object */;
@@ -119,6 +142,28 @@
 				6E729C751CC3BC760018A848 /* SwiftFoundation.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6E778DB71CD5B70300AED11E /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				6E778DA41CD5B70300AED11E /* CerraduraWatch Extension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6E778DB91CD5B70300AED11E /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				6E778DB11CD5B70300AED11E /* CerraduraWatch.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		6ED338711CC7D1EE00DF1461 /* Embed Frameworks */ = {
@@ -165,6 +210,7 @@
 		6E30653C1CD04AD3007424E0 /* NewKeyParentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewKeyParentViewController.swift; sourceTree = "<group>"; };
 		6E4E3F0B1CCBDBBD00196E39 /* Store.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		6E5269841CCC205500AB20A2 /* KeysViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeysViewController.swift; sourceTree = "<group>"; };
+		6E60B9E21CD5C70C002D788D /* AnimatedButtonController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimatedButtonController.swift; sourceTree = "<group>"; };
 		6E646CF11CC449770029A4B3 /* LockController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockController.swift; sourceTree = "<group>"; };
 		6E646CF31CC4A5730029A4B3 /* Version.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
 		6E646CF51CC4A8780029A4B3 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
@@ -181,6 +227,16 @@
 		6E729C6D1CC3BC330018A848 /* SwiftFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SwiftFoundation.framework; sourceTree = "<group>"; };
 		6E729C7D1CC3C3FC0018A848 /* GATTProfileTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTProfileTests.swift; sourceTree = "<group>"; };
 		6E729C811CC3C6930018A848 /* Crypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Crypto.swift; sourceTree = "<group>"; };
+		6E778D971CD5B70300AED11E /* CerraduraWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CerraduraWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6E778D9A1CD5B70300AED11E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
+		6E778D9C1CD5B70300AED11E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		6E778D9E1CD5B70300AED11E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6E778DA31CD5B70300AED11E /* CerraduraWatch Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "CerraduraWatch Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6E778DA81CD5B70300AED11E /* InterfaceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterfaceController.swift; sourceTree = "<group>"; };
+		6E778DAA1CD5B70300AED11E /* ExtensionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtensionDelegate.swift; sourceTree = "<group>"; };
+		6E778DAC1CD5B70300AED11E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		6E778DAE1CD5B70300AED11E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6E778DBA1CD5BD0900AED11E /* WatchController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WatchController.swift; sourceTree = "<group>"; };
 		6E9923761CCD268E00C0B92C /* Arduino.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Arduino.swift; sourceTree = "<group>"; };
 		6E9923781CCDE6CD00C0B92C /* SharedSecret.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedSecret.swift; sourceTree = "<group>"; };
 		6EA8996F1CC2E3F0005FC225 /* GATTProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTProfile.swift; sourceTree = "<group>"; };
@@ -219,6 +275,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				6E729C591CC3BC030018A848 /* CoreLock.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6E778DA01CD5B70300AED11E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -322,6 +385,28 @@
 			path = CoreLockUnitTests;
 			sourceTree = "<group>";
 		};
+		6E778D981CD5B70300AED11E /* CerraduraWatch */ = {
+			isa = PBXGroup;
+			children = (
+				6E778D991CD5B70300AED11E /* Interface.storyboard */,
+				6E778D9C1CD5B70300AED11E /* Assets.xcassets */,
+				6E778D9E1CD5B70300AED11E /* Info.plist */,
+			);
+			path = CerraduraWatch;
+			sourceTree = "<group>";
+		};
+		6E778DA71CD5B70300AED11E /* CerraduraWatch Extension */ = {
+			isa = PBXGroup;
+			children = (
+				6E778DAA1CD5B70300AED11E /* ExtensionDelegate.swift */,
+				6E778DA81CD5B70300AED11E /* InterfaceController.swift */,
+				6E60B9E21CD5C70C002D788D /* AnimatedButtonController.swift */,
+				6E778DAC1CD5B70300AED11E /* Assets.xcassets */,
+				6E778DAE1CD5B70300AED11E /* Info.plist */,
+			);
+			path = "CerraduraWatch Extension";
+			sourceTree = "<group>";
+		};
 		6EE605891CC21941008EF0EE = {
 			isa = PBXGroup;
 			children = (
@@ -333,6 +418,8 @@
 				6EE605A91CC21C1A008EF0EE /* Cerradura */,
 				6EE605C01CC21C81008EF0EE /* CoreLock */,
 				6E729C551CC3BC030018A848 /* CoreLockTests */,
+				6E778D981CD5B70300AED11E /* CerraduraWatch */,
+				6E778DA71CD5B70300AED11E /* CerraduraWatch Extension */,
 				6EE605931CC21941008EF0EE /* Products */,
 			);
 			sourceTree = "<group>";
@@ -345,6 +432,8 @@
 				6EE605BF1CC21C81008EF0EE /* CoreLock.framework */,
 				6E729C541CC3BC030018A848 /* CoreLockTests.xctest */,
 				6EF45FA01CC6CAF9001F7A39 /* CoreLock.framework */,
+				6E778D971CD5B70300AED11E /* CerraduraWatch.app */,
+				6E778DA31CD5B70300AED11E /* CerraduraWatch Extension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -370,6 +459,7 @@
 				6EE605B31CC21C1A008EF0EE /* LaunchScreen.storyboard */,
 				6EE605AA1CC21C1A008EF0EE /* AppDelegate.swift */,
 				6ED338691CC7C7CB00DF1461 /* ErrorAlert.swift */,
+				6E778DBA1CD5BD0900AED11E /* WatchController.swift */,
 				6E1F605B1CCB1DE8001914E7 /* Controller */,
 				6E1F605A1CCB1DE0001914E7 /* Model */,
 			);
@@ -470,6 +560,40 @@
 			productReference = 6E729C541CC3BC030018A848 /* CoreLockTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		6E778D961CD5B70300AED11E /* CerraduraWatch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6E778DB81CD5B70300AED11E /* Build configuration list for PBXNativeTarget "CerraduraWatch" */;
+			buildPhases = (
+				6E778D951CD5B70300AED11E /* Resources */,
+				6E778DB71CD5B70300AED11E /* Embed App Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6E778DA61CD5B70300AED11E /* PBXTargetDependency */,
+			);
+			name = CerraduraWatch;
+			productName = CerraduraWatch;
+			productReference = 6E778D971CD5B70300AED11E /* CerraduraWatch.app */;
+			productType = "com.apple.product-type.application.watchapp2";
+		};
+		6E778DA21CD5B70300AED11E /* CerraduraWatch Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6E778DB61CD5B70300AED11E /* Build configuration list for PBXNativeTarget "CerraduraWatch Extension" */;
+			buildPhases = (
+				6E778D9F1CD5B70300AED11E /* Sources */,
+				6E778DA01CD5B70300AED11E /* Frameworks */,
+				6E778DA11CD5B70300AED11E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "CerraduraWatch Extension";
+			productName = "CerraduraWatch Extension";
+			productReference = 6E778DA31CD5B70300AED11E /* CerraduraWatch Extension.appex */;
+			productType = "com.apple.product-type.watchkit2-extension";
+		};
 		6EE605911CC21941008EF0EE /* LockDaemon */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6EE605A11CC21942008EF0EE /* Build configuration list for PBXNativeTarget "LockDaemon" */;
@@ -498,12 +622,13 @@
 				6EE605A61CC21C1A008EF0EE /* Resources */,
 				6ED3386C1CC7D1DA00DF1461 /* Copy Frameworks */,
 				6ED338711CC7D1EE00DF1461 /* Embed Frameworks */,
-				6E1F605C1CCB2851001914E7 /* Increment Build */,
+				6E778DB91CD5B70300AED11E /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				6ED338701CC7D1EE00DF1461 /* PBXTargetDependency */,
+				6E778DB01CD5B70300AED11E /* PBXTargetDependency */,
 			);
 			name = Cerradura;
 			productName = Cerradura;
@@ -559,6 +684,14 @@
 					6E729C531CC3BC030018A848 = {
 						CreatedOnToolsVersion = 7.3;
 					};
+					6E778D961CD5B70300AED11E = {
+						CreatedOnToolsVersion = 7.3;
+						DevelopmentTeam = 4W79SG34MW;
+					};
+					6E778DA21CD5B70300AED11E = {
+						CreatedOnToolsVersion = 7.3;
+						DevelopmentTeam = 4W79SG34MW;
+					};
 					6EE605911CC21941008EF0EE = {
 						CreatedOnToolsVersion = 7.3;
 					};
@@ -592,6 +725,8 @@
 				6EE605BE1CC21C81008EF0EE /* CoreLock OS X */,
 				6EF45F8F1CC6CAF9001F7A39 /* CoreLock iOS */,
 				6E729C531CC3BC030018A848 /* CoreLockTests */,
+				6E778D961CD5B70300AED11E /* CerraduraWatch */,
+				6E778DA21CD5B70300AED11E /* CerraduraWatch Extension */,
 			);
 		};
 /* End PBXProject section */
@@ -601,6 +736,23 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6E778D951CD5B70300AED11E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6E778D9D1CD5B70300AED11E /* Assets.xcassets in Resources */,
+				6E778D9B1CD5B70300AED11E /* Interface.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6E778DA11CD5B70300AED11E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6E778DAD1CD5B70300AED11E /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -640,20 +792,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		6E1F605C1CCB2851001914E7 /* Increment Build */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Increment Build";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "#!/bin/bash\n\n#  update_build_number.sh\n#  Usage: `update_build_number.sh [branch]`\n#  Run this script after the 'Copy Bundle Resources' build phase\n#  Ref: http://tgoode.com/2014/06/05/sensible-way-increment-bundle-version-cfbundleversion-xcode/\n\nif [ $TRAVIS == \"true\" ]\nthen echo \"Updating build number to TRAVISCI.\"\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion TRAVISCI\" \"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\nelse branch=${1:-'develop'}\nbuildNumber=$(expr $(git rev-list $branch --count) - $(git rev-list HEAD..$branch --count))\necho \"Updating build number to $buildNumber using branch '$branch'.\"\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\nfi";
-		};
 		6ED3386C1CC7D1DA00DF1461 /* Copy Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -687,6 +825,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		6E778D9F1CD5B70300AED11E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6E778DAB1CD5B70300AED11E /* ExtensionDelegate.swift in Sources */,
+				6E60B9E31CD5C70C002D788D /* AnimatedButtonController.swift in Sources */,
+				6E778DA91CD5B70300AED11E /* InterfaceController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6EE6058E1CC21941008EF0EE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -717,6 +865,7 @@
 				6E1F60651CCB2D0A001914E7 /* LockCache.swift in Sources */,
 				6E30653D1CD04AD3007424E0 /* NewKeyParentViewController.swift in Sources */,
 				6EE605AB1CC21C1A008EF0EE /* AppDelegate.swift in Sources */,
+				6E778DBB1CD5BD0900AED11E /* WatchController.swift in Sources */,
 				6E1F60591CCB1D37001914E7 /* Model.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -767,6 +916,16 @@
 			target = 6EE605BE1CC21C81008EF0EE /* CoreLock OS X */;
 			targetProxy = 6E729C5A1CC3BC030018A848 /* PBXContainerItemProxy */;
 		};
+		6E778DA61CD5B70300AED11E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6E778DA21CD5B70300AED11E /* CerraduraWatch Extension */;
+			targetProxy = 6E778DA51CD5B70300AED11E /* PBXContainerItemProxy */;
+		};
+		6E778DB01CD5B70300AED11E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6E778D961CD5B70300AED11E /* CerraduraWatch */;
+			targetProxy = 6E778DAF1CD5B70300AED11E /* PBXContainerItemProxy */;
+		};
 		6ED338701CC7D1EE00DF1461 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 6EF45F8F1CC6CAF9001F7A39 /* CoreLock iOS */;
@@ -780,6 +939,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		6E778D991CD5B70300AED11E /* Interface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6E778D9A1CD5B70300AED11E /* Base */,
+			);
+			name = Interface.storyboard;
+			sourceTree = "<group>";
+		};
 		6EE6059B1CC21942008EF0EE /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -817,6 +984,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.colemancda.CoreLockTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -830,6 +998,71 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.colemancda.CoreLockTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		6E778DB21CD5B70300AED11E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "iPhone Developer";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				IBSC_MODULE = CerraduraWatch_Extension;
+				INFOPLIST_FILE = CerraduraWatch/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.colemancda.Cerradura.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+			};
+			name = Debug;
+		};
+		6E778DB31CD5B70300AED11E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "iPhone Developer";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				IBSC_MODULE = CerraduraWatch_Extension;
+				INFOPLIST_FILE = CerraduraWatch/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.colemancda.Cerradura.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		6E778DB41CD5B70300AED11E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = "CerraduraWatch Extension/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.colemancda.Cerradura.watchkitapp.watchkitextension;
+				PRODUCT_NAME = "${TARGET_NAME}";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+			};
+			name = Debug;
+		};
+		6E778DB51CD5B70300AED11E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = "CerraduraWatch Extension/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.colemancda.Cerradura.watchkitapp.watchkitextension;
+				PRODUCT_NAME = "${TARGET_NAME}";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
@@ -874,8 +1107,9 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx;
+				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				WATCHOS_DEPLOYMENT_TARGET = 2.0;
 			};
 			name = Debug;
 		};
@@ -913,8 +1147,9 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				SDKROOT = macosx;
+				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				WATCHOS_DEPLOYMENT_TARGET = 2.0;
 			};
 			name = Release;
 		};
@@ -930,6 +1165,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.colemancda.LockDaemon;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -945,6 +1181,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.colemancda.LockDaemon;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -1001,6 +1238,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.colemancda.CoreLock;
 				PRODUCT_NAME = CoreLock;
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1026,6 +1264,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.colemancda.CoreLock;
 				PRODUCT_NAME = CoreLock;
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -1095,6 +1334,24 @@
 			buildConfigurations = (
 				6E729C5D1CC3BC030018A848 /* Debug */,
 				6E729C5E1CC3BC030018A848 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6E778DB61CD5B70300AED11E /* Build configuration list for PBXNativeTarget "CerraduraWatch Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6E778DB41CD5B70300AED11E /* Debug */,
+				6E778DB51CD5B70300AED11E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6E778DB81CD5B70300AED11E /* Build configuration list for PBXNativeTarget "CerraduraWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6E778DB21CD5B70300AED11E /* Debug */,
+				6E778DB31CD5B70300AED11E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

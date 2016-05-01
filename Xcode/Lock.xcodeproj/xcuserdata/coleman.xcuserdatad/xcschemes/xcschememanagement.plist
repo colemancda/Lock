@@ -9,6 +9,11 @@
 			<key>orderHint</key>
 			<integer>1</integer>
 		</dict>
+		<key>CerraduraWatch.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>4</integer>
+		</dict>
 		<key>CoreLock OS X.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -28,6 +33,11 @@
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
 		<key>6E729C531CC3BC030018A848</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>6E778D961CD5B70300AED11E</key>
 		<dict>
 			<key>primary</key>
 			<true/>
