@@ -67,6 +67,7 @@ final class ComplicationController: NSObject, CLKComplicationDataSource {
         handler(CLKComplicationTimelineEntry(date: NSDate(), complicationTemplate: template))
     }
     
+    /*
     @objc(getTimelineEntriesForComplication:beforeDate:limit:withHandler:)
     func getTimelineEntries(for complication: CLKComplication, before date: NSDate, limit: Int, withHandler handler: (([CLKComplicationTimelineEntry]?) -> ())) {
         
@@ -79,16 +80,11 @@ final class ComplicationController: NSObject, CLKComplicationDataSource {
         let entries = events.map { CLKComplicationTimelineEntry(date: $0.date, complicationTemplate: self.template(for: complication, event: $0.event)) }
         
         handler(entries)
-    }
-    
-    @objc(getTimelineEntriesForComplication:afterDate:limit:withHandler:)
-    func getTimelineEntries(for complication: CLKComplication, after date: NSDate, limit: Int, withHandler handler: (([CLKComplicationTimelineEntry]?) -> ())) {
-        
-        handler(nil)
-    }
+    }*/
     
     // MARK: - Update Scheduling
     
+    /*
     @objc(getNextRequestedUpdateDateWithHandler:)
     func getNextRequestedUpdateDate(handler: (NSDate?) -> ()) {
         // Call the handler with the date when you would next like to be given the opportunity to update your complication content
@@ -100,7 +96,7 @@ final class ComplicationController: NSObject, CLKComplicationDataSource {
         print("Next date complication will be updated: \(futureDate)")
         */
         handler(nil)
-    }
+    }*/
     
     // MARK: - Placeholder Templates
     
@@ -123,7 +119,37 @@ final class ComplicationController: NSObject, CLKComplicationDataSource {
             
         case .modularSmall:
             
-            let image = UIImage(named: "modularSmallAdmin")!
+            let imageName: String
+                
+            switch event {
+                
+            case let .foundLock(permission):
+                
+                if let permission = permission {
+                    
+                    switch permission {
+                    case .owner: imageName = "modularSmallOwner"
+                    case .admin: imageName = "modularSmallAdmin"
+                    case .anytime: imageName = "modularSmallAnytime"
+                    case .scheduled: imageName = "modularSmallScheduled"
+                    }
+                    
+                } else {
+                    
+                    imageName = "modularSmallScan"
+                }
+                
+            case let .unlock(permission):
+                
+                switch permission {
+                case .owner: imageName = "modularSmallOwner"
+                case .admin: imageName = "modularSmallAdmin"
+                case .anytime: imageName = "modularSmallAnytime"
+                case .scheduled: imageName = "modularSmallScheduled"
+                }
+            }
+            
+            let image = UIImage(named: imageName)!
             
             let complicationTemplate = CLKComplicationTemplateModularSmallSimpleImage()
             

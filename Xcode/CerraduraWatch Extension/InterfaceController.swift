@@ -99,7 +99,7 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
         
         for complication in (complicationServer.activeComplications ?? []) {
             
-            complicationServer.extendTimeline(for: complication)
+            complicationServer.reloadTimeline(for: complication)
         }
     }
     
@@ -143,7 +143,7 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
         
         for complication in (complicationServer.activeComplications ?? []) {
             
-            complicationServer.extendTimeline(for: complication)
+            complicationServer.reloadTimeline(for: complication)
         }
     }
     
