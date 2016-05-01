@@ -32,14 +32,14 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
         scanAnimation.startAnimating()
         
         session = WCSession.defaultSession()
-        session?.delegate = self
+        session.delegate = self
     }
 
     override func willActivate() {
         // This method is called when watch view controller is about to be visible to user
         super.willActivate()
         
-        session?.activate()
+        session.activate()
     }
 
     override func didDeactivate() {
@@ -75,6 +75,6 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
             return
         }
         
-        
+        print("Session did activate")
     }
 }

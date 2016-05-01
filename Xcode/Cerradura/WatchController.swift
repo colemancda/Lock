@@ -42,4 +42,21 @@ final class WatchController: NSObject, WCSessionDelegate {
         
         log?("Activation did complete")
     }
+    
+    @objc(session:didReceiveMessage:replyHandler:)
+    func session(_ session: WCSession, didReceiveMessage message: [String : AnyObject], replyHandler: ([String : AnyObject]) -> Swift.Void) {
+        
+        guard let identifierRawValue = message[WatchMessageIdentifierKey] as? WatchMessageType.RawValue,
+            let identifier = WatchMessageType(rawValue: identifierRawValue)
+            else { return }
+        
+        switch identifier {
+            
+        case .UnlockRequest:
+            
+            let message = UnlockRequest.ini
+            
+        default: fatalError("Unexpected message: \(message)")
+        }
+    }
 }
