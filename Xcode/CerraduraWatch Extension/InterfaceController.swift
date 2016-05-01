@@ -33,9 +33,7 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
 
     override func awake(withContext context: AnyObject?) {
         super.awake(withContext: context)
-        
-        scanAnimation.startAnimating()
-        
+                
         session = WCSession.defaultSession()
         session.delegate = self
     }
@@ -44,7 +42,20 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
         // This method is called when watch view controller is about to be visible to user
         super.willActivate()
         
-        session.activate()
+        guard session.activationState == .activated else {
+            
+            button.setEnabled(true)
+            session.activate()
+            scanAnimation.startAnimating()
+            return
+        }
+        
+        // request current lock
+        session.sendMessage(CurrentLockRequest().toMessage(),
+                            replyHandler: currentLockResponse,
+                            errorHandler: { self.showError($0.localizedDescription) })
+        
+        
     }
 
     override func didDeactivate() {
@@ -64,19 +75,29 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
             return
         }
         
-        guard lock != nil else { return }
+        guard lock != nil else {
+            
+            // request current lock
+            session.sendMessage(CurrentLockRequest().toMessage(),
+                                replyHandler: currentLockResponse,
+                                errorHandler: { self.showError($0.localizedDescription) })
+            
+            return
+        }
         
         sender.setEnabled(false)
         
         session.sendMessage(UnlockRequest().toMessage(),
                             replyHandler: self.unlockResponse,
-                            errorHandler: { self.unlockError($0.localizedDescription) })
+                            errorHandler: { self.showError($0.localizedDescription) })
         
     }
     
     // MARK: - Private Functions
     
     private func didFindLock() {
+        
+        print("New lock value \(self.lock)")
         
         button.setEnabled(true)
         
@@ -91,12 +112,21 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
             case .scheduled: imageName = "watchScheduled"
             }
             
+            self.scanAnimation.stopAnimating()
             self.button.setBackgroundImageNamed(imageName)
             
         } else {
             
             self.scanAnimation.startAnimating()
         }
+    }
+    
+    private func currentLockResponse(message: [String: AnyObject]) {
+        
+        guard let response = CurrentLockResponse(message: message)
+            else { fatalError("Invalid message: \(message)") }
+        
+        self.lock = response.permission
     }
     
     private func unlockResponse(message: [String: AnyObject]) {
@@ -106,18 +136,24 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
         
         if let error = response.error {
             
-            unlockError(error)
+            showError(error)
             return
         }
         
         button.setEnabled(true)
     }
     
-    private func unlockError(_ error: String) {
+    private func showError(_ error: String) {
         
-        let action = WKAlertAction(title: "OK", style: WKAlertActionStyle.`default`) { self.button.setEnabled(true) }
+        print("Error: \(error)")
+        
+        let action = WKAlertAction(title: "OK", style: WKAlertActionStyle.`default`) { }
         
         self.presentAlert(withTitle: "Error", message: error, preferredStyle: .actionSheet, actions: [action])
+        
+        self.button.setEnabled(true)
+        
+        self.scanAnimation.startAnimating()
     }
     
     // MARK: - WCSessionDelegate
@@ -125,31 +161,39 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
     @objc(session:activationDidCompleteWithState:error:)
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: NSError?) {
         
-        guard activationState == .activated else {
+        guard activationState == .activated && session.isReachable
+            else {
             
             var message = "Cannot communicate with iPhone. "
             
             if let error = error {
                 
                 message += "(\(error.localizedDescription))"
+                
+            } else if session.isReachable == false {
+                
+                message += "iPhone is not reachable."
             }
             
-            let action = WKAlertAction(title: "OK", style: WKAlertActionStyle.`default`) { }
-            
-            self.presentAlert(withTitle: "Error", message: message, preferredStyle: .actionSheet, actions: [action])
+            showError(message)
             
             return
         }
         
         print("Session did activate")
+        
+        // request current lock
+        session.sendMessage(CurrentLockRequest().toMessage(),
+                            replyHandler: currentLockResponse,
+                            errorHandler: { self.showError($0.localizedDescription) })
     }
     
     @objc(session:didReceiveMessage:)
     func session(_ session: WCSession, didReceiveMessage message: [String : AnyObject]) {
         
-        guard let identifierRawValue = message[WatchMessageIdentifierKey] as? WatchMessageType.RawValue,
-            let identifier = WatchMessageType(rawValue: identifierRawValue)
-            else { return }
+        guard let identifierNumber = message[WatchMessageIdentifierKey] as? NSNumber,
+            let identifier = WatchMessageType(rawValue: identifierNumber.uint8Value)
+            else { fatalError("Invalid message: \(message)") }
         
         switch identifier {
             

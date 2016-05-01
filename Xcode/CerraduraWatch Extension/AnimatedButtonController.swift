@@ -38,6 +38,8 @@ public final class AnimatedButtonController {
     
     public func startAnimating() {
         
+        guard timer == nil else { return }
+        
         currentImageIndex = 0
         
         updateImage()

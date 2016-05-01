@@ -36,7 +36,11 @@ final class WatchController: NSObject, WCSessionDelegate {
     
     private func foundLock(lock: (peripheral: Peripheral, UUID: SwiftFoundation.UUID, status: Status, model: Model, version: UInt64)?) {
         
-        guard session.activationState == .activated else { return }
+        guard session.activationState == .activated
+            else { log?("Could not send found lock notification to Watch app, session not activated."); return }
+        
+        guard session.isReachable
+            else { log?("Could not send found lock notification to Watch app, the counterpart app is not available for live messaging."); return }
         
         let message: FoundLockNotification
         
@@ -51,7 +55,7 @@ final class WatchController: NSObject, WCSessionDelegate {
         
         session.sendMessage(message.toMessage(),
                             replyHandler: nil,
-                            errorHandler: { self.log?("Error \($0.localizedDescription)") })
+                            errorHandler: { self.log?("Error sending found lock notification: \($0.localizedDescription)") })
     }
     
     // MARK: - WCSessionDelegate
@@ -59,9 +63,10 @@ final class WatchController: NSObject, WCSessionDelegate {
     @objc(session:activationDidCompleteWithState:error:)
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: NSError?) {
         
-        guard activationState == .activated else {
+        guard activationState == .activated
+            && session.isReachable else {
             
-            log?("Activation error: \(error?.localizedDescription ?? "None")")
+            log?("Activation error: \(error?.localizedDescription ?? "Not Reachable")")
             
             return
         }
@@ -72,9 +77,9 @@ final class WatchController: NSObject, WCSessionDelegate {
     @objc(session:didReceiveMessage:replyHandler:)
     func session(_ session: WCSession, didReceiveMessage message: [String : AnyObject], replyHandler: ([String : AnyObject]) -> Swift.Void) {
         
-        guard let identifierRawValue = message[WatchMessageIdentifierKey] as? WatchMessageType.RawValue,
-            let identifier = WatchMessageType(rawValue: identifierRawValue)
-            else { return }
+        guard let identifierNumber = message[WatchMessageIdentifierKey] as? NSNumber,
+            let identifier = WatchMessageType(rawValue: identifierNumber.uint8Value)
+            else { fatalError("Invalid message: \(message)") }
         
         switch identifier {
             
@@ -99,6 +104,21 @@ final class WatchController: NSObject, WCSessionDelegate {
             replyHandler(UnlockResponse().toMessage())
             
             print("Unlocked from Watch")
+            
+        case .CurrentLockRequest:
+            
+            log?("Recieved current lock request")
+            
+            guard let _ = CurrentLockRequest(message: message)
+                else { replyHandler(UnlockResponse(error: "Bad communication with iPhone").toMessage()); return }
+            
+            guard let foundLock = LockManager.shared.foundLock.value,
+                let cachedLock = Store.shared[foundLock.UUID]
+                else { replyHandler(CurrentLockResponse().toMessage()); return }
+            
+            let response = CurrentLockResponse(permission: cachedLock.key.permission.type)
+            
+            replyHandler(response.toMessage())
             
         default: fatalError("Unexpected message: \(message)")
         }
