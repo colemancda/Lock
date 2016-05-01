@@ -54,8 +54,6 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
         session.sendMessage(CurrentLockRequest().toMessage(),
                             replyHandler: currentLockResponse,
                             errorHandler: { self.showError($0.localizedDescription) })
-        
-        
     }
 
     override func didDeactivate() {
@@ -80,7 +78,7 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
             // request current lock
             session.sendMessage(CurrentLockRequest().toMessage(),
                                 replyHandler: currentLockResponse,
-                                errorHandler: { self.showError($0.localizedDescription) })
+                                errorHandler: { (error) in mainQueue { self.showError(error.localizedDescription) } })
             
             return
         }
@@ -89,8 +87,9 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
         
         session.sendMessage(UnlockRequest().toMessage(),
                             replyHandler: self.unlockResponse,
-                            errorHandler: { self.showError($0.localizedDescription) })
+                            errorHandler: { (error) in mainQueue { self.showError(error.localizedDescription) } })
         
+        print("Sent unlock message")
     }
     
     // MARK: - Private Functions
@@ -126,7 +125,7 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
         guard let response = CurrentLockResponse(message: message)
             else { fatalError("Invalid message: \(message)") }
         
-        self.lock = response.permission
+        mainQueue { self.lock = response.permission }
     }
     
     private func unlockResponse(message: [String: AnyObject]) {
@@ -134,13 +133,16 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
         guard let response = UnlockResponse(message: message)
             else { fatalError("Invalid message: \(message)") }
         
-        if let error = response.error {
+        mainQueue {
             
-            showError(error)
-            return
+            if let error = response.error {
+                
+                self.showError(error)
+                return
+            }
+            
+            self.button.setEnabled(true)
         }
-        
-        button.setEnabled(true)
     }
     
     private func showError(_ error: String) {
@@ -175,7 +177,7 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
                 message += "iPhone is not reachable."
             }
             
-            showError(message)
+            mainQueue { self.showError(message) }
             
             return
         }
@@ -185,7 +187,7 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
         // request current lock
         session.sendMessage(CurrentLockRequest().toMessage(),
                             replyHandler: currentLockResponse,
-                            errorHandler: { self.showError($0.localizedDescription) })
+                            errorHandler: { (error) in mainQueue { self.showError(error.localizedDescription) } })
     }
     
     @objc(session:didReceiveMessage:)
@@ -204,7 +206,7 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
             guard let notification = FoundLockNotification(message: message)
                 else { fatalError("Invalid message: \(message)") }
             
-            lock = notification.permission
+            mainQueue { self.lock = notification.permission }
             
         default: fatalError("Unexpected message: \(message)")
         }

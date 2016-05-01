@@ -50,6 +50,8 @@ public final class AnimatedButtonController {
     public func stopAnimating() {
         
         timer?.invalidate()
+        
+        timer = nil
     }
     
     // MARK: - Private Methods
