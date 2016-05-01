@@ -25,7 +25,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         // add NSPersistentStore to Cerradura.Store
         try! LoadPersistentStore()
         
-        Central.shared.log = { print("Central: " + $0) }
+        LockManager.shared.log = { print("LockManager: " + $0) }
                         
         return true
     }

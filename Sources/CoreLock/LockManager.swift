@@ -1,5 +1,5 @@
 //
-//  Central.swift
+//  LockManager.swift
 //  Lock
 //
 //  Created by Alsey Coleman Miller on 4/30/16.
@@ -9,25 +9,17 @@
 #if os(OSX) || os(iOS) || os(watchOS)
     
     import SwiftFoundation
+    import Bluetooth
     import GATT
     import CoreBluetooth
     
-    public final class Central {
+    public final class LockManager {
+        
+        public typealias Error = LockManagerError
         
         // MARK: - Initialization
         
-        public static let shared: Central = {
-            
-            let central = Central()
-            
-            // initialize lazy value
-            let _ = central.internalManager.state
-            
-            // start scanning
-            central.startScan()
-            
-            return central
-        }()
+        public static let shared: LockManager = LockManager()
         
         // MARK: - Properties
         
@@ -42,7 +34,7 @@
         
         public let foundLock = Observable<(peripheral: Peripheral, UUID: SwiftFoundation.UUID, status: Status, model: Model, version: UInt64)?>()
         
-        public let state = Observable(CBCentralManagerState.unknown)
+        public lazy var state: Observable<CBCentralManagerState> = Observable(self.internalManager.state)
         
         // MARK: - Private Properties
         
@@ -52,35 +44,8 @@
         
         // MARK: - Methods
         
-        /// Setup the connected lock
-        func setup() {
-            
-            guard let lock = self.foundLock.value
-                else { return }
-            
-            
-        }
-        
-        // MARK: - Private Methods
-        
-        /// Perform a task on the internal queue.
-        private func async(_ block: () -> ()) {
-            
-            dispatch_async(queue) { block() }
-        }
-        
-        private func stateChanged(state: CBCentralManagerState) {
-            
-            if foundLock.value != nil { foundLock.value = nil }
-            
-            if state == .poweredOn {
-                
-                self.startScan()
-            }
-        }
-        
-        /// Internal method to be called to start the scanning.
-        private func startScan() {
+        /// Disconnnect from current lock (if any) and start scanning.
+        public func startScan() {
             
             log?("Scanning...")
             
@@ -111,6 +76,98 @@
                         }
                     }
                 }
+            }
+        }
+        
+        /// Setup the connected lock
+        public func setup(name: String) throws -> Key {
+            
+            guard let foundLock = self.foundLock.value
+                else { throw Error.NoLock }
+            
+            // write to setup characteristic
+            
+            let key = Key(data: KeyData(), permission: .owner)
+            
+            let setup = LockService.Setup.init(value: key.data)
+            
+            try internalManager.write(data: setup.toBigEndian(), response: true, characteristic: LockService.Setup.UUID, service: LockService.UUID, peripheral: foundLock.peripheral)
+            
+            // read lock service values
+            
+            let statusValue = try internalManager.read(characteristic: LockService.Status.UUID, service: LockService.UUID, peripheral: foundLock.peripheral)
+            
+            guard let status = LockService.Status.init(bigEndian: statusValue)
+                else { throw LockManagerError.InvalidCharacteristicValue(LockService.Status.UUID) }
+            
+            guard status.value == .unlock
+                else { throw LockManagerError.InvalidStatus(status.value) }
+            
+            return key
+        }
+        
+        /// Unlock the connected lock
+        public func unlock(key: KeyData) throws {
+            
+            guard let foundLock = self.foundLock.value
+                else { throw Error.NoLock }
+            
+            let unlock = LockService.Unlock.init(key: key)
+            
+            try internalManager.write(data: unlock.toBigEndian(), response: true, characteristic: LockService.Unlock.UUID, service: LockService.UUID, peripheral: foundLock.peripheral)
+        }
+        
+        public func createNewKey(permission: Permission, parentKey: KeyData, sharedSecret: SharedSecret = SharedSecret()) throws {
+            
+            assert(permission != .owner, "Cannot create owner keys")
+            
+            guard let foundLock = self.foundLock.value
+                else { throw Error.NoLock }
+            
+            let parentNewKey = LockService.NewKeyParentSharedSecret.init(sharedSecret: sharedSecret, parentKey: parentKey, permission: permission)
+            
+            try internalManager.write(data: parentNewKey.toBigEndian(), response: true, characteristic: LockService.NewKeyParentSharedSecret.UUID, service: LockService.UUID, peripheral: foundLock.peripheral)
+        }
+        
+        public func recieveNewKey(sharedSecret: SharedSecret) throws -> Key {
+            
+            guard let foundLock = self.foundLock.value
+                else { throw Error.NoLock }
+            
+            // read new key child characteristic
+            
+            let newKeyChildValue = try internalManager.read(characteristic: LockService.NewKeyChildSharedSecret.UUID, service: LockService.UUID, peripheral: foundLock.peripheral)
+            
+            guard let newKeyChild = LockService.NewKeyChildSharedSecret.init(bigEndian: newKeyChildValue)
+                else { throw Error.InvalidCharacteristicValue(LockService.NewKeyChildSharedSecret.UUID) }
+            
+            guard let key = newKeyChild.decrypt(sharedSecret: sharedSecret)
+                else { throw Error.InvalidSharedSecret }
+            
+            // write confirmation value
+            
+            let newKeyFinish = LockService.NewKeyFinish.init(key: key.data)
+            
+            try internalManager.write(data: newKeyFinish.toBigEndian(), response: true, characteristic: LockService.NewKeyFinish.UUID, service: LockService.UUID, peripheral: foundLock.peripheral)
+            
+            return key
+        }
+        
+        // MARK: - Private Methods
+        
+        /// Perform a task on the internal queue.
+        private func async(_ block: () -> ()) {
+            
+            dispatch_async(queue) { block() }
+        }
+        
+        private func stateChanged(state: CBCentralManagerState) {
+            
+            if foundLock.value != nil { foundLock.value = nil }
+            
+            if state == .poweredOn {
+                
+                self.startScan()
             }
         }
         
@@ -192,6 +249,15 @@
                 catch { foundLockError("\(error)"); return }
             }
         }
+    }
+    
+    public enum LockManagerError: ErrorProtocol {
+        
+        case NoLock
+        case InvalidStatus(Status)
+        case InvalidSharedSecret
+        case CharacteristicNotFound(Bluetooth.UUID)
+        case InvalidCharacteristicValue(Bluetooth.UUID)
     }
     
 #endif
