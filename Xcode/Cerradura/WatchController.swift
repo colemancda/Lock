@@ -111,13 +111,16 @@ final class WatchController: NSObject, WCSessionDelegate {
                 LockManager.shared.startScan()
             }
             
-            guard let foundLock = LockManager.shared.foundLock.value,
-                let cachedLock = Store.shared[foundLock.UUID]
-                else { replyHandler(CurrentLockResponse().toMessage()); return }
-            
-            let response = CurrentLockResponse(permission: cachedLock.key.permission.type)
-            
-            replyHandler(response.toMessage())
+            mainQueue {
+                
+                guard let foundLock = LockManager.shared.foundLock.value,
+                    let cachedLock = Store.shared[foundLock.UUID]
+                    else { replyHandler(CurrentLockResponse().toMessage()); return }
+                
+                let response = CurrentLockResponse(permission: cachedLock.key.permission.type)
+                
+                replyHandler(response.toMessage())
+            }
             
         default: fatalError("Unexpected message: \(message)")
         }

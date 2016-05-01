@@ -5,10 +5,10 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBWatchKitPlugin" version="10032"/>
     </dependencies>
     <scenes>
-        <!--Interface Controller-->
+        <!--Cerradura-->
         <scene sceneID="aou-V4-d1y">
             <objects>
-                <controller id="AgC-eL-Hgc" customClass="InterfaceController" customModule="CerraduraWatch" customModuleProvider="target">
+                <controller title="Cerradura" id="AgC-eL-Hgc" customClass="InterfaceController" customModule="CerraduraWatch" customModuleProvider="target">
                     <items>
                         <button width="130" height="130" alignment="center" verticalAlignment="center" backgroundImage="watchScan4" id="pFy-lL-rDT">
                             <color key="titleColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
