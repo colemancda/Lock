@@ -3,4 +3,5 @@
   <string name="app_name">Cerradura</string>
   <string name="near">Near</string>
   <string name="keys">Keys</string>
+  <string name="action_button">Action Button</string>
 </resources>

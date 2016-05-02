@@ -7,22 +7,33 @@ import android.view
 import android.widget
 import android.graphics
 
-public final class MainActivity: Activity {
+public final class MainActivity: ActivityGroup {
 	
 	// MARK: - Outlets
 	
-	lazy var mainContentView: FrameLayout = self.findViewById(R.id.MainContentView) as! FrameLayout
+	lazy var tabHost = findViewById(R.id.tabHost) as! TabHost
 	
 	// MARK: - Loading
 
 	public override func onCreate(savedInstanceState: Bundle!) {
 		super.onCreate(savedInstanceState)
+		
 		ContentView = R.layout.main
 		
+		tabHost.setup(self.getLocalActivityManager())
 		
+		addTab("Near", NearLockActivity.self)
+		addTab("Keys", KeysActivity.self)
 	}
 	
-	// MARK: - Actions
+	// MARK: - Private Methods
 	
-	
+	private func addTab(name: String, _ activity: Class<Object>) {
+		
+		let tab = tabHost.newTabSpec(name + "Tab")
+		let intent = android.content.Intent(self, activity)
+		tab.setIndicator(name)
+		tab.setContent(intent)
+		tabHost.addTab(tab)
+	}
 }
