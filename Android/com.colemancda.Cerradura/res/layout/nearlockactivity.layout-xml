@@ -14,6 +14,8 @@
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
             android:contentDescription="@string/action_button"
-            android:background="#00ffffff" />
+            android:background="#00ffffff"
+            android:src="@drawable/scan4"
+            android:scaleType="fitCenter" />
     </RelativeLayout>
 </LinearLayout>

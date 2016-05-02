@@ -67,9 +67,9 @@
 			<key>ScrollX</key>
 			<real>0.0</real>
 			<key>ScrollY</key>
-			<real>1651</real>
+			<real>3748</real>
 			<key>ScrolledToBottom</key>
-			<true/>
+			<false/>
 			<key>SelectionCursorUndecided</key>
 			<false/>
 			<key>SelectionEndColumn</key>
@@ -132,13 +132,13 @@
 		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/NearLockActivity.swift</key>
 		<dict>
 			<key>CursorX</key>
-			<integer>77</integer>
+			<integer>0</integer>
 			<key>CursorY</key>
-			<integer>23</integer>
+			<integer>7</integer>
 			<key>ScrollX</key>
 			<real>0.0</real>
 			<key>ScrollY</key>
-			<real>138</real>
+			<real>106</real>
 			<key>SelectionCursorUndecided</key>
 			<false/>
 			<key>SelectionEndColumn</key>

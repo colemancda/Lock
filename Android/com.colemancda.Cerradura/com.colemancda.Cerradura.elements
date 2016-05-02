@@ -89,6 +89,20 @@
         <None Include="res\layout\nearlockactivity.layout-xml"/>
         <Compile Include="KeysActivity.swift"/>
         <None Include="res\layout\keysactivity.layout-xml"/>
+        <None Include="res\drawable-ldpi\permissionbadgescheduled.png"/>
+        <None Include="res\drawable-ldpi\bluetoothlogo.png"/>
+        <None Include="res\drawable-ldpi\bluetoothlogodisabled.png"/>
+        <None Include="res\drawable-ldpi\permissionbadgeadmin.png"/>
+        <None Include="res\drawable-ldpi\permissionbadgeanytime.png"/>
+        <None Include="res\drawable-ldpi\permissionbadgeowner.png"/>
+        <None Include="res\drawable-ldpi\setupkey.png"/>
+        <None Include="res\drawable-ldpi\setupkeyselected.png"/>
+        <None Include="res\drawable-ldpi\setuplock.png"/>
+        <None Include="res\drawable-ldpi\setuplockselected.png"/>
+        <None Include="res\drawable-ldpi\scan4.png"/>
+        <None Include="res\drawable-ldpi\scan3.png"/>
+        <None Include="res\drawable-ldpi\scan2.png"/>
+        <None Include="res\drawable-ldpi\scan1.png"/>
     </ItemGroup>
     <Import Project="$(MSBuildExtensionsPath)\RemObjects Software\Elements\RemObjects.Elements.Cooper.Android.targets"/>
 </Project>
