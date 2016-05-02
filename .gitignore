@@ -3,3 +3,6 @@ Carthage
 Packages
 Xcode/Lock.xcodeproj/project.xcworkspace/xcuserdata
 Xcode/Lock.xcodeproj/xcuserdata
+
+Android/com.colemancda.Cerradura/bin
+Android/com.colemancda.Cerradura/obj

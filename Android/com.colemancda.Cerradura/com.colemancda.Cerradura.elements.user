@@ -1,0 +1,7 @@
+<?xml version="1.0" standalone="no"?>
+<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+    <PropertyGroup>
+        <CrossBoxDevice>Android Emulator 5554</CrossBoxDevice>
+        <CrossBoxDeviceID>emulator-5554</CrossBoxDeviceID>
+    </PropertyGroup>
+</Project>

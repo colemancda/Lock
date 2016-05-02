@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">Cerradura</string>
+  <string name="near">Near</string>
+  <string name="keys">Keys</string>
+</resources>

@@ -19,5 +19,5 @@ let package = Package(
             name: "CoreLock"
         )
     ],
-    exclude: ["Xcode"]
+    exclude: ["Xcode", "Android"]
 )
