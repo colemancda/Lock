@@ -12,6 +12,16 @@
 	<false/>
 	<key>FolderExpanded_com.colemancda.Cerradura_/Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements---References</key>
 	<true/>
+	<key>FolderExpanded_com.colemancda.Cerradura_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/</key>
+	<true/>
+	<key>FolderExpanded_com.colemancda.Cerradura_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Desktop/</key>
+	<true/>
+	<key>FolderExpanded_com.colemancda.Cerradura_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/</key>
+	<true/>
+	<key>FolderExpanded_com.colemancda.Cerradura_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/</key>
+	<true/>
+	<key>FolderExpanded_com.colemancda.Cerradura_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/</key>
+	<true/>
 	<key>FolderExpanded_com.colemancda.Cerradura_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/</key>
 	<true/>
 	<key>FolderExpanded_com.colemancda.Cerradura_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/Properties/</key>
@@ -76,9 +86,9 @@
 		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/KeysActivity.swift</key>
 		<dict>
 			<key>CursorX</key>
-			<integer>0</integer>
+			<integer>4</integer>
 			<key>CursorY</key>
-			<integer>0</integer>
+			<integer>25</integer>
 			<key>ScrollX</key>
 			<real>0.0</real>
 			<key>ScrollY</key>
@@ -86,13 +96,13 @@
 			<key>SelectionCursorUndecided</key>
 			<false/>
 			<key>SelectionEndColumn</key>
-			<integer>0</integer>
+			<integer>-1</integer>
 			<key>SelectionEndLine</key>
-			<integer>0</integer>
+			<integer>-1</integer>
 			<key>SelectionIsLinear</key>
-			<false/>
+			<true/>
 			<key>SelectionStartColumn</key>
-			<integer>0</integer>
+			<integer>-1</integer>
 			<key>SelectionStartLine</key>
 			<integer>-1</integer>
 		</dict>
@@ -122,13 +132,13 @@
 		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/NearLockActivity.swift</key>
 		<dict>
 			<key>CursorX</key>
-			<integer>22</integer>
+			<integer>77</integer>
 			<key>CursorY</key>
-			<integer>15</integer>
+			<integer>23</integer>
 			<key>ScrollX</key>
 			<real>0.0</real>
 			<key>ScrollY</key>
-			<real>0.0</real>
+			<real>138</real>
 			<key>SelectionCursorUndecided</key>
 			<false/>
 			<key>SelectionEndColumn</key>
@@ -371,6 +381,29 @@
 			<integer>60</integer>
 			<key>SelectionStartLine</key>
 			<integer>3</integer>
+		</dict>
+		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_generated://Cooper/android%2Ewidget%2EImageButton.swift</key>
+		<dict>
+			<key>CursorX</key>
+			<integer>1</integer>
+			<key>CursorY</key>
+			<integer>9</integer>
+			<key>ScrollX</key>
+			<real>0.0</real>
+			<key>ScrollY</key>
+			<real>0.0</real>
+			<key>SelectionCursorUndecided</key>
+			<false/>
+			<key>SelectionEndColumn</key>
+			<integer>0</integer>
+			<key>SelectionEndLine</key>
+			<integer>0</integer>
+			<key>SelectionIsLinear</key>
+			<true/>
+			<key>SelectionStartColumn</key>
+			<integer>0</integer>
+			<key>SelectionStartLine</key>
+			<integer>-1</integer>
 		</dict>
 		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_generated://Cooper/android%2Ewidget%2ETabHost%2ETabSpec.swift</key>
 		<dict>

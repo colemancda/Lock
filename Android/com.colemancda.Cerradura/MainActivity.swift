@@ -28,7 +28,7 @@ public final class MainActivity: ActivityGroup {
 	
 	// MARK: - Private Methods
 	
-	private func addTab(name: String, _ activity: Class<Object>) {
+	private func addTab(name: String, _ activity: Class) {
 		
 		let tab = tabHost.newTabSpec(name + "Tab")
 		let intent = android.content.Intent(self, activity)

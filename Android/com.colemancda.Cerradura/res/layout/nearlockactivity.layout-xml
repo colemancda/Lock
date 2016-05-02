@@ -13,6 +13,7 @@
             android:id="@+id/ActionButton"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
-            android:contentDescription="@string/action_button" />
+            android:contentDescription="@string/action_button"
+            android:background="#00ffffff" />
     </RelativeLayout>
 </LinearLayout>

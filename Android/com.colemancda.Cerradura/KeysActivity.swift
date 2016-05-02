@@ -1,4 +1,4 @@
-import java.util
+﻿import java.util
 import android.app
 import android.content
 import android.os
@@ -7,6 +7,11 @@ import android.view
 import android.widget
 
 public class KeysActivity: Activity {
+	
+	// MARK: - Outlets
+	
+	
+	// MARK: - Loading
 
 	public override func onCreate(savedInstanceState: Bundle!) {
 
@@ -14,5 +19,9 @@ public class KeysActivity: Activity {
 
 		// Set our view from the "KeysActivity" layout resource
 		ContentView = R.layout.keysactivity
+		
+		
 	}
+	
+	
 }
