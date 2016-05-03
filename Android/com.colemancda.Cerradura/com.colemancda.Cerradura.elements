@@ -11,7 +11,7 @@
         <RootNamespace>com.colemancda.cerradura</RootNamespace>
         <AssemblyName>com.colemancda.Cerradura</AssemblyName>
         <MinFrameworkVersionRequired>4.0</MinFrameworkVersionRequired>
-        <AndroidPlatformName>android-18</AndroidPlatformName>
+        <AndroidPlatformName>android-N</AndroidPlatformName>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
         <Optimize>false</Optimize>
