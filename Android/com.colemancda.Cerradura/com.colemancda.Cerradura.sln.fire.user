@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>DebugPaneActiveTab</key>
-	<real>2</real>
+	<real>0.0</real>
 	<key>DebuggerSplitterCollapsed</key>
 	<false/>
 	<key>ExplorerSplitter</key>
@@ -23,6 +23,8 @@
 	<key>FolderExpanded_com.colemancda.Cerradura_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/</key>
 	<true/>
 	<key>FolderExpanded_com.colemancda.Cerradura_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/</key>
+	<true/>
+	<key>FolderExpanded_com.colemancda.Cerradura_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/CoreLock</key>
 	<true/>
 	<key>FolderExpanded_com.colemancda.Cerradura_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/Properties/</key>
 	<true/>
@@ -44,18 +46,26 @@
 	<true/>
 	<key>FolderExpanded_com.colemancda.Cerradura_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/res/drawable-xhdpi/</key>
 	<true/>
+	<key>FolderExpanded_com.colemancda.Cerradura_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/res/drawable/</key>
+	<true/>
 	<key>FolderExpanded_com.colemancda.Cerradura_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/res/layout/</key>
+	<true/>
+	<key>FolderExpanded_com.colemancda.Cerradura_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/res/res/drawable/</key>
 	<true/>
 	<key>FolderExpanded_com.colemancda.Cerradura_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/res/values/</key>
 	<true/>
+	<key>FolderExpanded_com.colemancda.Cerradura_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Sources/</key>
+	<true/>
+	<key>FolderExpanded_com.colemancda.Cerradura_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Sources/CoreLock/</key>
+	<true/>
 	<key>LastBuildStatusLabel</key>
-	<string>Last build was successful</string>
+	<string>Last build failed</string>
 	<key>NavigationPaneActiveTab</key>
 	<real>0.0</real>
 	<key>Properties</key>
 	<dict/>
 	<key>SelectedNode</key>
-	<string>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/NearLockActivity.swift</string>
+	<string>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_generated://Cooper/android%2Ebluetooth%2Ele%2EScanCallback.swift</string>
 	<key>ViewMetaData</key>
 	<dict>
 		<key>/Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.sln---BuildLog</key>
@@ -63,11 +73,11 @@
 			<key>CursorX</key>
 			<integer>0</integer>
 			<key>CursorY</key>
-			<integer>0</integer>
+			<integer>277</integer>
 			<key>ScrollX</key>
 			<real>0.0</real>
 			<key>ScrollY</key>
-			<real>3748</real>
+			<real>3800</real>
 			<key>ScrolledToBottom</key>
 			<false/>
 			<key>SelectionCursorUndecided</key>
@@ -77,7 +87,7 @@
 			<key>SelectionEndLine</key>
 			<integer>0</integer>
 			<key>SelectionIsLinear</key>
-			<false/>
+			<true/>
 			<key>SelectionStartColumn</key>
 			<integer>0</integer>
 			<key>SelectionStartLine</key>
@@ -106,16 +116,62 @@
 			<key>SelectionStartLine</key>
 			<integer>-1</integer>
 		</dict>
-		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/MainActivity.swift</key>
+		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/LockManager.swift</key>
 		<dict>
 			<key>CursorX</key>
-			<integer>59</integer>
+			<integer>38</integer>
 			<key>CursorY</key>
-			<integer>33</integer>
+			<integer>29</integer>
 			<key>ScrollX</key>
 			<real>0.0</real>
 			<key>ScrollY</key>
-			<real>138</real>
+			<real>80</real>
+			<key>SelectionCursorUndecided</key>
+			<false/>
+			<key>SelectionEndColumn</key>
+			<integer>-1</integer>
+			<key>SelectionEndLine</key>
+			<integer>-1</integer>
+			<key>SelectionIsLinear</key>
+			<true/>
+			<key>SelectionStartColumn</key>
+			<integer>-1</integer>
+			<key>SelectionStartLine</key>
+			<integer>-1</integer>
+		</dict>
+		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/MainActivity.swift</key>
+		<dict>
+			<key>CursorX</key>
+			<integer>38</integer>
+			<key>CursorY</key>
+			<integer>27</integer>
+			<key>ScrollX</key>
+			<real>0.0</real>
+			<key>ScrollY</key>
+			<real>0.0</real>
+			<key>SelectionCursorUndecided</key>
+			<false/>
+			<key>SelectionEndColumn</key>
+			<integer>-1</integer>
+			<key>SelectionEndLine</key>
+			<integer>-1</integer>
+			<key>SelectionIsLinear</key>
+			<true/>
+			<key>SelectionStartColumn</key>
+			<integer>-1</integer>
+			<key>SelectionStartLine</key>
+			<integer>-1</integer>
+		</dict>
+		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/Model.swift</key>
+		<dict>
+			<key>CursorX</key>
+			<integer>2</integer>
+			<key>CursorY</key>
+			<integer>6</integer>
+			<key>ScrollX</key>
+			<real>0.0</real>
+			<key>ScrollY</key>
+			<real>0.0</real>
 			<key>SelectionCursorUndecided</key>
 			<false/>
 			<key>SelectionEndColumn</key>
@@ -132,13 +188,36 @@
 		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/NearLockActivity.swift</key>
 		<dict>
 			<key>CursorX</key>
-			<integer>0</integer>
+			<integer>8</integer>
 			<key>CursorY</key>
-			<integer>7</integer>
+			<integer>35</integer>
 			<key>ScrollX</key>
 			<real>0.0</real>
 			<key>ScrollY</key>
-			<real>106</real>
+			<real>81</real>
+			<key>SelectionCursorUndecided</key>
+			<false/>
+			<key>SelectionEndColumn</key>
+			<integer>-1</integer>
+			<key>SelectionEndLine</key>
+			<integer>-1</integer>
+			<key>SelectionIsLinear</key>
+			<true/>
+			<key>SelectionStartColumn</key>
+			<integer>-1</integer>
+			<key>SelectionStartLine</key>
+			<integer>-1</integer>
+		</dict>
+		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/Peer.swift</key>
+		<dict>
+			<key>CursorX</key>
+			<integer>1</integer>
+			<key>CursorY</key>
+			<integer>16</integer>
+			<key>ScrollX</key>
+			<real>0.0</real>
+			<key>ScrollY</key>
+			<real>0.0</real>
 			<key>SelectionCursorUndecided</key>
 			<false/>
 			<key>SelectionEndColumn</key>
@@ -175,7 +254,76 @@
 			<key>SelectionStartLine</key>
 			<integer>-1</integer>
 		</dict>
+		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/Status.swift</key>
+		<dict>
+			<key>CursorX</key>
+			<integer>14</integer>
+			<key>CursorY</key>
+			<integer>5</integer>
+			<key>ScrollX</key>
+			<real>0.0</real>
+			<key>ScrollY</key>
+			<real>0.0</real>
+			<key>SelectionCursorUndecided</key>
+			<false/>
+			<key>SelectionEndColumn</key>
+			<integer>-1</integer>
+			<key>SelectionEndLine</key>
+			<integer>-1</integer>
+			<key>SelectionIsLinear</key>
+			<true/>
+			<key>SelectionStartColumn</key>
+			<integer>-1</integer>
+			<key>SelectionStartLine</key>
+			<integer>-1</integer>
+		</dict>
 		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/obj/com.colemancda.Cerradura-UI-AndroidStudio/res/layout/near.xml</key>
+		<dict>
+			<key>CursorX</key>
+			<integer>0</integer>
+			<key>CursorY</key>
+			<integer>0</integer>
+			<key>ScrollX</key>
+			<real>0.0</real>
+			<key>ScrollY</key>
+			<real>0.0</real>
+			<key>SelectionCursorUndecided</key>
+			<false/>
+			<key>SelectionEndColumn</key>
+			<integer>0</integer>
+			<key>SelectionEndLine</key>
+			<integer>0</integer>
+			<key>SelectionIsLinear</key>
+			<false/>
+			<key>SelectionStartColumn</key>
+			<integer>0</integer>
+			<key>SelectionStartLine</key>
+			<integer>-1</integer>
+		</dict>
+		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/res/drawable-ldpi/scananimation.xml</key>
+		<dict>
+			<key>CursorX</key>
+			<integer>0</integer>
+			<key>CursorY</key>
+			<integer>0</integer>
+			<key>ScrollX</key>
+			<real>0.0</real>
+			<key>ScrollY</key>
+			<real>0.0</real>
+			<key>SelectionCursorUndecided</key>
+			<false/>
+			<key>SelectionEndColumn</key>
+			<integer>0</integer>
+			<key>SelectionEndLine</key>
+			<integer>0</integer>
+			<key>SelectionIsLinear</key>
+			<false/>
+			<key>SelectionStartColumn</key>
+			<integer>0</integer>
+			<key>SelectionStartLine</key>
+			<integer>-1</integer>
+		</dict>
+		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/res/drawable/frameanimation.android-xml</key>
 		<dict>
 			<key>CursorX</key>
 			<integer>0</integer>
@@ -267,6 +415,29 @@
 			<key>SelectionStartLine</key>
 			<integer>-1</integer>
 		</dict>
+		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/res/res/drawable/frameanimation.android-xml</key>
+		<dict>
+			<key>CursorX</key>
+			<integer>0</integer>
+			<key>CursorY</key>
+			<integer>0</integer>
+			<key>ScrollX</key>
+			<real>0.0</real>
+			<key>ScrollY</key>
+			<real>0.0</real>
+			<key>SelectionCursorUndecided</key>
+			<false/>
+			<key>SelectionEndColumn</key>
+			<integer>0</integer>
+			<key>SelectionEndLine</key>
+			<integer>0</integer>
+			<key>SelectionIsLinear</key>
+			<false/>
+			<key>SelectionStartColumn</key>
+			<integer>0</integer>
+			<key>SelectionStartLine</key>
+			<integer>-1</integer>
+		</dict>
 		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/res/values/strings.android-xml</key>
 		<dict>
 			<key>CursorX</key>
@@ -287,6 +458,52 @@
 			<true/>
 			<key>SelectionStartColumn</key>
 			<integer>-1</integer>
+			<key>SelectionStartLine</key>
+			<integer>-1</integer>
+		</dict>
+		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Sources/CoreLock/Observable.swift</key>
+		<dict>
+			<key>CursorX</key>
+			<integer>0</integer>
+			<key>CursorY</key>
+			<integer>0</integer>
+			<key>ScrollX</key>
+			<real>0.0</real>
+			<key>ScrollY</key>
+			<real>641</real>
+			<key>SelectionCursorUndecided</key>
+			<false/>
+			<key>SelectionEndColumn</key>
+			<integer>0</integer>
+			<key>SelectionEndLine</key>
+			<integer>0</integer>
+			<key>SelectionIsLinear</key>
+			<false/>
+			<key>SelectionStartColumn</key>
+			<integer>0</integer>
+			<key>SelectionStartLine</key>
+			<integer>-1</integer>
+		</dict>
+		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_generated://Cooper/Error.swift</key>
+		<dict>
+			<key>CursorX</key>
+			<integer>0</integer>
+			<key>CursorY</key>
+			<integer>0</integer>
+			<key>ScrollX</key>
+			<real>0.0</real>
+			<key>ScrollY</key>
+			<real>0.0</real>
+			<key>SelectionCursorUndecided</key>
+			<false/>
+			<key>SelectionEndColumn</key>
+			<integer>0</integer>
+			<key>SelectionEndLine</key>
+			<integer>0</integer>
+			<key>SelectionIsLinear</key>
+			<false/>
+			<key>SelectionStartColumn</key>
+			<integer>0</integer>
 			<key>SelectionStartLine</key>
 			<integer>-1</integer>
 		</dict>
@@ -331,6 +548,75 @@
 			<integer>0</integer>
 			<key>SelectionIsLinear</key>
 			<false/>
+			<key>SelectionStartColumn</key>
+			<integer>0</integer>
+			<key>SelectionStartLine</key>
+			<integer>-1</integer>
+		</dict>
+		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_generated://Cooper/android%2Ebluetooth%2EBluetoothAdapter.swift</key>
+		<dict>
+			<key>CursorX</key>
+			<integer>33</integer>
+			<key>CursorY</key>
+			<integer>67</integer>
+			<key>ScrollX</key>
+			<real>0.0</real>
+			<key>ScrollY</key>
+			<real>2</real>
+			<key>SelectionCursorUndecided</key>
+			<true/>
+			<key>SelectionEndColumn</key>
+			<integer>46</integer>
+			<key>SelectionEndLine</key>
+			<integer>67</integer>
+			<key>SelectionIsLinear</key>
+			<true/>
+			<key>SelectionStartColumn</key>
+			<integer>28</integer>
+			<key>SelectionStartLine</key>
+			<integer>67</integer>
+		</dict>
+		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_generated://Cooper/android%2Ebluetooth%2Ele%2EBluetoothLeScanner.swift</key>
+		<dict>
+			<key>CursorX</key>
+			<integer>45</integer>
+			<key>CursorY</key>
+			<integer>4</integer>
+			<key>ScrollX</key>
+			<real>0.0</real>
+			<key>ScrollY</key>
+			<real>0.0</real>
+			<key>SelectionCursorUndecided</key>
+			<false/>
+			<key>SelectionEndColumn</key>
+			<integer>-1</integer>
+			<key>SelectionEndLine</key>
+			<integer>-1</integer>
+			<key>SelectionIsLinear</key>
+			<true/>
+			<key>SelectionStartColumn</key>
+			<integer>-1</integer>
+			<key>SelectionStartLine</key>
+			<integer>-1</integer>
+		</dict>
+		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_generated://Cooper/android%2Ebluetooth%2Ele%2EScanCallback.swift</key>
+		<dict>
+			<key>CursorX</key>
+			<integer>1</integer>
+			<key>CursorY</key>
+			<integer>9</integer>
+			<key>ScrollX</key>
+			<real>0.0</real>
+			<key>ScrollY</key>
+			<real>0.0</real>
+			<key>SelectionCursorUndecided</key>
+			<false/>
+			<key>SelectionEndColumn</key>
+			<integer>0</integer>
+			<key>SelectionEndLine</key>
+			<integer>0</integer>
+			<key>SelectionIsLinear</key>
+			<true/>
 			<key>SelectionStartColumn</key>
 			<integer>0</integer>
 			<key>SelectionStartLine</key>
@@ -381,6 +667,29 @@
 			<integer>60</integer>
 			<key>SelectionStartLine</key>
 			<integer>3</integer>
+		</dict>
+		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_generated://Cooper/android%2Egraphics%2Edrawable%2EAnimationDrawable.swift</key>
+		<dict>
+			<key>CursorX</key>
+			<integer>0</integer>
+			<key>CursorY</key>
+			<integer>0</integer>
+			<key>ScrollX</key>
+			<real>0.0</real>
+			<key>ScrollY</key>
+			<real>0.0</real>
+			<key>SelectionCursorUndecided</key>
+			<false/>
+			<key>SelectionEndColumn</key>
+			<integer>0</integer>
+			<key>SelectionEndLine</key>
+			<integer>0</integer>
+			<key>SelectionIsLinear</key>
+			<false/>
+			<key>SelectionStartColumn</key>
+			<integer>0</integer>
+			<key>SelectionStartLine</key>
+			<integer>-1</integer>
 		</dict>
 		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_generated://Cooper/android%2Ewidget%2EImageButton.swift</key>
 		<dict>
@@ -434,6 +743,29 @@
 			<integer>48</integer>
 			<key>CursorY</key>
 			<integer>9</integer>
+			<key>ScrollX</key>
+			<real>0.0</real>
+			<key>ScrollY</key>
+			<real>0.0</real>
+			<key>SelectionCursorUndecided</key>
+			<false/>
+			<key>SelectionEndColumn</key>
+			<integer>0</integer>
+			<key>SelectionEndLine</key>
+			<integer>0</integer>
+			<key>SelectionIsLinear</key>
+			<false/>
+			<key>SelectionStartColumn</key>
+			<integer>0</integer>
+			<key>SelectionStartLine</key>
+			<integer>-1</integer>
+		</dict>
+		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_generated://Cooper/java%2Eutil%2EIterator%3Cjava%2Elang%2EObject%3E.swift</key>
+		<dict>
+			<key>CursorX</key>
+			<integer>0</integer>
+			<key>CursorY</key>
+			<integer>0</integer>
 			<key>ScrollX</key>
 			<real>0.0</real>
 			<key>ScrollY</key>

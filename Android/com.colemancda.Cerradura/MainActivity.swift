@@ -24,6 +24,8 @@ public final class MainActivity: ActivityGroup {
 		
 		addTab("Near", NearLockActivity.self)
 		addTab("Keys", KeysActivity.self)
+		
+		LockManager.shared.startScan()
 	}
 	
 	// MARK: - Private Methods

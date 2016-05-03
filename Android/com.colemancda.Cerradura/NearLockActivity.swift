@@ -5,6 +5,7 @@ import android.os
 import android.util
 import android.view
 import android.widget
+import android.graphics.drawable
 
 public class NearLockActivity: Activity {
 	
@@ -22,6 +23,8 @@ public class NearLockActivity: Activity {
 		ContentView = R.layout.nearlockactivity
 		
 		actionButton.OnClickListener = { (v: View!) in self.buttonPressed() }
+		
+		self.updateUI()
 	}
 	
 	// MARK: - Actions
@@ -35,5 +38,10 @@ public class NearLockActivity: Activity {
 	
 	// MARK: - Methods
 	
-	
+	private func updateUI() {
+		
+		actionButton.setBackgroundResource(R.drawable.scananimation)
+		let scanAnimation = actionButton.Background as! AnimationDrawable
+		scanAnimation.start()
+	}
 }
