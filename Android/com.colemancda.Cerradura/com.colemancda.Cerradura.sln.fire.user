@@ -65,7 +65,7 @@
 	<key>Properties</key>
 	<dict/>
 	<key>SelectedNode</key>
-	<string>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_generated://Cooper/android%2Ebluetooth%2Ele%2EScanCallback.swift</string>
+	<string>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/LockManager.swift</string>
 	<key>ViewMetaData</key>
 	<dict>
 		<key>/Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.sln---BuildLog</key>
@@ -77,9 +77,9 @@
 			<key>ScrollX</key>
 			<real>0.0</real>
 			<key>ScrollY</key>
-			<real>3800</real>
+			<real>4842</real>
 			<key>ScrolledToBottom</key>
-			<false/>
+			<true/>
 			<key>SelectionCursorUndecided</key>
 			<false/>
 			<key>SelectionEndColumn</key>
@@ -119,13 +119,13 @@
 		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/LockManager.swift</key>
 		<dict>
 			<key>CursorX</key>
-			<integer>38</integer>
+			<integer>4</integer>
 			<key>CursorY</key>
-			<integer>29</integer>
+			<integer>13</integer>
 			<key>ScrollX</key>
 			<real>0.0</real>
 			<key>ScrollY</key>
-			<real>80</real>
+			<real>19</real>
 			<key>SelectionCursorUndecided</key>
 			<false/>
 			<key>SelectionEndColumn</key>
@@ -142,13 +142,13 @@
 		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/MainActivity.swift</key>
 		<dict>
 			<key>CursorX</key>
-			<integer>38</integer>
+			<integer>57</integer>
 			<key>CursorY</key>
 			<integer>27</integer>
 			<key>ScrollX</key>
 			<real>0.0</real>
 			<key>ScrollY</key>
-			<real>0.0</real>
+			<real>39</real>
 			<key>SelectionCursorUndecided</key>
 			<false/>
 			<key>SelectionEndColumn</key>
@@ -556,13 +556,13 @@
 		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_generated://Cooper/android%2Ebluetooth%2EBluetoothAdapter.swift</key>
 		<dict>
 			<key>CursorX</key>
-			<integer>33</integer>
+			<integer>0</integer>
 			<key>CursorY</key>
-			<integer>67</integer>
+			<integer>6</integer>
 			<key>ScrollX</key>
 			<real>0.0</real>
 			<key>ScrollY</key>
-			<real>2</real>
+			<real>0.0</real>
 			<key>SelectionCursorUndecided</key>
 			<true/>
 			<key>SelectionEndColumn</key>
@@ -579,9 +579,32 @@
 		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_generated://Cooper/android%2Ebluetooth%2Ele%2EBluetoothLeScanner.swift</key>
 		<dict>
 			<key>CursorX</key>
-			<integer>45</integer>
+			<integer>23</integer>
 			<key>CursorY</key>
 			<integer>4</integer>
+			<key>ScrollX</key>
+			<real>0.0</real>
+			<key>ScrollY</key>
+			<real>0.0</real>
+			<key>SelectionCursorUndecided</key>
+			<true/>
+			<key>SelectionEndColumn</key>
+			<integer>28</integer>
+			<key>SelectionEndLine</key>
+			<integer>4</integer>
+			<key>SelectionIsLinear</key>
+			<true/>
+			<key>SelectionStartColumn</key>
+			<integer>20</integer>
+			<key>SelectionStartLine</key>
+			<integer>4</integer>
+		</dict>
+		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_generated://Cooper/android%2Ebluetooth%2Ele%2EScanCallback.swift</key>
+		<dict>
+			<key>CursorX</key>
+			<integer>0</integer>
+			<key>CursorY</key>
+			<integer>10</integer>
 			<key>ScrollX</key>
 			<real>0.0</real>
 			<key>ScrollY</key>
@@ -599,28 +622,28 @@
 			<key>SelectionStartLine</key>
 			<integer>-1</integer>
 		</dict>
-		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_generated://Cooper/android%2Ebluetooth%2Ele%2EScanCallback.swift</key>
+		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_generated://Cooper/android%2Ebluetooth%2Ele%2EScanResult.swift</key>
 		<dict>
 			<key>CursorX</key>
-			<integer>1</integer>
+			<integer>30</integer>
 			<key>CursorY</key>
-			<integer>9</integer>
+			<integer>13</integer>
 			<key>ScrollX</key>
 			<real>0.0</real>
 			<key>ScrollY</key>
 			<real>0.0</real>
 			<key>SelectionCursorUndecided</key>
-			<false/>
+			<true/>
 			<key>SelectionEndColumn</key>
-			<integer>0</integer>
+			<integer>34</integer>
 			<key>SelectionEndLine</key>
-			<integer>0</integer>
+			<integer>13</integer>
 			<key>SelectionIsLinear</key>
 			<true/>
 			<key>SelectionStartColumn</key>
-			<integer>0</integer>
+			<integer>28</integer>
 			<key>SelectionStartLine</key>
-			<integer>-1</integer>
+			<integer>13</integer>
 		</dict>
 		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_generated://Cooper/android%2Econtent%2EContext.swift</key>
 		<dict>
@@ -743,6 +766,29 @@
 			<integer>48</integer>
 			<key>CursorY</key>
 			<integer>9</integer>
+			<key>ScrollX</key>
+			<real>0.0</real>
+			<key>ScrollY</key>
+			<real>0.0</real>
+			<key>SelectionCursorUndecided</key>
+			<false/>
+			<key>SelectionEndColumn</key>
+			<integer>0</integer>
+			<key>SelectionEndLine</key>
+			<integer>0</integer>
+			<key>SelectionIsLinear</key>
+			<false/>
+			<key>SelectionStartColumn</key>
+			<integer>0</integer>
+			<key>SelectionStartLine</key>
+			<integer>-1</integer>
+		</dict>
+		<key>file:///Users/coleman/Developer/Lock/Android/com.colemancda.Cerradura/com.colemancda.Cerradura.elements_generated://Cooper/java%2Elang%2EObject.swift</key>
+		<dict>
+			<key>CursorX</key>
+			<integer>0</integer>
+			<key>CursorY</key>
+			<integer>10</integer>
 			<key>ScrollX</key>
 			<real>0.0</real>
 			<key>ScrollY</key>

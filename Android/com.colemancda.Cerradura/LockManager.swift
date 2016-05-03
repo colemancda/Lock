@@ -1,4 +1,5 @@
-﻿import java.util
+﻿import swift
+import java.util
 import android.bluetooth.le
 import android.bluetooth
 
@@ -25,20 +26,62 @@ public final class LockManager {
 	
 	private lazy var scanner: android.bluetooth.le.BluetoothLeScanner = adapter.getBluetoothLeScanner()
 	
+	private var foundDevices = [BluetoothDevice]()
+	
 	public func startScan() {
-		
-		class LockScanCallback: ScanCallback {
-			
-			
-		}
 			
 		log?("Scanning...")
 		
-		scanner.startScan()
+		foundDevices = []
+		
+		let scanCallback = LockScanCallback(self)
+		
+		scanner.startScan(scanCallback)
+		
+		wait(scanDuration * 1000)
+		
+		scanner.flushPendingScanResults(scanCallback)
+		scanner.stopScan(scanCallback)
+		
+		wait(1000)
+		
+		log?("Found \(foundDevices.count) devices")
 	}
 }
 
 // MARK: - Supporting Types
+
+private final class LockScanCallback: ScanCallback {
+	
+	weak var lockManager: LockManager?
+	
+	init(_ lockManager: LockManager) {
+		
+		self.lockManager = lockManager
+	}
+	
+	func onScanResult(callbackType: Integer!, _ result: ScanResult!) {
+		
+		lockManager?.foundDevices.append(result.getDevice())
+	}
+	
+	//func onBatchScanResults(results: List<ScanResult>!) { }
+	
+	func onScanFailed(errorCode: Integer!) {
+		
+		let error = ScanError(rawValue: UInt8(errorCode))!
+		
+		lockManager.log?("Could not scan. \(error)")
+	}
+}
+
+public enum ScanError: UInt8 {
+	
+	case AlreadyStarted				  = 1
+	case ApplicationRegistrationFailed   = 2
+	case FeatureUnsupported			  = 3
+	case InternalError				   = 4
+}
 
 public final class Observable<Value> {
 	

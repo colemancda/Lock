@@ -25,6 +25,7 @@ public final class MainActivity: ActivityGroup {
 		addTab("Near", NearLockActivity.self)
 		addTab("Keys", KeysActivity.self)
 		
+		LockManager.shared.log = { print("LockManager: " + $0) }
 		LockManager.shared.startScan()
 	}
 	
