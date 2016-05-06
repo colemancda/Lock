@@ -53,9 +53,9 @@ public enum Permission: Equatable {
             
             withUnsafePointer(&expiryBigEndianValue) { memcpy(&expiryBytes, $0, sizeof(Int64.self)) }
             
-            let startBytes = schedule.interval.rawValue.startIndex.bigEndian.bytes
+            let startBytes = schedule.interval.rawValue.upperBound.bigEndian.bytes
             
-            let endBytes = schedule.interval.rawValue.endIndex.bigEndian.bytes
+            let endBytes = schedule.interval.rawValue.lowerBound.bigEndian.bytes
             
             let weekdaysBytes = schedule.weekdays.toData().byteValue
             
@@ -218,7 +218,7 @@ public extension Permission.Schedule {
         
         public init?(rawValue: Range<UInt16>) {
             
-            guard rawValue.endIndex <= Interval.max
+            guard rawValue.upperBound <= Interval.max
                 else { return nil }
             
             self.rawValue = rawValue
