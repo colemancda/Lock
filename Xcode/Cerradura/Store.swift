@@ -166,11 +166,11 @@ func RemovePersistentStore() throws {
     
     let url = SQLiteStoreFileURL
     
-    if NSFileManager.defaultManager().fileExists(atPath: url.path!) {
+    if NSFileManager.default().fileExists(atPath: url.path!) {
         
         // delete file
         
-        try NSFileManager.defaultManager().removeItem(at: url)
+        try NSFileManager.default().removeItem(at: url)
     }
     
     if let store = PersistentStore {
@@ -186,7 +186,7 @@ func RemovePersistentStore() throws {
 
 let SQLiteStoreFileURL: NSURL = {
     
-    let cacheURL = try! NSFileManager.defaultManager().urlForDirectory(NSSearchPathDirectory.cachesDirectory,
+    let cacheURL = try! NSFileManager.default().urlForDirectory(NSSearchPathDirectory.cachesDirectory,
                                                                        in: NSSearchPathDomainMask.userDomainMask,
                                                                        appropriateFor: nil,
                                                                        create: false)

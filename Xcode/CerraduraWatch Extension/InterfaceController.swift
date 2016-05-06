@@ -35,7 +35,7 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
     override func awake(withContext context: AnyObject?) {
         super.awake(withContext: context)
                 
-        session = WCSession.defaultSession()
+        session = WCSession.default()
         session.delegate = self
     }
 

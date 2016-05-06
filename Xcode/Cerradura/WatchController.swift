@@ -21,7 +21,7 @@ final class WatchController: NSObject, WCSessionDelegate {
     
     var log: (String -> ())?
     
-    private let session = WCSession.defaultSession()
+    private let session = WCSession.default()
     
     // MARK: - Methods
     
