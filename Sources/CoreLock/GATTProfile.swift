@@ -484,7 +484,7 @@ public struct LockService: GATTProfileService {
         }
     }
     
-    /// Used to finish new key proccess door.
+    /// Used to finish new key proccess.
     ///
     /// nonce + HMAC(newKey, nonce) (16 + 64 bytes) (write-only)
     public struct NewKeyFinish: AuthenticatedCharacteristic {

@@ -39,7 +39,7 @@ public enum Permission: Equatable {
         }
     }
     
-    public static let length = 1 + sizeof(Int64.self) + (2 * sizeof(UInt16)) + Schedule.Weekdays.length // 20
+    public static let length = 1 + sizeof(Int64) + (2 * sizeof(UInt16)) + Schedule.Weekdays.length // 20
     
     public func toBigEndian() -> Data {
         
@@ -51,7 +51,7 @@ public enum Permission: Equatable {
             
             var expiryBytes = [UInt8](repeating: 0, count: sizeof(Int64))
             
-            withUnsafePointer(&expiryBigEndianValue) { memcpy(&expiryBytes, $0, sizeof(Int64.self)) }
+            withUnsafePointer(&expiryBigEndianValue) { let _ = memcpy(&expiryBytes, $0, sizeof(Int64.self)) }
             
             let startBytes = schedule.interval.rawValue.lowerBound.bigEndian.bytes
             
