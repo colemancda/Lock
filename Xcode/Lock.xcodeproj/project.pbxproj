@@ -55,7 +55,6 @@
 		6E778DB11CD5B70300AED11E /* CerraduraWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 6E778D971CD5B70300AED11E /* CerraduraWatch.app */; };
 		6E778DBB1CD5BD0900AED11E /* WatchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E778DBA1CD5BD0900AED11E /* WatchController.swift */; };
 		6E8024471CD651060043E847 /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8024461CD651060043E847 /* History.swift */; };
-		6E9923771CCD268E00C0B92C /* Arduino.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9923761CCD268E00C0B92C /* Arduino.swift */; };
 		6E9923791CCDE6CD00C0B92C /* SharedSecret.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9923781CCDE6CD00C0B92C /* SharedSecret.swift */; };
 		6E99237A1CCDE6CD00C0B92C /* SharedSecret.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9923781CCDE6CD00C0B92C /* SharedSecret.swift */; };
 		6EA899701CC2E3F0005FC225 /* GATTProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA8996F1CC2E3F0005FC225 /* GATTProfile.swift */; };
@@ -245,7 +244,6 @@
 		6E778DAE1CD5B70300AED11E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6E778DBA1CD5BD0900AED11E /* WatchController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WatchController.swift; sourceTree = "<group>"; };
 		6E8024461CD651060043E847 /* History.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = History.swift; sourceTree = "<group>"; };
-		6E9923761CCD268E00C0B92C /* Arduino.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Arduino.swift; sourceTree = "<group>"; };
 		6E9923781CCDE6CD00C0B92C /* SharedSecret.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedSecret.swift; sourceTree = "<group>"; };
 		6EA8996F1CC2E3F0005FC225 /* GATTProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTProfile.swift; sourceTree = "<group>"; };
 		6EA944C61CD6275500D776E5 /* ComplicationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComplicationController.swift; sourceTree = "<group>"; };
@@ -534,7 +532,6 @@
 				6EB4132C1CC2EE68005AB1E2 /* Configuration.swift */,
 				6E646CF11CC449770029A4B3 /* LockController.swift */,
 				6E4E3F0B1CCBDBBD00196E39 /* Store.swift */,
-				6E9923761CCD268E00C0B92C /* Arduino.swift */,
 			);
 			name = lockd;
 			path = ../Sources/lockd;
@@ -864,7 +861,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E9923771CCD268E00C0B92C /* Arduino.swift in Sources */,
 				6E4E3F0C1CCBDBBD00196E39 /* Store.swift in Sources */,
 				6E646CF21CC449770029A4B3 /* LockController.swift in Sources */,
 				6EE605981CC21941008EF0EE /* ViewController.swift in Sources */,

@@ -19,7 +19,7 @@ final class WatchController: NSObject, WCSessionDelegate {
     
     // MARK: - Properties
     
-    var log: (String -> ())?
+    var log: ((String) -> ())?
     
     private let session = WCSession.default()
     
@@ -27,7 +27,7 @@ final class WatchController: NSObject, WCSessionDelegate {
     
     func activate() {
         
-        LockManager.shared.foundLock.observe(foundLock)
+        let _ = LockManager.shared.foundLock.observe(foundLock)
         session.delegate = self
         session.activate()
     }
