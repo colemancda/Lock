@@ -6,12 +6,10 @@
 //  Copyright © 2016 ColemanCDA. All rights reserved.
 //
 
-import Darwin.C
-
 #if os(Linux)
     import Glibc
 #elseif os(OSX)
-    import Darwin
+    import Darwin.C
 #endif
 
 private let LockPin: GPIO = {
