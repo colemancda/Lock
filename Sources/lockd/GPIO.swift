@@ -10,8 +10,8 @@ import Darwin.C
 
 #if os(Linux)
     import Glibc
-#else
-    import Darwin.C
+#elseif os(OSX)
+    import Darwin
 #endif
 
 private let LockPin: GPIO = {

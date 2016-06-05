@@ -167,6 +167,7 @@ final class LockController {
             }
             
             // send signal to GPIO
+            UnlockIO()
             
             print("Unlocked by central \(central.identifier)")
             
