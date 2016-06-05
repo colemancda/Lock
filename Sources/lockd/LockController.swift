@@ -93,7 +93,7 @@ final class LockController {
         
         let lockService = Service(UUID: LockService.UUID, primary: true, characteristics: [identifier, model, version, status, setup, unlock, newKeyParent, newKeyChild, newKeyFinish])
         
-        try! peripheral.add(service: lockService)
+        let _ = try! peripheral.add(service: lockService)
     }
     
     private func didChangeStatus(oldValue: Status) {
