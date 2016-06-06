@@ -16,7 +16,7 @@ private let LockPin: GPIO = {
     
     let GPIOs = SwiftyGPIO.GPIOs(for: .RaspberryPi2)
     
-    let gpio = GPIOs[.P4]!
+    let gpio = GPIOs[.P6]!
     
     gpio.direction = .OUT
     
