@@ -12,13 +12,12 @@
     import Darwin.C
 #endif
 
-private let LockPin: GPIO = {
+private let LockPin: Int = {
     
-    let GPIOs = SwiftyGPIO.GPIOs(for: .RaspberryPi2)
+    let gpio = 6
     
-    let gpio = GPIOs[.P6]!
-    
-    gpio.direction = .OUT
+    system("echo \"\(6)\" > /sys/class/gpio/export")
+    system("echo \"out\" > /sys/class/gpio/gpio\(gpio)/direction")
     
     return gpio
 }()
@@ -27,12 +26,12 @@ private let LockPin: GPIO = {
 func UnlockIO() {
     
     #if arch(arm)
-    
-    LockPin.value = 1
-    
-    usleep(150 * 1000)
-    
-    LockPin.value = 0
+        
+    system("echo \"\(1)\" > /sys/class/gpio/gpio\(LockPin)/value")
+        
+    sleep(1)
+        
+    system("echo \"\(0)\" > /sys/class/gpio/gpio\(LockPin)/value")
     
     #else
         
