@@ -12,7 +12,9 @@
     import Darwin.C
 #endif
 
-private let UnlockGPIO: GPIO = {
+// MARK: - Unlocking
+
+let UnlockGPIO: GPIO = {
     
     let gpio = GPIO(sunXi: SunXiGPIO(letter: .A, pin: 6))
     
@@ -39,3 +41,16 @@ func UnlockIO() {
     
     #endif
 }
+
+// MARK: - App LED
+
+let AppLED: GPIO = {
+   
+    let gpio = GPIO(sunXi: SunXiGPIO(letter: .A, pin: 1))
+    
+    gpio.direction = .OUT
+    
+    return gpio
+}()
+
+

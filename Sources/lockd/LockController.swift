@@ -31,7 +31,18 @@ final class LockController {
     
     // MARK: - Intialization
     
+    deinit {
+        
+        AppLED.value = 0
+    }
+    
     private init() {
+        
+        // make sure lock is not accidentally unlocked by relay
+        UnlockGPIO.value = 0
+        
+        // turn on app LED
+        AppLED.value = 1
         
         self.keys = loadKeys()
         
@@ -46,7 +57,7 @@ final class LockController {
         
         #if os(Linux)
             peripheral = PeripheralManager()
-        #else
+        #elseif os(OSX)
             peripheral = PeripheralManager(localName: "Test Lock")
         #endif
         
