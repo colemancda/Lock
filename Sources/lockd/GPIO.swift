@@ -12,26 +12,24 @@
     import Darwin.C
 #endif
 
-private let LockPin: Int = {
+private let UnlockGPIO: GPIO = {
     
-    let gpio = 6
+    let gpio = GPIO(sunXi: SunXiGPIO(letter: .A, pin: 6))
     
-    system("echo \"\(6)\" > /sys/class/gpio/export")
-    system("echo \"out\" > /sys/class/gpio/gpio\(gpio)/direction")
+    gpio.direction = .OUT
     
     return gpio
 }()
-
 
 func UnlockIO() {
     
     #if arch(arm)
         
-    system("echo \"\(1)\" > /sys/class/gpio/gpio\(LockPin)/value")
+    UnlockGPIO.value = 1
         
     sleep(1)
         
-    system("echo \"\(0)\" > /sys/class/gpio/gpio\(LockPin)/value")
+    UnlockGPIO.value = 0
     
     #else
         

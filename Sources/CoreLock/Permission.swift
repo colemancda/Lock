@@ -99,7 +99,7 @@ public enum Permission: Equatable {
             
             var dateValue: Int64 = 0
             
-            withUnsafeMutablePointer(&dateValue) { memcpy($0, &dateBytes, sizeof(Int64)) }
+            withUnsafeMutablePointer(&dateValue) { let _ = memcpy($0, &dateBytes, sizeof(Int64)) }
             
             dateValue = dateValue.bigEndian
             

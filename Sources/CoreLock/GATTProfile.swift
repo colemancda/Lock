@@ -133,7 +133,7 @@ public struct LockService: GATTProfileService {
             
             var dataCopy = bigEndian
             
-            withUnsafeMutablePointer(&value) { memcpy($0, &dataCopy, length) }
+            withUnsafeMutablePointer(&value) { let _ = memcpy($0, &dataCopy, length) }
             
             self.value = value.bigEndian
         }
@@ -146,7 +146,7 @@ public struct LockService: GATTProfileService {
             
             var bytes = [UInt8](repeating: 0, count: length)
             
-            withUnsafePointer(&bigEndianValue) { memcpy(&bytes, $0, length) }
+            withUnsafePointer(&bigEndianValue) {let _ = memcpy(&bytes, $0, length) }
             
             return Data(byteValue: bytes)
         }

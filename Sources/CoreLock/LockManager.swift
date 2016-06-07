@@ -23,7 +23,7 @@
         
         // MARK: - Properties
         
-        public var log: (String -> ())? {
+        public var log: ((String) -> ())? {
             
             get { return internalManager.log }
             

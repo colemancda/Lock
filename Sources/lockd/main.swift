@@ -14,6 +14,6 @@ import CoreFoundation
 
 print("Starting Lock Daemon...")
 
-LockController.shared
+let _ = LockController.shared
 
 while true { }

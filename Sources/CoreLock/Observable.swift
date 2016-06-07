@@ -36,7 +36,7 @@ public final class Observable<Value> {
     
     // MARK: - Methods
     
-    public func observe(_ observer: Value -> ()) -> Int {
+    public func observe(_ observer: (Value) -> ()) -> Int {
         
         let identifier = nextID
         
@@ -72,9 +72,9 @@ private struct Observer<Value> {
     
     let identifier: Int
     
-    let callback: Value -> ()
+    let callback: (Value) -> ()
     
-    init(identifier: Int, callback: Value -> ()) {
+    init(identifier: Int, callback: (Value) -> ()) {
         
         self.identifier = identifier
         self.callback = callback

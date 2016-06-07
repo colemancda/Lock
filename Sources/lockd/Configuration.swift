@@ -19,6 +19,6 @@ struct Configuration {
         
         self.identifier = SwiftFoundation.UUID()
         
-        self.model = Model.test
+        self.model = Model.orangePi
     }
 }

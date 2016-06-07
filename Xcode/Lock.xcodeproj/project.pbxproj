@@ -73,10 +73,9 @@
 		6ED3386D1CC7D1EE00DF1461 /* CoreLock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EF45FA01CC6CAF9001F7A39 /* CoreLock.framework */; };
 		6ED3386E1CC7D1EE00DF1461 /* CoreLock.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6EF45FA01CC6CAF9001F7A39 /* CoreLock.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6EDC70131CC3E2260085180A /* Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB413301CC30084005AB1E2 /* Status.swift */; };
-		6EE605961CC21941008EF0EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE605951CC21941008EF0EE /* AppDelegate.swift */; };
-		6EE605981CC21941008EF0EE /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE605971CC21941008EF0EE /* ViewController.swift */; };
-		6EE6059A1CC21942008EF0EE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EE605991CC21942008EF0EE /* Assets.xcassets */; };
-		6EE6059D1CC21942008EF0EE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6EE6059B1CC21942008EF0EE /* Main.storyboard */; };
+		6EE0E36E1D06871C009E08D0 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB4132A1CC2ECD7005AB1E2 /* main.swift */; };
+		6EE0E3701D068772009E08D0 /* SwiftyGPIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0E36F1D068772009E08D0 /* SwiftyGPIO.swift */; };
+		6EE0E3721D068D8F009E08D0 /* SunXi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0E3711D068D8F009E08D0 /* SunXi.swift */; };
 		6EE605AB1CC21C1A008EF0EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE605AA1CC21C1A008EF0EE /* AppDelegate.swift */; };
 		6EE605B01CC21C1A008EF0EE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6EE605AE1CC21C1A008EF0EE /* Main.storyboard */; };
 		6EE605B21CC21C1A008EF0EE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EE605B11CC21C1A008EF0EE /* Assets.xcassets */; };
@@ -258,11 +257,9 @@
 		6ED338641CC7C1A800DF1461 /* Permission.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Permission.swift; sourceTree = "<group>"; };
 		6ED338671CC7C39200DF1461 /* NearLockViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NearLockViewController.swift; sourceTree = "<group>"; };
 		6ED338691CC7C7CB00DF1461 /* ErrorAlert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorAlert.swift; sourceTree = "<group>"; };
+		6EE0E36F1D068772009E08D0 /* SwiftyGPIO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftyGPIO.swift; sourceTree = "<group>"; };
+		6EE0E3711D068D8F009E08D0 /* SunXi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SunXi.swift; sourceTree = "<group>"; };
 		6EE605921CC21941008EF0EE /* LockDaemon.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LockDaemon.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		6EE605951CC21941008EF0EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		6EE605971CC21941008EF0EE /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		6EE605991CC21942008EF0EE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		6EE6059C1CC21942008EF0EE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		6EE6059E1CC21942008EF0EE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6EE605A81CC21C1A008EF0EE /* Cerradura.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cerradura.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EE605AA1CC21C1A008EF0EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -462,10 +459,6 @@
 		6EE605941CC21941008EF0EE /* LockDaemon */ = {
 			isa = PBXGroup;
 			children = (
-				6EE605951CC21941008EF0EE /* AppDelegate.swift */,
-				6EE605971CC21941008EF0EE /* ViewController.swift */,
-				6EE605991CC21942008EF0EE /* Assets.xcassets */,
-				6EE6059B1CC21942008EF0EE /* Main.storyboard */,
 				6EE6059E1CC21942008EF0EE /* Info.plist */,
 			);
 			path = LockDaemon;
@@ -534,7 +527,9 @@
 				6EB4132C1CC2EE68005AB1E2 /* Configuration.swift */,
 				6E646CF11CC449770029A4B3 /* LockController.swift */,
 				6E4E3F0B1CCBDBBD00196E39 /* Store.swift */,
+				6EE0E3711D068D8F009E08D0 /* SunXi.swift */,
 				6E7504EF1D0480BB00FC6A87 /* GPIO.swift */,
+				6EE0E36F1D068772009E08D0 /* SwiftyGPIO.swift */,
 			);
 			name = lockd;
 			path = ../Sources/lockd;
@@ -781,8 +776,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6EE6059A1CC21942008EF0EE /* Assets.xcassets in Resources */,
-				6EE6059D1CC21942008EF0EE /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -864,11 +857,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6EE0E3721D068D8F009E08D0 /* SunXi.swift in Sources */,
+				6EE0E3701D068772009E08D0 /* SwiftyGPIO.swift in Sources */,
 				6E4E3F0C1CCBDBBD00196E39 /* Store.swift in Sources */,
+				6EE0E36E1D06871C009E08D0 /* main.swift in Sources */,
 				6E646CF21CC449770029A4B3 /* LockController.swift in Sources */,
 				6E7504F01D0480BB00FC6A87 /* GPIO.swift in Sources */,
-				6EE605981CC21941008EF0EE /* ViewController.swift in Sources */,
-				6EE605961CC21941008EF0EE /* AppDelegate.swift in Sources */,
 				6EB4132D1CC2EE68005AB1E2 /* Configuration.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -971,14 +965,6 @@
 				6E778D9A1CD5B70300AED11E /* Base */,
 			);
 			name = Interface.storyboard;
-			sourceTree = "<group>";
-		};
-		6EE6059B1CC21942008EF0EE /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				6EE6059C1CC21942008EF0EE /* Base */,
-			);
-			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
 		6EE605AE1CC21C1A008EF0EE /* Main.storyboard */ = {
