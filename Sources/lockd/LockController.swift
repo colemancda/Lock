@@ -334,7 +334,7 @@ final class LockController {
         
         assert(gpio === ResetSwitch)
         
-        guard gpio.value == 1 else { return }
+        guard gpio.value == 0 else { return }
         
         print("Resetting...")
         
