@@ -1,12 +1,14 @@
 //
 //  SunXi.swift
-//  Lock
+//
 //
 //  Created by Alsey Coleman Miller on 6/7/16.
-//  Copyright © 2016 ColemanCDA. All rights reserved.
+//  Copyright © 2016 PureSwift. All rights reserved.
 //
 
 /// GPIO for SunXi (e.g. OrangePi) hardware. 
+///
+/// - SeeAlso: [SunXi Wiki](http://linux-sunxi.org/GPIO)
 public struct SunXiGPIO: CustomStringConvertible, Equatable {
     
     // MARK: - Properties
