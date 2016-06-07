@@ -37,11 +37,6 @@ final class LockController {
     
     // MARK: - Intialization
     
-    deinit {
-        
-        AppLED.value = 0
-    }
-    
     private init() {
         
         // load keys
@@ -76,7 +71,7 @@ final class LockController {
         // Setup GPIO
         
         // make sure lock is not accidentally unlocked by relay
-        UnlockGPIO.value = 0
+        UnlockGPIO.value = 1
         
         // turn on app LED
         //AppLED.value = 1
