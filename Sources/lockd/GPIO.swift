@@ -18,6 +18,8 @@ private let UnlockGPIO: GPIO = {
     
     gpio.direction = .OUT
     
+    gpio.value = 1
+    
     return gpio
 }()
 
@@ -25,11 +27,11 @@ func UnlockIO() {
     
     #if arch(arm)
         
-    UnlockGPIO.value = 1
+    UnlockGPIO.value = 0
         
     sleep(1)
         
-    UnlockGPIO.value = 0
+    UnlockGPIO.value = 1
     
     #else
         
