@@ -61,6 +61,8 @@ let ResetSwitch: GPIO = {
     
     gpio.direction = .IN
     
+    gpio.value = 0
+    
     return gpio
 }()
 

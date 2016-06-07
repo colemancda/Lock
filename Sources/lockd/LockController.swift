@@ -82,7 +82,7 @@ final class LockController {
         //AppLED.value = 1
         
         // listen to reset switch
-        ResetSwitch.onRaising(resetSwitchPressed)
+        ResetSwitch.onChange(resetSwitchPressed)
         
         // start GATT server
         
@@ -338,6 +338,8 @@ final class LockController {
     private func resetSwitchPressed(gpio: GPIO) {
         
         assert(gpio === ResetSwitch)
+        
+        guard gpio.value == 1 else { return }
         
         print("Resetting...")
         
