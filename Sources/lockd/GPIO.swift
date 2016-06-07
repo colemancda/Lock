@@ -53,4 +53,14 @@ let AppLED: GPIO = {
     return gpio
 }()
 
+// MARK: - Reset Swift
+
+let ResetSwitch: GPIO = {
+    
+    let gpio = GPIO(sunXi: SunXiGPIO(letter: .A, pin: 0))
+    
+    gpio.direction = .IN
+    
+    return gpio
+}()
 

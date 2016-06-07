@@ -6,6 +6,12 @@
 //  Copyright © 2016 ColemanCDA. All rights reserved.
 //
 
+#if os(Linux)
+    import Glibc
+#elseif os(OSX)
+    import Darwin.C
+#endif
+
 import SwiftFoundation
 import Bluetooth
 import GATT
@@ -38,11 +44,7 @@ final class LockController {
     
     private init() {
         
-        // make sure lock is not accidentally unlocked by relay
-        UnlockGPIO.value = 0
-        
-        // turn on app LED
-        AppLED.value = 1
+        // load keys
         
         self.keys = loadKeys()
         
@@ -54,6 +56,8 @@ final class LockController {
             
             status = .unlock
         }
+        
+        // setup server
         
         #if os(Linux)
             peripheral = PeripheralManager()
@@ -69,10 +73,27 @@ final class LockController {
         
         addLockService()
         
-        try! peripheral.start()
+        // Setup GPIO
+        
+        // make sure lock is not accidentally unlocked by relay
+        UnlockGPIO.value = 0
+        
+        // turn on app LED
+        //AppLED.value = 1
+        
+        // listen to reset switch
+        ResetSwitch.onRaising(resetSwitchPressed)
+        
+        // start GATT server
+        
+        do { try peripheral.start() }
+        
+        catch { fatalError("Could not start peripheral: \(error)") }
     }
     
-    // MARK: - Methods
+    // MARK: - Private Methods
+    
+    // MARK: GATT
     
     private func addLockService() {
         
@@ -310,5 +331,16 @@ final class LockController {
             
         default: fatalError("Writing to characteristic \(UUID)")
         }
+    }
+    
+    // MARK: GPIO
+    
+    private func resetSwitchPressed(gpio: GPIO) {
+        
+        assert(gpio === ResetSwitch)
+        
+        print("Resetting...")
+        
+        system("reboot")
     }
 }
