@@ -74,10 +74,10 @@ final class LockController {
         UnlockGPIO.value = 1
         
         // turn on app LED
-        //AppLED.value = 1
+        AppLED.value = 1
         
         // listen to reset switch
-        //ResetSwitch.onChange(resetSwitchPressed)
+        ResetSwitch.onChange(resetSwitchPressed)
         
         // start GATT server
         
@@ -334,10 +334,10 @@ final class LockController {
         
         assert(gpio === ResetSwitch)
         
-        guard gpio.value == 0 else { return }
+        guard gpio.value == 1 else { return }
         
         print("Resetting...")
         
-        system("reboot")
+        //system("reboot")
     }
 }
