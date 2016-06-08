@@ -9,5 +9,5 @@
 /// Lock hardware model. 
 public enum Model: UInt8 {
     
-    case orangePi
+    case orangePiOne = 1
 }

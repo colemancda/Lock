@@ -31,7 +31,7 @@ final class LockController {
         didSet { didChangeStatus(oldValue: oldValue) }
     }
     
-    let configuration: Configuration = Configuration()
+    let configuration = try! Configuration.load()
     
     let store = Store(filename: "/opt/colemancda/lockd/data.bson")
     
@@ -88,6 +88,8 @@ final class LockController {
         do { try peripheral.start() }
         
         catch { fatalError("Could not start peripheral: \(error)") }
+        
+        print("Status: \(status)")
     }
     
     // MARK: - Private Methods
