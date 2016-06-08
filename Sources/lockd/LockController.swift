@@ -33,7 +33,11 @@ final class LockController {
     
     let configuration: Configuration = Configuration()
     
-    var keys: [Key]
+    let store = Store(filename: "/opt/colemancda/lockd/data.json")
+    
+    // MARK: - Private Properties
+    
+    private var newKey: Key?
     
     private var resetSwitchLastFallDate = Date()
     
@@ -43,11 +47,7 @@ final class LockController {
     
     private init() {
         
-        // load keys
-        
-        self.keys = loadKeys()
-        
-        if keys.first == nil {
+        if store.data.first == nil {
             
             status = .setup
             
@@ -172,11 +172,11 @@ final class LockController {
             
             var authenticatedKey: Key!
             
-            for key in keys {
+            for storeData in store.data {
                 
-                if unlock.authenticated(with: key.data) {
+                if unlock.authenticated(with: storeData.key.data) {
                     
-                    authenticatedKey = key
+                    authenticatedKey = storeData.key
                     
                     break
                 }
@@ -213,11 +213,11 @@ final class LockController {
             
             var authenticatedKey: Key!
             
-            for key in keys {
+            for storeData in store.data {
                 
-                if newKeyParent.authenticated(with: key.data) {
+                if newKeyParent.authenticated(with: storeData.key.data) {
                     
-                    authenticatedKey = key
+                    authenticatedKey = storeData.key
                     
                     break
                 }
@@ -255,6 +255,8 @@ final class LockController {
             
         case LockService.Setup.UUID:
             
+            assert(store.data.isEmpty, "Lock already setup")
+            
             // deserialize
             let key = LockService.Setup.init(bigEndian: newValue)!
             
@@ -263,7 +265,7 @@ final class LockController {
                 else { fatalError("Unauthenticated setup key") }
             
             // set key
-            self.keys = [Key(data: key.value, permission: .owner)]
+            store.add(key: Key(data: key.value, permission: .owner))
             
             print("Lock setup by central \(central.identifier)")
             
@@ -281,11 +283,11 @@ final class LockController {
             
             var authenticatedKey: Key!
             
-            for key in keys {
+            for storeData in store.data {
                 
-                if newKeyParent.authenticated(with: key.data) {
+                if newKeyParent.authenticated(with: storeData.key.data) {
                     
-                    authenticatedKey = key
+                    authenticatedKey = storeData.key
                     
                     break
                 }
@@ -297,8 +299,7 @@ final class LockController {
             status = .newKey
             
             let newKey = Key(data: KeyData(), permission: newKeyParent.permission)
-            
-            self.keys.append(newKey)
+            self.newKey = newKey
             
             // new child value
             let newKeyChild = LockService.NewKeyChildSharedSecret(sharedSecret: sharedSecret, newKey: newKey)
@@ -309,24 +310,27 @@ final class LockController {
             
             assert(status == .newKey)
             
+            guard let newKey = self.newKey
+                else { fatalError("New key must not be nil") }
+            
             // deserialize
             let newKeyFinish = LockService.NewKeyFinish.init(bigEndian: newValue)!
-            
-            guard let newKey = keys.last
-                else { fatalError("No keys") }
-            
-            self.status = .unlock
             
             guard newKeyFinish.authenticated(with: newKey.data) else {
                 
                 print("Invalid authentication for New Key confirmation, deleting new key")
                 
-                keys.removeLast()
+                self.newKey = nil
                 
                 return
             }
             
             print("Successfully created new \(newKey.permission) key")
+            
+            // update status
+            self.status = .unlock
+            self.store.add(key: newKey)
+            self.newKey = nil
             
         default: fatalError("Writing to characteristic \(UUID)")
         }
@@ -355,7 +359,9 @@ final class LockController {
                         
                         // reset DB
                         
-                        print("Reset button pressed for 10 seconds, resetting... ")
+                        print("Resetting...")
+                        
+                        controller.store.clear()
                         
                         system("reboot")
                         
