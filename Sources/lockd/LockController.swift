@@ -363,6 +363,8 @@ final class LockController {
                         
                         print("Resetting...")
                         
+                        AppLED.value = 0
+                        
                         // reset config
                         let newConfiguration = Configuration(model: controller.configuration.model)
                         try! newConfiguration.save(File.configuration)
