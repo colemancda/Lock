@@ -6,6 +6,12 @@
 //  Copyright © 2016 ColemanCDA. All rights reserved.
 //
 
+#if os(OSX) || os(iOS) || os(watchOS) || os(tvOS)
+    import Foundation
+#elseif os(Linux)
+    import Cb64
+#endif
+
 import SwiftFoundation
 
 extension Base64 {
@@ -26,18 +32,18 @@ extension Base64 {
             
             base64_init_decodestate(&decodeState)
             
-            let inputCharArray: [CChar] = bytes.map { (element: Byte) -> CChar in return CChar(element) }
+            let inputCharArray: [CChar] = data.byteValue.map { (element: Byte) -> CChar in return CChar(element) }
             
             // http://stackoverflow.com/questions/13378815/base64-length-calculation
             let outputBufferSize = ((inputCharArray.count * 3) / 4)
             
-            let outputBuffer = UnsafeMutablePointer<CChar>.alloc(outputBufferSize)
+            let outputBuffer = UnsafeMutablePointer<CChar>.init(allocatingCapacity: outputBufferSize)
             
-            defer { outputBuffer.dealloc(outputBufferSize) }
+            defer { outputBuffer.deallocateCapacity(outputBufferSize) }
             
-            let outputBufferCount = base64_decode_block(inputCharArray, CInt(inputCharArray.count), outputBuffer, &decodeState)
+            let outputBufferCount = base64_decode_block(inputCharArray, CInt(inputCharArray.count), outputBuffer, &decodeState)!
             
-            let outputBytes = DataFromBytePointer(outputBuffer, length: Int(outputBufferCount))
+            let outputBytes = Data.from(pointer: outputBuffer, length: Int(outputBufferCount))
             
             return outputBytes
             
