@@ -35,6 +35,10 @@ final class LockController {
     
     var keys: [Key]
     
+    private var resetSwitchLastFallDate = Date()
+    
+    private var resetThread: Thread?
+    
     // MARK: - Intialization
     
     private init() {
@@ -55,9 +59,9 @@ final class LockController {
         // setup server
         
         #if os(Linux)
-            peripheral = PeripheralManager()
+        peripheral = PeripheralManager()
         #elseif os(OSX)
-            peripheral = PeripheralManager(localName: "Test Lock")
+        peripheral = PeripheralManager(localName: "Test Lock")
         #endif
         
         peripheral.log = { print("Peripheral: " + $0) }
@@ -77,7 +81,7 @@ final class LockController {
         AppLED.value = 1
         
         // listen to reset switch
-        ResetSwitch.onChange(resetSwitchPressed)
+        ResetSwitch.onFalling(resetSwitchFalling)
         
         // start GATT server
         
@@ -330,14 +334,35 @@ final class LockController {
     
     // MARK: GPIO
     
-    private func resetSwitchPressed(gpio: GPIO) {
+    private func resetSwitchFalling(gpio: GPIO) {
         
         assert(gpio === ResetSwitch)
         
-        guard gpio.value == 0 else { return }
+        resetSwitchLastFallDate = Date()
         
-        print("Resetting...")
-        
-        //system("reboot")
+        if resetThread == nil {
+            
+            // create the reset checking thread
+            resetThread = try! Thread { [weak self] in
+                
+                while self != nil {
+                    
+                    let controller = self!
+                    
+                    guard Date() - controller.resetSwitchLastFallDate < 10 else {
+                        
+                        ResetSwitch.clearListeners()
+                        
+                        // reset DB
+                        
+                        print("Reset button pressed for 10 seconds, resetting... ")
+                        
+                        system("reboot")
+                        
+                        return
+                    }
+                }
+            }
+        }
     }
 }
