@@ -26,7 +26,7 @@ extension Base64 {
             
         #elseif os(Linux)
             
-            guard bytes.count > 0 else { return bytes }
+            guard data.byteValue.count > 0 else { return data }
             
             var decodeState = base64_decodestate()
             
@@ -41,7 +41,7 @@ extension Base64 {
             
             defer { outputBuffer.deallocateCapacity(outputBufferSize) }
             
-            let outputBufferCount = base64_decode_block(inputCharArray, CInt(inputCharArray.count), outputBuffer, &decodeState)!
+            let outputBufferCount = base64_decode_block(inputCharArray, CInt(inputCharArray.count), outputBuffer, &decodeState)
             
             let outputBytes = Data.from(pointer: outputBuffer, length: Int(outputBufferCount))
             
