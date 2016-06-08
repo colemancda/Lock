@@ -43,6 +43,8 @@ final class Store {
             
         } else {
             
+            try! FileManager.createFile(at: filename)
+            
             // no prevous data
             self.data = []
         }
