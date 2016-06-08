@@ -122,7 +122,7 @@ extension Store {
         
         func toBSON() -> BSON.Value {
             
-            var document = Document()
+            var document = BSON.Document(array: [])
             
             document[BSONKey.date.rawValue] = .double(date.since1970)
             
