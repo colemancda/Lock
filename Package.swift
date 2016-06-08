@@ -5,7 +5,7 @@ let package = Package(
     dependencies: [
         .Package(url: "https://github.com/PureSwift/GATT.git", majorVersion: 1),
         .Package(url: "https://github.com/ColemanCDA/CryptoSwift", majorVersion: 1),
-        .Package(url: "https://github.com/PureSwift/Cb64", majorVersion: 1)
+        .Package(url: "https://github.com/OpenKitten/BSON.git", majorVersion: 2)
     ],
     targets: [
         Target(

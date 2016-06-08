@@ -8,6 +8,7 @@
 
 import SwiftFoundation
 import CoreLock
+import BSON
 
 // Secure data store.
 final class Store {
@@ -23,31 +24,32 @@ final class Store {
     init(filename: String) {
         
         self.filename = filename
+        self.data = []
         
-        // load existing data
-        if FileManager.fileExists(at: filename) {
-            
-            if let fileData = try? FileManager.contents(at: filename),
-                let jsonString = String(UTF8Data: fileData),
-                let JSON = JSON.Value(string: jsonString),
-                let JSONArray = JSON.arrayValue,
-                let data = Data.fromJSON(JSONArray: JSONArray) {
-                
-                self.data = data
-                
-            } else {
-                
-                // could not decode
-                self.data = []
-            }
-            
-        } else {
-            
-            try! FileManager.createFile(at: filename)
+        // try load existing data... 
+        
+        guard FileManager.fileExists(at: filename) else {
             
             // no prevous data
-            self.data = []
+            try! FileManager.createFile(at: filename)
+            return
         }
+        
+        guard let fileData = try? FileManager.contents(at: filename)
+            else { return }
+        
+        let bsonArray = BSON.Document(data: fileData.byteValue).arrayValue
+        
+        var existingData = [Data]()
+        for bson in bsonArray {
+            
+            guard let storeData = Store.Data(BSONValue: bson)
+                else { return }
+            
+            existingData.append(storeData)
+        }
+        
+        self.data = existingData
     }
     
     // MARK: - Methods
@@ -72,10 +74,14 @@ final class Store {
     // MARK: - Private Methods
     
     private func save() {
+                
+        let bsonArray = self.data.map { $0.toBSON() }
         
-        let jsonData = data.toJSON().toString()!.toUTF8Data()
+        let bson = Document(array: bsonArray)
         
-        try! FileManager.set(contents: jsonData, at: filename)
+        let data = SwiftFoundation.Data(byteValue: bson.bytes)
+        
+        try! FileManager.set(contents: data, at: filename)
     }
 }
 
@@ -83,16 +89,16 @@ final class Store {
 
 extension Store {
     
-    struct Data: JSONEncodable, JSONDecodable {
+    struct Data {
         
-        enum JSONKey: String {
+        enum BSONKey: String {
             
             case date, data, permission
         }
         
         let date: Date
         
-        let key: Key
+        let key: CoreLock.Key
         
         private init(key: Key) {
             
@@ -100,33 +106,31 @@ extension Store {
             self.key = key
         }
         
-        init?(JSONValue: JSON.Value) {
+        init?(BSONValue: BSON.Value) {
             
-            guard let JSONObject = JSONValue.objectValue,
-                let date = JSONObject[JSONKey.date.rawValue]?.rawValue as? Double,
-                let keyDataString = JSONObject[JSONKey.data.rawValue]?.rawValue as? String,
-                let permissionDataString = JSONObject[JSONKey.permission.rawValue]?.rawValue as? String
-                else { return nil }
-            
-            guard let keyData = KeyData(data: Base64.decode(keyDataString.toUTF8Data())),
-                let permission = Permission(bigEndian: Base64.decode(permissionDataString.toUTF8Data()))
+            guard let document = BSONValue.documentValue,
+                let date = document[BSONKey.date.rawValue].doubleValue,
+                case let .binary(.generic, keyDataBytes) = document[BSONKey.data.rawValue],
+                let keyData = KeyData(data: SwiftFoundation.Data(byteValue: keyDataBytes)),
+                case let .binary(.generic, permissionBytes) = document[BSONKey.permission.rawValue],
+                let permission = Permission(bigEndian: SwiftFoundation.Data(byteValue: permissionBytes))
                 else { return nil }
             
             self.date = Date(since1970: date)
-            self.key = Key(data: keyData, permission: permission)
+            self.key = CoreLock.Key(data: keyData, permission: permission)
         }
         
-        func toJSON() -> JSON.Value {
+        func toBSON() -> BSON.Value {
             
-            var JSONObject = JSON.Object(minimumCapacity: 3)
+            var document = Document()
             
-            JSONObject[JSONKey.date.rawValue] = .Number(.Double(date.since1970))
+            document[BSONKey.date.rawValue] = .double(date.since1970)
             
-            JSONObject[JSONKey.data.rawValue] = .String(String(UTF8Data: Base64.encode(key.data.data))!)
+            document[BSONKey.data.rawValue] = .binary(subtype: .generic, data: key.data.data.byteValue)
             
-            JSONObject[JSONKey.permission.rawValue] = .String(String(UTF8Data: Base64.encode(key.permission.toBigEndian()))!)
+            document[BSONKey.permission.rawValue] = .binary(subtype: .generic, data: key.permission.toBigEndian().byteValue)
             
-            return .Object(JSONObject)
+            return BSON.Value.document(document)
         }
     }
 }

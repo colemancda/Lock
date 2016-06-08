@@ -33,7 +33,7 @@ final class LockController {
     
     let configuration: Configuration = Configuration()
     
-    let store = Store(filename: "/opt/colemancda/lockd/data.json")
+    let store = Store(filename: "/opt/colemancda/lockd/data.bson")
     
     // MARK: - Private Properties
     
