@@ -83,9 +83,9 @@ extension Configuration {
         try FileManager.set(contents: data, at: filename)
     }
     
-    static func load() throws -> Configuration {
-        
-        let filename = "/opt/colemancda/lockd/config.json"
+    
+    
+    static func load(_ filename: String) throws -> Configuration {
         
         if let configuration = Configuration(filename: filename) {
             

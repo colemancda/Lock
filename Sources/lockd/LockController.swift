@@ -31,9 +31,9 @@ final class LockController {
         didSet { didChangeStatus(oldValue: oldValue) }
     }
     
-    let configuration = try! Configuration.load()
+    let configuration = try! Configuration.load(File.configuration)
     
-    let store = Store(filename: "/opt/colemancda/lockd/data.bson")
+    let store = Store(filename: File.store)
     
     // MARK: - Private Properties
     
@@ -363,8 +363,14 @@ final class LockController {
                         
                         print("Resetting...")
                         
+                        // reset config
+                        let newConfiguration = Configuration(model: controller.configuration.model)
+                        try! newConfiguration.save(File.configuration)
+                        
+                        // clear store
                         controller.store.clear()
                         
+                        // reboot
                         system("reboot")
                         
                         return
