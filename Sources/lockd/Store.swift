@@ -108,12 +108,8 @@ extension Store {
                 let permissionDataString = JSONObject[JSONKey.permission.rawValue]?.rawValue as? String
                 else { return nil }
             
-            // base 64 decode
-            let decodedKeyData = Base64.decode(keyDataString.toUTF8Data().byteValue)
-            let decodedPermissionData = Base64.decode(permissionDataString.toUTF8Data().byteValue)
-            
-            guard let keyData = KeyData(data: SwiftFoundation.Data(byteValue: decodedKeyData)),
-                let permission = Permission(bigEndian: SwiftFoundation.Data(byteValue: decodedPermissionData))
+            guard let keyData = KeyData(data: Base64.decode(data: keyDataString.toUTF8Data())),
+                let permission = Permission(bigEndian: Base64.decode(data: permissionDataString.toUTF8Data()))
                 else { return nil }
             
             self.date = Date(since1970: date)
@@ -126,9 +122,9 @@ extension Store {
             
             JSONObject[JSONKey.date.rawValue] = .Number(.Double(date.since1970))
             
-            JSONObject[JSONKey.data.rawValue] = .String(Base64.encode(key.data.data.byteValue))
+            JSONObject[JSONKey.data.rawValue] = .String(String(UTF8Data: Base64.encode(data: key.data.data))!)
             
-            JSONObject[JSONKey.permission.rawValue] = .String(Base64.encode(key.permission.toBigEndian().byteValue))
+            JSONObject[JSONKey.permission.rawValue] = .String(String(UTF8Data: Base64.encode(data: key.permission.toBigEndian()))!)
             
             return .Object(JSONObject)
         }
