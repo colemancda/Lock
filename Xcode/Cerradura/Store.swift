@@ -186,7 +186,7 @@ func RemovePersistentStore() throws {
 
 let SQLiteStoreFileURL: NSURL = {
     
-    let cacheURL = try! NSFileManager.default().urlForDirectory(NSSearchPathDirectory.cachesDirectory,
+    let cacheURL = try! NSFileManager.default().urlForDirectory(NSSearchPathDirectory.documentDirectory,
                                                                        in: NSSearchPathDomainMask.userDomainMask,
                                                                        appropriateFor: nil,
                                                                        create: false)
