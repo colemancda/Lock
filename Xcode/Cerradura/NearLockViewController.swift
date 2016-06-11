@@ -32,12 +32,18 @@ final class NearLockViewController: UIViewController {
         super.viewDidLoad()
         
         // start observing
-        LockManager.shared.foundLock.observe(foundLock)
+        let _ = LockManager.shared.foundLock.observe(foundLock)
         
-        LockManager.shared.state.observe(stateChanged)
+        let _ = LockManager.shared.state.observe(stateChanged)
         
         // update UI
         self.updateUI()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        
     }
     
     // MARK: - Actions
@@ -311,7 +317,7 @@ final class NearLockViewController: UIViewController {
     }
     
     /// Ask's the user for the lock's name.
-    private func requestLockName(_ completion: String? -> ()) {
+    private func requestLockName(_ completion: (String?) -> ()) {
         
         let alert = UIAlertController(title: NSLocalizedString("Lock Name", comment: "LockName"),
                                       message: "Type a user friendly name for the lock.",

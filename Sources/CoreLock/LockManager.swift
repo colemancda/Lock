@@ -211,6 +211,8 @@
             if peripheral.identifier == foundLock.peripheral.identifier {
                 
                 self.foundLock.value = nil
+                
+                LockManager.shared.startScan()
             }
         }
         
