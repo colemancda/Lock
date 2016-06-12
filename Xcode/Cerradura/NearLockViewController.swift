@@ -33,6 +33,8 @@ final class NearLockViewController: UIViewController, AsyncProtocol {
     
     private var scanning = false
     
+    private var visible = false
+    
     private lazy var updateTimer: NSTimer = NSTimer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(updateState), userInfo: nil, repeats: true)
     
     // MARK: - Loading
@@ -52,18 +54,22 @@ final class NearLockViewController: UIViewController, AsyncProtocol {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        // scan for lock again
-        if foundLock != nil {
-            
-            foundLock = nil
-        }
+        foundLock = nil
+        
+        visible = true
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        visible = false
     }
     
     // MARK: - Actions
     
     @IBAction func scan(sender: AnyObject? = nil) {
         
-        assert(scanning == false, "Already scanning")
+        guard scanning == false else { return }
         
         scanning = true
         
@@ -219,7 +225,9 @@ final class NearLockViewController: UIViewController, AsyncProtocol {
     
     @objc private func updateState() {
         
-        if scanning == false {
+        guard visible && LockManager.shared.state.value == .poweredOn else { return }
+        
+        if scanning == false && foundLock == nil {
             
             self.scan()
         }
@@ -233,6 +241,8 @@ final class NearLockViewController: UIViewController, AsyncProtocol {
         self.setTitle("Error")
         
         self.actionButton.isEnabled = true
+        
+        self.foundLock = nil
         
         showErrorAlert(error, okHandler: { self.scan() })
     }
