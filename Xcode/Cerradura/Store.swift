@@ -74,7 +74,7 @@ final class Store {
             
             let lockCache = LockCache(lock)
             
-            try! lockCache.save(context: managedObjectContext)
+            let _ = try! lockCache.save(context: managedObjectContext)
             
             try! keychain.set(value: lock.key.data.data.toFoundation(), key: UUID.rawValue)
         }

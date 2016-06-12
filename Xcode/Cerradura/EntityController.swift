@@ -53,7 +53,7 @@ public final class EntityController<Decodable: CoreDataDecodable> {
 
 public struct ManagedObjectObserverEvent<Decodable: CoreDataDecodable> {
     
-    public var updated: Decodable -> () = { _ in }
+    public var updated: (Decodable) -> () = { _ in }
     
     public var deleted: () -> () = { _ in }
 }

@@ -81,7 +81,7 @@ final class NearLockViewController: UIViewController, AsyncProtocol {
             
             do { foundLock = try LockManager.shared.scan() }
             
-            catch { mainQueue { controller.showErrorAlert("\(error)"); controller.scanning = false }; return }
+            catch { mainQueue { controller.actionError("\(error)"); controller.scanning = false }; return }
             
             mainQueue { controller.foundLock = foundLock; controller.scanning = false }
         }

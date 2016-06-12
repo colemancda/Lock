@@ -60,7 +60,7 @@ final class WatchController: NSObject, WCSessionDelegate {
             
             log?("Recieved unlock request")
             
-            guard let foundLock = try? LockManager.shared.scan(duration: 1, filter: <#T##UUID?#>)
+            guard let foundLock = try? LockManager.shared.scan(duration: 2, filter: <#T##UUID?#>)
                 else { replyHandler(UnlockResponse(error: "Lock not found").toMessage()); return }
             
             guard let cachedLock = Store.shared[foundLock.UUID]
