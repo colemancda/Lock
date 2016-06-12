@@ -38,7 +38,24 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                 //WatchController.shared.activate()
             }
         }
-                        
+        
+        // iBeacon
+        BeaconController.shared.log = { print("BeaconController: " + $0) }
+        BeaconController.shared.start()
+        
+        // notifications
+        let unlockAction = UIMutableUserNotificationAction()
+        unlockAction.identifier = UnlockActionIdentifier
+        unlockAction.title = "Unlock"
+        unlockAction.activationMode = .background
+        unlockAction.isAuthenticationRequired = true
+        
+        let category = UIMutableUserNotificationCategory()
+        category.identifier = LockCategory
+        category.setActions([unlockAction], for: .minimal)
+        
+        UIApplication.shared().register(UIUserNotificationSettings(forTypes: [.alert], categories: [category]))
+        
         return true
     }
 
@@ -62,6 +79,28 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+        
+        BeaconController.shared.stop()
+    }
+    
+    func application(_ application: UIApplication, didReceive notification: UILocalNotification) {
+        
+        print("Notification: \(notification.alertTitle ?? "")")
+        
+        
+    }
+    
+    func application(_ application: UIApplication, didRegister notificationSettings: UIUserNotificationSettings) {
+        
+        print("Registered notification settings")
+    }
+    
+    func application(_ application: UIApplication, handleActionWithIdentifier identifier: String?, for notification: UILocalNotification, completionHandler: () -> ()) {
+        
+        print("Handle Action \(identifier)")
+        
+        
+        completionHandler()
     }
 }
 
