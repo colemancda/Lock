@@ -71,7 +71,13 @@ final class NewKeyParentViewController: UIViewController {
             
             let sharedSecret = SharedSecret()
             
-            do { try LockManager.shared.createNewKey(permission: self.newKey.permission, parentKey: parentKey, sharedSecret: sharedSecret) }
+            do {
+                
+                guard var lock = try LockManager.shared.scan(duration: 1, filter: self.newKey.identifier)
+                    else { mainQueue { self.newKeyError("Lock not found") }; return }
+                
+                try LockManager.shared.createNewKey(lock: &lock, permission: self.newKey.permission, parentKey: parentKey, sharedSecret: sharedSecret)
+            }
                 
             catch { mainQueue { self.newKeyError("Could not create new key. (\(error))") }; return }
             

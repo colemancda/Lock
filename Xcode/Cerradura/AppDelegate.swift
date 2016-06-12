@@ -33,9 +33,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             
             if WCSession.isSupported() {
                 
-                WatchController.shared.log = { print("WatchController: " + $0) }
+                //WatchController.shared.log = { print("WatchController: " + $0) }
                 
-                WatchController.shared.activate()
+                //WatchController.shared.activate()
             }
         }
                         
@@ -63,11 +63,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-}
-
-func mainQueue(_ block: () -> ()) {
-    
-    NSOperationQueue.main().addOperation(block)
 }
 
 /** Version of the app. */

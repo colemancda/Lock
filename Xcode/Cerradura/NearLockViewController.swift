@@ -14,7 +14,7 @@ import Bluetooth
 import GATT
 import CoreLock
 
-final class NearLockViewController: UIViewController {
+final class NearLockViewController: UIViewController, AsyncProtocol {
     
     // MARK: - IB Outlets
     
@@ -24,17 +24,26 @@ final class NearLockViewController: UIViewController {
     
     // MARK: - Properties
     
-    private lazy var queue: dispatch_queue_t = dispatch_queue_create("\(self.dynamicType) Internal Queue", DISPATCH_QUEUE_SERIAL)
+    internal lazy var queue: dispatch_queue_t = dispatch_queue_create("\(self.dynamicType) Internal Queue", DISPATCH_QUEUE_SERIAL)
+    
+    private var foundLock: LockManager.Lock? {
+        
+        didSet { updateUI() }
+    }
+    
+    private var scanning = false
+    
+    private lazy var updateTimer: NSTimer = NSTimer.scheduledTimer(timeInterval: 3, target: self, selector: #selector(updateState), userInfo: nil, repeats: true)
     
     // MARK: - Loading
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // start observing
-        let _ = LockManager.shared.foundLock.observe(foundLock)
-        
+        // start observing state
         let _ = LockManager.shared.state.observe(stateChanged)
+        
+        updateTimer.fire()
         
         // update UI
         self.updateUI()
@@ -43,14 +52,38 @@ final class NearLockViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        
+        // scan for lock again
+        if foundLock != nil {
+            
+            foundLock = nil
+        }
     }
     
     // MARK: - Actions
     
+    @IBAction func scan(sender: AnyObject? = nil) {
+        
+        assert(scanning == false, "Already scanning")
+        
+        scanning = true
+        
+        async { [weak self] in
+            
+            guard let controller = self else { return }
+            
+            var foundLock: LockManager.Lock?
+            
+            do { foundLock = try LockManager.shared.scan() }
+            
+            catch { mainQueue { controller.showErrorAlert("\(error)"); controller.scanning = false }; return }
+            
+            mainQueue { if let lock = foundLock { controller.foundLock = lock }; controller.scanning = false }
+        }
+    }
+    
     @IBAction func newKey(_ sender: AnyObject?) {
         
-        guard let foundLock = LockManager.shared.foundLock.value else { return }
+        guard let foundLock = self.foundLock else { return }
         
         let navigationController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "newKeyNavigationStack") as! UINavigationController
         
@@ -63,7 +96,7 @@ final class NearLockViewController: UIViewController {
     
     @IBAction func actionButton(_ sender: UIButton) {
         
-        guard let foundLock = LockManager.shared.foundLock.value else { return }
+        guard let foundLock = self.foundLock else { return }
         
         func unlock() {
             
@@ -76,13 +109,15 @@ final class NearLockViewController: UIViewController {
             
             async {
                 
-                do { try LockManager.shared.unlock(key: cachedLock.key.data) }
+                do { try LockManager.shared.unlock(lock: foundLock, key: cachedLock.key.data) }
                     
                 catch { mainQueue { self.actionError("\(error)") }; return }
                 
                 print("Successfully unlocked lock \"\(foundLock.UUID)\"")
                 
                 mainQueue { self.updateUI() }
+                
+                
             }
         }
         
@@ -103,7 +138,7 @@ final class NearLockViewController: UIViewController {
                         
                         print("Setting up lock \(foundLock.UUID) (\(name))")
                         
-                        let key = try LockManager.shared.setup(name: name)
+                        let key = try LockManager.shared.setup(lock: &self.foundLock!)
                         
                         mainQueue {
                             
@@ -145,7 +180,7 @@ final class NearLockViewController: UIViewController {
                     
                     do {
                         
-                        let key = try LockManager.shared.recieveNewKey(sharedSecret: sharedSecret)
+                        let key = try LockManager.shared.recieveNewKey(lock: &self.foundLock!, sharedSecret: sharedSecret)
                         
                         mainQueue {
                             
@@ -167,28 +202,27 @@ final class NearLockViewController: UIViewController {
     
     // MARK: - Private Methods
     
-    /// Perform a task on the internal queue.
-    private func async(_ block: () -> ()) {
-        
-        dispatch_async(queue) { block() }
-    }
-    
     private func stateChanged(state: CBCentralManagerState) {
         
         mainQueue {
             
+            self.foundLock = nil
+            
             if state == .poweredOn {
                 
-                LockManager.shared.startScan()
+                self.scan()
             }
             
             self.updateUI()
         }
     }
     
-    private func foundLock(lock: (peripheral: Peripheral, UUID: SwiftFoundation.UUID, status: Status, model: Model, version: UInt64)?) {
+    @objc private func updateState() {
         
-        mainQueue { self.updateUI() }
+        if foundLock == nil && scanning == false {
+            
+            self.scan()
+        }
     }
     
     private func actionError(_ error: String) {
@@ -200,7 +234,7 @@ final class NearLockViewController: UIViewController {
         
         self.actionButton.isEnabled = true
         
-        showErrorAlert(error, okHandler: { LockManager.shared.startScan() })
+        showErrorAlert(error, okHandler: { self.scan() })
     }
     
     private func setTitle(_ title: String) {
@@ -215,7 +249,7 @@ final class NearLockViewController: UIViewController {
         self.actionButton.isEnabled = true
         
         // No lock
-        guard let lock = LockManager.shared.foundLock.value else {
+        guard let lock = self.foundLock else {
             
             if LockManager.shared.state.value == .poweredOn {
                 
@@ -343,7 +377,7 @@ final class NearLockViewController: UIViewController {
         self.present(alert, animated: true, completion: nil)
     }
     
-    private func requestNewKey(_ completion: (name: String, sharedSecret: String)? -> ()) {
+    private func requestNewKey(_ completion: ((name: String, sharedSecret: String)?) -> ()) {
         
         let alert = UIAlertController(title: NSLocalizedString("New Key", comment: "NewKeyTitle"),
                                       message: "Type a user friendly name for the lock and enter the PIN code.",

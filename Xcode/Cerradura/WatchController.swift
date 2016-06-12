@@ -27,35 +27,8 @@ final class WatchController: NSObject, WCSessionDelegate {
     
     func activate() {
         
-        let _ = LockManager.shared.foundLock.observe(foundLock)
         session.delegate = self
         session.activate()
-    }
-    
-    // MARK: - Private Methods
-    
-    private func foundLock(lock: (peripheral: Peripheral, UUID: SwiftFoundation.UUID, status: Status, model: Model, version: UInt64)?) {
-        
-        guard session.activationState == .activated
-            else { log?("Could not send found lock notification to Watch app, session not activated."); return }
-        
-        guard session.isReachable
-            else { log?("Could not send found lock notification to Watch app, the counterpart app is not available for live messaging."); return }
-        
-        let message: FoundLockNotification
-        
-        if let foundLock = lock, let cachedLock = Store.shared[foundLock.UUID] {
-            
-            message = FoundLockNotification(permission: cachedLock.key.permission.type)
-            
-        } else {
-            
-            message = FoundLockNotification()
-        }
-        
-        session.sendMessage(message.toMessage(),
-                            replyHandler: nil,
-                            errorHandler: { self.log?("Error sending found lock notification: \($0.localizedDescription)") })
     }
     
     // MARK: - WCSessionDelegate
@@ -87,13 +60,13 @@ final class WatchController: NSObject, WCSessionDelegate {
             
             log?("Recieved unlock request")
             
-            guard let foundLock = LockManager.shared.foundLock.value
-                else { replyHandler(UnlockResponse(error: "Lock disconnected").toMessage()); return }
+            guard let foundLock = try? LockManager.shared.scan(duration: 1, filter: <#T##UUID?#>)
+                else { replyHandler(UnlockResponse(error: "Lock not found").toMessage()); return }
             
             guard let cachedLock = Store.shared[foundLock.UUID]
                 else { replyHandler(UnlockResponse(error: "No stored key for lock").toMessage()); return }
             
-            do { try LockManager.shared.unlock(key: cachedLock.key.data) }
+            do { try LockManager.shared.unlock(lock: foundLock, key: cachedLock.key.data) }
             
             catch { replyHandler(UnlockResponse(error: "\(error)").toMessage()); return }
             

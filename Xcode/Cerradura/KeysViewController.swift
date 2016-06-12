@@ -13,7 +13,7 @@ import CoreBluetooth
 import CoreLock
 import GATT
 
-final class KeysViewController: UIViewController {
+final class KeysViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, NSFetchedResultsControllerDelegate, AsyncProtocol {
     
     // MARK: - IB Outlets
     
@@ -32,29 +32,23 @@ final class KeysViewController: UIViewController {
         return controller
     }()
     
-    private lazy var queue: dispatch_queue_t = dispatch_queue_create("\(self.dynamicType) Internal Queue", DISPATCH_QUEUE_SERIAL)
+    internal lazy var queue: dispatch_queue_t = dispatch_queue_create("\(self.dynamicType) Internal Queue", DISPATCH_QUEUE_SERIAL)
     
     // MARK: - Loading
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        LockManager.shared.state.observe(stateChanged)
+        let _ = LockManager.shared.state.observe(stateChanged)
         
-        fetchedResultsController.delegate = unsafeBitCast(self, to: NSFetchedResultsControllerDelegate.self)
-        tableView.dataSource = unsafeBitCast(self, to: UITableViewDataSource.self)
-        tableView.delegate = unsafeBitCast(self, to: UITableViewDelegate.self)
+        fetchedResultsController.delegate = self
+        tableView.dataSource = self
+        tableView.delegate = self
         
         try! fetchedResultsController.performFetch()
     }
     
     // MARK: - Methods
-    
-    /// Perform a task on the internal queue.
-    private func async(_ block: () -> ()) {
-        
-        dispatch_async(queue) { block() }
-    }
     
     private func stateChanged(_ state: CBCentralManagerState) {
         
@@ -117,7 +111,7 @@ final class KeysViewController: UIViewController {
     
     // MARK: - UITableViewDatasource
     
-    @objc func numberOfSectionsInTableView(_ tableView: UITableView) -> Int {
+    @objc func numberOfSections(in tableView: UITableView) -> Int {
         
         return 1
     }
@@ -127,7 +121,7 @@ final class KeysViewController: UIViewController {
         return fetchedResultsController.fetchedObjects?.count ?? 0
     }
     
-    @objc func tableView(_ tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    @objc func tableView(_ tableView: UITableView, cellForRowAt indexPath: NSIndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: KeyTableViewCell.resuseIdentifier, for: indexPath) as! KeyTableViewCell
         
@@ -138,7 +132,7 @@ final class KeysViewController: UIViewController {
     
     // MARK: - UITableViewDelegate
     
-    func tableView(_ tableView: UITableView, editActionsForRowAtIndexPath indexPath: NSIndexPath) -> [UITableViewRowAction]? {
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: NSIndexPath) -> [UITableViewRowAction]? {
         
         var actions = [UITableViewRowAction]()
         
@@ -179,7 +173,15 @@ final class KeysViewController: UIViewController {
             
             self.async {
                 
-                do { try LockManager.shared.unlock(key: key) }
+                do {
+                    
+                    guard let lock = try LockManager.shared.scan(duration: 1, filter: lockCache.identifier)
+                        else { mainQueue { self.showErrorAlert("Lock not found") }; return }
+                    
+                    try LockManager.shared.unlock(lock: lock, key: key)
+                    
+                    
+                }
                     
                 catch { mainQueue { self.showErrorAlert("Could not unlock. (\(error))") }; return }
                 
@@ -187,18 +189,14 @@ final class KeysViewController: UIViewController {
             }
         }
         
-        // Lock mus be connected for unlocking
-        if LockManager.shared.foundLock.value?.UUID == lockCache.identifier {
+        // validate permission for unlocking
+        if case let .scheduled(schedule) = lockCache.permission where schedule.valid() {
             
-            // validate permission for unlocking
-            if case let .scheduled(schedule) = lockCache.permission where schedule.valid() {
-                
-                actions.append(unlock)
-                
-            } else {
-                
-                actions.append(unlock)
-            }
+            actions.append(unlock)
+            
+        } else {
+            
+            actions.append(unlock)
         }
         
         let newKey = UITableViewRowAction(style: UITableViewRowActionStyle.normal, title: "New key") { (action, index) in
@@ -239,9 +237,9 @@ final class KeysViewController: UIViewController {
     }
     
     @objc func controller(_ controller: NSFetchedResultsController,
-                          didChangeObject anObject: AnyObject,
-                          atIndexPath indexPath: NSIndexPath?,
-                          forChangeType type: NSFetchedResultsChangeType,
+                          didChange anObject: AnyObject,
+                          at indexPath: NSIndexPath?,
+                          for type: NSFetchedResultsChangeType,
                           newIndexPath: NSIndexPath?) {
         
         sleep(1)

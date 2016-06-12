@@ -30,6 +30,8 @@
             set { internalManager.log = newValue }
         }
         
+        public var connectionTimeout: Int = 5
+        
         public lazy var state: Observable<CBCentralManagerState> = Observable(self.internalManager.state)
         
         // MARK: - Private Properties
@@ -82,10 +84,16 @@
                     let foundLock = try self.foundLock(peripheral: peripheral)
                     
                     // optionally filter locks
-                    guard foundLock.UUID == UUID || UUID != nil else { continue }
+                    guard foundLock.UUID == UUID || UUID == nil else { continue }
+                    
+                    // disconnect
+                    internalManager.disconnect(peripheral: peripheral)
                     
                     return foundLock
                 }
+                
+                // disconnect
+                internalManager.disconnect(peripheral: peripheral)
             }
             
             return nil
@@ -98,6 +106,11 @@
         
         /// Setup the connected lock.
         public func setup(lock: inout Lock) throws -> Key {
+            
+            lockAction(&lock) {
+                
+                
+            }
             
             // write to setup characteristic
             
@@ -120,20 +133,32 @@
             // update cached status
             lock.status = status.value
             
+            // disconnect
+            disconnect(lock: lock)
+            
             return key
         }
         
         /// Unlock the connected lock
         public func unlock(lock: Lock, key: KeyData) throws {
             
+            // connect first
+            try internalManager.connect(to: lock.peripheral, timeout: connectionTimeout)
+            
             let unlock = LockService.Unlock.init(key: key)
             
             try internalManager.write(data: unlock.toBigEndian(), response: true, characteristic: LockService.Unlock.UUID, service: LockService.UUID, peripheral: lock.peripheral)
+            
+            // disconnect
+            disconnect(lock: lock)
         }
         
         public func createNewKey(lock: inout Lock, permission: Permission, parentKey: KeyData, sharedSecret: SharedSecret = SharedSecret()) throws {
             
             assert(permission != .owner, "Cannot create owner keys")
+            
+            // connect first
+            try internalManager.connect(to: lock.peripheral, timeout: connectionTimeout)
             
             let parentNewKey = LockService.NewKeyParentSharedSecret.init(sharedSecret: sharedSecret, parentKey: parentKey, permission: permission)
             
@@ -141,9 +166,15 @@
             
             // update cached status
             lock.status = .newKey
+            
+            // disconnect
+            disconnect(lock: lock)
         }
         
         public func recieveNewKey(lock: inout Lock, sharedSecret: SharedSecret) throws -> Key {
+            
+            // connect first
+            try internalManager.connect(to: lock.peripheral, timeout: connectionTimeout)
             
             // read new key child characteristic
             
@@ -164,10 +195,28 @@
             // update cached status
             lock.status = .unlock
             
+            // disconnect
+            disconnect(lock: lock)
+            
             return key
         }
         
         // MARK: - Private Methods
+        
+        /// Connects to the lock, fetches the data, and performs the action, and disconnects.
+        private func lockAction<T>(_ lock: inout Lock, _ action: () throws -> (T)) throws -> T {
+            
+            // connect first
+            try internalManager.connect(to: lock.peripheral, timeout: connectionTimeout)
+            
+            defer { internalManager.disconnect(peripheral: lock.peripheral) }
+            
+            // reload data
+            lock = try self.foundLock(peripheral: lock.peripheral)
+            
+            // perform action
+            return try action()
+        }
         
         private func foundLock(peripheral: Peripheral) throws -> Lock {
             
