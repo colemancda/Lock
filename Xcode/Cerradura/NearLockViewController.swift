@@ -77,7 +77,7 @@ final class NearLockViewController: UIViewController, AsyncProtocol {
             
             catch { mainQueue { controller.showErrorAlert("\(error)"); controller.scanning = false }; return }
             
-            mainQueue { if let lock = foundLock { controller.foundLock = lock }; controller.scanning = false }
+            mainQueue { controller.foundLock = foundLock; controller.scanning = false }
         }
     }
     
@@ -219,7 +219,7 @@ final class NearLockViewController: UIViewController, AsyncProtocol {
     
     @objc private func updateState() {
         
-        if foundLock == nil && scanning == false {
+        if scanning == false {
             
             self.scan()
         }
