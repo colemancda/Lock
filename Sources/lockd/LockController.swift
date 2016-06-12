@@ -85,11 +85,15 @@ final class LockController {
         
         // start GATT server
         
-        let beacon = Beacon(UUID: configuration.identifier, major: 0, minor: 0, RSSI: -40)
+        let beacon = Beacon(UUID: LockBeaconUUID, major: 0, minor: 0, RSSI: -40)
         
+        #if os(Linux)
         do { try peripheral.start(beacon: beacon) }
-        
         catch { fatalError("Could not start peripheral: \(error)") }
+        #elseif os(OSX)
+        do { try peripheral.start() }
+        catch { fatalError("Could not start peripheral: \(error)") }
+        #endif
         
         print("Status: \(status)")
     }
