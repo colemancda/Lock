@@ -22,7 +22,7 @@ final class Store {
     /// A convenience variable for the managed object model.
     let managedObjectModel: NSManagedObjectModel
     
-    private let keychain = Keychain()
+    private let keychain = Keychain(accessGroup: "com.colemancda.Cerradura")
     
     private init() {
         

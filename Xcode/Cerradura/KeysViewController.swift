@@ -181,14 +181,18 @@ final class KeysViewController: UIViewController, UITableViewDataSource, UITable
             }
         }
         
-        // validate permission for unlocking
-        if case let .scheduled(schedule) = lockCache.permission where schedule.valid() {
+        // make sure the peripheral has been discovered
+        if LockManager.shared.foundLocks.value.contains({ $0.UUID == lockCache.identifier }) && LockManager.shared.state.value == .poweredOn {
             
-            actions.append(unlock)
-            
-        } else {
-            
-            actions.append(unlock)
+            // validate permission for unlocking
+            if case let .scheduled(schedule) = lockCache.permission where schedule.valid() {
+                
+                actions.append(unlock)
+                
+            } else {
+                
+                actions.append(unlock)
+            }
         }
         
         let newKey = UITableViewRowAction(style: UITableViewRowActionStyle.normal, title: "New key") { (action, index) in
