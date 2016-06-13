@@ -32,6 +32,8 @@
         
         public var connectionTimeout: Int = 5
         
+        public let foundLocks: Observable<[Lock]> = Observable([])
+        
         public lazy var state: Observable<CBCentralManagerState> = Observable(self.internalManager.state)
         
         // MARK: - Private Properties
@@ -48,16 +50,38 @@
             return central
         }()
         
+        // MARK: - Subscripting
+        
+        public private(set) subscript (UUID: SwiftFoundation.UUID) -> Lock? {
+            
+            get {
+                
+                guard let index = foundLocks.value.index(where: { $0.UUID == UUID })
+                    else { return nil }
+                
+                return foundLocks.value[index]
+            }
+            
+            set {
+                
+                guard let index = foundLocks.value.index(where: { $0.UUID == UUID })
+                    else { fatalError("Invalid index") }
+                
+                guard let newLock = newValue
+                    else { foundLocks.value.remove(at: index); return }
+                
+                foundLocks.value[index] = newLock
+            }
+        }
+        
         // MARK: - Methods
         
-        /// Disconnnect from current lock (if any) and scans for a lock. 
+        /// Scans for a lock.
         ///
         /// - Parameter duration: The duration of the scan.
         ///
-        /// - Parameter filter: The UUID Lock to find, or `nil` for the first lock found.
-        ///
-        /// - Returns: The first lock found.
-        public func scan(duration: Int = 3, filter UUID: SwiftFoundation.UUID? = nil) throws -> Lock? {
+        /// - Returns: The locks found.
+        public func scan(duration: Int = 3) throws {
             
             assert(self.internalManager.state == .poweredOn, "Should only scan when powered on")
             
@@ -68,6 +92,8 @@
             let foundDevices = self.internalManager.scan(duration: duration)
             
             if foundDevices.count > 0 { self.log?("Found \(foundDevices.count) peripherals") }
+            
+            var locks = [Lock]()
             
             for peripheral in foundDevices {
                 
@@ -81,22 +107,17 @@
                 // found lock
                 if services.contains({ $0.UUID == LockService.UUID }) {
                     
-                    let foundLock = try self.foundLock(peripheral: peripheral)
+                    guard let foundLock = try? self.foundLock(peripheral: peripheral)
+                        else { continue }
                     
-                    // optionally filter locks
-                    guard foundLock.UUID == UUID || UUID == nil else { continue }
-                    
-                    // disconnect
-                    internalManager.disconnect(peripheral: peripheral)
-                    
-                    return foundLock
+                    locks.append(foundLock)
                 }
                 
                 // disconnect
                 internalManager.disconnect(peripheral: peripheral)
             }
             
-            return nil
+            foundLocks.value = locks
         }
         
         public func disconnect(lock: Lock) {
@@ -107,7 +128,10 @@
         // MARK: Lock Actions
         
         /// Setup the connected lock.
-        public func setup(lock: inout Lock) throws -> Key {
+        public func setup(_ identifier: SwiftFoundation.UUID) throws -> Key {
+            
+            guard let lock = self[identifier]
+                else { throw Error.NoLock }
             
             return try lockAction(peripheral: lock.peripheral, characteristics: [LockService.Setup.UUID]) {
                 
@@ -130,14 +154,17 @@
                     else { throw LockManagerError.InvalidStatus(status.value) }
                 
                 // update cached status
-                lock.status = status.value
+                self[identifier]?.status = status.value
                 
                 return key
             }
         }
         
         /// Unlock the connected lock
-        public func unlock(lock: Lock, key: KeyData) throws {
+        public func unlock(_ identifier: SwiftFoundation.UUID, key: KeyData) throws {
+            
+            guard let lock = self[identifier]
+                else { throw Error.NoLock }
             
             return try lockAction(peripheral: lock.peripheral, characteristics: [LockService.Unlock.UUID]) {
                 
@@ -149,9 +176,12 @@
             }
         }
         
-        public func createNewKey(lock: inout Lock, permission: Permission, parentKey: KeyData, sharedSecret: SharedSecret = SharedSecret()) throws {
+        public func createNewKey(_ identifier: SwiftFoundation.UUID, permission: Permission, parentKey: KeyData, sharedSecret: SharedSecret = SharedSecret()) throws {
             
             assert(permission != .owner, "Cannot create owner keys")
+            
+            guard let lock = self[identifier]
+                else { throw Error.NoLock }
             
             return try lockAction(peripheral: lock.peripheral, characteristics: [LockService.NewKeyParentSharedSecret.UUID]) {
              
@@ -162,11 +192,14 @@
                 try self.internalManager.write(data: parentNewKey.toBigEndian(), response: true, characteristic: LockService.NewKeyParentSharedSecret.UUID, service: LockService.UUID, peripheral: lock.peripheral)
                 
                 // update cached status
-                lock.status = .newKey
+                self[identifier]?.status = .newKey
             }
         }
         
-        public func recieveNewKey(lock: inout Lock, sharedSecret: SharedSecret) throws -> Key {
+        public func recieveNewKey(_ identifier: SwiftFoundation.UUID, sharedSecret: SharedSecret) throws -> Key {
+            
+            guard let lock = self[identifier]
+                else { throw Error.NoLock }
             
             return try lockAction(peripheral: lock.peripheral, characteristics: [LockService.NewKeyChildSharedSecret.UUID, LockService.NewKeyFinish.UUID]) {
                 
@@ -187,7 +220,7 @@
                 try self.internalManager.write(data: newKeyFinish.toBigEndian(), response: true, characteristic: LockService.NewKeyFinish.UUID, service: LockService.UUID, peripheral: lock.peripheral)
                 
                 // update cached status
-                lock.status = .unlock
+                self[identifier]?.status = .unlock
                 
                 return key
             }
@@ -288,6 +321,7 @@
     
     public enum LockManagerError: ErrorProtocol {
         
+        case NoLock
         case InvalidStatus(Status)
         case InvalidSharedSecret
         case CharacteristicNotFound(Bluetooth.UUID)

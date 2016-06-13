@@ -9,6 +9,11 @@
 			<key>orderHint</key>
 			<integer>1</integer>
 		</dict>
+		<key>CerraduraTodayExtension.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>5</integer>
+		</dict>
 		<key>CerraduraWatch.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -38,6 +43,11 @@
 			<true/>
 		</dict>
 		<key>6E778D961CD5B70300AED11E</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>6EDCE1E51D0F34A200C3D3DC</key>
 		<dict>
 			<key>primary</key>
 			<true/>

@@ -65,18 +65,15 @@ final class NewKeyParentViewController: UIViewController {
         
         print("Setting up new key for lock \(newKey.identifier)...")
         
+        let sharedSecret = SharedSecret()
+        
         async {
             
             // write to parent new key characteristic
             
-            let sharedSecret = SharedSecret()
-            
             do {
                 
-                guard var lock = try LockManager.shared.scan(duration: 3, filter: self.newKey.identifier)
-                    else { mainQueue { self.newKeyError("Lock not found") }; return }
-                
-                try LockManager.shared.createNewKey(lock: &lock, permission: self.newKey.permission, parentKey: parentKey, sharedSecret: sharedSecret)
+                try LockManager.shared.createNewKey(self.newKey.identifier, permission: self.newKey.permission, parentKey: parentKey, sharedSecret: sharedSecret)
             }
                 
             catch { mainQueue { self.newKeyError("Could not create new key. (\(error))") }; return }

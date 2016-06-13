@@ -173,15 +173,7 @@ final class KeysViewController: UIViewController, UITableViewDataSource, UITable
             
             self.async {
                 
-                do {
-                    
-                    guard let lock = try LockManager.shared.scan(duration: 3, filter: lockCache.identifier)
-                        else { mainQueue { self.showErrorAlert("Lock not found") }; return }
-                    
-                    try LockManager.shared.unlock(lock: lock, key: key)
-                    
-                    
-                }
+                do { try LockManager.shared.unlock(lockCache.identifier, key: key) }
                     
                 catch { mainQueue { self.showErrorAlert("Could not unlock. (\(error))") }; return }
                 

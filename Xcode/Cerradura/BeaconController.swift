@@ -28,8 +28,6 @@ final class BeaconController: NSObject, CLLocationManagerDelegate {
     
     var regionState: CLRegionState = .unknown
     
-    var beaconLockScreenNotification: UILocalNotification?
-    
     private lazy var locationManager: CLLocationManager = {
         
         let location = CLLocationManager()
@@ -52,36 +50,6 @@ final class BeaconController: NSObject, CLLocationManagerDelegate {
     func stop() {
         
         locationManager.stopMonitoring(for: BeaconController.region)
-    }
-    
-    func unlockFromNotification() {
-        
-        self.beaconLockScreenNotification = nil
-        
-        var foundLock: LockManager.Lock!
-        
-        // scan for current lock
-        do {
-            guard let lock = try LockManager.shared.scan()
-                else { print("Could not find lock"); return }
-            
-            foundLock = lock
-        }
-            
-        catch { print("Error connecting to current lock: \(error)"); return }
-        
-        // make sure you can unlock
-        guard let lockCache = Store.shared[foundLock.UUID]
-            else { print("Cannot unlock, permission denied") ;return }
-        
-        if case let .scheduled(schedule) = lockCache.key.permission {
-            
-            guard schedule.valid() else { return }
-        }
-        
-        do { try LockManager.shared.unlock(lock: foundLock, key: lockCache.key.data) }
-            
-        catch { print("Could not unlock: \(error)") }
     }
     
     // MARK: - CLLocationManagerDelegate
@@ -116,47 +84,14 @@ final class BeaconController: NSObject, CLLocationManagerDelegate {
         
         regionState = state
         
-        switch state {
-            
-        case .inside:
-            
-            if let previousNotification = beaconLockScreenNotification {
-                
-                UIApplication.shared().cancel(previousNotification)
-                
-                beaconLockScreenNotification = nil
-            }
-            
-            // show unlock notification if in background
-            
-            guard AppDelegate.shared.active == false
-                else { return }
-            
-            // show notification on user screen
-            
-            let notification = UILocalNotification()
-            
-            notification.alertBody = "Unlock Door"
-            
-            notification.category = LockCategory
-            
-            UIApplication.shared().presentLocalNotificationNow(notification)
-            
-            beaconLockScreenNotification = notification
-            
-        case .outside, .unknown:
-            
-            if let previousNotification = beaconLockScreenNotification {
-                
-                UIApplication.shared().cancel(previousNotification)
-                
-                beaconLockScreenNotification = nil
-            }
-        }
+        
+        // do { try LockManager.shared.scan() }
+        // catch { print("Error scanning: \(error)") }
+        
     }
 }
 
-// MARK: - Private 
+// MARK: - Private
 
 let BeaconIdentifier = "LockBeacon"
 
