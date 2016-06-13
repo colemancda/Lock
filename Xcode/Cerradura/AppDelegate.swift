@@ -13,8 +13,12 @@ import WatchConnectivity
 
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate {
+    
+    static let shared = UIApplication.shared().delegate as! AppDelegate
 
     var window: UIWindow?
+    
+    var active = true
     
     @objc(application:didFinishLaunchingWithOptions:)
     func application(_ application: UIApplication, didFinishLaunchingWithOptions didFinishLaunchingWithLaunchOptions: [NSObject: AnyObject]?) -> Bool {
@@ -62,32 +66,40 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
+        
+        active = false
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+        
+        //state = .background
+        active = false
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+        
+        //state = .foreground
+        active = true
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+        
+        active = true
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         
-        BeaconController.shared.stop()
+        //BeaconController.shared.stop()
     }
     
     func application(_ application: UIApplication, didReceive notification: UILocalNotification) {
         
-        print("Notification: \(notification.alertTitle ?? "")")
-        
-        
+        print("Notification: \(notification.alertBody ?? "")")
     }
     
     func application(_ application: UIApplication, didRegister notificationSettings: UIUserNotificationSettings) {
@@ -97,10 +109,18 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, handleActionWithIdentifier identifier: String?, for notification: UILocalNotification, completionHandler: () -> ()) {
         
-        print("Handle Action \(identifier)")
+        print("Handle Action: \(identifier ?? "")")
         
+        defer { completionHandler() }
         
-        completionHandler()
+        switch identifier ?? "" {
+            
+        case UnlockActionIdentifier:
+            
+            BeaconController.shared.unlockFromNotification()
+            
+        default: fatalError("Unknown action \(identifier)")
+        }
     }
 }
 
@@ -109,3 +129,11 @@ public let AppVersion = NSBundle.main().infoDictionary!["CFBundleShortVersionStr
 
 /** Build of the app. */
 public let AppBuild = NSBundle.main().infoDictionary!["CFBundleVersion"] as! String
+
+extension AppDelegate {
+    
+    enum State {
+        
+        case foreground, background
+    }
+}
