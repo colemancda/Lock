@@ -62,7 +62,7 @@ final class BeaconController: NSObject, CLLocationManagerDelegate {
         
         // scan for current lock
         do {
-            guard let lock = try LockManager.shared.scan(duration: 10)
+            guard let lock = try LockManager.shared.scan()
                 else { print("Could not find lock"); return }
             
             foundLock = lock
