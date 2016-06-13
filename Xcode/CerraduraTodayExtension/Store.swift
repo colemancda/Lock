@@ -15,7 +15,7 @@ final class Store {
     
     static let shared = Store()
     
-    private let keychain = Keychain(accessGroup: "com.colemancda.Cerradura")
+    private let keychain = Keychain(accessGroup: AppGroup)
     
     /// Remove the specified key / lock pair from the database, along with its cached info.
     func remove(_ UUID: SwiftFoundation.UUID) {

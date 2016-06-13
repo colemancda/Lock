@@ -22,7 +22,7 @@ final class Store {
     /// A convenience variable for the managed object model.
     let managedObjectModel: NSManagedObjectModel
     
-    private let keychain = Keychain(accessGroup: "com.colemancda.Cerradura")
+    private let keychain = Keychain(accessGroup: AppGroup)
     
     private init() {
         
@@ -186,10 +186,7 @@ func RemovePersistentStore() throws {
 
 let SQLiteStoreFileURL: NSURL = {
     
-    let cacheURL = try! NSFileManager.default().urlForDirectory(NSSearchPathDirectory.documentDirectory,
-                                                                       in: NSSearchPathDomainMask.userDomainMask,
-                                                                       appropriateFor: nil,
-                                                                       create: false)
+    let cacheURL = NSFileManager.default().containerURLForSecurityApplicationGroupIdentifier(AppGroup)!
     
     let fileURL = cacheURL.appendingPathComponent("cache.sqlite")
     

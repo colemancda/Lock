@@ -16,15 +16,15 @@ final class TodayViewController: UIViewController, NCWidgetProviding, AsyncProto
     
     // MARK: - IB Outlets
     
-    @IBOutlet weak var actionButton: UIButton!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
-    @IBOutlet weak var actionImageView: UIImageView!
+    @IBOutlet weak var actionButton: UIButton!
     
     // MARK: - Private Properties
     
     internal lazy var queue: dispatch_queue_t = dispatch_queue_create("\(self.dynamicType) Internal Queue", DISPATCH_QUEUE_SERIAL)
     
-    private var foundLock: SwiftFoundation.UUID? {
+    private var foundLock: (lock: SwiftFoundation.UUID, key: KeyData)? {
         
         didSet { updateUI() }
     }
@@ -55,7 +55,7 @@ final class TodayViewController: UIViewController, NCWidgetProviding, AsyncProto
     
     // MARK: - Actions
     
-    @IBAction func scan(sender: AnyObject? = nil) {
+    @IBAction func scan(_ sender: AnyObject? = nil) {
         
         // remove current lock (updates UI)
         if foundLock != nil { foundLock = nil }
@@ -69,6 +69,26 @@ final class TodayViewController: UIViewController, NCWidgetProviding, AsyncProto
             catch { mainQueue { controller.actionError("\(error)") }; return }
             
             // observer callback will update UI
+        }
+    }
+    
+    @IBAction func unlock(_ sender: UIButton) {
+        
+        guard let foundLock = self.foundLock else { return }
+        
+        print("Unlocking")
+        
+        sender.isEnabled = false
+        
+        async {
+            
+            do { try LockManager.shared.unlock(foundLock.lock, key: foundLock.key) }
+                
+            catch { mainQueue { self.actionError("\(error)") }; return }
+            
+            print("Successfully unlocked lock \"\(foundLock.lock)\"")
+            
+            mainQueue { self.updateUI() }
         }
     }
     
@@ -93,13 +113,11 @@ final class TodayViewController: UIViewController, NCWidgetProviding, AsyncProto
         
         mainQueue {
             
-            self.foundLock = locks.first?.UUID
+            guard let lockIdentifier = locks.first?.UUID,
+                let key = Store.shared[key: lockIdentifier]
+                else { self.scan(); return }
             
-            // continue scanning
-            if self.foundLock == nil {
-                
-                self.scan()
-            }
+            self.foundLock = (lockIdentifier, key)
         }
     }
     
@@ -107,123 +125,29 @@ final class TodayViewController: UIViewController, NCWidgetProviding, AsyncProto
         
         print("Error: " + error)
         
-        // update UI
-       //self.setTitle("Error")
-        
-        self.actionButton.isEnabled = true
-        
-        self.foundLock = nil
-        
-        //showErrorAlert(error, okHandler: { self.scan() })
+        self.scan()
     }
     
     private func updateUI() {
         
-        self.navigationItem.rightBarButtonItem = nil
+        print("Configure UI with lock: \(foundLock?.lock.description ?? "")")
         
-        self.actionButton.isEnabled = true
-        
-        // No lock
-        guard let lockIdentifier = self.foundLock else {
+        guard foundLock != nil else {
             
-            if LockManager.shared.state.value == .poweredOn {
-                
-                //self.setTitle("Scanning...")
-                
-                let image1 = UIImage(named: "scan1")!
-                let image2 = UIImage(named: "scan2")!
-                let image3 = UIImage(named: "scan3")!
-                let image4 = UIImage(named: "scan4")!
-                
-                self.actionButton.isHidden = true
-                self.actionButton.setImage(nil, for: UIControlState(rawValue: 0))
-                self.actionImageView.isHidden = false
-                self.actionImageView.animationImages = [image1, image2, image3, image4]
-                self.actionImageView.animationDuration = 2.0
-                self.actionImageView.startAnimating()
-                
-            } else {
-                
-                //self.setTitle("Error")
-                
-                let image1 = UIImage(named: "bluetoothLogo")!
-                let image2 = UIImage(named: "bluetoothLogoDisabled")!
-                
-                self.actionButton.isHidden = true
-                self.actionButton.setImage(nil, for: UIControlState(rawValue: 0))
-                self.actionImageView.isHidden = false
-                self.actionImageView.animationImages = [image1, image2]
-                self.actionImageView.animationDuration = 2.0
-                self.actionImageView.startAnimating()
-                
-                //self.showErrorAlert("Bluetooth disabled")
-            }
+            self.activityIndicator.isHidden = false
+            self.activityIndicator.startAnimating()
+            self.actionButton.isHidden = true
             
             return
         }
         
-        let lock = LockManager.shared[lockIdentifier]!
-        
-        func configureUnlockUI() {
-            
-            // Unlock UI (if possible)
-            let key = Store.shared[key: lockIdentifier]
-            
-            // set lock name (if any)
-            //let lockName = key?.name ?? "Lock"
-            //self.setTitle(lockName)
-            
-            self.actionImageView.stopAnimating()
-            self.actionImageView.animationImages = nil
-            self.actionImageView.isHidden = true
-            self.actionButton.isHidden = false
-            self.actionButton.isEnabled = (key != nil)
-            self.actionButton.setImage(UIImage(named: "unlockButton")!, for: UIControlState(rawValue: 0))
-            self.actionButton.setImage(UIImage(named: "unlockButtonSelected")!, for: UIControlState.highlighted)
-        }
-        
-        switch lock.status {
-            
-        case .setup:
-            
-            // setup UI
-            
-            //self.setTitle("New Lock")
-            
-            self.actionImageView.stopAnimating()
-            self.actionImageView.animationImages = nil
-            self.actionImageView.isHidden = true
-            self.actionButton.isHidden = false
-            self.actionButton.isEnabled = true
-            self.actionButton.setImage(UIImage(named: "setupLock")!, for: UIControlState(rawValue: 0))
-            self.actionButton.setImage(UIImage(named: "setupLockSelected")!, for: UIControlState.highlighted)
-            
-        case .unlock:
-            
-            configureUnlockUI()
-            
-        case .newKey:
-            
-            /// Cannot have duplicate keys for same lock.
-            guard Store.shared[key: lock.UUID] == nil
-                else { configureUnlockUI(); return }
-            
-            // new key UI
-            
-            //self.setTitle("New Key")
-            self.actionImageView.stopAnimating()
-            self.actionImageView.animationImages = nil
-            self.actionImageView.isHidden = true
-            self.actionButton.isHidden = false
-            self.actionButton.isEnabled = true
-            self.actionButton.setImage(UIImage(named: "setupKey")!, for: UIControlState(rawValue: 0))
-            self.actionButton.setImage(UIImage(named: "setupKeySelected")!, for: UIControlState.highlighted)
-        }
+        self.activityIndicator.stopAnimating()
+        self.actionButton.isHidden = false
     }
     
     // MARK: - NCWidgetProviding
     
-    func widgetPerformUpdateWithCompletionHandler(completionHandler: ((NCUpdateResult) -> Void)) {
+    func widgetPerformUpdateWithCompletionHandler(completionHandler: ((NCUpdateResult) -> ())) {
         
         print("Update Today Extension")
         
@@ -232,8 +156,14 @@ final class TodayViewController: UIViewController, NCWidgetProviding, AsyncProto
         // If an error is encountered, use NCUpdateResult.Failed
         // If there's no update required, use NCUpdateResult.NoData
         // If there's an update, use NCUpdateResult.NewData
-
-        completionHandler(NCUpdateResult.newData)
+        
+        async {
+            
+            do { try LockManager.shared.scan(duration: 5) }
+            
+            catch { print("Error scanning for lock: \(error)") }
+            
+            completionHandler(NCUpdateResult.newData)
+        }
     }
-    
 }
