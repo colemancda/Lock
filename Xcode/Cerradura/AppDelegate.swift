@@ -14,7 +14,7 @@ import SwiftFoundation
 import CoreLock
 
 @UIApplicationMain
-final class AppDelegate: UIResponder, UIApplicationDelegate, AsyncProtocol {
+final class AppDelegate: UIResponder, UIApplicationDelegate {
     
     static let shared = UIApplication.shared().delegate as! AppDelegate
 
@@ -122,7 +122,27 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, AsyncProtocol {
             
             async {
                 
-                do { try LockManager.shared.unlock(lock.identifier, key: lock.key.data) }
+                do {
+                    var foundLock = LockManager.shared[lock.identifier]
+                    
+                    // scan if not prevously found
+                    if foundLock == nil {
+                        
+                        try LockManager.shared.scan()
+                        
+                        foundLock = LockManager.shared[lock.identifier]
+                    }
+                    
+                    guard foundLock != nil else { mainQueue { self.window?.rootViewController?.showErrorAlert("Could not unlock. Not in range.") }; return }
+                    
+                    // wait until other scanning completes
+                    while LockManager.shared.scanning.value {
+                        
+                        sleep(1)
+                    }
+                    
+                    try LockManager.shared.unlock(lock.identifier, key: lock.key.data)
+                }
                 
                 catch { mainQueue { self.window?.rootViewController?.showErrorAlert("Could not unlock. \(error)") }; return }
             }

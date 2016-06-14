@@ -14,7 +14,7 @@ import Bluetooth
 import GATT
 import CoreLock
 
-final class NearLockViewController: UIViewController, AsyncProtocol {
+final class NearLockViewController: UIViewController {
     
     // MARK: - IB Outlets
     
@@ -24,8 +24,7 @@ final class NearLockViewController: UIViewController, AsyncProtocol {
     
     // MARK: - Properties
     
-    internal lazy var queue: dispatch_queue_t = dispatch_queue_create("\(self.dynamicType) Internal Queue", DISPATCH_QUEUE_SERIAL)
-    
+    // The current lock
     private var foundLock: SwiftFoundation.UUID? {
         
         didSet { updateUI() }
@@ -56,6 +55,10 @@ final class NearLockViewController: UIViewController, AsyncProtocol {
         
         // remove current lock (updates UI)
         if foundLock != nil { foundLock = nil }
+        
+        // already scanning
+        guard LockManager.shared.scanning.value == false
+            else { return }
         
         async { [weak self] in
             
@@ -120,7 +123,7 @@ final class NearLockViewController: UIViewController, AsyncProtocol {
                 
                 sender.isEnabled = false
                 
-                self.async {
+                async {
                     
                     do {
                         
@@ -164,7 +167,7 @@ final class NearLockViewController: UIViewController, AsyncProtocol {
                 
                 sender.isEnabled = false
                 
-                self.async {
+                async {
                     
                     do {
                         

@@ -13,7 +13,7 @@ import SwiftFoundation
 import CoreLock
 import KeychainAccess
 
-final class TodayViewController: UIViewController, NCWidgetProviding, AsyncProtocol {
+final class TodayViewController: UIViewController, NCWidgetProviding {
     
     // MARK: - IB Outlets
     
@@ -23,7 +23,7 @@ final class TodayViewController: UIViewController, NCWidgetProviding, AsyncProto
     
     // MARK: - Private Properties
     
-    internal lazy var queue: dispatch_queue_t = dispatch_queue_create("\(self.dynamicType) Internal Queue", DISPATCH_QUEUE_SERIAL)
+    
     
     private var foundLock: (lock: SwiftFoundation.UUID, key: KeyData)? {
         

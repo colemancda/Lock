@@ -13,7 +13,7 @@ import CoreBluetooth
 import CoreLock
 import GATT
 
-final class KeysViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, NSFetchedResultsControllerDelegate, AsyncProtocol {
+final class KeysViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, NSFetchedResultsControllerDelegate {
     
     // MARK: - IB Outlets
     
@@ -32,7 +32,7 @@ final class KeysViewController: UIViewController, UITableViewDataSource, UITable
         return controller
     }()
     
-    internal lazy var queue: dispatch_queue_t = dispatch_queue_create("\(self.dynamicType) Internal Queue", DISPATCH_QUEUE_SERIAL)
+    
     
     // MARK: - Loading
     
@@ -171,7 +171,7 @@ final class KeysViewController: UIViewController, UITableViewDataSource, UITable
             
             tableView.setEditing(false, animated: true)
             
-            self.async {
+            async {
                 
                 do { try LockManager.shared.unlock(lockCache.identifier, key: key) }
                     

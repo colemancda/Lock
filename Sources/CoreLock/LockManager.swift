@@ -30,6 +30,8 @@
             set { internalManager.log = newValue }
         }
         
+        public var scanning = Observable(false)
+        
         public var connectionTimeout: Int = 5
         
         public let foundLocks: Observable<[Lock]> = Observable([])
@@ -87,6 +89,8 @@
             
             log?("Scanning...")
             
+            scanning.value = true
+            
             internalManager.disconnectAll()
             
             let foundDevices = self.internalManager.scan(duration: duration)
@@ -116,6 +120,8 @@
                 // disconnect
                 internalManager.disconnect(peripheral: peripheral)
             }
+            
+            scanning.value = false
             
             foundLocks.value = locks
         }
