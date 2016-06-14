@@ -14,13 +14,15 @@ import SwiftFoundation
 import CoreLock
 
 @UIApplicationMain
-final class AppDelegate: UIResponder, UIApplicationDelegate {
+final class AppDelegate: UIResponder, UIApplicationDelegate, AsyncProtocol {
     
     static let shared = UIApplication.shared().delegate as! AppDelegate
 
     var window: UIWindow?
     
     var active = true
+    
+    lazy var queue: dispatch_queue_t = dispatch_queue_create("\(self.dynamicType) Internal Queue", DISPATCH_QUEUE_SERIAL)
     
     @objc(application:didFinishLaunchingWithOptions:)
     func application(_ application: UIApplication, didFinishLaunchingWithOptions didFinishLaunchingWithLaunchOptions: [NSObject: AnyObject]?) -> Bool {
@@ -118,6 +120,13 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             
             print("Selected lock \(lock.identifier) from CoreSpotlight")
             
+            async {
+                
+                do { try LockManager.shared.unlock(lock.identifier, key: lock.key.data) }
+                
+                catch { mainQueue { self.window?.rootViewController?.showErrorAlert("Could not unlock. \(error)") }; return }
+            }
+            
             return true
             
         } else {
@@ -133,10 +142,3 @@ public let AppVersion = NSBundle.main().infoDictionary!["CFBundleShortVersionStr
 /** Build of the app. */
 public let AppBuild = NSBundle.main().infoDictionary!["CFBundleVersion"] as! String
 
-extension AppDelegate {
-    
-    enum State {
-        
-        case foreground, background
-    }
-}
