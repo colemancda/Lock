@@ -11,6 +11,7 @@ import CoreLock
 import CoreSpotlight
 import CoreData
 import MobileCoreServices
+import UIKit
 
 @available(iOS 9.0, *)
 extension LockCache {
@@ -19,20 +20,51 @@ extension LockCache {
     
     func toSearchableItem() -> CSSearchableItem {
         
-        let item = CSSearchableItem()
-        
-        item.uniqueIdentifier = identifier.rawValue
-        
         let attributeSet = CSSearchableItemAttributeSet(itemContentType: self.dynamicType.itemContentType)
         
-        attributeSet.displayName = name
+        let permissionImage: UIImage
         
-        return item
+        let permissionText: String
+        
+        switch permission {
+            
+        case .owner:
+            
+            permissionImage = UIImage(named: "permissionBadgeOwner")!
+            
+            permissionText = "Owner"
+            
+        case .admin:
+            
+            permissionImage = UIImage(named: "permissionBadgeAdmin")!
+            
+            permissionText = "Admin"
+            
+        case .anytime:
+            
+            permissionImage = UIImage(named: "permissionBadgeAnytime")!
+            
+            permissionText = "Anytime"
+            
+        case let .scheduled(schedule):
+            
+            permissionImage = UIImage(named: "permissionBadgeScheduled")!
+            
+            permissionText = "Scheduled" // FIXME
+        }
+        
+        attributeSet.displayName = name
+        attributeSet.contentDescription = permissionText
+        attributeSet.thumbnailData = UIImagePNGRepresentation(permissionImage)!
+        
+        return CSSearchableItem(uniqueIdentifier: identifier.rawValue, domainIdentifier: nil, attributeSet: attributeSet)
     }
 }
 
 @available(iOS 9.0, *)
 func UpdateSpotlight(_ index: CSSearchableIndex = CSSearchableIndex.default(), completionHandler: ((NSError?) -> Void)? = nil) {
+    
+    print(kUTTypeText as String)
     
     index.deleteAllSearchableItems { (deleteError) in
         

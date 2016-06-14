@@ -58,7 +58,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                     
                     print("Updated SpotLight index")
                     
-                    if let error = error { print(error) }
+                    if let error = error { print("Spotlight Error: ", error) }
                 }
             }
         }
