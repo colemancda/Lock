@@ -111,6 +111,8 @@ final class TodayViewController: UIViewController, NCWidgetProviding, AsyncProto
     
     private func locksUpdated(locks: [LockManager.Lock]) {
         
+        print("Fetched locks: \(locks.map({ $0.UUID }))")
+        
         mainQueue {
             
             guard let lockIdentifier = locks.first?.UUID,
@@ -129,9 +131,7 @@ final class TodayViewController: UIViewController, NCWidgetProviding, AsyncProto
     }
     
     private func updateUI() {
-        
-        print("Configure UI with lock: \(foundLock?.lock.description ?? "")")
-        
+                
         guard foundLock != nil else {
             
             self.activityIndicator.isHidden = false

@@ -186,7 +186,8 @@ func RemovePersistentStore() throws {
 
 let SQLiteStoreFileURL: NSURL = {
     
-    let cacheURL = NSFileManager.default().containerURLForSecurityApplicationGroupIdentifier(AppGroup)!
+    guard let cacheURL = NSFileManager.default().containerURLForSecurityApplicationGroupIdentifier(AppGroup)
+        else { fatalError("Could not get URL for Core Data cache: App Group Error") }
     
     let fileURL = cacheURL.appendingPathComponent("cache.sqlite")
     
