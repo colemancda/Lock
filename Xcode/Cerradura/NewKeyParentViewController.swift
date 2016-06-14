@@ -27,8 +27,6 @@ final class NewKeyParentViewController: UIViewController {
     
     var newKey: (identifier: UUID, permission: Permission)!
     
-    private lazy var queue: dispatch_queue_t = dispatch_queue_create("\(self.dynamicType) Internal Queue", DISPATCH_QUEUE_SERIAL)
-    
     // MARK: - Loading
     
     override func viewDidLoad() {
@@ -51,12 +49,6 @@ final class NewKeyParentViewController: UIViewController {
     }
     
     // MARK: - Methods
-    
-    /// Perform a task on the internal queue.
-    private func async(_ block: () -> ()) {
-        
-        dispatch_async(queue) { block() }
-    }
     
     private func setupNewKey() {
         
