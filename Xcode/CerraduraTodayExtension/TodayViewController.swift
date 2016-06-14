@@ -11,6 +11,7 @@ import NotificationCenter
 import CoreBluetooth
 import SwiftFoundation
 import CoreLock
+import KeychainAccess
 
 final class TodayViewController: UIViewController, NCWidgetProviding, AsyncProtocol {
     
@@ -45,6 +46,10 @@ final class TodayViewController: UIViewController, NCWidgetProviding, AsyncProto
         
         // update UI
         self.updateUI()
+        
+        let keychain = Keychain(accessGroup: AppGroup)
+        
+        print("All Keys: ", keychain.allKeys())
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -116,10 +121,10 @@ final class TodayViewController: UIViewController, NCWidgetProviding, AsyncProto
         mainQueue {
             
             guard let lockIdentifier = locks.first?.UUID,
-                let key = Store.shared[key: lockIdentifier]
+                let lock = Store.shared[lockIdentifier]
                 else { self.scan(); return }
             
-            self.foundLock = (lockIdentifier, key)
+            self.foundLock = (lockIdentifier, lock.key.data)
         }
     }
     
@@ -131,6 +136,8 @@ final class TodayViewController: UIViewController, NCWidgetProviding, AsyncProto
     }
     
     private func updateUI() {
+        
+        print("Found lock \(foundLock?.lock.description ?? "(null)")")
                 
         guard foundLock != nil else {
             

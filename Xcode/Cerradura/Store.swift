@@ -139,8 +139,7 @@ private extension LockCache {
 
 private func LoadManagedObjectModel() -> NSManagedObjectModel {
     
-    guard let bundle = NSBundle(identifier: "com.colemancda.Cerradura")
-        else { fatalError("Could not load Cerradura bundle") }
+    let bundle = NSBundle(for: Store.self)
     
     let modelURL = bundle.urlForResource("Model", withExtension: "momd")!
     

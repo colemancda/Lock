@@ -313,7 +313,6 @@
 		6EDCE1F01D0F34A300C3D3DC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6EDCE1F81D0F35A100C3D3DC /* CerraduraTodayExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = CerraduraTodayExtension.entitlements; sourceTree = "<group>"; };
 		6EDCE1F91D0F35B100C3D3DC /* Cerradura.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Cerradura.entitlements; sourceTree = "<group>"; };
-		6EDCE1FA1D0F46E800C3D3DC /* Store.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		6EE0E36F1D068772009E08D0 /* SwiftyGPIO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftyGPIO.swift; sourceTree = "<group>"; };
 		6EE0E3711D068D8F009E08D0 /* SunXi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SunXi.swift; sourceTree = "<group>"; };
 		6EE5065B1D0DEBD20018ABD2 /* Beacon.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Beacon.swift; sourceTree = "<group>"; };
@@ -506,7 +505,6 @@
 			children = (
 				6EDCE1F81D0F35A100C3D3DC /* CerraduraTodayExtension.entitlements */,
 				6EDCE1EB1D0F34A300C3D3DC /* TodayViewController.swift */,
-				6EDCE1FA1D0F46E800C3D3DC /* Store.swift */,
 				6EDCE1ED1D0F34A300C3D3DC /* MainInterface.storyboard */,
 				6EDCE1F01D0F34A300C3D3DC /* Info.plist */,
 			);
