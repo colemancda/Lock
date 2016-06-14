@@ -21,9 +21,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     
     var active = true
-    
-    lazy var queue: dispatch_queue_t = dispatch_queue_create("\(self.dynamicType) Internal Queue", DISPATCH_QUEUE_SERIAL)
-    
+        
     @objc(application:didFinishLaunchingWithOptions:)
     func application(_ application: UIApplication, didFinishLaunchingWithOptions didFinishLaunchingWithLaunchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
