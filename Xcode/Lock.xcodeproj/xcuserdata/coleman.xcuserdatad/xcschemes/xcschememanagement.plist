@@ -9,6 +9,11 @@
 			<key>orderHint</key>
 			<integer>1</integer>
 		</dict>
+		<key>CerraduraSpotlightIndex.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>6</integer>
+		</dict>
 		<key>CerraduraTodayExtension.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -37,6 +42,11 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>6E0429DA1D0FA3AA005AF969</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>6E729C531CC3BC030018A848</key>
 		<dict>
 			<key>primary</key>

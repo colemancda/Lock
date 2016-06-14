@@ -8,8 +8,10 @@
 
 import Foundation
 import UIKit
-import CoreLock
 import WatchConnectivity
+import CoreSpotlight
+import SwiftFoundation
+import CoreLock
 
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -47,6 +49,20 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         BeaconController.shared.log = { print("BeaconController: " + $0) }
         BeaconController.shared.start()
         
+        // Core Spotlight
+        if #available(iOS 9.0, *) {
+            
+            if CSSearchableIndex.isIndexingAvailable() {
+                
+                UpdateSpotlight() { (error) in
+                    
+                    print("Updated SpotLight index")
+                    
+                    if let error = error { print(error) }
+                }
+            }
+        }
+        
         return true
     }
 
@@ -82,6 +98,32 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         
         //BeaconController.shared.stop()
+    }
+    
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: ([AnyObject]?) -> ()) -> Bool {
+        
+        print("Continue activity \(userActivity.activityType)")
+        
+        if #available(iOS 9.0, *) {
+            
+            guard userActivity.activityType == CSSearchableItemActionType
+                else { return false }
+            
+            guard let identifierString = userActivity.userInfo?[CSSearchableItemActivityIdentifier] as? String,
+                let identifier = SwiftFoundation.UUID(rawValue: identifierString)
+                else { return false }
+            
+            guard let lock = Store.shared[identifier]
+                else { return false }
+            
+            print("Selected lock \(lock.identifier) from CoreSpotlight")
+            
+            return true
+            
+        } else {
+            
+            return false
+        }
     }
 }
 

@@ -88,6 +88,42 @@ final class Store {
         
         return KeyData(data: Data(foundation: data))
     }
+    
+    subscript (cache UUID: SwiftFoundation.UUID) -> LockCache? {
+        
+        let entity = managedObjectContext.persistentStoreCoordinator!.managedObjectModel.entitiesByName[LockCache.entityName]!
+        
+        guard let managedObject = try! managedObjectContext.find(entity: entity, resourceID: UUID.rawValue, identifierProperty: LockCache.Property.identifier.rawValue)
+            else { return nil }
+        
+        let lockCache = LockCache(managedObject: managedObject)
+        
+        return lockCache
+    }
+
+    /// Returns the entire cache.
+    var cache: [LockCache] {
+        
+        let entity = managedObjectContext.persistentStoreCoordinator!.managedObjectModel.entitiesByName[LockCache.entityName]!
+        
+        let fetchRequest = NSFetchRequest(entityName: entity.name!)
+        
+        fetchRequest.includesSubentities = false
+        
+        fetchRequest.returnsObjectsAsFaults = false
+        
+        fetchRequest.sortDescriptors = [NSSortDescriptor.init(key: LockCache.Property.identifier.rawValue, ascending: true)]
+        
+        var cache: [LockCache]!
+        
+        NSOperationQueue.main().addOperations([NSBlockOperation(block: {
+            
+            cache = try! self.managedObjectContext.fetch(fetchRequest)
+            
+        })], waitUntilFinished: true)
+        
+        return cache
+    }
 }
 
 // MARK: - Supporting Types

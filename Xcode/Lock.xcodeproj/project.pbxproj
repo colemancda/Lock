@@ -14,6 +14,9 @@
 		6E0429D41D0F8950005AF969 /* CoreDataDecodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F605E1CCB2C0C001914E7 /* CoreDataDecodable.swift */; };
 		6E0429D51D0F8950005AF969 /* EntityController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F605F1CCB2C0C001914E7 /* EntityController.swift */; };
 		6E0429D61D0F8955005AF969 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F60571CCB1D37001914E7 /* Model.xcdatamodeld */; };
+		6E0429DE1D0FA3AA005AF969 /* IndexRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0429DD1D0FA3AA005AF969 /* IndexRequestHandler.swift */; };
+		6E0429E21D0FA3AA005AF969 /* CerraduraSpotlightIndex.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 6E0429DB1D0FA3AA005AF969 /* CerraduraSpotlightIndex.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		6E0429E71D0FA411005AF969 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F60571CCB1D37001914E7 /* Model.xcdatamodeld */; };
 		6E1F604C1CCB00DB001914E7 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F604A1CCAF290001914E7 /* Store.swift */; };
 		6E1F604E1CCB0130001914E7 /* Key.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F604D1CCB0130001914E7 /* Key.swift */; };
 		6E1F604F1CCB0130001914E7 /* Key.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F604D1CCB0130001914E7 /* Key.swift */; };
@@ -67,7 +70,12 @@
 		6E8024471CD651060043E847 /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8024461CD651060043E847 /* History.swift */; };
 		6E9923791CCDE6CD00C0B92C /* SharedSecret.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9923781CCDE6CD00C0B92C /* SharedSecret.swift */; };
 		6E99237A1CCDE6CD00C0B92C /* SharedSecret.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9923781CCDE6CD00C0B92C /* SharedSecret.swift */; };
-		6E9D0B501D0E243100049A31 /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9D0B4F1D0E243100049A31 /* Notification.swift */; };
+		6EA7FC981D0FA71800F5D90B /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F604A1CCAF290001914E7 /* Store.swift */; };
+		6EA7FC991D0FA71800F5D90B /* LockCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F60641CCB2D0A001914E7 /* LockCache.swift */; };
+		6EA7FC9A1D0FA71800F5D90B /* CoreDataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F60661CCB3885001914E7 /* CoreDataExtensions.swift */; };
+		6EA7FC9B1D0FA71800F5D90B /* CoreDataEncodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F605D1CCB2C0C001914E7 /* CoreDataEncodable.swift */; };
+		6EA7FC9C1D0FA71800F5D90B /* CoreDataDecodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F605E1CCB2C0C001914E7 /* CoreDataDecodable.swift */; };
+		6EA7FC9D1D0FA71800F5D90B /* EntityController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F605F1CCB2C0C001914E7 /* EntityController.swift */; };
 		6EA899701CC2E3F0005FC225 /* GATTProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA8996F1CC2E3F0005FC225 /* GATTProfile.swift */; };
 		6EA944C71CD6275500D776E5 /* ComplicationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA944C61CD6275500D776E5 /* ComplicationController.swift */; };
 		6EB2E9E61CD54721000CF975 /* LockManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB2E9E51CD54721000CF975 /* LockManager.swift */; };
@@ -76,6 +84,9 @@
 		6EB2E9EA1CD547CA000CF975 /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB2E9E81CD547CA000CF975 /* Observable.swift */; };
 		6EB4132D1CC2EE68005AB1E2 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB4132C1CC2EE68005AB1E2 /* Configuration.swift */; };
 		6EB413331CC317A3005AB1E2 /* Bool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB413321CC317A3005AB1E2 /* Bool.swift */; };
+		6EBAE76D1D0FAF0D008EADC7 /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6212201D0F79E300FF5917 /* AppGroup.swift */; };
+		6EBAE7711D0FB2E8008EADC7 /* CoreSpotlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EBAE7701D0FB2E8008EADC7 /* CoreSpotlight.swift */; };
+		6EBAE7721D0FB347008EADC7 /* CoreSpotlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EBAE7701D0FB2E8008EADC7 /* CoreSpotlight.swift */; };
 		6EC7DB171D08D0DF000CA60A /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7DB161D08D0DF000CA60A /* File.swift */; };
 		6ED338651CC7C1A800DF1461 /* Permission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED338641CC7C1A800DF1461 /* Permission.swift */; };
 		6ED338661CC7C1A800DF1461 /* Permission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED338641CC7C1A800DF1461 /* Permission.swift */; };
@@ -113,6 +124,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		6E0429E01D0FA3AA005AF969 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6EE6058A1CC21941008EF0EE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E0429DA1D0FA3AA005AF969;
+			remoteInfo = CerraduraSpotlightIndex;
+		};
 		6E6172251D0F548B006C1148 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6EE6058A1CC21941008EF0EE /* Project object */;
@@ -140,6 +158,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 6E778D961CD5B70300AED11E;
 			remoteInfo = CerraduraWatch;
+		};
+		6EA7FC961D0FA6A100F5D90B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6EE6058A1CC21941008EF0EE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6EF45F8F1CC6CAF9001F7A39;
+			remoteInfo = "CoreLock iOS";
 		};
 		6ED3386F1CC7D1EE00DF1461 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -220,6 +245,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				6E0429E21D0FA3AA005AF969 /* CerraduraSpotlightIndex.appex in Embed App Extensions */,
 				6EDCE1F31D0F34A300C3D3DC /* CerraduraToday Extension.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
@@ -246,6 +272,10 @@
 
 /* Begin PBXFileReference section */
 		6E0429CF1D0F8842005AF969 /* CerraduraWatch Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "CerraduraWatch Extension.entitlements"; sourceTree = "<group>"; };
+		6E0429DB1D0FA3AA005AF969 /* CerraduraSpotlightIndex.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CerraduraSpotlightIndex.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		6E0429DD1D0FA3AA005AF969 /* IndexRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexRequestHandler.swift; sourceTree = "<group>"; };
+		6E0429DF1D0FA3AA005AF969 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6E0429E61D0FA3B4005AF969 /* CerraduraSpotlightIndex.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = CerraduraSpotlightIndex.entitlements; sourceTree = "<group>"; };
 		6E1F604A1CCAF290001914E7 /* Store.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		6E1F604D1CCB0130001914E7 /* Key.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Key.swift; sourceTree = "<group>"; };
 		6E1F60581CCB1D37001914E7 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
@@ -293,7 +323,6 @@
 		6E7E65DC1D0D3619009E00C4 /* Async.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Async.swift; sourceTree = "<group>"; };
 		6E8024461CD651060043E847 /* History.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = History.swift; sourceTree = "<group>"; };
 		6E9923781CCDE6CD00C0B92C /* SharedSecret.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedSecret.swift; sourceTree = "<group>"; };
-		6E9D0B4F1D0E243100049A31 /* Notification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
 		6EA8996F1CC2E3F0005FC225 /* GATTProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTProfile.swift; sourceTree = "<group>"; };
 		6EA944C61CD6275500D776E5 /* ComplicationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComplicationController.swift; sourceTree = "<group>"; };
 		6EB2E9E51CD54721000CF975 /* LockManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockManager.swift; sourceTree = "<group>"; };
@@ -302,6 +331,7 @@
 		6EB4132C1CC2EE68005AB1E2 /* Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		6EB413301CC30084005AB1E2 /* Status.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Status.swift; sourceTree = "<group>"; };
 		6EB413321CC317A3005AB1E2 /* Bool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bool.swift; sourceTree = "<group>"; };
+		6EBAE7701D0FB2E8008EADC7 /* CoreSpotlight.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreSpotlight.swift; sourceTree = "<group>"; };
 		6EC7DB161D08D0DF000CA60A /* File.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		6ED338641CC7C1A800DF1461 /* Permission.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Permission.swift; sourceTree = "<group>"; };
 		6ED338671CC7C39200DF1461 /* NearLockViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NearLockViewController.swift; sourceTree = "<group>"; };
@@ -334,6 +364,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		6E0429D81D0FA3AA005AF969 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6E729C511CC3BC030018A848 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -390,6 +427,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6E0429DC1D0FA3AA005AF969 /* CerraduraSpotlightIndex */ = {
+			isa = PBXGroup;
+			children = (
+				6E0429E61D0FA3B4005AF969 /* CerraduraSpotlightIndex.entitlements */,
+				6E0429DD1D0FA3AA005AF969 /* IndexRequestHandler.swift */,
+				6E0429DF1D0FA3AA005AF969 /* Info.plist */,
+			);
+			path = CerraduraSpotlightIndex;
+			sourceTree = "<group>";
+		};
 		6E1F605A1CCB1DE0001914E7 /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -492,6 +539,14 @@
 			path = "CerraduraWatch Extension";
 			sourceTree = "<group>";
 		};
+		6EBAE76F1D0FB2C2008EADC7 /* Spotlight */ = {
+			isa = PBXGroup;
+			children = (
+				6EBAE7701D0FB2E8008EADC7 /* CoreSpotlight.swift */,
+			);
+			name = Spotlight;
+			sourceTree = "<group>";
+		};
 		6EDCE1E71D0F34A300C3D3DC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -526,6 +581,7 @@
 				6E778D981CD5B70300AED11E /* CerraduraWatch */,
 				6E778DA71CD5B70300AED11E /* CerraduraWatch Extension */,
 				6EDCE1EA1D0F34A300C3D3DC /* CerraduraToday Extension */,
+				6E0429DC1D0FA3AA005AF969 /* CerraduraSpotlightIndex */,
 				6EDCE1E71D0F34A300C3D3DC /* Frameworks */,
 				6EE605931CC21941008EF0EE /* Products */,
 			);
@@ -542,6 +598,7 @@
 				6E778D971CD5B70300AED11E /* CerraduraWatch.app */,
 				6E778DA31CD5B70300AED11E /* CerraduraWatch Extension.appex */,
 				6EDCE1E61D0F34A200C3D3DC /* CerraduraToday Extension.appex */,
+				6E0429DB1D0FA3AA005AF969 /* CerraduraSpotlightIndex.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -563,11 +620,11 @@
 				6EE605B11CC21C1A008EF0EE /* Assets.xcassets */,
 				6EE605B31CC21C1A008EF0EE /* LaunchScreen.storyboard */,
 				6EE605AA1CC21C1A008EF0EE /* AppDelegate.swift */,
+				6E6212201D0F79E300FF5917 /* AppGroup.swift */,
 				6ED338691CC7C7CB00DF1461 /* ErrorAlert.swift */,
 				6E7E65DC1D0D3619009E00C4 /* Async.swift */,
 				6EE5065E1D0DEFEA0018ABD2 /* BeaconController.swift */,
-				6E9D0B4F1D0E243100049A31 /* Notification.swift */,
-				6E6212201D0F79E300FF5917 /* AppGroup.swift */,
+				6EBAE76F1D0FB2C2008EADC7 /* Spotlight */,
 				6E68EEBB1CD5DD950068C7B4 /* WatchKit */,
 				6E1F605B1CCB1DE8001914E7 /* Controller */,
 				6E1F605A1CCB1DE0001914E7 /* Model */,
@@ -654,6 +711,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		6E0429DA1D0FA3AA005AF969 /* CerraduraSpotlightIndex */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6E0429E31D0FA3AB005AF969 /* Build configuration list for PBXNativeTarget "CerraduraSpotlightIndex" */;
+			buildPhases = (
+				6E0429D71D0FA3AA005AF969 /* Sources */,
+				6E0429D81D0FA3AA005AF969 /* Frameworks */,
+				6E0429D91D0FA3AA005AF969 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6EA7FC971D0FA6A100F5D90B /* PBXTargetDependency */,
+			);
+			name = CerraduraSpotlightIndex;
+			productName = CerraduraSpotlightIndex;
+			productReference = 6E0429DB1D0FA3AA005AF969 /* CerraduraSpotlightIndex.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		6E729C531CC3BC030018A848 /* CoreLockTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6E729C5C1CC3BC030018A848 /* Build configuration list for PBXNativeTarget "CoreLockTests" */;
@@ -762,6 +837,7 @@
 				6ED338701CC7D1EE00DF1461 /* PBXTargetDependency */,
 				6E778DB01CD5B70300AED11E /* PBXTargetDependency */,
 				6EDCE1F21D0F34A300C3D3DC /* PBXTargetDependency */,
+				6E0429E11D0FA3AA005AF969 /* PBXTargetDependency */,
 			);
 			name = Cerradura;
 			productName = Cerradura;
@@ -814,6 +890,15 @@
 				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = ColemanCDA;
 				TargetAttributes = {
+					6E0429DA1D0FA3AA005AF969 = {
+						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = 4W79SG34MW;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+						};
+					};
 					6E729C531CC3BC030018A848 = {
 						CreatedOnToolsVersion = 7.3;
 					};
@@ -889,11 +974,19 @@
 				6E778D961CD5B70300AED11E /* CerraduraWatch */,
 				6E778DA21CD5B70300AED11E /* CerraduraWatch Extension */,
 				6EDCE1E51D0F34A200C3D3DC /* CerraduraToday Extension */,
+				6E0429DA1D0FA3AA005AF969 /* CerraduraSpotlightIndex */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		6E0429D91D0FA3AA005AF969 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6E729C521CC3BC030018A848 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -984,6 +1077,23 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		6E0429D71D0FA3AA005AF969 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6EA7FC9A1D0FA71800F5D90B /* CoreDataExtensions.swift in Sources */,
+				6EA7FC9C1D0FA71800F5D90B /* CoreDataDecodable.swift in Sources */,
+				6EA7FC9D1D0FA71800F5D90B /* EntityController.swift in Sources */,
+				6EA7FC981D0FA71800F5D90B /* Store.swift in Sources */,
+				6EBAE76D1D0FAF0D008EADC7 /* AppGroup.swift in Sources */,
+				6E0429DE1D0FA3AA005AF969 /* IndexRequestHandler.swift in Sources */,
+				6E0429E71D0FA411005AF969 /* Model.xcdatamodeld in Sources */,
+				6EBAE7721D0FB347008EADC7 /* CoreSpotlight.swift in Sources */,
+				6EA7FC9B1D0FA71800F5D90B /* CoreDataEncodable.swift in Sources */,
+				6EA7FC991D0FA71800F5D90B /* LockCache.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6E729C501CC3BC030018A848 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1061,7 +1171,7 @@
 				6EE5065F1D0DEFEA0018ABD2 /* BeaconController.swift in Sources */,
 				6EE605AB1CC21C1A008EF0EE /* AppDelegate.swift in Sources */,
 				6E1F60591CCB1D37001914E7 /* Model.xcdatamodeld in Sources */,
-				6E9D0B501D0E243100049A31 /* Notification.swift in Sources */,
+				6EBAE7711D0FB2E8008EADC7 /* CoreSpotlight.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1108,6 +1218,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		6E0429E11D0FA3AA005AF969 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6E0429DA1D0FA3AA005AF969 /* CerraduraSpotlightIndex */;
+			targetProxy = 6E0429E01D0FA3AA005AF969 /* PBXContainerItemProxy */;
+		};
 		6E6172261D0F548B006C1148 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 6EF45F8F1CC6CAF9001F7A39 /* CoreLock iOS */;
@@ -1127,6 +1242,11 @@
 			isa = PBXTargetDependency;
 			target = 6E778D961CD5B70300AED11E /* CerraduraWatch */;
 			targetProxy = 6E778DAF1CD5B70300AED11E /* PBXContainerItemProxy */;
+		};
+		6EA7FC971D0FA6A100F5D90B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6EF45F8F1CC6CAF9001F7A39 /* CoreLock iOS */;
+			targetProxy = 6EA7FC961D0FA6A100F5D90B /* PBXContainerItemProxy */;
 		};
 		6ED338701CC7D1EE00DF1461 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1181,6 +1301,37 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		6E0429E41D0FA3AB005AF969 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = CerraduraSpotlightIndex/CerraduraSpotlightIndex.entitlements;
+				FRAMEWORK_SEARCH_PATHS = $SRCROOT/../Carthage/Build/iOS;
+				INFOPLIST_FILE = CerraduraSpotlightIndex/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.colemancda.Cerradura.CerraduraSpotlightIndex;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		6E0429E51D0FA3AB005AF969 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = CerraduraSpotlightIndex/CerraduraSpotlightIndex.entitlements;
+				FRAMEWORK_SEARCH_PATHS = $SRCROOT/../Carthage/Build/iOS;
+				INFOPLIST_FILE = CerraduraSpotlightIndex/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.colemancda.Cerradura.CerraduraSpotlightIndex;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		6E729C5D1CC3BC030018A848 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1586,6 +1737,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		6E0429E31D0FA3AB005AF969 /* Build configuration list for PBXNativeTarget "CerraduraSpotlightIndex" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6E0429E41D0FA3AB005AF969 /* Debug */,
+				6E0429E51D0FA3AB005AF969 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		6E729C5C1CC3BC030018A848 /* Build configuration list for PBXNativeTarget "CoreLockTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
