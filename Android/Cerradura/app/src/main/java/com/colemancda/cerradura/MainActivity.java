@@ -19,8 +19,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-  
+
 import android.widget.TextView;
+import android.content.*;
+
+import android.bluetooth.*;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -47,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements NearLockFragment.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
+
+    private static Integer REQUEST_ENABLE_BT = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +126,18 @@ public class MainActivity extends AppCompatActivity implements NearLockFragment.
                 Uri.parse("android-app://com.colemancda.cerradura/http/host/path")
         );
         AppIndex.AppIndexApi.start(client, viewAction);
+
+        // Check Bluetooth Support
+
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null) {
+            // Device does not support Bluetooth
+        }
+
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }
     }
 
     @Override

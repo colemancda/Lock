@@ -25,4 +25,7 @@
             android:value="@integer/google_play_services_version" />
     </application>
 
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
+
 </manifest>
