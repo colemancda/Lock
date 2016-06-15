@@ -20,6 +20,8 @@ import android.view.ViewGroup;
  */
 public final class NearLockFragment extends Fragment {
 
+    private static String TAG = "NearLockFragment";
+
     private OnFragmentInteractionListener mListener;
 
     private boolean isViewShown = false;
@@ -56,7 +58,7 @@ public final class NearLockFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_near_lock, container, false);
 
         if (!isViewShown) {
-            viewDidAppear();
+            viewDidLoad();
         }
 
         return view;
@@ -86,29 +88,16 @@ public final class NearLockFragment extends Fragment {
         mListener = null;
     }
 
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (getView() != null) {
-            isViewShown = true;
-
-            viewDidAppear();
-        } else {
-            isViewShown = false;
-        }
-    }
-
     /**
      * Loading
      */
 
-    public void viewDidAppear() {
+    public void viewDidLoad() {
 
-        Log.v("", "Near Lock Fragment did appear");
+        Log.v(TAG, "Near Lock Fragment did Load");
 
-        //scan();
+        scan();
     }
-
 
     /**
      * Actions
@@ -116,9 +105,9 @@ public final class NearLockFragment extends Fragment {
 
     public void scan() {
 
-        try { LockManager.shared().scan(); }
+        try { LockManager.shared().scan(3); }
 
-        catch (Exception e) { System.console().printf("Error: ", e);  }
+        catch (Exception e) { Log.e(TAG, "Error: ", e);  }
     }
 
     /**

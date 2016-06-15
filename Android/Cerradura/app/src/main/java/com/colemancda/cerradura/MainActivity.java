@@ -129,15 +129,14 @@ public class MainActivity extends AppCompatActivity implements NearLockFragment.
 
         // Check Bluetooth Support
 
-        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBluetoothAdapter == null) {
-            // Device does not support Bluetooth
-        }
 
-        if (!mBluetoothAdapter.isEnabled()) {
+
+        if (!LockManager.shared().adapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
+
+
     }
 
     @Override
