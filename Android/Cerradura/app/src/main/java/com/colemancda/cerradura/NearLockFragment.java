@@ -2,6 +2,7 @@ package com.colemancda.cerradura;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -24,7 +25,7 @@ public final class NearLockFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private boolean isViewShown = false;
+    private static boolean didLoad = false;
 
     public NearLockFragment() {
         // Required empty public constructor
@@ -49,6 +50,8 @@ public final class NearLockFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
         }
+
+
     }
 
     @Override
@@ -57,7 +60,7 @@ public final class NearLockFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_near_lock, container, false);
 
-        if (!isViewShown) {
+        if (!didLoad) {
             viewDidLoad();
         }
 
@@ -94,6 +97,8 @@ public final class NearLockFragment extends Fragment {
 
     public void viewDidLoad() {
 
+        didLoad = true;
+
         Log.v(TAG, "Near Lock Fragment did Load");
 
         scan();
@@ -105,12 +110,20 @@ public final class NearLockFragment extends Fragment {
 
     public void scan() {
 
-        // dont scan if already scanning
-        if (LockManager.shared().getIsScanning()) { return; }
+        Runnable task = new Runnable() {
+            @Override
+            public void run() {
 
-        try { LockManager.shared().scan(3); }
+                // dont scan if already scanning
+                if (LockManager.shared().getIsScanning()) { return; }
 
-        catch (Exception e) { Log.e(TAG, "Error: ", e);  }
+                try { LockManager.shared().scan(3); }
+
+                catch (Exception e) { Log.e(TAG, "Error: ", e);  }
+            }
+        };
+
+        AsyncTask.execute(task);
     }
 
     /**
