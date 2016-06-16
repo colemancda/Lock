@@ -81,12 +81,20 @@ public class MainActivity extends AppCompatActivity implements NearLockFragment.
                 Snackbar.make(view, "Scanning...", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
-                // dont scan if already scanning
-                if (LockManager.shared().getIsScanning()) { return; }
+                Runnable task = new Runnable() {
+                    @Override
+                    public void run() {
 
-                try { LockManager.shared().scan(3); }
+                        // dont scan if already scanning
+                        if (LockManager.shared().getIsScanning()) { return; }
 
-                catch (Exception e) { Log.e(TAG, "Error: ", e);  }
+                        try { LockManager.shared().scan(3); }
+
+                        catch (Exception e) { Log.e(TAG, "Error: ", e);  }
+                    }
+                };
+
+                Async.run(task);
             }
         });
 
