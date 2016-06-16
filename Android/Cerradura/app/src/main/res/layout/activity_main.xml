@@ -44,6 +44,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_dialog_email" />
+        android:src="@android:drawable/stat_notify_sync"
+        android:background="#4288c5"
+        app:backgroundTint="#4781f9" />
 
 </android.support.design.widget.CoordinatorLayout>
