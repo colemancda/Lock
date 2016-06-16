@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -53,6 +54,8 @@ public class MainActivity extends AppCompatActivity implements NearLockFragment.
 
     private static Integer REQUEST_ENABLE_BT = 100;
 
+    private final static String TAG = "MainActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,8 +78,15 @@ public class MainActivity extends AppCompatActivity implements NearLockFragment.
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Scanning...", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+
+                // dont scan if already scanning
+                if (LockManager.shared().getIsScanning()) { return; }
+
+                try { LockManager.shared().scan(3); }
+
+                catch (Exception e) { Log.e(TAG, "Error: ", e);  }
             }
         });
 
@@ -127,10 +137,8 @@ public class MainActivity extends AppCompatActivity implements NearLockFragment.
         );
         AppIndex.AppIndexApi.start(client, viewAction);
 
-        // Check Bluetooth Support
 
-
-
+        // Check Bluetooth enabled
         if (!LockManager.shared().adapter.isEnabled()) {
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
@@ -192,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements NearLockFragment.
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
+            // Show 2 total pages.
             return 2;
         }
 
@@ -205,6 +213,20 @@ public class MainActivity extends AppCompatActivity implements NearLockFragment.
                     return "Keys";
             }
             return null;
+        }
+
+        /**
+         * Action
+         */
+
+        public void scan() {
+
+            // dont scan if already scanning
+            if (LockManager.shared().getIsScanning()) { return; }
+
+            try { LockManager.shared().scan(3); }
+
+            catch (Exception e) { Log.e(TAG, "Error: ", e);  }
         }
     }
 

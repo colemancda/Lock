@@ -1,12 +1,13 @@
 package com.colemancda.cerradura;
 
-import android.bluetooth.*;
-import android.bluetooth.le.*;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothManager;
+import android.content.Context;
 import android.util.Log;
-
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.UUID;
-import java.util.concurrent.locks.Lock;
 
 /**
  * Created by coleman on 6/15/16.
@@ -34,11 +35,16 @@ public final class LockManager implements BluetoothAdapter.LeScanCallback {
      * Properties
      */
 
-    public BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+    private final static String TAG = "LockManager";
 
-    public ArrayList<Lock> foundLocks = new ArrayList<Lock>();
+    public final BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
 
-    private static String TAG = "LockManager";
+    public final ArrayList<Lock> foundLocks = new ArrayList<Lock>();
+
+    private Boolean isScanning = false;
+
+    public final Boolean getIsScanning() { return isScanning;  }
+
 
     /**
      * Methods
@@ -48,18 +54,32 @@ public final class LockManager implements BluetoothAdapter.LeScanCallback {
 
         Log.v(TAG, "Scanning");
 
-        adapter.startLeScan(this);
+        if (!adapter.startLeScan(this)) throw new LockManagerError("Could not start scan");
 
-        synchronized (this) {
+        isScanning = true;
 
-            wait(duration * 1000);
+        Long scanDate = System.currentTimeMillis();
+
+        while (true) {
+
+            synchronized (this) {
+
+                wait(1000);
+            }
+
+            long interval = System.currentTimeMillis() - scanDate;
+
+            if (interval >= duration * 1000) {
+
+                break;
+            }
         }
 
-        //adapter.stopLeScan(this);
+        adapter.stopLeScan(this);
+
+        isScanning = false;
 
         Log.v(TAG, "Finished scanning");
-
-
     }
 
     /**
@@ -69,7 +89,9 @@ public final class LockManager implements BluetoothAdapter.LeScanCallback {
                    int rssi,
                    byte[] scanRecord) {
 
-        Log.i(TAG, "Discovered peripheral " + device.getAddress().toString());
+        Log.v(TAG, "Discovered peripheral " + device.getAddress().toString());
+
+
     }
 
     /**
@@ -79,6 +101,16 @@ public final class LockManager implements BluetoothAdapter.LeScanCallback {
     public final class Lock {
 
         public UUID uuid;
+    }
+
+    public final class LockManagerError extends Exception {
+
+        public LockManagerError(String text) {
+
+            this.text = text;
+        }
+
+        public String text;
     }
 }
 

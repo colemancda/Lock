@@ -105,6 +105,9 @@ public final class NearLockFragment extends Fragment {
 
     public void scan() {
 
+        // dont scan if already scanning
+        if (LockManager.shared().getIsScanning()) { return; }
+
         try { LockManager.shared().scan(3); }
 
         catch (Exception e) { Log.e(TAG, "Error: ", e);  }
