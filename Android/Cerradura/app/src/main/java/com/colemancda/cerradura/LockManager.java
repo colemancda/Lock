@@ -108,7 +108,7 @@ public final class LockManager extends Service implements BluetoothAdapter.LeSca
                 // try to extract lock info from Lock
                 try {
 
-                    LockManager.Lock lock = foundLock(peripheral);
+                    LockManager.Lock lock = foundLock(peripheral, service);
 
                     foundLocks.add(lock);
                 }
@@ -149,15 +149,21 @@ public final class LockManager extends Service implements BluetoothAdapter.LeSca
         peripheral.
     }*/
 
-    private LockManager.Lock foundLock(BluetoothGatt peripheral) throws Exception {
+    private LockManager.Lock foundLock(BluetoothGatt peripheral, BluetoothGattService lockService) throws Exception {
 
         Log.v(TAG, "Found lock peripheral " + peripheral.getDevice().getAddress().toString());
 
         // get lock status
-        if () {
 
-            throw
-        }
+        BluetoothGattCharacteristic statusCharacteristic = lockService.getCharacteristic(LockIdentifier.UUID);
+        if (statusCharacteristic == null) { throw new LockManagerMissingCharacteristicError(LockIdentifier.UUID); }
+
+
+
+        BluetoothGattCharacteristic identifierCharacteristic = lockService.getCharacteristic(LockIdentifier.UUID);
+        if (identifierCharacteristic == null) { throw new LockManagerMissingCharacteristicError(LockIdentifier.UUID); }
+
+
     }
 
     private void waitForOperation(int timeout) throws Exception {
@@ -220,11 +226,24 @@ public final class LockManager extends Service implements BluetoothAdapter.LeSca
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
 
+            if (status != BluetoothGatt.GATT_SUCCESS) {
+
+                if (runningAsyncOperation) {
+
+                    stopWaiting(new LockManagerGATTError(status));
+                }
+
+                Log.w(TAG, "Error connecting to " + gatt.getDevice().getAddress().toString());
+
+                return;
+            }
+
             if (newState == BluetoothProfile.STATE_CONNECTED) {
 
                 Log.v(TAG, "Connected to " + gatt.getDevice().getAddress().toString());
 
                 stopWaiting(null);
+
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
 
                 Log.v(TAG, "Disconnected from " + gatt.getDevice().getAddress().toString());
@@ -244,7 +263,7 @@ public final class LockManager extends Service implements BluetoothAdapter.LeSca
 
                 Log.w(TAG, "Could not discover services for " + gatt.getDevice().getAddress().toString());
 
-                stopWaiting(null); // TODO: Throw error
+                stopWaiting(new LockManagerGATTError(status));
             }
         }
 
@@ -264,7 +283,7 @@ public final class LockManager extends Service implements BluetoothAdapter.LeSca
 
                 Log.w(TAG, "Could not read characteristic" + characteristic.getUuid().toString());
 
-                stopWaiting(null); // TODO: Throw error
+                stopWaiting(new LockManagerGATTError(status));
             }
         }
 
@@ -324,11 +343,11 @@ public final class LockManager extends Service implements BluetoothAdapter.LeSca
 
     public final class LockManagerGATTError extends  Exception {
 
-        public final int state;
+        public final int status;
 
-        private LockManagerGATTError(int state) {
+        private LockManagerGATTError(int status) {
 
-            this.state = state;
+            this.status = status;
         }
     }
 }
