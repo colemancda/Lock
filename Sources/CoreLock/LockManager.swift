@@ -103,7 +103,7 @@
                 
                 do { try self.internalManager.connect(to: peripheral) }
                     
-                catch { print("Cound not connect to \(peripheral.identifier) (\(error))"); continue }
+                catch { log?("Cound not connect to \(peripheral.identifier) (\(error))"); continue }
                 
                 guard let services = try? self.internalManager.discoverServices(for: peripheral)
                     else { continue }
