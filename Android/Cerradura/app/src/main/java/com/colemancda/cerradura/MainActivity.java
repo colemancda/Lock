@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
    
@@ -82,6 +83,26 @@ public class MainActivity extends AppCompatActivity implements NearLockFragment.
                 Snackbar.make(view, "Scanning...", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
+                // dont scan if already scanning
+                if (LockManager.shared().getIsScanning()) { return; }
+
+                try { LockManager.shared().scan(3); }
+
+                catch (Exception e) {
+                    Log.e(TAG, "Error: ", e);
+
+                    AlertDialog.Builder alert = new AlertDialog.Builder(view.getContext());
+
+                    alert.setCancelable(true);
+
+                    alert.setTitle("Error");
+
+                    alert.setMessage(e.toString());
+
+                    alert.show();
+                }
+
+                /* Needs to run on UI thread on Samsung devices for prompt
                 Runnable task = new Runnable() {
                     @Override
                     public void run() {
@@ -95,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements NearLockFragment.
                     }
                 };
 
-                AsyncTask.execute(task);
+                AsyncTask.execute(task);*/
             }
         });
 

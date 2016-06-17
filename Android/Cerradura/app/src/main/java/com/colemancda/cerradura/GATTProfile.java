@@ -1,6 +1,7 @@
 package com.colemancda.cerradura;
 
 import java.util.UUID;
+import java.nio.ByteBuffer;
 
 /**
  * Created by coleman on 6/16/16.
@@ -25,7 +26,17 @@ final class LockIdentifier implements GATTProfileCharacteristic {
 
     static final UUID UUID = java.util.UUID.fromString("EB1BA354-044C-11E6-BDFD-09AB70D5A8C7");
 
-    
+    final UUID value;
+
+    LockIdentifier(byte[] bytes) {
+
+        ByteBuffer buffer = ByteBuffer.wrap(bytes);
+
+        long msb = buffer.getLong();
+        long lsb = buffer.getLong();
+
+        this.value = new UUID(msb, lsb);
+    }
 }
 
 final class LockStatus implements GATTProfileCharacteristic {

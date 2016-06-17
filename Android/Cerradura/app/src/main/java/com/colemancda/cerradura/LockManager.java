@@ -10,6 +10,8 @@ import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 import java.util.ArrayList;
@@ -153,17 +155,30 @@ public final class LockManager extends Service implements BluetoothAdapter.LeSca
 
         Log.v(TAG, "Found lock peripheral " + peripheral.getDevice().getAddress().toString());
 
-        // get lock status
-
-        BluetoothGattCharacteristic statusCharacteristic = lockService.getCharacteristic(LockIdentifier.UUID);
-        if (statusCharacteristic == null) { throw new LockManagerMissingCharacteristicError(LockIdentifier.UUID); }
-
-
+        // get lock identifier
 
         BluetoothGattCharacteristic identifierCharacteristic = lockService.getCharacteristic(LockIdentifier.UUID);
-        if (identifierCharacteristic == null) { throw new LockManagerMissingCharacteristicError(LockIdentifier.UUID); }
+
+        if (identifierCharacteristic == null || !peripheral.readCharacteristic(identifierCharacteristic))
+        { throw new LockManagerMissingCharacteristicError(LockIdentifier.UUID); }
+
+        byte[] identifierValue = identifierCharacteristic.getValue();
+
+        LockIdentifier lockIdentifier = new LockIdentifier(identifierValue);
 
 
+        /*
+        // get lock status
+
+        BluetoothGattCharacteristic statusCharacteristic = lockService.getCharacteristic(LockStatus.UUID);
+
+        if (statusCharacteristic == null || !peripheral.readCharacteristic(statusCharacteristic))
+            { throw new LockManagerMissingCharacteristicError(LockStatus.UUID); }
+
+        byte[] statusValue = statusCharacteristic.getValue();
+        */
+
+        return new Lock(lockIdentifier.value);
     }
 
     private void waitForOperation(int timeout) throws Exception {
@@ -297,10 +312,27 @@ public final class LockManager extends Service implements BluetoothAdapter.LeSca
         }
     };
 
-    public IBinder onBind(android.content.Intent intent) {
-
-        return null;
+    public class LocalBinder extends Binder {
+        LockManager shared() {
+            return LockManager.this;
+        }
     }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mBinder;
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        // After using a given device, you should make sure that BluetoothGatt.close() is called
+        // such that resources are cleaned up properly.  In this particular example, close() is
+        // invoked when the UI is disconnected from the Service.
+        //close();
+        return super.onUnbind(intent);
+    }
+
+    private final IBinder mBinder = new LocalBinder();
 
     /**
      * Supporting Types.
@@ -308,7 +340,12 @@ public final class LockManager extends Service implements BluetoothAdapter.LeSca
 
     public final class Lock {
 
-        public UUID uuid;
+        public final UUID UUID;
+
+        Lock(UUID UUID) {
+
+            this.UUID = UUID;
+        }
     }
 
     public final class LockManagerError extends Exception {
