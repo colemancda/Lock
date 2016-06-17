@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.content.Context;
@@ -74,44 +75,94 @@ public final class LockManager extends Service implements BluetoothAdapter.LeSca
 
         synchronized (this) {
 
-            wait(duration);
+            wait(duration * 1000);
         }
 
         adapter.stopLeScan(this);
-
-        isScanning = false;
 
         Log.v(TAG, "Finished scanning");
 
         // connect to peripherals and detect if lock
 
-        for (BluetoothDevice peripheral : scanResults) {
+        ArrayList<Lock> foundLocks = new ArrayList<Lock>();
 
-            BluetoothGatt bluetoothGatt;
+        for (BluetoothDevice device : scanResults) {
 
-            try { bluetoothGatt = connect(peripheral, 5); }
+            BluetoothGatt peripheral;
 
-            catch (Exception e) { Log.v(TAG, "Cound not connect to " + peripheral.getAddress().toString() + ": " + e.toString()); continue; }
+            try { peripheral = connect(device, 3); }
+
+            catch (Exception e) { Log.v(TAG, "Cound not connect to " + device.getAddress().toString() + ": " + e.toString()); continue; }
+
+            assert peripheral != null;
 
             // discover services, detect lock
+            try { discoverServices(peripheral); }
+
+            catch (Exception e) { peripheral.disconnect(); continue; }
+
+            BluetoothGattService service = peripheral.getService(LockService.UUID);
+
+            if (service != null) {
+
+                // try to extract lock info from Lock
+                try {
+
+                    LockManager.Lock lock = foundLock(peripheral);
+
+                    foundLocks.add(lock);
+                }
+
+                catch (Exception e) {
+                    Log.v(TAG, "Error discovering lock " + device.getAddress().toString() + ": " + e.toString());
+                    peripheral.disconnect();
+                    continue;
+                }
+            }
 
             // disconnect
-            bluetoothGatt.disconnect();
+            peripheral.disconnect();
         }
+
+        isScanning = false;
     }
 
     private BluetoothGatt connect(BluetoothDevice peripheral, int timeout) throws Exception {
 
         BluetoothGatt bluetoothGatt = peripheral.connectGatt(this, false, gattCallback);
 
-        wait(timeout);
+        waitForOperation(timeout);
 
         return bluetoothGatt;
     }
 
-    private void wait(int timeout) throws Exception {
+    private void discoverServices(BluetoothGatt peripheral) throws Exception {
 
-        assert runningAsyncOperation == false;
+        peripheral.discoverServices();
+
+        waitForOperation(5);
+    }
+
+    /*
+    private void discoverCharacteristics(BluetoothGattService serviceUUID, BluetoothGatt peripheral) throws Exception {
+
+        peripheral.
+    }*/
+
+    private LockManager.Lock foundLock(BluetoothGatt peripheral) throws Exception {
+
+        Log.v(TAG, "Found lock peripheral " + peripheral.getDevice().getAddress().toString());
+
+        // get lock status
+        if () {
+
+            throw
+        }
+    }
+
+    private void waitForOperation(int timeout) throws Exception {
+
+        //assert (!runningAsyncOperation);
 
         runningAsyncOperation = true;
 
@@ -155,9 +206,12 @@ public final class LockManager extends Service implements BluetoothAdapter.LeSca
                    int rssi,
                    byte[] scanRecord) {
 
-        Log.v(TAG, "Discovered peripheral " + device.getAddress().toString());
+        if (!scanResults.contains(device)) {
 
-        scanResults.add(device);
+            Log.v(TAG, "Discovered peripheral " + device.getAddress().toString());
+
+            scanResults.add(device);
+        }
     }
 
     // Implements callback methods for GATT events that the app cares about.  For example,
@@ -168,39 +222,30 @@ public final class LockManager extends Service implements BluetoothAdapter.LeSca
 
             if (newState == BluetoothProfile.STATE_CONNECTED) {
 
-                Log.i(TAG, "Connected to " + gatt.getDevice().getAddress().toString());
+                Log.v(TAG, "Connected to " + gatt.getDevice().getAddress().toString());
 
                 stopWaiting(null);
-            }
-
-            /*
-            String intentAction;
-            if (newState == BluetoothProfile.STATE_CONNECTED) {
-                intentAction = ACTION_GATT_CONNECTED;
-                mConnectionState = STATE_CONNECTED;
-                broadcastUpdate(intentAction);
-                Log.i(TAG, "Connected to GATT server.");
-                // Attempts to discover services after successful connection.
-                Log.i(TAG, "Attempting to start service discovery:" +
-                        mBluetoothGatt.discoverServices());
-
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                intentAction = ACTION_GATT_DISCONNECTED;
-                mConnectionState = STATE_DISCONNECTED;
-                Log.i(TAG, "Disconnected from GATT server.");
-                broadcastUpdate(intentAction);
-            }*/
+
+                Log.v(TAG, "Disconnected from " + gatt.getDevice().getAddress().toString());
+            }
         }
 
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
 
-            /*
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                broadcastUpdate(ACTION_GATT_SERVICES_DISCOVERED);
+
+                Log.v(TAG, "Discovered " + gatt.getServices().size() + " services for " + gatt.getDevice().getAddress().toString());
+
+                stopWaiting(null);
+
             } else {
-                Log.w(TAG, "onServicesDiscovered received: " + status);
-            }*/
+
+                Log.w(TAG, "Could not discover services for " + gatt.getDevice().getAddress().toString());
+
+                stopWaiting(null); // TODO: Throw error
+            }
         }
 
         @Override
@@ -208,10 +253,19 @@ public final class LockManager extends Service implements BluetoothAdapter.LeSca
                                          BluetoothGattCharacteristic characteristic,
                                          int status) {
 
-            /*
+
             if (status == BluetoothGatt.GATT_SUCCESS) {
-                broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
-            }*/
+
+                Log.v(TAG, "Read characteristic" + characteristic.getUuid().toString());
+
+                stopWaiting(null);
+
+            } else {
+
+                Log.w(TAG, "Could not read characteristic" + characteristic.getUuid().toString());
+
+                stopWaiting(null); // TODO: Throw error
+            }
         }
 
         @Override
@@ -245,12 +299,37 @@ public final class LockManager extends Service implements BluetoothAdapter.LeSca
             this.text = text;
         }
 
-        public String text;
+        public final String text;
+
+        public final String toString() {
+
+            return text;
+        }
     }
 
     public final class LockManagerTimeoutError extends Exception {
 
         private LockManagerTimeoutError() { }
+    }
+
+    public final class LockManagerMissingCharacteristicError extends Exception  {
+
+        public final UUID UUID;
+
+        private LockManagerMissingCharacteristicError(UUID uuid) {
+
+            this.UUID = uuid;
+        }
+    }
+
+    public final class LockManagerGATTError extends  Exception {
+
+        public final int state;
+
+        private LockManagerGATTError(int state) {
+
+            this.state = state;
+        }
     }
 }
 
