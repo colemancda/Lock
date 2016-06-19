@@ -83,7 +83,7 @@ final class LockController {
         AppLED.value = 1
         
         // listen to reset switch
-        ResetSwitch.onFalling(resetSwitchFalling)
+        ResetSwitch.onRaising(resetSwitch)
         
         // start GATT server
         
@@ -348,7 +348,7 @@ final class LockController {
     
     // MARK: GPIO
     
-    private func resetSwitchFalling(gpio: GPIO) {
+    private func resetSwitch(gpio: GPIO) {
         
         assert(gpio === ResetSwitch)
         
