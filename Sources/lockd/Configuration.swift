@@ -13,13 +13,10 @@ struct Configuration: JSONEncodable, JSONDecodable {
     
     let identifier: UUID
     
-    let model: Model
-    
-    init(model: Model = .orangePiOne) {
+    /// Initializes a new `Configuration`. 
+    init() {
         
         self.identifier = UUID()
-        
-        self.model = Model.orangePiOne
     }
 }
 
@@ -36,19 +33,15 @@ extension Configuration {
         
         guard let JSONObject = JSONValue.objectValue,
             let identifierString = JSONObject[JSONKey.identifier.rawValue]?.rawValue as? String,
-            let identifier = UUID(rawValue: identifierString),
-            let modelInteger = JSONObject[JSONKey.model.rawValue]?.rawValue as? Int,
-            let model = Model(rawValue: UInt8(modelInteger))
+            let identifier = UUID(rawValue: identifierString)
             else { return nil }
         
         self.identifier = identifier
-        self.model = model
     }
     
     func toJSON() -> JSON.Value {
         
-        return .Object([JSONKey.identifier.rawValue: .String(identifier.rawValue),
-                        JSONKey.model.rawValue: .Number(.Integer(Int(model.rawValue)))])
+        return .Object([JSONKey.identifier.rawValue: .String(identifier.rawValue)])
     }
 }
 

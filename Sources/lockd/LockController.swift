@@ -33,6 +33,8 @@ final class LockController {
     
     let configuration = try! Configuration.load(File.configuration)
     
+    let model: Model = .orangePiOne
+    
     let store = Store(filename: File.store)
     
     // MARK: - Private Properties
@@ -108,7 +110,7 @@ final class LockController {
         
         let identifier = Characteristic(UUID: LockService.Identifier.UUID, value: identifierValue, permissions: [.Read], properties: [.Read])
         
-        let modelValue = LockService.Model(value: configuration.model).toBigEndian()
+        let modelValue = LockService.Model(value: self.model).toBigEndian()
         
         let model = Characteristic(UUID: LockService.Model.UUID, value: modelValue, permissions: [.Read], properties: [.Read])
                 
@@ -372,7 +374,7 @@ final class LockController {
                         AppLED.value = 0
                         
                         // reset config
-                        let newConfiguration = Configuration(model: controller.configuration.model)
+                        let newConfiguration = Configuration()
                         try! newConfiguration.save(File.configuration)
                         
                         // clear store
