@@ -95,3 +95,81 @@ func UpdateSpotlight(_ index: CSSearchableIndex = CSSearchableIndex.default(), c
         }
     }
 }
+
+/// Updates the CoreSpotlight index from CoreData changes.
+@available(iOS 9.0, *)
+final class SpotlightController: NSObject, NSFetchedResultsControllerDelegate {
+    
+    static let shared = SpotlightController()
+    
+    let spotlightIndex = CSSearchableIndex.default()
+    
+    var log: ((String) -> ())?
+    
+    private lazy var fetchedResultsController: NSFetchedResultsController = {
+        
+        let fetchRequest = NSFetchRequest(entityName: LockCache.entityName)
+        
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: LockCache.Property.name.rawValue, ascending: true)]
+        
+        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: Store.shared.managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
+        
+        fetchedResultsController.delegate = self
+        
+        return fetchedResultsController
+    }()
+    
+    private override init() {
+        
+        super.init()
+    }
+    
+    // MARK: - Methods
+    
+    func startObserving() throws {
+        
+        try self.fetchedResultsController.performFetch()
+    }
+    
+    // MARK: - NSFetchedResultsControllerDelegate
+    
+    func controller(_ controller: NSFetchedResultsController, didChange anObject: AnyObject, at indexPath: NSIndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
+        
+        let lockCache = LockCache(managedObject: anObject as! NSManagedObject)
+        
+        switch type {
+            
+        case .move: break // ignore
+            
+        case .insert, .update:
+            
+            let item = lockCache.toSearchableItem()
+            
+            spotlightIndex.indexSearchableItems([item])  { (error) in
+                
+                if let error = error {
+                    
+                    self.log?("Error adding lock \(lockCache.identifier) to SpotLight index: \(error)")
+                    
+                } else {
+                    
+                    self.log?("Added lock \(lockCache.identifier) to SpotLight index")
+                }
+            }
+            
+        case .delete:
+            
+            spotlightIndex.deleteSearchableItems(withIdentifiers: [lockCache.identifier.rawValue]) { (error) in
+                
+                if let error = error {
+                    
+                    self.log?("Error Deleting lock \(lockCache.identifier) from SpotLight index: \(error)")
+                    
+                } else {
+                    
+                    self.log?("Deleted lock \(lockCache.identifier) from SpotLight index")
+                }
+            }
+        }
+    }
+}

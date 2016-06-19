@@ -60,6 +60,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                     
                     if let error = error { print("Spotlight Error: ", error) }
                 }
+                
+                SpotlightController.shared.log = { print("SpotlightController: " + $0) }
+                
+                try! SpotlightController.shared.startObserving()
             }
         }
         
