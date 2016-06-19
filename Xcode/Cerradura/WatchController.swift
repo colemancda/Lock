@@ -107,7 +107,8 @@ final class WatchController: NSObject, WCSessionDelegate {
             
             log?("Recieved current lock request")
             
-            if LockManager.shared.foundLocks.value.first == nil {
+            if LockManager.shared.foundLocks.value.first == nil
+                && LockManager.shared.scanning.value == false {
                 
                 // scan in background
                 async {
