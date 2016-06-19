@@ -39,9 +39,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             
             if WCSession.isSupported() {
                 
-                //WatchController.shared.log = { print("WatchController: " + $0) }
+                WatchController.shared.log = { print("WatchController: " + $0) }
                 
-                //WatchController.shared.activate()
+                WatchController.shared.activate()
             }
         }
         
