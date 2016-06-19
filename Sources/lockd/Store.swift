@@ -38,10 +38,11 @@ final class Store {
         guard let fileData = try? FileManager.contents(at: filename)
             else { return }
         
-        let bsonArray = BSON.Document(data: fileData.byteValue).arrayValue
+        let bson = BSON.Document(data: fileData.byteValue)
+                
+        var existingData: [Store.Data] = []
         
-        var existingData = [Data]()
-        for bson in bsonArray {
+        for bson in bson.arrayValue {
             
             guard let storeData = Store.Data(BSONValue: bson)
                 else { return }
@@ -122,7 +123,7 @@ extension Store {
         
         func toBSON() -> BSON.Value {
             
-            var document = BSON.Document(array: [])
+            var document = BSON.Document()
             
             document[BSONKey.date.rawValue] = .double(date.since1970)
             
