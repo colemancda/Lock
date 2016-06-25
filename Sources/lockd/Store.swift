@@ -60,16 +60,18 @@ final class Store {
         
         self.data.append(newEntry)
         
-        save()
+        do { try save() }
+        
+        catch { fatalError("Could not save keys: \(key)") }
     }
         
     // MARK: - Private Methods
     
-    private func save() {
+    private func save() throws {
         
         let data = self.data.toJSON().toString(options: [.Pretty])!.toUTF8Data()
         
-        try! FileManager.set(contents: data, at: filename)
+        try FileManager.set(contents: data, at: filename)
     }
 }
 
@@ -119,9 +121,15 @@ extension Store {
             
             JSONObject[JSONKey.date.rawValue] = .Number(.Double(date.since1970))
             
-            JSONObject[JSONKey.data.rawValue] = .String(String(UTF8Data: Base64.encode(key.data.data))!)
+            guard let encodedKeyData = String(UTF8Data: Base64.encode(key.data.data))
+                else { fatalError("Could not encode KeyData to Base64") }
             
-            JSONObject[JSONKey.permission.rawValue] = .String(String(UTF8Data: Base64.encode(key.permission.toBigEndian()))!)
+            JSONObject[JSONKey.data.rawValue] = .String(encodedKeyData)
+            
+            guard let encodedPermisson = String(UTF8Data: Base64.encode(key.permission.toBigEndian()))
+                else { fatalError("Could not encode Permission to Base64") }
+            
+            JSONObject[JSONKey.permission.rawValue] = .String(encodedPermisson)
             
             return JSON.Value.Object(JSONObject)
         }
