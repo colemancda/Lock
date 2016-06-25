@@ -25,7 +25,7 @@ final class Store {
         self.filename = filename
         self.data = []
         
-        // try load existing data... 
+        // try load existing data...
         
         guard FileManager.fileExists(at: filename) else {
             
@@ -61,15 +61,18 @@ final class Store {
         self.data.append(newEntry)
         
         do { try save() }
-        
+            
         catch { fatalError("Could not save keys: \(key)") }
     }
-        
+    
     // MARK: - Private Methods
     
     private func save() throws {
         
-        let data = self.data.toJSON().toString(options: [.Pretty])!.toUTF8Data()
+        guard let jsonString = self.data.toJSON().toString()
+            else { fatalError("Could no encode to JSON string") }
+        
+        let data = jsonString.toUTF8Data()
         
         try FileManager.set(contents: data, at: filename)
     }
@@ -121,12 +124,12 @@ extension Store {
             
             JSONObject[JSONKey.date.rawValue] = .Number(.Double(date.since1970))
             
-            guard let encodedKeyData = String(UTF8Data: Base64.encode(key.data.data))
+            guard let encodedKeyData = String(UTF8Data: SwiftFoundation.Base64.encode(data: key.data.data))
                 else { fatalError("Could not encode KeyData to Base64") }
             
             JSONObject[JSONKey.data.rawValue] = .String(encodedKeyData)
             
-            guard let encodedPermisson = String(UTF8Data: Base64.encode(key.permission.toBigEndian()))
+            guard let encodedPermisson = String(UTF8Data: SwiftFoundation.Base64.encode(data: key.permission.toBigEndian()))
                 else { fatalError("Could not encode Permission to Base64") }
             
             JSONObject[JSONKey.permission.rawValue] = .String(encodedPermisson)
