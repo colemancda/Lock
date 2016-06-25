@@ -8,7 +8,6 @@
 
 import SwiftFoundation
 import CoreLock
-import BSON
 
 // Secure data store.
 final class Store {
@@ -35,22 +34,14 @@ final class Store {
             return
         }
         
-        guard let fileData = try? FileManager.contents(at: filename)
+        guard let fileData = try? FileManager.contents(at: filename),
+            let jsonString = String(UTF8Data: fileData),
+            let json = JSON.Value(string: jsonString),
+            let jsonArray = json.arrayValue,
+            let data = Data.fromJSON(JSONArray: jsonArray)
             else { return }
         
-        let bson = BSON.Document(data: fileData.byteValue)
-                
-        var existingData: [Store.Data] = []
-        
-        for bson in bson.arrayValue {
-            
-            guard let storeData = Store.Data(BSONValue: bson)
-                else { return }
-            
-            existingData.append(storeData)
-        }
-        
-        self.data = existingData
+        self.data = data
     }
     
     // MARK: - Methods
@@ -75,12 +66,8 @@ final class Store {
     // MARK: - Private Methods
     
     private func save() {
-                
-        let bsonArray = self.data.map { $0.toBSON() }
         
-        let bson = Document(array: bsonArray)
-        
-        let data = SwiftFoundation.Data(byteValue: bson.bytes)
+        let data = self.data.toJSON().toString(options: [.Pretty])!.toUTF8Data()
         
         try! FileManager.set(contents: data, at: filename)
     }
@@ -90,9 +77,9 @@ final class Store {
 
 extension Store {
     
-    struct Data {
+    struct Data: JSONDecodable, JSONEncodable {
         
-        enum BSONKey: String {
+        enum JSONKey: String {
             
             case date, data, permission
         }
@@ -107,31 +94,36 @@ extension Store {
             self.key = key
         }
         
-        init?(BSONValue: BSON.Value) {
+        init?(JSONValue: JSON.Value) {
             
-            guard let document = BSONValue.documentValue,
-                let date = document[BSONKey.date.rawValue].doubleValue,
-                case let .binary(.generic, keyDataBytes) = document[BSONKey.data.rawValue],
-                let keyData = KeyData(data: SwiftFoundation.Data(byteValue: keyDataBytes)),
-                case let .binary(.generic, permissionBytes) = document[BSONKey.permission.rawValue],
-                let permission = Permission(bigEndian: SwiftFoundation.Data(byteValue: permissionBytes))
+            guard let JSONObject = JSONValue.objectValue,
+                let date = JSONObject[JSONKey.date.rawValue]?.rawValue as? Double,
+                let keyDataString = JSONObject[JSONKey.data.rawValue]?.rawValue as? String,
+                let permissionDataString = JSONObject[JSONKey.permission.rawValue]?.rawValue as? String
+                else { return nil }
+            
+            let keyBytes = Base64.decode(keyDataString.toUTF8Data())
+            let permissionData = Base64.decode(permissionDataString.toUTF8Data())
+            
+            guard let permission = Permission(bigEndian: permissionData),
+                let keyData = KeyData(data: keyBytes)
                 else { return nil }
             
             self.date = Date(since1970: date)
             self.key = CoreLock.Key(data: keyData, permission: permission)
         }
         
-        func toBSON() -> BSON.Value {
+        func toJSON() -> JSON.Value {
             
-            var document = BSON.Document()
+            var JSONObject = JSON.Object(minimumCapacity: 3)
             
-            document[BSONKey.date.rawValue] = .double(date.since1970)
+            JSONObject[JSONKey.date.rawValue] = .Number(.Double(date.since1970))
             
-            document[BSONKey.data.rawValue] = .binary(subtype: .generic, data: key.data.data.byteValue)
+            JSONObject[JSONKey.data.rawValue] = .String(String(UTF8Data: Base64.encode(key.data.data))!)
             
-            document[BSONKey.permission.rawValue] = .binary(subtype: .generic, data: key.permission.toBigEndian().byteValue)
+            JSONObject[JSONKey.permission.rawValue] = .String(String(UTF8Data: Base64.encode(key.permission.toBigEndian()))!)
             
-            return BSON.Value.document(document)
+            return JSON.Value.Object(JSONObject)
         }
     }
 }

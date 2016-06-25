@@ -8,7 +8,7 @@
 
 struct File {
     
-    static let store = "/opt/colemancda/lockd/data.bson"
+    static let store = "/opt/colemancda/lockd/data.json"
     
     static let configuration = "/opt/colemancda/lockd/config.json"
 }
