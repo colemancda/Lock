@@ -1,4 +1,4 @@
 github "PureSwift/GATT" "master"
 github "ColemanCDA/CryptoSwift" "Swift3"
 github "ColemanCDA/KeychainAccess" "master"
-github "OpenKitten/BSON"
+github "PureSwift/libb64" "Xcode"
