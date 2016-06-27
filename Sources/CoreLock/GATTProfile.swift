@@ -22,9 +22,9 @@ public protocol GATTProfileCharacteristic {
     
     static var UUID: Bluetooth.UUID { get }
     
-    //init?(bigEndian: Data)
+    init?(bigEndian: Data)
     
-    //func toBigEndian() -> Data
+    func toBigEndian() -> Data
 }
 
 public protocol AuthenticatedCharacteristic: GATTProfileCharacteristic {
@@ -179,15 +179,17 @@ public struct LockService: GATTProfileService {
         }
     }
     
-    /// nonce + IV + encrypt(salt, iv, newKey) + HMAC(salt, nonce) (write-only)
+    /// UUID + nonce + IV + encrypt(salt, iv, newKey) + HMAC(salt, nonce) (write-only)
     public struct Setup: AuthenticatedCharacteristic {
         
-        public static let length = Nonce.length + IVSize + 48 + HMACSize
+        public static let length = 16 + Nonce.length + IVSize + 48 + HMACSize
         
         /// The private key used to encrypt and decrypt new keys.
         private static let salt = KeyData(data: "p3R1pf9AmQxYlVAixSh6Yr0DRGSc4xST".toUTF8Data())!
         
         public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "129E401C-044D-11E6-8FA9-09AB70D5A8C7")!)
+        
+        public let identifier: SwiftFoundation.UUID
         
         public let value: KeyData
         
@@ -196,8 +198,9 @@ public struct LockService: GATTProfileService {
         /// HMAC of key and nonce
         public let authentication: Data
         
-        public init(value: KeyData, nonce: Nonce = Nonce()) {
+        public init(identifier: SwiftFoundation.UUID = SwiftFoundation.UUID(), value: KeyData, nonce: Nonce = Nonce()) {
             
+            self.identifier = identifier
             self.value = value
             self.nonce = nonce
             self.authentication = HMAC(key: Setup.salt, message: nonce)
@@ -210,15 +213,24 @@ public struct LockService: GATTProfileService {
             guard bytes.count == self.dynamicType.length
                 else { return nil }
             
-            let nonceBytes = Array(bytes[0 ..< Nonce.length])
+            var UUIDBytes = Array(bytes[0 ..< 16])
+            
+            if isBigEndian == false {
+                
+                UUIDBytes.reverse()
+            }
+            
+            self.identifier = SwiftFoundation.UUID(data: Data(byteValue: UUIDBytes))!
+            
+            let nonceBytes = Array(bytes[16 ..< 16 + Nonce.length])
             
             self.nonce = Nonce(data: Data(byteValue: nonceBytes))!
             
-            let ivBytes = Array(bytes[Nonce.length ..< Nonce.length + IVSize])
+            let ivBytes = Array(bytes[16 + Nonce.length ..< 16 + Nonce.length + IVSize])
             
             let iv = InitializationVector(data: Data(byteValue: ivBytes))!
             
-            let encryptedBytes = Array(bytes[Nonce.length + IVSize ..< Nonce.length + IVSize + 48])
+            let encryptedBytes = Array(bytes[16 + Nonce.length + IVSize ..< 16 + Nonce.length + IVSize + 48])
             
             let decryptedData = decrypt(key: Setup.salt.data, iv: iv, data: Data(byteValue: encryptedBytes))
             
@@ -226,7 +238,7 @@ public struct LockService: GATTProfileService {
             
             self.value = KeyData(data: decryptedData)!
             
-            let hmac = Array(bytes.suffix(from: Nonce.length + IVSize + 48))
+            let hmac = Array(bytes.suffix(from: 16 + Nonce.length + IVSize + 48))
             
             assert(hmac.count == HMACSize)
             
@@ -237,7 +249,9 @@ public struct LockService: GATTProfileService {
             
             let (encryptedKey, iv) = encrypt(key: Setup.salt.data, data: value.data)
             
-            let bytes = nonce.data.byteValue + iv.data.byteValue + encryptedKey.byteValue + authentication.byteValue
+            let bigEndianUUIDBytes = isBigEndian ? identifier.toData().byteValue : identifier.toData().byteValue.reversed()
+            
+            let bytes = bigEndianUUIDBytes + nonce.data.byteValue + iv.data.byteValue + encryptedKey.byteValue + authentication.byteValue
             
             assert(bytes.count == Setup.length)
             

@@ -56,13 +56,16 @@ final class GATTProfileTests: XCTestCase {
         
         let nonce = Nonce()
         
-        let request = requestType.init(value: key, nonce: nonce)
+        let identifier = SwiftFoundation.UUID()
+        
+        let request = requestType.init(identifier: identifier, value: key, nonce: nonce)
         
         let requestData = request.toBigEndian()
         
         guard let deserialized = requestType.init(bigEndian: requestData)
             else { XCTFail(); return }
         
+        XCTAssert(deserialized.identifier == identifier)
         XCTAssert(deserialized.value == key)
         XCTAssert(deserialized.nonce == nonce)
         XCTAssert(deserialized.authenticatedWithSalt())
