@@ -143,9 +143,9 @@
                 
                 // write to setup characteristic
                 
-                let key = Key(data: KeyData(), permission: .owner)
+                let key = Key(permission: .owner)
                 
-                let setup = LockService.Setup.init(value: key.data)
+                let setup = LockService.Setup.init(identifier: key.identifier, value: key.data)
                 
                 try self.internalManager.write(data: setup.toBigEndian(), response: true, characteristic: LockService.Setup.UUID, service: LockService.UUID, peripheral: lock.peripheral)
                 
@@ -167,7 +167,7 @@
         }
         
         /// Unlock the connected lock
-        public func unlock(_ identifier: SwiftFoundation.UUID, key: KeyData) throws {
+        public func unlock(_ identifier: SwiftFoundation.UUID, key: Key) throws {
             
             guard let lock = self[identifier]
                 else { throw Error.NoLock }
@@ -176,7 +176,7 @@
                 
                 // unlock
                 
-                let unlock = LockService.Unlock.init(key: key)
+                let unlock = LockService.Unlock.init(identifier: key.identifier, key: key.data)
                 
                 try self.internalManager.write(data: unlock.toBigEndian(), response: true, characteristic: LockService.Unlock.UUID, service: LockService.UUID, peripheral: lock.peripheral)
             }

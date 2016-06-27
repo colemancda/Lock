@@ -12,7 +12,7 @@ import CoreLock
 
 final class GATTProfileTests: XCTestCase {
     
-    static let allTests: [(String, GATTProfileTests -> () throws -> Void)] = [("testLockIdentifier", testLockIdentifier), ("testLockSetup", testLockSetup), ("testUnlock", testUnlock), ("testNewChildKey", testNewChildKey)]
+    static let allTests: [(String, (GATTProfileTests) -> () throws -> Void)] = [("testLockIdentifier", testLockIdentifier), ("testLockSetup", testLockSetup), ("testUnlock", testUnlock), ("testNewChildKey", testNewChildKey)]
     
     func testLockIdentifier() {
         
@@ -82,21 +82,22 @@ final class GATTProfileTests: XCTestCase {
         
         let nonce = Nonce()
         
-        let request = requestType.init(nonce: nonce, key: key)
+        let identifier = SwiftFoundation.UUID()
+        
+        let request = requestType.init(identifier: identifier, nonce: nonce, key: key)
         
         let requestData = request.toBigEndian()
         
         guard let deserialized = requestType.init(bigEndian: requestData)
             else { XCTFail(); return }
         
+        XCTAssert(deserialized.identifier == identifier)
         XCTAssert(deserialized.nonce == nonce)
         XCTAssert(deserialized.authenticated(with: key))
         XCTAssert(deserialized.authenticated(with: KeyData()) == false)
     }
     
     func testNewChildKey() {
-        
-        let parentRequestType = LockService.NewKeyParentSharedSecret.self
         
         let weekdays = Permission.Schedule.Weekdays.init(sunday: false,
                                                          monday: true,
@@ -118,11 +119,11 @@ final class GATTProfileTests: XCTestCase {
         
         let parentNonce = Nonce()
         
-        let parentRequest = parentRequestType.init(nonce: parentNonce, sharedSecret: sharedSecret, parentKey: parentKey, permission: permission)
+        let parentRequest = LockService.NewKeyParentSharedSecret.init(nonce: parentNonce, sharedSecret: sharedSecret, parentKey: parentKey, permission: permission)
         
         let parentRequestData = parentRequest.toBigEndian()
         
-        guard let parentDeserialized = parentRequestType.init(bigEndian: parentRequestData)
+        guard let parentDeserialized = LockService.NewKeyParentSharedSecret.init(bigEndian: parentRequestData)
             else { XCTFail(); return }
         
         guard let decryptedSharedSecret = parentDeserialized.decrypt(key: parentKey)

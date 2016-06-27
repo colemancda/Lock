@@ -10,12 +10,15 @@ import SwiftFoundation
 
 public struct Key: Equatable {
     
+    public let identifier: SwiftFoundation.UUID
+    
     public let data: KeyData
     
     public let permission: Permission
     
-    public init(data: KeyData = KeyData(), permission: Permission = .owner) {
+    public init(identifier: SwiftFoundation.UUID = SwiftFoundation.UUID(), data: KeyData = KeyData(), permission: Permission = .owner) {
         
+        self.identifier = identifier
         self.data = data
         self.permission = permission
     }
@@ -23,6 +26,7 @@ public struct Key: Equatable {
 
 public func == (lhs: Key, rhs: Key) -> Bool {
     
-    return lhs.data == rhs.data
+    return lhs.identifier == rhs.identifier
+        && lhs.data == rhs.data
         && lhs.permission == rhs.permission
 }
