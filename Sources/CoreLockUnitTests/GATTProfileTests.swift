@@ -29,6 +29,9 @@ final class GATTProfileTests: XCTestCase {
             
             XCTAssert(characteristic.toBigEndian() != UUID.toData(),
                       "Serialized data should not be the same on little endian machines")
+            
+            XCTAssert(characteristic.toBigEndian() == Data(byteValue: UUID.toData().byteValue.reversed()),
+                      "Serialized data should not be the same on little endian machines")
         }
         
         if isBigEndian {
@@ -115,22 +118,25 @@ final class GATTProfileTests: XCTestCase {
         
         let sharedSecret = SharedSecret()
         
-        let parentKey = KeyData()
+        let parentKeyIdentifier = SwiftFoundation.UUID()
+        
+        let parentKeyData = KeyData()
         
         let parentNonce = Nonce()
         
-        let parentRequest = LockService.NewKeyParentSharedSecret.init(nonce: parentNonce, sharedSecret: sharedSecret, parentKey: parentKey, permission: permission)
+        let parentRequest = LockService.NewKeyParentSharedSecret.init(nonce: parentNonce, sharedSecret: sharedSecret, parentKey: (parentKeyIdentifier, parentKeyData), permission: permission)
         
         let parentRequestData = parentRequest.toBigEndian()
         
         guard let parentDeserialized = LockService.NewKeyParentSharedSecret.init(bigEndian: parentRequestData)
             else { XCTFail(); return }
         
-        guard let decryptedSharedSecret = parentDeserialized.decrypt(key: parentKey)
+        guard let decryptedSharedSecret = parentDeserialized.decrypt(key: parentKeyData)
             else { XCTFail(); return }
         
+        XCTAssert(parentDeserialized.identifier == parentKeyIdentifier)
         XCTAssert(parentDeserialized.nonce == parentNonce)
-        XCTAssert(parentDeserialized.authenticated(with: parentKey))
+        XCTAssert(parentDeserialized.authenticated(with: parentKeyData))
         XCTAssert(parentDeserialized.authenticated(with: KeyData()) == false)
         XCTAssert(parentDeserialized.permission == permission, "\(parentDeserialized.permission) == \(permission)")
         XCTAssert(decryptedSharedSecret == sharedSecret)

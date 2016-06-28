@@ -182,7 +182,7 @@
             }
         }
         
-        public func createNewKey(_ identifier: SwiftFoundation.UUID, permission: Permission, parentKey: KeyData, sharedSecret: SharedSecret = SharedSecret()) throws {
+        public func createNewKey(_ identifier: SwiftFoundation.UUID, permission: Permission, parentKey: (SwiftFoundation.UUID, KeyData), sharedSecret: SharedSecret) throws {
             
             assert(permission != .owner, "Cannot create owner keys")
             
