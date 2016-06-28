@@ -409,7 +409,7 @@ public struct LockService: GATTProfileService {
         }
     }
     
-    /// New Key Child Shared Secret (write-only)
+    /// New Key Child Shared Secret (read-only)
     ///
     /// new key UUID + nonce + IV + encrypt((sharedSecret * 4), iv, childKey) + HMAC(sharedSecret, nonce) + permission
     public struct NewKeyChild: AuthenticatedCharacteristic {
@@ -417,6 +417,8 @@ public struct LockService: GATTProfileService {
         public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "4CC3B5BA-044D-11E6-A956-09AB70D5A8C7")!)
         
         public static let length = SwiftFoundation.UUID.length + Nonce.length + IVSize + 48 + HMACSize + Permission.length
+        
+        public let identifier: SwiftFoundation.UUID
         
         public let permission: Permission
         
@@ -431,6 +433,7 @@ public struct LockService: GATTProfileService {
         
         public init(nonce: Nonce = Nonce(), sharedSecret: SharedSecret, newKey: Key) {
             
+            self.identifier = newKey.identifier
             self.permission = newKey.permission
             self.nonce = nonce
             self.authentication = HMAC(key: sharedSecret.toKeyData(), message: nonce)
@@ -448,23 +451,25 @@ public struct LockService: GATTProfileService {
             guard bytes.count == self.dynamicType.length
                 else { return nil }
             
-            let nonceBytes = Array(bytes[0 ..< Nonce.length])
+            self.identifier = SwiftFoundation.UUID(bigEndian: Data(byteValue: Array(bytes[0 ..< 16])))!
+            
+            let nonceBytes = Array(bytes[16 ..< 16 + Nonce.length])
             
             self.nonce = Nonce(data: Data(byteValue: nonceBytes))!
             
-            let ivBytes = Array(bytes[Nonce.length ..< Nonce.length + IVSize])
+            let ivBytes = Array(bytes[16 + Nonce.length ..< 16 + Nonce.length + IVSize])
             
             self.initializationVector = InitializationVector(data: Data(byteValue: ivBytes))!
             
-            self.encryptedNewKey = Data(byteValue: Array(bytes[Nonce.length + IVSize ..< Nonce.length + IVSize + 48]))
+            self.encryptedNewKey = Data(byteValue: Array(bytes[16 + Nonce.length + IVSize ..< 16 + Nonce.length + IVSize + 48]))
             
-            let hmac = Array(bytes[Nonce.length + IVSize + 48 ..< Nonce.length + IVSize + 48 + HMACSize])
+            let hmac = Array(bytes[16 + Nonce.length + IVSize + 48 ..< 16 + Nonce.length + IVSize + 48 + HMACSize])
             
             assert(hmac.count == HMACSize)
             
             self.authentication = Data(byteValue: hmac)
             
-            let permissionBytes = Array(bytes[Nonce.length + IVSize + 48 + HMACSize ..< Nonce.length + IVSize + 48 + HMACSize + Permission.length])
+            let permissionBytes = Array(bytes[16 + Nonce.length + IVSize + 48 + HMACSize ..< 16 + Nonce.length + IVSize + 48 + HMACSize + Permission.length])
             
             guard let permission = Permission(bigEndian: Data(byteValue: permissionBytes))
                 else { return nil }
@@ -476,7 +481,7 @@ public struct LockService: GATTProfileService {
         
         public func toBigEndian() -> Data {
             
-            let bytes = nonce.data.byteValue + initializationVector.data.byteValue + encryptedNewKey.byteValue + authentication.byteValue + permission.toBigEndian().byteValue
+            let bytes = identifier.toBigEndian().byteValue + nonce.data.byteValue + initializationVector.data.byteValue + encryptedNewKey.byteValue + authentication.byteValue + permission.toBigEndian().byteValue
             
             assert(bytes.count == self.dynamicType.length)
             
@@ -497,7 +502,67 @@ public struct LockService: GATTProfileService {
             
             let keyData = KeyData(data: decryptedData)!
             
-            return Key(data: keyData, permission: permission)
+            return Key(identifier: identifier, data: keyData, permission: permission)
+        }
+    }
+    
+    /// Used to finish new key proccess.
+    ///
+    /// nonce + HMAC(newKey, nonce) + name (16 + 64 + 64 bytes) (write-only)
+    public struct NewKeyFinish: AuthenticatedCharacteristic {
+        
+        public static let length = Nonce.length + HMACSize + 1 ... Nonce.length + HMACSize + Key.Name.maxLength
+        
+        public static let UUID = Bluetooth.UUID.Bit128(SwiftFoundation.UUID(rawValue: "C52B681E-0CE4-11E6-9998-AC69ADB65F8F")!)
+        
+        /// The name of the new key. 
+        public let name: Key.Name
+        
+        public let nonce: Nonce
+        
+        /// HMAC of key and nonce
+        public let authentication: Data
+        
+        public init(nonce: Nonce = Nonce(), name: Key.Name, key: KeyData) {
+            
+            self.name = name
+            self.nonce = nonce
+            self.authentication = HMAC(key: key, message: nonce)
+            
+            assert(authentication.byteValue.count == HMACSize)
+        }
+        
+        public init?(bigEndian: Data) {
+            
+            let bytes = bigEndian.byteValue
+            
+            guard bytes.count >= self.dynamicType.length.first
+                && bytes.count <= self.dynamicType.length.last
+                else { return nil }
+            
+            let nonceBytes = Array(bytes[0 ..< Nonce.length])
+            
+            assert(nonceBytes.count == Nonce.length)
+            
+            let hmac = Array(bytes[Nonce.length ..< Nonce.length + HMACSize])
+            
+            assert(hmac.count == HMACSize)
+            
+            let nameBytes = Data(byteValue: Array(bytes.suffix(from: Nonce.length + HMACSize)))
+            
+            guard let name = Key.Name(data: nameBytes)
+                else { return nil }
+            
+            self.nonce = Nonce(data: Data(byteValue: nonceBytes))!
+            self.authentication = Data(byteValue: hmac)
+            self.name = name
+        }
+        
+        public func toBigEndian() -> Data {
+            
+            let bytes = nonce.data.byteValue + authentication.byteValue + name.toData().byteValue
+            
+            return Data(byteValue: bytes)
         }
     }
     

@@ -189,39 +189,38 @@
             guard let lock = self[identifier]
                 else { throw Error.NoLock }
             
-            return try lockAction(peripheral: lock.peripheral, characteristics: [LockService.NewKeyParentSharedSecret.UUID]) {
+            return try lockAction(peripheral: lock.peripheral, characteristics: [LockService.NewKeyParent.UUID]) {
              
                 // create new parent key
+                let parentNewKey = LockService.NewKeyParent.init(sharedSecret: sharedSecret, parentKey: parentKey, permission: permission)
                 
-                let parentNewKey = LockService.NewKeyParentSharedSecret.init(sharedSecret: sharedSecret, parentKey: parentKey, permission: permission)
-                
-                try self.internalManager.write(data: parentNewKey.toBigEndian(), response: true, characteristic: LockService.NewKeyParentSharedSecret.UUID, service: LockService.UUID, peripheral: lock.peripheral)
+                try self.internalManager.write(data: parentNewKey.toBigEndian(), response: true, characteristic: LockService.NewKeyParent.UUID, service: LockService.UUID, peripheral: lock.peripheral)
                 
                 // update cached status
                 self[identifier]?.status = .newKey
             }
         }
         
-        public func recieveNewKey(_ identifier: SwiftFoundation.UUID, sharedSecret: SharedSecret) throws -> Key {
+        public func recieveNewKey(_ identifier: SwiftFoundation.UUID, sharedSecret: SharedSecret, name: Key.Name) throws -> Key {
             
             guard let lock = self[identifier]
                 else { throw Error.NoLock }
             
-            return try lockAction(peripheral: lock.peripheral, characteristics: [LockService.NewKeyChildSharedSecret.UUID, LockService.NewKeyFinish.UUID]) {
+            return try lockAction(peripheral: lock.peripheral, characteristics: [LockService.NewKeyChild.UUID, LockService.NewKeyFinish.UUID]) {
                 
                 // read new key child characteristic
                 
-                let newKeyChildValue = try self.internalManager.read(characteristic: LockService.NewKeyChildSharedSecret.UUID, service: LockService.UUID, peripheral: lock.peripheral)
+                let newKeyChildValue = try self.internalManager.read(characteristic: LockService.NewKeyChild.UUID, service: LockService.UUID, peripheral: lock.peripheral)
                 
-                guard let newKeyChild = LockService.NewKeyChildSharedSecret.init(bigEndian: newKeyChildValue)
-                    else { throw Error.InvalidCharacteristicValue(LockService.NewKeyChildSharedSecret.UUID) }
+                guard let newKeyChild = LockService.NewKeyChild.init(bigEndian: newKeyChildValue)
+                    else { throw Error.InvalidCharacteristicValue(LockService.NewKeyChild.UUID) }
                 
                 guard let key = newKeyChild.decrypt(sharedSecret: sharedSecret)
                     else { throw Error.InvalidSharedSecret }
                 
                 // write confirmation value
                 
-                let newKeyFinish = LockService.NewKeyFinish.init(key: key.data)
+                let newKeyFinish = LockService.NewKeyFinish.init(name: name, key: key.data)
                 
                 try self.internalManager.write(data: newKeyFinish.toBigEndian(), response: true, characteristic: LockService.NewKeyFinish.UUID, service: LockService.UUID, peripheral: lock.peripheral)
                 
@@ -310,11 +309,11 @@
             guard characteristics.contains({ $0.UUID == LockService.Unlock.UUID })
                 else { throw Error.CharacteristicNotFound(LockService.Unlock.UUID) }
             
-            guard characteristics.contains({ $0.UUID == LockService.NewKeyParentSharedSecret.UUID })
-                else { throw Error.CharacteristicNotFound(LockService.NewKeyParentSharedSecret.UUID) }
+            guard characteristics.contains({ $0.UUID == LockService.NewKeyParent.UUID })
+                else { throw Error.CharacteristicNotFound(LockService.NewKeyParent.UUID) }
             
-            guard characteristics.contains({ $0.UUID == LockService.NewKeyChildSharedSecret.UUID })
-                else { throw Error.CharacteristicNotFound(LockService.NewKeyChildSharedSecret.UUID) }
+            guard characteristics.contains({ $0.UUID == LockService.NewKeyChild.UUID })
+                else { throw Error.CharacteristicNotFound(LockService.NewKeyChild.UUID) }
             
             guard characteristics.contains({ $0.UUID == LockService.NewKeyFinish.UUID })
                 else { throw Error.CharacteristicNotFound(LockService.NewKeyFinish.UUID) }

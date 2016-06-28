@@ -102,6 +102,8 @@ final class GATTProfileTests: XCTestCase {
     
     func testNewChildKey() {
         
+        // parent
+        
         let weekdays = Permission.Schedule.Weekdays.init(sunday: false,
                                                          monday: true,
                                                          tuesday: true,
@@ -124,11 +126,11 @@ final class GATTProfileTests: XCTestCase {
         
         let parentNonce = Nonce()
         
-        let parentRequest = LockService.NewKeyParentSharedSecret.init(nonce: parentNonce, sharedSecret: sharedSecret, parentKey: (parentKeyIdentifier, parentKeyData), permission: permission)
+        let parentRequest = LockService.NewKeyParent.init(nonce: parentNonce, sharedSecret: sharedSecret, parentKey: (parentKeyIdentifier, parentKeyData), permission: permission)
         
         let parentRequestData = parentRequest.toBigEndian()
         
-        guard let parentDeserialized = LockService.NewKeyParentSharedSecret.init(bigEndian: parentRequestData)
+        guard let parentDeserialized = LockService.NewKeyParent.init(bigEndian: parentRequestData)
             else { XCTFail(); return }
         
         guard let decryptedSharedSecret = parentDeserialized.decrypt(key: parentKeyData)
@@ -141,17 +143,17 @@ final class GATTProfileTests: XCTestCase {
         XCTAssert(parentDeserialized.permission == permission, "\(parentDeserialized.permission) == \(permission)")
         XCTAssert(decryptedSharedSecret == sharedSecret)
         
-        let childRequestType = LockService.NewKeyChildSharedSecret.self
+        // child
         
         let childNonce = Nonce()
         
         let newKey = Key(data: KeyData(), permission: permission)
         
-        let childRequest = childRequestType.init(nonce: childNonce, sharedSecret: sharedSecret, newKey: newKey)
+        let childRequest = LockService.NewKeyChild.init(nonce: childNonce, sharedSecret: sharedSecret, newKey: newKey)
         
         let childRequestData = childRequest.toBigEndian()
         
-        guard let childDeserialized = childRequestType.init(bigEndian: childRequestData)
+        guard let childDeserialized = LockService.NewKeyChild.init(bigEndian: childRequestData)
             else { XCTFail(); return }
         
         guard let decryptedNewKey = childDeserialized.decrypt(sharedSecret: sharedSecret)
@@ -161,6 +163,22 @@ final class GATTProfileTests: XCTestCase {
         XCTAssert(childDeserialized.authenticated(with: sharedSecret.toKeyData()))
         XCTAssert(childDeserialized.authenticated(with: KeyData()) == false)
         XCTAssert(childDeserialized.permission == permission)
+        XCTAssert(decryptedNewKey.data == newKey.data)
+        XCTAssert(decryptedNewKey.permission == newKey.permission)
+        XCTAssert(decryptedNewKey.identifier == newKey.identifier)
         XCTAssert(decryptedNewKey == newKey)
+        
+        // finish
+        
+        let childKeyName = Key.Name(rawValue: "New Key")!
+        
+        let newKeyFinish = LockService.NewKeyFinish.init(name: childKeyName, key: newKey.data)
+        
+        let newKeyFinishData = newKeyFinish.toBigEndian()
+        
+        guard let newKeyFinishDeserialzed = LockService.NewKeyFinish.init(bigEndian: childRequestData)
+            else { XCTFail(); return }
+        
+        
     }
 }

@@ -30,3 +30,45 @@ public func == (lhs: Key, rhs: Key) -> Bool {
         && lhs.data == rhs.data
         && lhs.permission == rhs.permission
 }
+
+// MARK: - Supporting Types
+
+public extension Key {
+    
+    /// 64 byte String name.
+    public struct Name: Equatable, RawRepresentable, DataConvertible, CustomStringConvertible {
+        
+        public static let maxLength = 64
+        
+        public let rawValue: String
+        
+        public init?(rawValue: String) {
+            
+            guard rawValue.utf8.count <= Name.maxLength
+                && rawValue.isEmpty == false
+                else { return nil }
+            
+            self.rawValue = rawValue
+        }
+        
+        public init?(data: Data) {
+            
+            guard let string = String(UTF8Data: data)
+                where data.byteValue.count == Name.maxLength
+                else { return nil }
+            
+            self.rawValue = string
+        }
+        
+        @inline(__always)
+        public func toData() -> Data {
+            
+            return rawValue.toUTF8Data()
+        }
+        
+        public var description: String {
+            
+            return rawValue
+        }
+    }
+}
