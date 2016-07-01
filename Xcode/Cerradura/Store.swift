@@ -34,7 +34,7 @@ final class Store {
     }
     
     /// Remove the specified key / lock pair from the database, along with its cached info.
-    func remove(_ UUID: UUID) {
+    func remove(_ UUID: SwiftFoundation.UUID) {
         
         // remove from CoreData
         let entity = managedObjectContext.persistentStoreCoordinator!.managedObjectModel.entitiesByName[LockCache.entityName]!
@@ -58,7 +58,7 @@ final class Store {
             let entity = managedObjectContext.persistentStoreCoordinator!.managedObjectModel.entitiesByName[LockCache.entityName]!
             
             guard let keyData = try! keychain.getData(key: UUID.rawValue),
-                let key = KeyData(data: keyData),
+                let key = KeyData(data: keyData as Data),
                 let managedObject = try! managedObjectContext.find(entity: entity, resourceID: UUID.rawValue, identifierProperty: LockCache.Property.identifier.rawValue)
                 else { return nil }
             
@@ -116,7 +116,7 @@ final class Store {
         
         var cache: [LockCache]!
         
-        OperationQueue.main().addOperations([NSBlockOperation(block: {
+        OperationQueue.main().addOperations([BlockOperation(block: {
             
             cache = try! self.managedObjectContext.fetch(fetchRequest)
             
@@ -175,7 +175,7 @@ private extension LockCache {
 
 private func LoadManagedObjectModel() -> NSManagedObjectModel {
     
-    let bundle = NSBundle(for: Store.self)
+    let bundle = Bundle(for: Store.self)
     
     let modelURL = bundle.urlForResource("Model", withExtension: "momd")!
     

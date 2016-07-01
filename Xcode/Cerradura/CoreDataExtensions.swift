@@ -46,13 +46,13 @@ public extension NSManagedObjectContext {
         
         // create predicate
         
-        fetchRequest.predicate = ComparisonPredicate(leftExpression: NSExpression(forKeyPath: identifierProperty), rightExpression: NSExpression(forConstantValue: resourceID), modifier: ComparisonPredicate.Modifier.directPredicateModifier, type: PredicateOperatorType.equalToPredicateOperatorType, options: NSComparisonPredicateOptions.normalizedPredicateOption)
+        fetchRequest.predicate = ComparisonPredicate(leftExpression: NSExpression(forKeyPath: identifierProperty), rightExpression: NSExpression(forConstantValue: resourceID), modifier: ComparisonPredicate.Modifier.direct, type: ComparisonPredicate.Operator.equalTo, options: ComparisonPredicate.Options.normalized)
         
         fetchRequest.returnsObjectsAsFaults = false
         
         // fetch
         
-        let results = try self.fetch(fetchRequest) as! [T]
+        let results = try self.fetch(fetchRequest)
         
         let resource: T
         
@@ -88,12 +88,12 @@ public extension NSManagedObjectContext {
         
         // create predicate
         
-        fetchRequest.predicate = ComparisonPredicate(leftExpression: NSExpression(forKeyPath: identifierProperty), rightExpression: NSExpression(forConstantValue: resourceID), modifier: ComparisonPredicateModifier.directPredicateModifier, type: NSPredicateOperatorType.equalToPredicateOperatorType, options: NSComparisonPredicateOptions.normalizedPredicateOption)
+        fetchRequest.predicate = ComparisonPredicate(leftExpression: NSExpression(forKeyPath: identifierProperty), rightExpression: NSExpression(forConstantValue: resourceID), modifier: ComparisonPredicate.Modifier.direct, type: ComparisonPredicate.Operator.equalTo, options: ComparisonPredicate.Options.normalized)
         
         fetchRequest.returnsObjectsAsFaults = false
         
         // fetch
         
-        return (try self.fetch(fetchRequest) as! [T]).first
+        return try self.fetch(fetchRequest).first
     }
 }
