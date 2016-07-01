@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11129.15" systemVersion="16A201w" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11103.10"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="scan4" translatesAutoresizingMaskIntoConstraints="NO" id="OPt-Ko-5gb">
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="OPt-Ko-5gb" secondAttribute="height" id="16I-pI-X6L"/>
+                        <constraint firstAttribute="height" constant="150" id="O4w-Oq-ttg"/>
+                    </constraints>
+                </imageView>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tXo-9h-UcQ"/>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="tXo-9h-UcQ" firstAttribute="centerX" secondItem="OPt-Ko-5gb" secondAttribute="centerX" id="Az2-Mi-hFH"/>
+                <constraint firstItem="OPt-Ko-5gb" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="K0I-tW-7ef"/>
+                <constraint firstItem="tXo-9h-UcQ" firstAttribute="leading" secondItem="OPt-Ko-5gb" secondAttribute="leading" id="abv-Fl-4jz"/>
+                <constraint firstItem="tXo-9h-UcQ" firstAttribute="centerY" secondItem="OPt-Ko-5gb" secondAttribute="centerY" id="cja-Zk-CXL"/>
+                <constraint firstItem="tXo-9h-UcQ" firstAttribute="bottom" secondItem="OPt-Ko-5gb" secondAttribute="bottom" id="f43-x2-KS4"/>
+                <constraint firstItem="OPt-Ko-5gb" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="qqL-1S-DDt"/>
+                <constraint firstItem="tXo-9h-UcQ" firstAttribute="trailing" secondItem="OPt-Ko-5gb" secondAttribute="trailing" id="quz-V2-ZUC"/>
+                <constraint firstItem="tXo-9h-UcQ" firstAttribute="top" secondItem="OPt-Ko-5gb" secondAttribute="top" id="vyH-F0-Raz"/>
+            </constraints>
+            <point key="canvasLocation" x="32" y="26"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="scan4" width="230" height="230"/>
+    </resources>
+    <simulatedMetricsContainer key="defaultSimulatedMetrics">
+        <simulatedStatusBarMetrics key="statusBar"/>
+        <simulatedOrientationMetrics key="orientation"/>
+        <simulatedScreenMetrics key="destination" type="retina4_0.fullscreen"/>
+    </simulatedMetricsContainer>
+</document>

@@ -14,6 +14,177 @@ import Bluetooth
 import GATT
 import CoreLock
 
+/// Displays a list of nearby locks.
+final class NearLockViewController: UITableViewController, EmptyTableViewController {
+    
+    // MARK: - Properties
+    
+    private(set) var state: State = .scanning {
+        
+        didSet { updateUI() }
+    }
+    
+    var emptyTableView: EmptyTableView?
+    
+    // MARK: - Private Properties
+    
+    private var stateObserver: Int!
+    
+    private var locksObserver: Int!
+    
+    // MARK: - Loading
+    
+    deinit {
+        
+        // stop observing state
+        LockManager.shared.state.remove(observer: stateObserver)
+        LockManager.shared.foundLocks.remove(observer: locksObserver)
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        // start observing state
+        stateObserver = LockManager.shared.state.observe(stateChanged)
+        locksObserver = LockManager.shared.foundLocks.observe(foundLocks)
+        
+        // start scanning
+        scan()
+    }
+    
+    // MARK: - Actions
+    
+    @IBAction func scan(_ sender: AnyObject? = nil) {
+        
+        // dont scan if already scanning
+        guard LockManager.shared.scanning.value == false else { return }
+        
+        state = .scanning
+        
+        async { [weak self] in
+            
+            guard let controller = self else { return }
+            
+            do { try LockManager.shared.scan(duration: 5) }
+            
+            catch { mainQueue { controller.state = .error(error) }; return }
+            
+            // callback will update UI
+        }
+    }
+    
+    @IBAction func emptyTableViewAction(_ sender: UIButton) {
+        
+        
+    }
+    
+    // MARK: - Private Methods
+    
+    private func updateUI() {
+        
+        switch state {
+            
+        case .scanning:
+            
+            tableView.isUserInteractionEnabled = false
+            
+            self.tableView.reloadData()
+            
+            
+            
+        case let .error(error):
+            
+            tableView.isUserInteractionEnabled = false
+            
+            self.tableView.reloadData()
+            
+            do { throw error }
+            
+            catch Error.bluetoothDisabled {
+                
+                showErrorAlert("Bluetooth not enabled.")
+            }
+            
+            catch {
+                
+                showErrorAlert("\(error)", okHandler: { self.scan() })
+            }
+            
+        case .found:
+            
+            tableView.isUserInteractionEnabled = true
+            
+            self.tableView.setContentOffset(CGPoint.zero, animated: true)
+            
+            DispatchQueue.main.after(when: DispatchTime.now() + 1.0) {
+                
+                self.tableView.reloadData()
+            }
+        }
+    }
+    
+    private func stateChanged(managerState: CBManagerState) {
+        
+        mainQueue {
+            
+            // just powered on
+            if managerState == .poweredOn {
+                
+                self.scan()
+            }
+            
+            // bluetooth disabled
+            else {
+                
+                self.state = .error(Error.bluetoothDisabled)
+            }
+        }
+    }
+    
+    private func foundLocks(locks: [LockManager.Lock]) {
+        
+        mainQueue {
+            
+            self.state = .found(locks)
+        }
+    }
+    
+    // MARK: - UITableViewDataSource
+    
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        
+        guard case .found = self.state else { return 0 }
+        
+        return 1
+    }
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        guard case let .found(locks) = self.state else { return 0 }
+        
+        return locks.count
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: <#T##String#>, for: <#T##IndexPath#>)
+    }
+}
+
+// MARK: - Supporting Types
+
+extension NearLockViewController {
+    
+    enum State {
+        
+        case scanning
+        case error(ErrorProtocol)
+        case found([LockManager.Lock])
+    }
+}
+
+
+/*
 final class NearLockViewController: UIViewController {
     
     // MARK: - IB Outlets
@@ -193,7 +364,7 @@ final class NearLockViewController: UIViewController {
     
     // MARK: - Private Methods
     
-    private func stateChanged(state: CBCentralManagerState) {
+    private func stateChanged(state: CBManagerState) {
         
         mainQueue {
             
@@ -406,3 +577,4 @@ final class NearLockViewController: UIViewController {
         self.present(alert, animated: true, completion: nil)
     }
 }
+*/

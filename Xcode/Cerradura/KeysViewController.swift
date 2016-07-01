@@ -275,16 +275,3 @@ final class KeysViewController: UIViewController, UITableViewDataSource, UITable
         }
     }
 }
-
-// MARK: - Supporting Types
-
-final class KeyTableViewCell: UITableViewCell {
-    
-    static let resuseIdentifier = "KeyTableViewCell"
-    
-    @IBOutlet weak var permissionImageView: UIImageView!
-    
-    @IBOutlet weak var lockNameLabel: UILabel!
-    
-    @IBOutlet weak var permissionLabel: UILabel!
-}

@@ -20,4 +20,4 @@ func async(_ block: () -> ()) {
     queue.async { block() }
 }
 
-private let queue = DispatchQueue(label: "Cerradura Internal Queue", attributes: .serial)
+private let queue = DispatchQueue(label: "Cerradura Queue", attributes: .serial)

@@ -28,6 +28,7 @@ final class ExtensionDelegate: NSObject, WKExtensionDelegate {
 
 }
 
+@inline(__always)
 func mainQueue(_ block: () -> ()) {
     
     OperationQueue.main().addOperation(block)
