@@ -219,19 +219,21 @@
                 guard let newKeyChild = LockService.NewKeyChild.init(bigEndian: newKeyChildValue)
                     else { throw Error.InvalidCharacteristicValue(LockService.NewKeyChild.UUID) }
                 
-                guard let key = newKeyChild.decrypt(sharedSecret: sharedSecret)
+                guard let keyData = newKeyChild.decrypt(sharedSecret: sharedSecret)
                     else { throw Error.InvalidSharedSecret }
                 
-                // write confirmation value
+                // write confirmation value (sets name, and verifies that the KeyData can be used to unlock)
                 
-                let newKeyFinish = LockService.NewKeyFinish.init(name: name, key: key.data)
+                let newKeyFinish = LockService.NewKeyFinish.init(name: name, key: keyData)
                 
                 try self.internalManager.write(data: newKeyFinish.toBigEndian(), response: true, characteristic: LockService.NewKeyFinish.UUID, service: LockService.UUID, peripheral: lock.peripheral)
+                
+                // success!
                 
                 // update cached status
                 self[identifier]?.status = .unlock
                 
-                return key
+                return Key(identifier: newKeyChild.identifier, name: name, data: keyData, permission: newKeyChild.permission)
             }
         }
         

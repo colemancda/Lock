@@ -490,7 +490,7 @@ public struct LockService: GATTProfileService {
             return Data(bytes: bytes)
         }
         
-        public func decrypt(sharedSecret: SharedSecret) -> Key? {
+        public func decrypt(sharedSecret: SharedSecret) -> KeyData? {
             
             let sharedSecretKey = sharedSecret.toKeyData()
             
@@ -502,9 +502,7 @@ public struct LockService: GATTProfileService {
             
             assert(decryptedData.bytes.count == KeyData.length)
             
-            let keyData = KeyData(data: decryptedData)!
-            
-            return Key(identifier: identifier, data: keyData, permission: permission)
+            return KeyData(data: decryptedData)!
         }
     }
     
