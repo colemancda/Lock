@@ -79,11 +79,11 @@ public struct ManagedObjectObserverEvent<Decodable: CoreDataDecodable> {
             
             if newValue {
                 
-                NSNotificationCenter.default().addObserver(self, selector: #selector(PrivateEntityController.objectsDidChange(_:)), name: NSManagedObjectContextObjectsDidChangeNotification, object: context)
+                NotificationCenter.default().addObserver(self, selector: #selector(PrivateEntityController.objectsDidChange(_:)), name: NSNotification.Name.NSManagedObjectContextObjectsDidChange, object: context)
             }
             else {
                 
-                NSNotificationCenter.default().removeObserver(self, name: NSManagedObjectContextObjectsDidChangeNotification, object: self.context)
+                NotificationCenter.default().removeObserver(self, name: NSNotification.Name.NSManagedObjectContextObjectsDidChange, object: self.context)
             }
         }
     }

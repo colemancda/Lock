@@ -64,7 +64,7 @@ final class ComplicationController: NSObject, CLKComplicationDataSource {
         
         let template = self.template(for: complication, event: event)
         
-        handler(CLKComplicationTimelineEntry(date: NSDate(), complicationTemplate: template))
+        handler(CLKComplicationTimelineEntry(date: Date(), complicationTemplate: template))
     }
     
     /*

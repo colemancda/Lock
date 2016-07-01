@@ -30,13 +30,13 @@ final class ExtensionDelegate: NSObject, WKExtensionDelegate {
 
 func mainQueue(_ block: () -> ()) {
     
-    NSOperationQueue.main().addOperation(block)
+    OperationQueue.main().addOperation(block)
 }
 
 /** Version of the app. */
-public let AppVersion = NSBundle.main().infoDictionary!["CFBundleShortVersionString"] as! String
+public let AppVersion = Bundle.main().infoDictionary!["CFBundleShortVersionString"] as! String
 
 /** Build of the app. */
-public let AppBuild = NSBundle.main().infoDictionary!["CFBundleVersion"] as! String
+public let AppBuild = Bundle.main().infoDictionary!["CFBundleVersion"] as! String
 
 

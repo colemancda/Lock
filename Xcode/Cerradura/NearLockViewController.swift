@@ -25,7 +25,7 @@ final class NearLockViewController: UIViewController {
     // MARK: - Properties
     
     // The current lock
-    private var foundLock: SwiftFoundation.UUID? {
+    private var foundLock: UUID? {
         
         didSet { updateUI() }
     }

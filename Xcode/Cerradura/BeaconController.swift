@@ -17,7 +17,7 @@ final class BeaconController: NSObject, CLLocationManagerDelegate {
     
     static let region: CLBeaconRegion = {
         
-        let region = CLBeaconRegion(proximityUUID: LockBeaconUUID.toFoundation(), major: 0, minor: 0, identifier: BeaconIdentifier)
+        let region = CLBeaconRegion(proximityUUID: LockBeaconUUID, major: 0, minor: 0, identifier: BeaconIdentifier)
         
         region.notifyEntryStateOnDisplay = true
         

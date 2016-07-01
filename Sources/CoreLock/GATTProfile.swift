@@ -513,7 +513,7 @@ public struct LockService: GATTProfileService {
     /// nonce + HMAC(newKey, nonce) + name (16 + 64 + 64 bytes) (write-only)
     public struct NewKeyFinish: AuthenticatedCharacteristic {
         
-        public static let length = Nonce.length + HMACSize + 1 ... Nonce.length + HMACSize + Key.Name.maxLength
+        public static let length = (min: Nonce.length + HMACSize + 1, max: Nonce.length + HMACSize + Key.Name.maxLength)
         
         public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "C52B681E-0CE4-11E6-9998-AC69ADB65F8F")!)
         
@@ -538,8 +538,8 @@ public struct LockService: GATTProfileService {
             
             let bytes = bigEndian.bytes
             
-            guard bytes.count >= NewKeyFinish.length.first
-                && bytes.count <= NewKeyFinish.length.last
+            guard bytes.count >= NewKeyFinish.length.min
+                && bytes.count <= NewKeyFinish.length.max
                 else { return nil }
             
             let nonceBytes = Array(bytes[0 ..< Nonce.length])

@@ -38,7 +38,7 @@ public extension NSManagedObjectContext {
         
         // get cached resource...
         
-        let fetchRequest = NSFetchRequest(entityName: entity.name!)
+        let fetchRequest = NSFetchRequest<T>(entityName: entity.name!)
         
         fetchRequest.fetchLimit = 1
         
@@ -46,7 +46,7 @@ public extension NSManagedObjectContext {
         
         // create predicate
         
-        fetchRequest.predicate = NSComparisonPredicate(leftExpression: NSExpression(forKeyPath: identifierProperty), rightExpression: NSExpression(forConstantValue: resourceID), modifier: NSComparisonPredicateModifier.directPredicateModifier, type: NSPredicateOperatorType.equalToPredicateOperatorType, options: NSComparisonPredicateOptions.normalizedPredicateOption)
+        fetchRequest.predicate = ComparisonPredicate(leftExpression: NSExpression(forKeyPath: identifierProperty), rightExpression: NSExpression(forConstantValue: resourceID), modifier: ComparisonPredicate.Modifier.directPredicateModifier, type: NSPredicateOperatorType.equalToPredicateOperatorType, options: NSComparisonPredicateOptions.normalizedPredicateOption)
         
         fetchRequest.returnsObjectsAsFaults = false
         
@@ -80,7 +80,7 @@ public extension NSManagedObjectContext {
         
         // get cached resource...
         
-        let fetchRequest = NSFetchRequest(entityName: entity.name!)
+        let fetchRequest = NSFetchRequest<T>(entityName: entity.name!)
         
         fetchRequest.fetchLimit = 1
         
@@ -88,7 +88,7 @@ public extension NSManagedObjectContext {
         
         // create predicate
         
-        fetchRequest.predicate = NSComparisonPredicate(leftExpression: NSExpression(forKeyPath: identifierProperty), rightExpression: NSExpression(forConstantValue: resourceID), modifier: NSComparisonPredicateModifier.directPredicateModifier, type: NSPredicateOperatorType.equalToPredicateOperatorType, options: NSComparisonPredicateOptions.normalizedPredicateOption)
+        fetchRequest.predicate = ComparisonPredicate(leftExpression: NSExpression(forKeyPath: identifierProperty), rightExpression: NSExpression(forConstantValue: resourceID), modifier: ComparisonPredicateModifier.directPredicateModifier, type: NSPredicateOperatorType.equalToPredicateOperatorType, options: NSComparisonPredicateOptions.normalizedPredicateOption)
         
         fetchRequest.returnsObjectsAsFaults = false
         

@@ -18,12 +18,12 @@ public protocol CoreDataDecodable {
 public extension NSManagedObjectContext {
     
     /// Executes a fetch request and returns ```CoreDataDecodable``` types.
-    func fetch<T: CoreDataDecodable>(_ fetchRequest: NSFetchRequest) throws -> [T] {
+    func fetch<T: CoreDataDecodable>(_ fetchRequest: NSFetchRequest<NSManagedObject>) throws -> [T] {
         
         guard fetchRequest.resultType == NSFetchRequestResultType(rawValue: 0x00)
             else { fatalError("Method only supports fetch requests with NSFetchRequestManagedObjectResultType") }
         
-        let managedObjects = try self.fetch(fetchRequest) as! [NSManagedObject]
+        let managedObjects = try self.fetch(fetchRequest)
         
         let decodables = managedObjects.map { (element) -> T in T.init(managedObject: element) }
         

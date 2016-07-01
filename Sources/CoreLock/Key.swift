@@ -10,15 +10,21 @@ import SwiftFoundation
 
 public struct Key: Equatable {
     
-    public let identifier: SwiftFoundation.UUID
+    public let identifier: UUID
     
     public let data: KeyData
     
     public let permission: Permission
     
-    public init(identifier: SwiftFoundation.UUID = SwiftFoundation.UUID(), data: KeyData = KeyData(), permission: Permission = .owner) {
+    /// The name of the key.
+    ///
+    /// - Note: Not applicable for Owner keys. 
+    public let name: Name?
+    
+    public init(identifier: UUID = UUID(), name: Name? = nil, data: KeyData = KeyData(), permission: Permission = .owner) {
         
         self.identifier = identifier
+        self.name = name
         self.data = data
         self.permission = permission
     }
@@ -54,7 +60,8 @@ public extension Key {
         public init?(data: Data) {
             
             guard let string = String(UTF8Data: data)
-                where data.bytes.count == Name.maxLength
+                where string.isEmpty == false
+                && data.bytes.count <= Name.maxLength
                 else { return nil }
             
             self.rawValue = string

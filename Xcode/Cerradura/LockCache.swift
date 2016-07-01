@@ -44,7 +44,7 @@ extension LockCache {
         managedObject.setValue(name, forKey: Property.name.rawValue)
         managedObject.setValue(NSNumber(value: Int16(model.rawValue)), forKey: Property.model.rawValue)
         managedObject.setValue(NSNumber(value: version), forKey: Property.version.rawValue)
-        managedObject.setValue(permission.toBigEndian().toFoundation(), forKey: Property.permission.rawValue)
+        managedObject.setValue(permission.toBigEndian(), forKey: Property.permission.rawValue)
         
         try context.save()
         

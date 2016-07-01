@@ -59,7 +59,7 @@ final class GATTProfileTests: XCTestCase {
         
         let nonce = Nonce()
         
-        let identifier = SwiftFoundation.UUID()
+        let identifier = UUID()
         
         let request = requestType.init(identifier: identifier, value: key, nonce: nonce)
         
@@ -85,7 +85,7 @@ final class GATTProfileTests: XCTestCase {
         
         let nonce = Nonce()
         
-        let identifier = SwiftFoundation.UUID()
+        let identifier = UUID()
         
         let request = requestType.init(identifier: identifier, nonce: nonce, key: key)
         
@@ -112,7 +112,9 @@ final class GATTProfileTests: XCTestCase {
                                                          friday: true,
                                                          saturday: false)
         
-        let expiry = Date(sinceReferenceDate: TimeInterval(Int(TimeIntervalSinceReferenceDate() + (60 * 60))))
+        // expires in an hour
+        let normalizedTimeInterval = TimeInterval(Int(Date.timeIntervalSinceReferenceDate))
+        let expiry = Date(timeIntervalSinceReferenceDate: normalizedTimeInterval) + (60 * 60)
         
         let schedule = Permission.Schedule(expiry: expiry, weekdays: weekdays)
         
@@ -120,7 +122,7 @@ final class GATTProfileTests: XCTestCase {
         
         let sharedSecret = SharedSecret()
         
-        let parentKeyIdentifier = SwiftFoundation.UUID()
+        let parentKeyIdentifier = UUID()
         
         let parentKeyData = KeyData()
         
@@ -159,6 +161,7 @@ final class GATTProfileTests: XCTestCase {
         guard let decryptedNewKey = childDeserialized.decrypt(sharedSecret: sharedSecret)
             else { XCTFail(); return }
         
+        XCTAssert(childDeserialized.identifier == childRequest.identifier)
         XCTAssert(childDeserialized.nonce == childNonce)
         XCTAssert(childDeserialized.authenticated(with: sharedSecret.toKeyData()))
         XCTAssert(childDeserialized.authenticated(with: KeyData()) == false)
@@ -176,9 +179,13 @@ final class GATTProfileTests: XCTestCase {
         
         let newKeyFinishData = newKeyFinish.toBigEndian()
         
-        guard let newKeyFinishDeserialzed = LockService.NewKeyFinish.init(bigEndian: childRequestData)
+        guard let newKeyFinishDeserialzed = LockService.NewKeyFinish.init(bigEndian: newKeyFinishData)
             else { XCTFail(); return }
         
-        
+        XCTAssert(newKeyFinishDeserialzed.name == newKeyFinish.name)
+        XCTAssert(newKeyFinishDeserialzed.nonce == newKeyFinish.nonce)
+        XCTAssert(newKeyFinishDeserialzed.authentication == newKeyFinish.authentication)
+        XCTAssert(newKeyFinishDeserialzed.authenticated(with: newKey.data))
+        XCTAssert(newKeyFinishDeserialzed.authenticated(with: KeyData()) == false)
     }
 }

@@ -15,7 +15,6 @@
 		6E0429D51D0F8950005AF969 /* EntityController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F605F1CCB2C0C001914E7 /* EntityController.swift */; };
 		6E0429D61D0F8955005AF969 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F60571CCB1D37001914E7 /* Model.xcdatamodeld */; };
 		6E0429DE1D0FA3AA005AF969 /* IndexRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0429DD1D0FA3AA005AF969 /* IndexRequestHandler.swift */; };
-		6E0429E21D0FA3AA005AF969 /* CerraduraSpotlightIndex.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 6E0429DB1D0FA3AA005AF969 /* CerraduraSpotlightIndex.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		6E0429E71D0FA411005AF969 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F60571CCB1D37001914E7 /* Model.xcdatamodeld */; };
 		6E1F604C1CCB00DB001914E7 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F604A1CCAF290001914E7 /* Store.swift */; };
 		6E1F604E1CCB0130001914E7 /* Key.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F604D1CCB0130001914E7 /* Key.swift */; };
@@ -99,7 +98,6 @@
 		6EDCE1E91D0F34A300C3D3DC /* NotificationCenter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EDCE1E81D0F34A300C3D3DC /* NotificationCenter.framework */; };
 		6EDCE1EC1D0F34A300C3D3DC /* TodayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EDCE1EB1D0F34A300C3D3DC /* TodayViewController.swift */; };
 		6EDCE1EF1D0F34A300C3D3DC /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6EDCE1ED1D0F34A300C3D3DC /* MainInterface.storyboard */; };
-		6EDCE1F31D0F34A300C3D3DC /* CerraduraToday Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 6EDCE1E61D0F34A200C3D3DC /* CerraduraToday Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		6EE0E36E1D06871C009E08D0 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB4132A1CC2ECD7005AB1E2 /* main.swift */; };
 		6EE0E3701D068772009E08D0 /* SwiftyGPIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0E36F1D068772009E08D0 /* SwiftyGPIO.swift */; };
 		6EE0E3721D068D8F009E08D0 /* SunXi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE0E3711D068D8F009E08D0 /* SunXi.swift */; };
@@ -127,13 +125,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		6E0429E01D0FA3AA005AF969 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6EE6058A1CC21941008EF0EE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 6E0429DA1D0FA3AA005AF969;
-			remoteInfo = CerraduraSpotlightIndex;
-		};
 		6E6172251D0F548B006C1148 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6EE6058A1CC21941008EF0EE /* Project object */;
@@ -175,13 +166,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 6EF45F8F1CC6CAF9001F7A39;
 			remoteInfo = "CoreLock iOS";
-		};
-		6EDCE1F11D0F34A300C3D3DC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6EE6058A1CC21941008EF0EE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 6EDCE1E51D0F34A200C3D3DC;
-			remoteInfo = CerraduraTodayExtension;
 		};
 		6EE605C41CC21C81008EF0EE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -240,18 +224,6 @@
 				6ED3386E1CC7D1EE00DF1461 /* CoreLock.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		6EDCE1F71D0F34A300C3D3DC /* Embed App Extensions */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 13;
-			files = (
-				6E0429E21D0FA3AA005AF969 /* CerraduraSpotlightIndex.appex in Embed App Extensions */,
-				6EDCE1F31D0F34A300C3D3DC /* CerraduraToday Extension.appex in Embed App Extensions */,
-			);
-			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		6EE605CB1CC21C81008EF0EE /* Embed Frameworks */ = {
@@ -834,15 +806,12 @@
 				6ED3386C1CC7D1DA00DF1461 /* Copy Frameworks */,
 				6ED338711CC7D1EE00DF1461 /* Embed Frameworks */,
 				6E778DB91CD5B70300AED11E /* Embed Watch Content */,
-				6EDCE1F71D0F34A300C3D3DC /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				6ED338701CC7D1EE00DF1461 /* PBXTargetDependency */,
 				6E778DB01CD5B70300AED11E /* PBXTargetDependency */,
-				6EDCE1F21D0F34A300C3D3DC /* PBXTargetDependency */,
-				6E0429E11D0FA3AA005AF969 /* PBXTargetDependency */,
 			);
 			name = Cerradura;
 			productName = Cerradura;
@@ -1226,11 +1195,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		6E0429E11D0FA3AA005AF969 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 6E0429DA1D0FA3AA005AF969 /* CerraduraSpotlightIndex */;
-			targetProxy = 6E0429E01D0FA3AA005AF969 /* PBXContainerItemProxy */;
-		};
 		6E6172261D0F548B006C1148 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 6EF45F8F1CC6CAF9001F7A39 /* CoreLock iOS */;
@@ -1260,11 +1224,6 @@
 			isa = PBXTargetDependency;
 			target = 6EF45F8F1CC6CAF9001F7A39 /* CoreLock iOS */;
 			targetProxy = 6ED3386F1CC7D1EE00DF1461 /* PBXContainerItemProxy */;
-		};
-		6EDCE1F21D0F34A300C3D3DC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 6EDCE1E51D0F34A200C3D3DC /* CerraduraToday Extension */;
-			targetProxy = 6EDCE1F11D0F34A300C3D3DC /* PBXContainerItemProxy */;
 		};
 		6EE605C51CC21C81008EF0EE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1601,7 +1560,6 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = $SRCROOT/../Carthage/Build/iOS;
 				INFOPLIST_FILE = Cerradura/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.colemancda.Cerradura;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1621,7 +1579,6 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = $SRCROOT/../Carthage/Build/iOS;
 				INFOPLIST_FILE = Cerradura/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.colemancda.Cerradura;
 				PRODUCT_NAME = "$(TARGET_NAME)";

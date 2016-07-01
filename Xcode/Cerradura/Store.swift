@@ -34,7 +34,7 @@ final class Store {
     }
     
     /// Remove the specified key / lock pair from the database, along with its cached info.
-    func remove(_ UUID: SwiftFoundation.UUID) {
+    func remove(_ UUID: UUID) {
         
         // remove from CoreData
         let entity = managedObjectContext.persistentStoreCoordinator!.managedObjectModel.entitiesByName[LockCache.entityName]!
@@ -51,14 +51,14 @@ final class Store {
     }
     
     /// Get the key data and cached lock info for the specified lock.
-    subscript (UUID: SwiftFoundation.UUID) -> Lock? {
+    subscript (UUID: UUID) -> Lock? {
         
         get {
             
             let entity = managedObjectContext.persistentStoreCoordinator!.managedObjectModel.entitiesByName[LockCache.entityName]!
             
             guard let keyData = try! keychain.getData(key: UUID.rawValue),
-                let key = KeyData(data: Data(foundation: keyData)),
+                let key = KeyData(data: keyData),
                 let managedObject = try! managedObjectContext.find(entity: entity, resourceID: UUID.rawValue, identifierProperty: LockCache.Property.identifier.rawValue)
                 else { return nil }
             
@@ -76,20 +76,20 @@ final class Store {
             
             let _ = try! lockCache.save(context: managedObjectContext)
             
-            try! keychain.set(value: lock.key.data.data.toFoundation(), key: UUID.rawValue)
+            try! keychain.set(value: lock.key.data.data, key: UUID.rawValue)
         }
     }
     
     /// Subscript to get key.
-    subscript (key UUID:  SwiftFoundation.UUID) -> KeyData? {
+    subscript (key UUID:  UUID) -> KeyData? {
         
         guard let data = try! keychain.getData(key: UUID.rawValue)
             else { return nil }
         
-        return KeyData(data: Data(foundation: data))
+        return KeyData(data: data as Data)
     }
     
-    subscript (cache UUID: SwiftFoundation.UUID) -> LockCache? {
+    subscript (cache UUID: UUID) -> LockCache? {
         
         let entity = managedObjectContext.persistentStoreCoordinator!.managedObjectModel.entitiesByName[LockCache.entityName]!
         
@@ -106,17 +106,17 @@ final class Store {
         
         let entity = managedObjectContext.persistentStoreCoordinator!.managedObjectModel.entitiesByName[LockCache.entityName]!
         
-        let fetchRequest = NSFetchRequest(entityName: entity.name!)
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: entity.name!)
         
         fetchRequest.includesSubentities = false
         
         fetchRequest.returnsObjectsAsFaults = false
         
-        fetchRequest.sortDescriptors = [NSSortDescriptor.init(key: LockCache.Property.identifier.rawValue, ascending: true)]
+        fetchRequest.sortDescriptors = [SortDescriptor.init(key: LockCache.Property.identifier.rawValue, ascending: true)]
         
         var cache: [LockCache]!
         
-        NSOperationQueue.main().addOperations([NSBlockOperation(block: {
+        OperationQueue.main().addOperations([NSBlockOperation(block: {
             
             cache = try! self.managedObjectContext.fetch(fetchRequest)
             
@@ -201,11 +201,11 @@ func RemovePersistentStore() throws {
     
     let url = SQLiteStoreFileURL
     
-    if NSFileManager.default().fileExists(atPath: url.path!) {
+    if FileManager.default().fileExists(atPath: url.path!) {
         
         // delete file
         
-        try NSFileManager.default().removeItem(at: url)
+        try FileManager.default().removeItem(at: url)
     }
     
     if let store = PersistentStore {
@@ -219,12 +219,12 @@ func RemovePersistentStore() throws {
     }
 }
 
-let SQLiteStoreFileURL: NSURL = {
+let SQLiteStoreFileURL: URL = {
     
-    guard let cacheURL = NSFileManager.default().containerURLForSecurityApplicationGroupIdentifier(AppGroup)
+    guard let cacheURL = FileManager.default().containerURLForSecurityApplicationGroupIdentifier(AppGroup)
         else { fatalError("Could not get URL for Core Data cache: App Group Error") }
     
-    let fileURL = cacheURL.appendingPathComponent("cache.sqlite")
+    let fileURL = try! cacheURL.appendingPathComponent("cache.sqlite")
     
     return fileURL
 }()

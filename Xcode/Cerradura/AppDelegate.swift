@@ -114,7 +114,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                 else { return false }
             
             guard let identifierString = userActivity.userInfo?[CSSearchableItemActivityIdentifier] as? String,
-                let identifier = SwiftFoundation.UUID(rawValue: identifierString)
+                let identifier = UUID(rawValue: identifierString)
                 else { return false }
             
             guard let lock = Store.shared[identifier]
