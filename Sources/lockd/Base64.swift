@@ -21,13 +21,13 @@ public struct Base64 {
     
     static public func decode(_ data: Data) -> Data {
         
-        guard data.byteValue.count > 0 else { return data }
+        guard data.bytes.count > 0 else { return data }
         
         var decodeState = base64_decodestate()
         
         base64_init_decodestate(&decodeState)
         
-        let inputCharArray: [CChar] = data.byteValue.map { (element: Byte) -> CChar in return CChar(element) }
+        let inputCharArray: [CChar] = data.bytes.map { (element: Byte) -> CChar in return CChar(element) }
         
         // http://stackoverflow.com/questions/13378815/base64-length-calculation
         let outputBufferSize = ((inputCharArray.count * 3) / 4)

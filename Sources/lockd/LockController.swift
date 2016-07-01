@@ -144,7 +144,7 @@ final class LockController {
         peripheral[characteristic: LockService.Status.UUID] = LockService.Status(value: self.status).toBigEndian()
     }
     
-    private func willRead(central: Central, UUID: Bluetooth.UUID, value: Data, offset: Int) -> Bluetooth.ATT.Error? {
+    private func willRead(central: Central, UUID: BluetoothUUID, value: Data, offset: Int) -> Bluetooth.ATT.Error? {
         
         switch UUID {
             
@@ -156,7 +156,7 @@ final class LockController {
         }
     }
     
-    private func willWrite(central: Central, UUID: Bluetooth.UUID, value: Data, newValue: Data) -> Bluetooth.ATT.Error? {
+    private func willWrite(central: Central, UUID: BluetoothUUID, value: Data, newValue: Data) -> Bluetooth.ATT.Error? {
         
         switch UUID {
             
@@ -259,7 +259,7 @@ final class LockController {
         return nil
     }
     
-    private func didWrite(central: Central, UUID: Bluetooth.UUID, value: SwiftFoundation.Data, newValue: SwiftFoundation.Data){
+    private func didWrite(central: Central, UUID: BluetoothUUID, value: SwiftFoundation.Data, newValue: SwiftFoundation.Data){
         
         switch UUID {
             

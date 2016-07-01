@@ -47,7 +47,7 @@ public enum Permission: Equatable {
             
         case let .scheduled(schedule):
             
-            var expiryBigEndianValue = Int64(schedule.expiry.since1970).bigEndian
+            var expiryBigEndianValue = Int64(schedule.expiry.timeIntervalSince1970).bigEndian
             
             var expiryBytes = [UInt8](repeating: 0, count: sizeof(Int64))
             
@@ -57,13 +57,13 @@ public enum Permission: Equatable {
             
             let endBytes = schedule.interval.rawValue.upperBound.bigEndian.bytes
             
-            let weekdaysBytes = schedule.weekdays.toData().byteValue
+            let weekdaysBytes = schedule.weekdays.toData().bytes
             
             let bytes = [self.type.rawValue] + expiryBytes + [startBytes.0, startBytes.1, endBytes.0, endBytes.1] + weekdaysBytes
             
             assert(bytes.count == self.dynamicType.length)
             
-            return Data(byteValue: bytes)
+            return Data(bytes: bytes)
         
         case .owner, .admin, .anytime:
             
@@ -71,16 +71,16 @@ public enum Permission: Equatable {
             
             bytes[0] = self.type.rawValue
             
-            return Data(byteValue: bytes)
+            return Data(bytes: bytes)
         }
     }
     
     public init?(bigEndian: Data) {
         
-        guard bigEndian.byteValue.count == Permission.length
+        guard bigEndian.bytes.count == Permission.length
             else { return nil }
         
-        let byteValue = bigEndian.byteValue
+        let byteValue = bigEndian.bytes
         
         let permissionTypeByte = byteValue[0]
         
@@ -114,10 +114,10 @@ public enum Permission: Equatable {
             
             let weekdaysBytes = Array(byteValue[sizeof(Int64) + 5 ..< sizeof(Int64) + 5 + Schedule.Weekdays.length])
             
-            guard let weekdays = Schedule.Weekdays(data: Data(byteValue: weekdaysBytes))
+            guard let weekdays = Schedule.Weekdays(data: Data(bytes: weekdaysBytes))
                 else { return nil }
             
-            let schedule = Schedule(expiry: Date(since1970: TimeInterval(dateValue)), interval: interval, weekdays: weekdays)
+            let schedule = Schedule(expiry: Date(timeIntervalSince1970: TimeInterval(dateValue)), interval: interval, weekdays: weekdays)
             
             self = .scheduled(schedule)
             
@@ -296,16 +296,16 @@ public extension Permission.Schedule {
         
         public init?(data: Data) {
             
-            guard data.byteValue.count == Weekdays.length
+            guard data.bytes.count == Weekdays.length
                 else { return nil }
             
-            guard let sunday = BluetoothBool(rawValue: data.byteValue[0])?.boolValue,
-                let monday = BluetoothBool(rawValue: data.byteValue[1])?.boolValue,
-                let tuesday = BluetoothBool(rawValue: data.byteValue[2])?.boolValue,
-                let wednesday = BluetoothBool(rawValue: data.byteValue[3])?.boolValue,
-                let thursday = BluetoothBool(rawValue: data.byteValue[4])?.boolValue,
-                let friday = BluetoothBool(rawValue: data.byteValue[5])?.boolValue,
-                let saturday = BluetoothBool(rawValue: data.byteValue[6])?.boolValue
+            guard let sunday = BluetoothBool(rawValue: data.bytes[0])?.boolValue,
+                let monday = BluetoothBool(rawValue: data.bytes[1])?.boolValue,
+                let tuesday = BluetoothBool(rawValue: data.bytes[2])?.boolValue,
+                let wednesday = BluetoothBool(rawValue: data.bytes[3])?.boolValue,
+                let thursday = BluetoothBool(rawValue: data.bytes[4])?.boolValue,
+                let friday = BluetoothBool(rawValue: data.bytes[5])?.boolValue,
+                let saturday = BluetoothBool(rawValue: data.bytes[6])?.boolValue
                 else { return nil }
             
             self.sunday = sunday
@@ -329,7 +329,7 @@ public extension Permission.Schedule {
             bytes[5] = BluetoothBool(friday).rawValue
             bytes[6] = BluetoothBool(saturday).rawValue
             
-            return Data(byteValue: bytes)
+            return Data(bytes: bytes)
         }
     }
 }

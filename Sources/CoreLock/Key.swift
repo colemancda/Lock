@@ -54,7 +54,7 @@ public extension Key {
         public init?(data: Data) {
             
             guard let string = String(UTF8Data: data)
-                where data.byteValue.count == Name.maxLength
+                where data.bytes.count == Name.maxLength
                 else { return nil }
             
             self.rawValue = string

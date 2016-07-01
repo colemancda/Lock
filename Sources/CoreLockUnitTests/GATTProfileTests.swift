@@ -30,7 +30,7 @@ final class GATTProfileTests: XCTestCase {
             XCTAssert(characteristic.toBigEndian() != UUID.toData(),
                       "Serialized data should not be the same on little endian machines")
             
-            XCTAssert(characteristic.toBigEndian() == Data(byteValue: UUID.toData().byteValue.reversed()),
+            XCTAssert(characteristic.toBigEndian() == Data(bytes: UUID.toData().bytes.reversed()),
                       "Serialized data should not be the same on little endian machines")
         }
         
@@ -43,7 +43,7 @@ final class GATTProfileTests: XCTestCase {
             XCTAssert(LockService.Identifier.init(bigEndian: UUID.toData())?.value != UUID)
             
             /// correct data on little endian
-            let correctedData = Data(byteValue: UUID.toData().byteValue.reversed())
+            let correctedData = Data(bytes: UUID.toData().bytes.reversed())
             
             XCTAssert(LockService.Identifier.init(bigEndian: correctedData)?.value == UUID)
         }

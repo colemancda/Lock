@@ -38,7 +38,7 @@ public struct KeyData: SecureData {
     
     public init?(data: Data) {
         
-        guard data.byteValue.count == self.dynamicType.length
+        guard data.bytes.count == self.dynamicType.length
             else { return nil }
         
         self.data = data
@@ -60,7 +60,7 @@ public struct Nonce: SecureData {
     
     public init?(data: Data) {
         
-        guard data.byteValue.count == self.dynamicType.length
+        guard data.bytes.count == self.dynamicType.length
             else { return nil }
         
         self.data = data
@@ -80,7 +80,7 @@ public struct InitializationVector: SecureData {
     
     public init?(data: Data) {
         
-        guard data.byteValue.count == self.dynamicType.length
+        guard data.bytes.count == self.dynamicType.length
             else { return nil }
         
         self.data = data

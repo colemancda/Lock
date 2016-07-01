@@ -61,7 +61,7 @@ final class CryptoTests: XCTestCase {
         
         let (encryptedData, iv) = encrypt(key: salt.data, data: key.data)
         
-        print("Encrypted key is \(encryptedData.byteValue.count) bytes")
+        print("Encrypted key is \(encrypteddata.bytes.count) bytes")
         
         let decryptedData = decrypt(key: salt.data, iv: iv, data: encryptedData)
         
@@ -74,11 +74,11 @@ final class CryptoTests: XCTestCase {
         
         let sharedSecret = SharedSecret()
         
-        print("Shared Secret: \(sharedSecret.toData().byteValue)")
+        print("Shared Secret: \(sharedSecret.toData().bytes)")
         
         let (encryptedData, iv) = encrypt(key: parentKey.data, data: sharedSecret.toData())
         
-        print("Encrypted shared secret is \(encryptedData.byteValue.count) bytes")
+        print("Encrypted shared secret is \(encrypteddata.bytes.count) bytes")
         
         let decryptedData = decrypt(key: parentKey.data, iv: iv, data: encryptedData)
         
@@ -95,7 +95,7 @@ final class CryptoTests: XCTestCase {
         
         let (encryptedData, iv) = encrypt(key: sharedSecretKey.data, data: childKey.data)
         
-        print("Encrypted Child Key (4 repetitions) is \(encryptedData.byteValue.count) bytes")
+        print("Encrypted Child Key (4 repetitions) is \(encrypteddata.bytes.count) bytes")
         
         let decryptedData = decrypt(key: sharedSecretKey.data, iv: iv, data: encryptedData)
         

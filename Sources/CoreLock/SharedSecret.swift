@@ -35,17 +35,17 @@ public struct SharedSecret: DataConvertible, Equatable, CustomStringConvertible 
     
     public init?(data: Data) {
         
-        guard data.byteValue.count == SharedSecret.length
+        guard data.bytes.count == SharedSecret.length
             else { return nil }
         
-        guard let d1 = Digit(rawValue: data.byteValue[0]),
-            let d2 = Digit(rawValue: data.byteValue[1]),
-            let d3 = Digit(rawValue: data.byteValue[2]),
-            let d4 = Digit(rawValue: data.byteValue[3]),
-            let d5 = Digit(rawValue: data.byteValue[4]),
-            let d6 = Digit(rawValue: data.byteValue[5]),
-            let d7 = Digit(rawValue: data.byteValue[6]),
-            let d8 = Digit(rawValue: data.byteValue[7])
+        guard let d1 = Digit(rawValue: data.bytes[0]),
+            let d2 = Digit(rawValue: data.bytes[1]),
+            let d3 = Digit(rawValue: data.bytes[2]),
+            let d4 = Digit(rawValue: data.bytes[3]),
+            let d5 = Digit(rawValue: data.bytes[4]),
+            let d6 = Digit(rawValue: data.bytes[5]),
+            let d7 = Digit(rawValue: data.bytes[6]),
+            let d8 = Digit(rawValue: data.bytes[7])
             else { return nil }
         
         self.value = (d1, d2, d3, d4, d5, d6, d7, d8)
@@ -53,7 +53,7 @@ public struct SharedSecret: DataConvertible, Equatable, CustomStringConvertible 
     
     public func toData() -> Data {
         
-        return Data(byteValue: [value.0.rawValue,
+        return Data(bytes: [value.0.rawValue,
                                 value.1.rawValue,
                                 value.2.rawValue,
                                 value.3.rawValue,
@@ -171,7 +171,7 @@ public extension SharedSecret {
     
     public init?(keyData: KeyData) {
         
-        let bytes = keyData.data.byteValue
+        let bytes = keyData.data.bytes
         
         func sharedSecretBytes(_ index: Int) -> [UInt8] {
             
@@ -180,7 +180,7 @@ public extension SharedSecret {
         
         let secretBytes = sharedSecretBytes(0)
         
-        guard let sharedSecret = SharedSecret(data: Data(byteValue: secretBytes))
+        guard let sharedSecret = SharedSecret(data: Data(bytes: secretBytes))
             else { return nil }
         
         // 4 repetitions of same value
@@ -194,11 +194,11 @@ public extension SharedSecret {
     
     public func toKeyData() -> KeyData {
         
-        let secretBytes = self.toData().byteValue
+        let secretBytes = self.toData().bytes
         
         // 4 repetitions of same value
         let keyBytes = secretBytes + secretBytes + secretBytes + secretBytes
         
-        return KeyData(data: Data(byteValue: keyBytes))!
+        return KeyData(data: Data(bytes: keyBytes))!
     }
 }

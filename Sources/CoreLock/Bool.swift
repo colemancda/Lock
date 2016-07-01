@@ -52,14 +52,14 @@ extension BluetoothBool: DataConvertible {
     
     public init?(data: Data) {
         
-        guard data.byteValue.count == 1
+        guard data.bytes.count == 1
             else { return nil }
         
-        self.init(rawValue: data.byteValue[0])
+        self.init(rawValue: data.bytes[0])
     }
     
     public func toData() -> Data {
         
-        return Data(byteValue: [rawValue])
+        return Data(bytes: [rawValue])
     }
 }

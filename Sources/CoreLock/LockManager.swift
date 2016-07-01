@@ -36,7 +36,7 @@
         
         public let foundLocks: Observable<[Lock]> = Observable([])
         
-        public lazy var state: Observable<CBCentralManagerState> = Observable(self.internalManager.state)
+        public lazy var state: Observable<CBManagerState> = Observable(self.internalManager.state)
         
         // MARK: - Private Properties
         
@@ -234,7 +234,7 @@
         // MARK: - Private Methods
         
         /// Connects to the lock, fetches the data, and performs the action, and disconnects.
-        private func lockAction<T>(peripheral: Peripheral, characteristics: [Bluetooth.UUID], action: () throws -> (T)) throws -> T {
+        private func lockAction<T>(peripheral: Peripheral, characteristics: [BluetoothUUID], action: () throws -> (T)) throws -> T {
             
             // connect first
             try internalManager.connect(to: peripheral, timeout: connectionTimeout)
@@ -329,8 +329,8 @@
         case NoLock
         case InvalidStatus(Status)
         case InvalidSharedSecret
-        case CharacteristicNotFound(Bluetooth.UUID)
-        case InvalidCharacteristicValue(Bluetooth.UUID)
+        case CharacteristicNotFound(BluetoothUUID)
+        case InvalidCharacteristicValue(BluetoothUUID)
         case LockServiceNotFound
     }
     
