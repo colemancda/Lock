@@ -43,7 +43,7 @@ final class LockController {
     
     private var resetSwitchLastFallDate = Date()
     
-    private var resetThread: Thread?
+    private var resetThread: SwiftFoundation.Thread?
     
     // MARK: - Intialization
     
@@ -83,7 +83,7 @@ final class LockController {
         AppLED.value = 1
         
         // listen to reset switch
-        ResetSwitch.onRaising(resetSwitch)
+        ResetSwitch.onChange(resetSwitch)
         
         // start GATT server
         
@@ -126,9 +126,9 @@ final class LockController {
         
         let unlock = Characteristic(UUID: LockService.Unlock.UUID, permissions: [.Write], properties: [.Write])
         
-        let newKeyParent = Characteristic(UUID: LockService.NewKeyParentSharedSecret.UUID, permissions: [.Write], properties: [.Write])
+        let newKeyParent = Characteristic(UUID: LockService.NewKeyParent.UUID, permissions: [.Write], properties: [.Write])
         
-        let newKeyChild = Characteristic(UUID: LockService.NewKeyChildSharedSecret.UUID, value: Data(), permissions: [.Read], properties: [.Read])
+        let newKeyChild = Characteristic(UUID: LockService.NewKeyChild.UUID, value: Data(), permissions: [.Read], properties: [.Read])
         
         let newKeyFinish = Characteristic(UUID: LockService.NewKeyFinish.UUID, value: Data(), permissions: [.Write], properties: [.Write])
         
@@ -148,7 +148,7 @@ final class LockController {
         
         switch UUID {
             
-        case LockService.NewKeyChildSharedSecret.UUID:
+        case LockService.NewKeyChild.UUID:
             
             return nil
             
@@ -212,13 +212,13 @@ final class LockController {
             
             print("Unlocked by central \(central.identifier)")
             
-        case LockService.NewKeyParentSharedSecret.UUID:
+        case LockService.NewKeyParent.UUID:
             
             guard status == .unlock
                 else { return ATT.Error.WriteNotPermitted }
             
             // deserialize
-            guard let newKeyParent = LockService.NewKeyParentSharedSecret.init(bigEndian: newValue)
+            guard let newKeyParent = LockService.NewKeyParent.init(bigEndian: newValue)
                 else { return ATT.Error.InvalidAttributeValueLength }
             
             var authenticatedKey: Key!
@@ -285,11 +285,11 @@ final class LockController {
             
             assert(status != .setup)
             
-        case LockService.NewKeyParentSharedSecret.UUID:
+        case LockService.NewKeyParent.UUID:
             
             assert(status == .unlock)
             
-            let newKeyParent = LockService.NewKeyParentSharedSecret.init(bigEndian: newValue)!
+            let newKeyParent = LockService.NewKeyParent.init(bigEndian: newValue)!
             
             var authenticatedKey: Key!
             
@@ -312,9 +312,9 @@ final class LockController {
             self.newKey = newKey
             
             // new child value
-            let newKeyChild = LockService.NewKeyChildSharedSecret(sharedSecret: sharedSecret, newKey: newKey)
+            let newKeyChild = LockService.NewKeyChild(sharedSecret: sharedSecret, newKey: newKey)
             
-            peripheral[characteristic: LockService.NewKeyChildSharedSecret.UUID] = newKeyChild.toBigEndian()
+            peripheral[characteristic: LockService.NewKeyChild.UUID] = newKeyChild.toBigEndian()
             
         case LockService.NewKeyFinish.UUID:
             
@@ -348,45 +348,26 @@ final class LockController {
     
     // MARK: GPIO
     
-    private func resetSwitch(gpio: GPIO) {
+    private func resetSwitch(_ gpio: GPIO) {
         
-        assert(gpio === ResetSwitch)
+        // reset DB
         
-        resetSwitchLastFallDate = Date()
+        print("Resetting...")
         
-        if resetThread == nil {
-            
-            // create the reset checking thread
-            resetThread = try! Thread { [weak self] in
-                
-                while self != nil {
-                    
-                    let controller = self!
-                    
-                    guard Date() - controller.resetSwitchLastFallDate < 10 else {
-                        
-                        ResetSwitch.clearListeners()
-                        
-                        // reset DB
-                        
-                        print("Resetting...")
-                        
-                        AppLED.value = 0
-                        
-                        // reset config
-                        let newConfiguration = Configuration()
-                        try! newConfiguration.save(File.configuration)
-                        
-                        // clear store
-                        controller.store.clear()
-                        
-                        // reboot
-                        system("reboot")
-                        
-                        return
-                    }
-                }
-            }
-        }
+        AppLED.value = 0
+        
+        // reset config
+        let newConfiguration = Configuration()
+        try! newConfiguration.save(File.configuration)
+        
+        // clear store
+        self.store.clear()
+        
+        // reboot
+        #if os(Linux)
+        system("reboot")
+        #endif
+        
+        return
     }
 }

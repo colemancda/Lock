@@ -114,7 +114,7 @@ extension Store {
                 let keyData = KeyData(data: keyBytes)
                 else { return nil }
             
-            self.date = Date(since1970: date)
+            self.date = Date(timeIntervalSince1970: date)
             self.key = CoreLock.Key(data: keyData, permission: permission)
         }
         
@@ -122,7 +122,7 @@ extension Store {
             
             var JSONObject = JSON.Object(minimumCapacity: 3)
             
-            JSONObject[JSONKey.date.rawValue] = .Number(.Double(date.since1970))
+            JSONObject[JSONKey.date.rawValue] = .Number(.Double(date.timeIntervalSince1970))
             
             guard let encodedKeyData = String(UTF8Data: SwiftFoundation.Base64.encode(data: key.data.data))
                 else { fatalError("Could not encode KeyData to Base64") }

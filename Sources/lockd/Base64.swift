@@ -38,7 +38,7 @@ public struct Base64 {
         
         let outputBufferCount = base64_decode_block(inputCharArray, CInt(inputCharArray.count), outputBuffer, &decodeState)
         
-        let outputBytes = Data.from(pointer: outputBuffer, length: Int(outputBufferCount))
+        let outputBytes = Data(bytes: UnsafePointer<UInt8>(outputBuffer), count: Int(outputBufferCount))
         
         return outputBytes
     }
