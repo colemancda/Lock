@@ -138,7 +138,7 @@
         // MARK: Lock Actions
         
         /// Setup the connected lock.
-        public func setup(_ identifier: SwiftFoundation.UUID) throws -> Key {
+        public func setup(_ identifier: UUID) throws -> Key {
             
             guard let lock = self[identifier]
                 else { throw Error.NoLock }
@@ -171,7 +171,7 @@
         }
         
         /// Unlock the connected lock
-        public func unlock(_ identifier: SwiftFoundation.UUID, key: Key) throws {
+        public func unlock(_ identifier: UUID, key: Key) throws {
             
             guard let lock = self[identifier]
                 else { throw Error.NoLock }
@@ -186,7 +186,7 @@
             }
         }
         
-        public func createNewKey(_ identifier: SwiftFoundation.UUID, permission: Permission, parentKey: (SwiftFoundation.UUID, KeyData), sharedSecret: SharedSecret) throws {
+        public func createNewKey(_ identifier: UUID, permission: Permission, parentKey: (UUID, KeyData), sharedSecret: SharedSecret) throws {
             
             assert(permission != .owner, "Cannot create owner keys")
             
@@ -205,7 +205,7 @@
             }
         }
         
-        public func recieveNewKey(_ identifier: SwiftFoundation.UUID, sharedSecret: SharedSecret, name: Key.Name) throws -> Key {
+        public func recieveNewKey(_ identifier: UUID, sharedSecret: SharedSecret, name: Key.Name) throws -> Key {
             
             guard let lock = self[identifier]
                 else { throw Error.NoLock }
