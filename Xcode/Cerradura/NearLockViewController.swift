@@ -32,6 +32,8 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
     
     private var locksObserver: Int!
     
+    private var scanningObserver: Int!
+    
     // MARK: - Loading
     
     deinit {
@@ -39,14 +41,19 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
         // stop observing state
         LockManager.shared.state.remove(observer: stateObserver)
         LockManager.shared.foundLocks.remove(observer: locksObserver)
+        LockManager.shared.scanning.remove(observer: scanningObserver)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // setup table view
+        tableView.register(LockTableViewCell.nib, forCellReuseIdentifier: LockTableViewCell.reuseIdentifier)
+        
         // start observing state
         stateObserver = LockManager.shared.state.observe(stateChanged)
         locksObserver = LockManager.shared.foundLocks.observe(foundLocks)
+        scanningObserver = LockManager.shared.scanning.observe(scanningStateChanged)
         
         // start scanning
         scan()
@@ -74,7 +81,6 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
     }
     
     @IBAction func emptyTableViewAction(_ sender: UIButton) {
-        
         
     }
     
@@ -123,6 +129,98 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
         }
     }
     
+    private func configure(cell: LockTableViewCell, at indexPath: IndexPath) {
+        
+        guard case let .found(locks) = self.state else { fatalError("No locks found") }
+        
+        let lock = locks[indexPath.row]
+        
+        let cellImage: (UIImage, UIImage)
+        
+        let cellTitle: String
+        
+        let cellDetail: String
+        
+        let enabled: Bool
+        
+        switch lock.status {
+            
+        case .setup:
+            
+            enabled = true
+            
+            cellImage = (#imageLiteral(resourceName: "setupLock"), #imageLiteral(resourceName: "setupLockSelected"))
+            
+            cellTitle = "New Lock"
+            
+            cellDetail = lock.UUID.rawValue
+            
+        case .unlock:
+            
+            cellImage = (#imageLiteral(resourceName: "unlockButton"), #imageLiteral(resourceName: "unlockButtonSelected"))
+            
+            if let key = Store.shared[lock.UUID] {
+                
+                enabled = true
+                
+                cellTitle = key.name
+                
+                let permission = key.key.permission
+                
+                switch permission {
+                    
+                case .owner: cellDetail = "Owner"
+                    
+                case .admin: cellDetail = "Admin"
+                    
+                case .anytime: cellDetail = "Anytime"
+                    
+                case .scheduled: cellDetail = "Scheduled" // FIXME: detailed schedule description
+                }
+                
+            } else {
+                
+                enabled = false
+                
+                cellTitle = "Unknown lock"
+                
+                cellDetail = lock.UUID.rawValue
+            }
+            
+        case .newKey:
+            
+            enabled = true
+            
+            cellImage = (#imageLiteral(resourceName: "setupKey"), #imageLiteral(resourceName: "setupKeySelected"))
+            
+            cellTitle = "New Key"
+            
+            cellDetail = lock.UUID.rawValue
+        }
+        
+        // configure cell
+    
+        cell.lockTitleLabel.text = cellTitle
+        
+        cell.lockDetailLabel.text = cellDetail
+        
+        cell.lockImageView.image = cellImage.0
+        
+        cell.lockImageView.highlightedImage = cellImage.1
+        
+        cell.isUserInteractionEnabled = enabled
+        
+        cell.lockTitleLabel.isEnabled = enabled
+        
+        cell.lockDetailLabel.isEnabled = enabled
+        
+        cell.lockImageView.alpha = enabled ? 1.0 : 0.6
+        
+        cell.selectionStyle = enabled ? .default : .none
+    }
+    
+    // MARK: Lock Manager Notifications
+    
     private func stateChanged(managerState: CBManagerState) {
         
         mainQueue {
@@ -141,12 +239,14 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
         }
     }
     
+    private func scanningStateChanged(value: Bool) {
+        
+        mainQueue { self.state  = .scanning }
+    }
+    
     private func foundLocks(locks: [LockManager.Lock]) {
         
-        mainQueue {
-            
-            self.state = .found(locks)
-        }
+        mainQueue { self.state = .found(locks) }
     }
     
     // MARK: - UITableViewDataSource
@@ -167,7 +267,9 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: <#T##String#>, for: <#T##IndexPath#>)
+        let cell = tableView.dequeueReusableCell(withIdentifier: LockTableViewCell.reuseIdentifier, for: indexPath)
+        
+        return cell
     }
 }
 

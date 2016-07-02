@@ -10,11 +10,17 @@ import UIKit
 
 final class LockTableViewCell: UITableViewCell {
     
+    // MARK: - Class Properties
+    
     static let reuseIdentifier = "LockTableViewCell"
     
-    @IBOutlet weak var permissionImageView: UIImageView!
+    static let nib = UINib(nibName: "LockTableViewCell", bundle: nil)
     
-    @IBOutlet weak var lockNameLabel: UILabel!
+    // MARK: - IB Outlets
     
-    @IBOutlet weak var permissionLabel: UILabel!
+    @IBOutlet weak var lockImageView: UIImageView!
+    
+    @IBOutlet weak var lockTitleLabel: UILabel!
+    
+    @IBOutlet weak var lockDetailLabel: UILabel!
 }

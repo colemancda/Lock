@@ -40,70 +40,6 @@
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="68" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="ena-5w-k3W">
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <prototypes>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="LockTableViewCell" rowHeight="68" id="JQc-OU-q8K" customClass="KeyTableViewCell" customModule="Cerradura" customModuleProvider="target">
-                                        <frame key="frameInset" minY="92" width="375" height="68"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="JQc-OU-q8K" id="p2s-pj-SzR">
-                                            <frame key="frameInset" width="375" height="67"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Anytime" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nS8-7K-MM2">
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <color key="textColor" red="0.66666666666666663" green="0.66666666666666663" blue="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YX8-oB-bWY">
-                                                    <subviews>
-                                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="permissionBadgeOwner" translatesAutoresizingMaskIntoConstraints="NO" id="81i-Gg-ppk">
-                                                            <constraints>
-                                                                <constraint firstAttribute="width" constant="51" id="tsY-ma-zjw"/>
-                                                            </constraints>
-                                                        </imageView>
-                                                    </subviews>
-                                                    <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="bottom" secondItem="81i-Gg-ppk" secondAttribute="bottom" id="L6J-aJ-Ary"/>
-                                                        <constraint firstAttribute="width" secondItem="YX8-oB-bWY" secondAttribute="height" multiplier="1:1" id="UiC-nb-fZ9"/>
-                                                        <constraint firstAttribute="trailing" secondItem="81i-Gg-ppk" secondAttribute="trailing" id="ZCH-jj-NvP"/>
-                                                        <constraint firstItem="81i-Gg-ppk" firstAttribute="leading" secondItem="YX8-oB-bWY" secondAttribute="leading" id="Zkk-17-Y4Y"/>
-                                                        <constraint firstItem="81i-Gg-ppk" firstAttribute="top" secondItem="YX8-oB-bWY" secondAttribute="top" id="leS-du-Rzf"/>
-                                                    </constraints>
-                                                </view>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Lock Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zAQ-Zf-tDo" userLabel="Lock Name Label">
-                                                    <fontDescription key="fontDescription" type="system" pointSize="19"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="zAQ-Zf-tDo" firstAttribute="leading" secondItem="YX8-oB-bWY" secondAttribute="trailing" constant="8" id="Afv-vO-CJA"/>
-                                                <constraint firstItem="nS8-7K-MM2" firstAttribute="leading" secondItem="YX8-oB-bWY" secondAttribute="trailing" constant="20" id="CbL-HR-yLt"/>
-                                                <constraint firstItem="YX8-oB-bWY" firstAttribute="top" secondItem="p2s-pj-SzR" secondAttribute="topMargin" id="KyG-fC-4LH"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="zAQ-Zf-tDo" secondAttribute="trailing" id="NZf-EJ-GfP"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="nS8-7K-MM2" secondAttribute="trailing" id="Xmq-V0-M25"/>
-                                                <constraint firstItem="zAQ-Zf-tDo" firstAttribute="leading" secondItem="nS8-7K-MM2" secondAttribute="leading" id="Zva-IC-71R"/>
-                                                <constraint firstItem="zAQ-Zf-tDo" firstAttribute="top" secondItem="p2s-pj-SzR" secondAttribute="topMargin" id="g5a-52-QVh"/>
-                                                <constraint firstItem="zAQ-Zf-tDo" firstAttribute="trailing" secondItem="nS8-7K-MM2" secondAttribute="trailing" id="mn6-WR-uA7"/>
-                                                <constraint firstItem="nS8-7K-MM2" firstAttribute="top" secondItem="zAQ-Zf-tDo" secondAttribute="bottom" constant="8" id="ofs-C7-xhO"/>
-                                                <constraint firstAttribute="bottomMargin" secondItem="YX8-oB-bWY" secondAttribute="bottom" id="uAd-p1-pn2"/>
-                                                <constraint firstItem="YX8-oB-bWY" firstAttribute="leading" secondItem="p2s-pj-SzR" secondAttribute="leading" constant="8" id="wbo-D3-vJi"/>
-                                            </constraints>
-                                            <variation key="default">
-                                                <mask key="constraints">
-                                                    <exclude reference="CbL-HR-yLt"/>
-                                                    <exclude reference="Xmq-V0-M25"/>
-                                                </mask>
-                                            </variation>
-                                        </tableViewCellContentView>
-                                        <inset key="separatorInset" minX="67" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                        <connections>
-                                            <outlet property="lockNameLabel" destination="zAQ-Zf-tDo" id="4it-VQ-Vax"/>
-                                            <outlet property="permissionImageView" destination="81i-Gg-ppk" id="hhn-3X-oNN"/>
-                                            <outlet property="permissionLabel" destination="nS8-7K-MM2" id="FpM-hQ-Es5"/>
-                                        </connections>
-                                    </tableViewCell>
-                                </prototypes>
                                 <connections>
                                     <outlet property="dataSource" destination="LbF-bm-a4u" id="Xw3-Wh-swS"/>
                                     <outlet property="delegate" destination="LbF-bm-a4u" id="GP6-gc-tDy"/>
@@ -169,70 +105,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="LockTableViewCell" rowHeight="68" id="tkF-FB-gyM" customClass="KeyTableViewCell" customModule="Cerradura" customModuleProvider="target">
-                                <frame key="frameInset" minY="92" width="375" height="68"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="tkF-FB-gyM" id="6Kv-3L-Zag">
-                                    <frame key="frameInset" width="375" height="67"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Anytime" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZUh-k2-UdQ">
-                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                            <color key="textColor" red="0.66666666669999997" green="0.66666666669999997" blue="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="SRI-AQ-j2c">
-                                            <subviews>
-                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="permissionBadgeOwner" translatesAutoresizingMaskIntoConstraints="NO" id="gnL-0p-7B8">
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="51" id="vWl-MG-QWv"/>
-                                                    </constraints>
-                                                </imageView>
-                                            </subviews>
-                                            <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" secondItem="SRI-AQ-j2c" secondAttribute="height" multiplier="1:1" id="0Hd-Ib-AFw"/>
-                                                <constraint firstItem="gnL-0p-7B8" firstAttribute="top" secondItem="SRI-AQ-j2c" secondAttribute="top" id="OLV-Su-KJl"/>
-                                                <constraint firstAttribute="bottom" secondItem="gnL-0p-7B8" secondAttribute="bottom" id="aQ5-0d-YNc"/>
-                                                <constraint firstAttribute="trailing" secondItem="gnL-0p-7B8" secondAttribute="trailing" id="lLl-x0-hhv"/>
-                                                <constraint firstItem="gnL-0p-7B8" firstAttribute="leading" secondItem="SRI-AQ-j2c" secondAttribute="leading" id="mHr-i4-iMK"/>
-                                            </constraints>
-                                        </view>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Lock Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QQx-vw-yO8" userLabel="Lock Name Label">
-                                            <fontDescription key="fontDescription" type="system" pointSize="19"/>
-                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                    </subviews>
-                                    <constraints>
-                                        <constraint firstAttribute="trailingMargin" secondItem="QQx-vw-yO8" secondAttribute="trailing" id="2Xd-vJ-I08"/>
-                                        <constraint firstItem="ZUh-k2-UdQ" firstAttribute="leading" secondItem="SRI-AQ-j2c" secondAttribute="trailing" constant="20" id="CaK-l4-kL1"/>
-                                        <constraint firstItem="ZUh-k2-UdQ" firstAttribute="top" secondItem="QQx-vw-yO8" secondAttribute="bottom" constant="8" id="GM3-aL-PeL"/>
-                                        <constraint firstAttribute="bottomMargin" secondItem="SRI-AQ-j2c" secondAttribute="bottom" id="M0Y-90-k7P"/>
-                                        <constraint firstAttribute="trailingMargin" secondItem="ZUh-k2-UdQ" secondAttribute="trailing" id="OZO-qf-KZA"/>
-                                        <constraint firstItem="QQx-vw-yO8" firstAttribute="leading" secondItem="ZUh-k2-UdQ" secondAttribute="leading" id="Sa0-fW-1J9"/>
-                                        <constraint firstItem="QQx-vw-yO8" firstAttribute="top" secondItem="6Kv-3L-Zag" secondAttribute="topMargin" id="de1-xl-KMJ"/>
-                                        <constraint firstItem="SRI-AQ-j2c" firstAttribute="top" secondItem="6Kv-3L-Zag" secondAttribute="topMargin" id="dv5-Fk-hnM"/>
-                                        <constraint firstItem="SRI-AQ-j2c" firstAttribute="leading" secondItem="6Kv-3L-Zag" secondAttribute="leading" constant="8" id="qGe-MO-b92"/>
-                                        <constraint firstItem="QQx-vw-yO8" firstAttribute="leading" secondItem="SRI-AQ-j2c" secondAttribute="trailing" constant="8" id="qQN-hb-uDr"/>
-                                        <constraint firstItem="QQx-vw-yO8" firstAttribute="trailing" secondItem="ZUh-k2-UdQ" secondAttribute="trailing" id="vip-RK-hdq"/>
-                                    </constraints>
-                                    <variation key="default">
-                                        <mask key="constraints">
-                                            <exclude reference="CaK-l4-kL1"/>
-                                            <exclude reference="OZO-qf-KZA"/>
-                                        </mask>
-                                    </variation>
-                                </tableViewCellContentView>
-                                <inset key="separatorInset" minX="67" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                <connections>
-                                    <outlet property="lockNameLabel" destination="QQx-vw-yO8" id="eEL-sm-h02"/>
-                                    <outlet property="permissionImageView" destination="gnL-0p-7B8" id="WZq-EB-YjF"/>
-                                    <outlet property="permissionLabel" destination="ZUh-k2-UdQ" id="lsz-0q-lkw"/>
-                                </connections>
-                            </tableViewCell>
-                        </prototypes>
                         <connections>
                             <outlet property="dataSource" destination="fh1-AB-QIB" id="1mq-hS-ieq"/>
                             <outlet property="delegate" destination="fh1-AB-QIB" id="Efi-d9-zf1"/>
@@ -543,7 +415,6 @@
         <image name="Near" width="25" height="25"/>
         <image name="NearSelected" width="25" height="25"/>
         <image name="permissionBadgeAdmin" width="51" height="51"/>
-        <image name="permissionBadgeOwner" width="51" height="51"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
