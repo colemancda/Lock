@@ -54,6 +54,7 @@ final class BeaconController: NSObject, CLLocationManagerDelegate {
     
     // MARK: - CLLocationManagerDelegate
     
+    @objc(locationManager:didStartMonitoringForRegion:)
     func locationManager(_ manager: CLLocationManager, didStartMonitoringFor region: CLRegion) {
         
         log?("Started iBeacon monitoring")
@@ -61,23 +62,27 @@ final class BeaconController: NSObject, CLLocationManagerDelegate {
         
     }
     
+    @objc(locationManager:monitoringDidFailForRegion:withError:)
     func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: NSError) {
         
         log?("Could not start iBeacon monitoring. (\(error))")
     }
     
-    func locationManager(_ manager: CLLocationManager, didEnter region: CLRegion) {
+    @objc(locationManager:didEnterRegion:)
+    func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
         
         log?("Did enter region")
         
         
     }
     
+    @objc(locationManager:didExitRegion:)
     func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
         
         log?("Did exit region")
     }
     
+    @objc(locationManager:didDetermineState:forRegion:)
     func locationManager(_ manager: CLLocationManager, didDetermineState state: CLRegionState, for region: CLRegion) {
         
         log?("State \(state.rawValue) for region")

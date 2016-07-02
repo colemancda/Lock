@@ -52,8 +52,10 @@ final class NewKeyParentViewController: UIViewController {
     
     private func setupNewKey() {
         
-        guard let parentKey = Store.shared[key: newKey.identifier]
+        guard let (lockCache, parentKeyData) = Store.shared[newKey.identifier]
             else { newKeyError("The key for the specified lock has been deleted from the database."); return }
+        
+        let parentKey = (lockCache.keyIdentifier, parentKeyData)
         
         print("Setting up new key for lock \(newKey.identifier)...")
         

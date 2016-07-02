@@ -36,11 +36,7 @@
         
         public let foundLocks: Observable<[Lock]> = Observable([])
         
-        #if os(OSX)
-        public lazy var state: Observable<CBCentralManagerState> = Observable(self.internalManager.state)
-        #elseif os(iOS)
-        public lazy var state: Observable<CBManagerState> = Observable(self.internalManager.state)
-        #endif
+        public lazy var state: Observable<CBCentralManagerState> = unsafeBitCast(Observable(self.internalManager.state), to: Observable<CBCentralManagerState>.self)
         
         // MARK: - Private Properties
         
@@ -171,7 +167,7 @@
         }
         
         /// Unlock the connected lock
-        public func unlock(_ identifier: UUID, key: Key) throws {
+        public func unlock(_ identifier: UUID, key: (UUID, KeyData)) throws {
             
             guard let lock = self[identifier]
                 else { throw Error.NoLock }
@@ -180,7 +176,7 @@
                 
                 // unlock
                 
-                let unlock = LockService.Unlock.init(identifier: key.identifier, key: key.data)
+                let unlock = LockService.Unlock.init(identifier: key.0, key: key.1)
                 
                 try self.internalManager.write(data: unlock.toBigEndian(), response: true, characteristic: LockService.Unlock.UUID, service: LockService.UUID, peripheral: lock.peripheral)
             }

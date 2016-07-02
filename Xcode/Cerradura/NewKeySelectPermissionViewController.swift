@@ -108,7 +108,7 @@ final class NewKeySelectPermissionViewController: UITableViewController {
     
     // MARK: - UITableViewDelegate
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         tableView.deselectRow(at: indexPath, animated: true)
         
@@ -141,4 +141,17 @@ final class NewKeySelectPermissionViewController: UITableViewController {
         case .owner: fatalError("Cannot create owner key")
         }
     }
+}
+
+// MARK: - Supporting Types
+
+final class PermissionTypeTableViewCell: UITableViewCell {
+    
+    static let resuseIdentifier = "PermissionTypeTableViewCell"
+    
+    @IBOutlet weak var permissionImageView: UIImageView!
+    
+    @IBOutlet weak var permissionTypeLabel: UILabel!
+    
+    @IBOutlet weak var permissionDescriptionLabel: UILabel!
 }

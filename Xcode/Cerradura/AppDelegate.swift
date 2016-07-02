@@ -34,6 +34,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         
         LockManager.shared.log = { print("LockManager: " + $0) }
         
+        /*
         // Apple Watch support
         if #available(iOS 9.3, *) {
             
@@ -43,7 +44,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                 
                 WatchController.shared.activate()
             }
-        }
+        }*/
         
         // iBeacon
         BeaconController.shared.log = { print("BeaconController: " + $0) }
@@ -117,25 +118,26 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                 let identifier = UUID(rawValue: identifierString)
                 else { return false }
             
-            guard let lock = Store.shared[identifier]
+            guard let (lockCache, keyData) = Store.shared[identifier]
                 else { return false }
             
-            print("Selected lock \(lock.identifier) from CoreSpotlight")
+            print("Selected lock \(identifier) from CoreSpotlight")
             
             async {
                 
                 do {
-                    var foundLock = LockManager.shared[lock.identifier]
+                    var foundLock = LockManager.shared[identifier]
                     
                     // scan if not prevously found
                     if foundLock == nil {
                         
                         try LockManager.shared.scan()
                         
-                        foundLock = LockManager.shared[lock.identifier]
+                        foundLock = LockManager.shared[identifier]
                     }
                     
-                    guard foundLock != nil else { mainQueue { self.window?.rootViewController?.showErrorAlert("Could not unlock. Not in range.") }; return }
+                    guard foundLock != nil
+                        else { mainQueue { self.window?.rootViewController?.showErrorAlert("Could not unlock. Not in range.") }; return }
                     
                     // wait until other scanning completes
                     while LockManager.shared.scanning.value {
@@ -143,7 +145,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                         sleep(1)
                     }
                     
-                    try LockManager.shared.unlock(lock.identifier, key: lock.key)
+                    let key = (lockCache.keyIdentifier, keyData)
+                    
+                    try LockManager.shared.unlock(identifier, key: key)
                 }
                 
                 catch { mainQueue { self.window?.rootViewController?.showErrorAlert("Could not unlock. \(error)") }; return }

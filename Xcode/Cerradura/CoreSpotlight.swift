@@ -30,25 +30,25 @@ extension LockCache {
             
         case .owner:
             
-            permissionImage = UIImage(named: "permissionBadgeOwner")!
+            permissionImage = #imageLiteral(resourceName: "permissionBadgeOwner")
             
             permissionText = "Owner"
             
         case .admin:
             
-            permissionImage = UIImage(named: "permissionBadgeAdmin")!
+            permissionImage = #imageLiteral(resourceName: "permissionBadgeAdmin")
             
             permissionText = "Admin"
             
         case .anytime:
             
-            permissionImage = UIImage(named: "permissionBadgeAnytime")!
+            permissionImage = #imageLiteral(resourceName: "permissionBadgeAnytime")
             
             permissionText = "Anytime"
             
-        case let .scheduled(schedule):
+        case .scheduled:
             
-            permissionImage = UIImage(named: "permissionBadgeScheduled")!
+            permissionImage = #imageLiteral(resourceName: "permissionBadgeScheduled")
             
             permissionText = "Scheduled" // FIXME
         }
@@ -80,10 +80,10 @@ func UpdateSpotlight(_ index: CSSearchableIndex = CSSearchableIndex.default(), c
         managedObjectContext.persistentStoreCoordinator = Store.shared.managedObjectContext.persistentStoreCoordinator!
         
         let entity = managedObjectContext.persistentStoreCoordinator!.managedObjectModel.entitiesByName[LockCache.entityName]!
-        let fetchRequest = NSFetchRequest(entityName: entity.name!)
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: entity.name!)
         fetchRequest.includesSubentities = false
         fetchRequest.returnsObjectsAsFaults = false
-        fetchRequest.sortDescriptors = [NSSortDescriptor.init(key: LockCache.Property.identifier.rawValue, ascending: true)]
+        fetchRequest.sortDescriptors = [SortDescriptor.init(key: LockCache.Property.identifier.rawValue, ascending: true)]
         
         managedObjectContext.perform {
             

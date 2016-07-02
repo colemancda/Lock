@@ -56,7 +56,7 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
         scanningObserver = LockManager.shared.scanning.observe(scanningStateChanged)
         
         // start scanning
-        scan()
+        self.scan()
     }
     
     // MARK: - Actions
@@ -76,7 +76,7 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
             
             catch { mainQueue { controller.state = .error(error) }; return }
             
-            // callback will update UI
+            // callback will update UI or continue to scan
         }
     }
     
@@ -84,32 +84,37 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
     
     private func updateUI() {
         
+        refreshControl?.endRefreshing()
+        
+        tableView.reloadData()
+        
+        tableView.setContentOffset(CGPoint.zero, animated: true)
+        
         switch state {
             
         case .scanning:
             
-            tableView.isUserInteractionEnabled = false
+            showEmptyTableView()
             
-            self.tableView.reloadData()
+            emptyTableView?.label.text = "Scanning..."
             
-            self.showEmptyTableView {
+            emptyTableView?.imageView.animationDuration = 2.0
             
-                $0.label.text = "Scanning..."
-                
-                $0.imageView.animationImages = [#imageLiteral(resourceName: "scan1"), #imageLiteral(resourceName: "scan2"), #imageLiteral(resourceName: "scan3"), #imageLiteral(resourceName: "scan4")]
-            }
+            emptyTableView?.imageView.animationImages = [#imageLiteral(resourceName: "scan1"), #imageLiteral(resourceName: "scan2"), #imageLiteral(resourceName: "scan3"), #imageLiteral(resourceName: "scan4")]
             
         case let .error(error):
-            
-            tableView.isUserInteractionEnabled = false
-            
-            self.tableView.reloadData()
             
             do { throw error }
             
             catch Error.bluetoothDisabled {
                 
-                showErrorAlert("Bluetooth not enabled.")
+                showEmptyTableView()
+                
+                emptyTableView?.label.text = "Bluetooth disabled"
+                
+                emptyTableView?.imageView.animationDuration = 2.0
+                
+                emptyTableView?.imageView.animationImages = [#imageLiteral(resourceName: "bluetoothLogo"), #imageLiteral(resourceName: "bluetoothLogoDisabled")]
             }
             
             catch {
@@ -117,16 +122,13 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
                 showErrorAlert("\(error)", okHandler: { self.scan() })
             }
             
-        case .found:
+        case let .found(locks):
             
-            tableView.isUserInteractionEnabled = true
+            assert(locks.isEmpty == false, "Should scan continously when there are no locks")
             
-            self.tableView.setContentOffset(CGPoint.zero, animated: true)
+            hideEmptyTableView()
             
-            DispatchQueue.main.after(when: DispatchTime.now() + 1.0) {
-                
-                self.tableView.reloadData()
-            }
+            tableView.reloadData()
         }
     }
     
@@ -160,13 +162,13 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
             
             cellImage = (#imageLiteral(resourceName: "unlockButton"), #imageLiteral(resourceName: "unlockButtonSelected"))
             
-            if let key = Store.shared[lock.UUID] {
+            if let lockCache = Store.shared[cache: lock.UUID] {
                 
                 enabled = true
                 
-                cellTitle = key.name
+                cellTitle = lockCache.name
                 
-                let permission = key.key.permission
+                let permission = lockCache.permission
                 
                 switch permission {
                     
@@ -222,7 +224,7 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
     
     // MARK: Lock Manager Notifications
     
-    private func stateChanged(managerState: CBManagerState) {
+    private func stateChanged(managerState: CBCentralManagerState) {
         
         mainQueue {
             
@@ -240,13 +242,25 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
         }
     }
     
-    private func scanningStateChanged(value: Bool) {
+    private func scanningStateChanged(isScanning: Bool) {
         
-        mainQueue { self.state  = .scanning }
+        if isScanning {
+            
+            mainQueue { self.state  = .scanning }
+        }
     }
     
     private func foundLocks(locks: [LockManager.Lock]) {
         
+        /// no locks were found
+        guard locks.isEmpty == false else {
+            
+            
+            
+            return
+        }
+        
+        // display found locks
         mainQueue { self.state = .found(locks) }
     }
     
@@ -272,6 +286,28 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
         
         return cell
     }
+    
+    // MARK: - UITableViewDelegate
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        defer { tableView.deselectRow(at: indexPath, animated: true) }
+        
+        let cell = tableView.cellForRow(at: indexPath) as! LockTableViewCell
+        
+        cell.imageView?.isHighlighted = true
+        
+        // perform action
+        
+        
+    }
+    
+    override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        
+        let cell = tableView.cellForRow(at: indexPath) as! LockTableViewCell
+        
+        cell.imageView?.isHighlighted = true
+    }
 }
 
 // MARK: - Supporting Types
@@ -285,7 +321,6 @@ extension NearLockViewController {
         case found([LockManager.Lock])
     }
 }
-
 
 /*
 final class NearLockViewController: UIViewController {

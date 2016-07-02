@@ -38,20 +38,13 @@ final class EmptyTableView: UIView {
 
 extension EmptyTableViewController {
     
-    func showEmptyTableView(_ configure: (EmptyTableView) -> ()) {
+    func showEmptyTableView() {
+        
+        guard self.emptyTableView == nil else { return }
         
         self.tableView.isScrollEnabled = false
         
-        guard self.emptyTableView == nil else {
-            
-            configure(self.emptyTableView!)
-            
-            return
-        }
-        
         let emptyTableView = EmptyTableView.loadFromNib()
-        
-        configure(emptyTableView)
         
         emptyTableView.frame = self.tableView.bounds
         
