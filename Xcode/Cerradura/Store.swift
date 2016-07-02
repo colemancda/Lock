@@ -26,9 +26,9 @@ final class Store {
     /// A convenience variable for the managed object model.
     let managedObjectModel: NSManagedObjectModel
     
-    // MARK: - Private Properties
+    let keychain = Keychain(accessGroup: AppGroup)
     
-    private let keychain = Keychain(accessGroup: AppGroup)
+    // MARK: - Private Properties
     
     private lazy var lockCacheEntity: NSEntityDescription = self.managedObjectContext.persistentStoreCoordinator!.managedObjectModel.entitiesByName[LockCache.entityName]!
     

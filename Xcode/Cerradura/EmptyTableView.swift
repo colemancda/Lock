@@ -42,6 +42,8 @@ extension EmptyTableViewController {
         
         guard self.emptyTableView == nil else { return }
         
+        tableView.tableFooterView = UIView()
+        
         self.tableView.isScrollEnabled = false
         
         let emptyTableView = EmptyTableView.loadFromNib()
@@ -64,5 +66,7 @@ extension EmptyTableViewController {
         self.emptyTableView?.removeFromSuperview()
         
         self.emptyTableView = nil
+        
+        tableView.tableFooterView = nil
     }
 }

@@ -30,7 +30,16 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         print("Launching Cerradura v\(AppVersion) Build \(AppBuild)")
         
         // add NSPersistentStore to Cerradura.Store
-        try! LoadPersistentStore()
+        do { try LoadPersistentStore() }
+        
+        catch {
+            
+            print("Nuking cache")
+            
+            try! RemovePersistentStore()
+            try! LoadPersistentStore()
+            try! Store.shared.keychain.removeAll()
+        }
         
         LockManager.shared.log = { print("LockManager: " + $0) }
         

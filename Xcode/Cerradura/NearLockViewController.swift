@@ -56,7 +56,7 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
         scanningObserver = LockManager.shared.scanning.observe(scanningStateChanged)
         
         // start scanning
-        self.scan()
+        scan()
     }
     
     // MARK: - Actions
@@ -72,7 +72,7 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
             
             guard let controller = self else { return }
             
-            do { try LockManager.shared.scan(duration: 2) }
+            do { try LockManager.shared.scan(duration: 4) }
             
             catch { mainQueue { controller.state = .error(error) }; return }
             
@@ -86,9 +86,9 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
         
         refreshControl?.endRefreshing()
         
-        tableView.reloadData()
+        emptyTableView?.imageView.stopAnimating()
         
-        tableView.setContentOffset(CGPoint.zero, animated: true)
+        tableView.reloadData()
         
         switch state {
             
@@ -101,6 +101,8 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
             emptyTableView?.imageView.animationDuration = 2.0
             
             emptyTableView?.imageView.animationImages = [#imageLiteral(resourceName: "scan1"), #imageLiteral(resourceName: "scan2"), #imageLiteral(resourceName: "scan3"), #imageLiteral(resourceName: "scan4")]
+            
+            emptyTableView?.imageView.startAnimating()
             
         case let .error(error):
             
@@ -115,6 +117,8 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
                 emptyTableView?.imageView.animationDuration = 2.0
                 
                 emptyTableView?.imageView.animationImages = [#imageLiteral(resourceName: "bluetoothLogo"), #imageLiteral(resourceName: "bluetoothLogoDisabled")]
+                
+                emptyTableView?.imageView.startAnimating()
             }
             
             catch {
@@ -252,16 +256,18 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
     
     private func foundLocks(locks: [LockManager.Lock]) {
         
-        /// no locks were found
-        guard locks.isEmpty == false else {
+        mainQueue {
             
+            /// no locks were found
+            guard locks.isEmpty == false else {
+             
+                self.scan()
+                return
+            }
             
-            
-            return
+            // display found locks
+            mainQueue { self.state = .found(locks) }
         }
-        
-        // display found locks
-        mainQueue { self.state = .found(locks) }
     }
     
     // MARK: - UITableViewDataSource
@@ -282,7 +288,9 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: LockTableViewCell.reuseIdentifier, for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: LockTableViewCell.reuseIdentifier, for: indexPath) as! LockTableViewCell
+        
+        configure(cell: cell, at: indexPath)
         
         return cell
     }

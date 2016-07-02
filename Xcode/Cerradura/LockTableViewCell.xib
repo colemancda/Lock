@@ -26,6 +26,7 @@
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="permissionBadgeOwner" translatesAutoresizingMaskIntoConstraints="NO" id="yjR-jd-4to">
                                 <constraints>
+                                    <constraint firstAttribute="width" secondItem="yjR-jd-4to" secondAttribute="height" multiplier="1:1" id="Izx-RQ-Z5H"/>
                                     <constraint firstAttribute="width" constant="51" id="vVc-qP-eED"/>
                                 </constraints>
                             </imageView>
