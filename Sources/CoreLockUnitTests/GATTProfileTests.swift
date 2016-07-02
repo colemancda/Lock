@@ -166,10 +166,9 @@ final class GATTProfileTests: XCTestCase {
         XCTAssert(childDeserialized.authenticated(with: sharedSecret.toKeyData()))
         XCTAssert(childDeserialized.authenticated(with: KeyData()) == false)
         XCTAssert(childDeserialized.permission == permission)
-        XCTAssert(decryptedNewKey.data == newKey.data)
-        XCTAssert(decryptedNewKey.permission == newKey.permission)
-        XCTAssert(decryptedNewKey.identifier == newKey.identifier)
-        XCTAssert(decryptedNewKey == newKey)
+        XCTAssert(decryptedNewKey == newKey.data)
+        XCTAssert(childDeserialized.permission == newKey.permission)
+        XCTAssert(childDeserialized.identifier == newKey.identifier)
         
         // finish
         
