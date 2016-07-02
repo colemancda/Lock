@@ -11,12 +11,18 @@ import CoreLock
 
 struct Configuration: JSONEncodable, JSONDecodable {
     
+    /// The lock's identifier.
     let identifier: UUID
+    
+    /// Whether HomeKit support is enabled.
+    var isHomeKitEnabled: Bool
     
     /// Initializes a new `Configuration`. 
     init() {
         
         self.identifier = UUID()
+        
+        isHomeKitEnabled = false
     }
 }
 

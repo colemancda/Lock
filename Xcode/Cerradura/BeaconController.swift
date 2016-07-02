@@ -15,6 +15,8 @@ final class BeaconController: NSObject, CLLocationManagerDelegate {
     
     static let shared = BeaconController()
     
+    // MARK: - Properties
+    
     static let region: CLBeaconRegion = {
         
         let region = CLBeaconRegion(proximityUUID: LockBeaconUUID, major: 0, minor: 0, identifier: BeaconIdentifier)
@@ -26,7 +28,7 @@ final class BeaconController: NSObject, CLLocationManagerDelegate {
     
     var log: ((String) -> ())?
     
-    var regionState: CLRegionState = .unknown
+    private(set) var regionState: CLRegionState = .unknown
     
     private lazy var locationManager: CLLocationManager = {
         
@@ -58,8 +60,6 @@ final class BeaconController: NSObject, CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didStartMonitoringFor region: CLRegion) {
         
         log?("Started iBeacon monitoring")
-        
-        
     }
     
     @objc(locationManager:monitoringDidFailForRegion:withError:)
@@ -68,6 +68,43 @@ final class BeaconController: NSObject, CLLocationManagerDelegate {
         log?("Could not start iBeacon monitoring. (\(error))")
     }
     
+    @objc(locationManager:didDetermineState:forRegion:)
+    func locationManager(_ manager: CLLocationManager, didDetermineState state: CLRegionState, for region: CLRegion) {
+        
+        guard regionState != state else {
+            
+            log?("Region state: \(state.rawValue)")
+            
+            return
+        }
+        
+        log?("Region state changed: \(state.rawValue)")
+        
+        // state changed
+        regionState = state
+        
+        if state == .inside {
+            
+            // dont scan if already scanning
+            guard LockManager.shared.scanning.value == false
+                && LockManager.shared.state.value == .poweredOn
+                else { return }
+            
+            async {
+                
+                do { try LockManager.shared.scan(duration: 2) }
+                
+                catch { self.log?("Scan failed: \(error)") }
+            }
+            
+        } else {
+            
+            LockManager.shared.clear()
+        }
+        
+    }
+    
+    /*
     @objc(locationManager:didEnterRegion:)
     func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
         
@@ -80,20 +117,8 @@ final class BeaconController: NSObject, CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
         
         log?("Did exit region")
-    }
+    }*/
     
-    @objc(locationManager:didDetermineState:forRegion:)
-    func locationManager(_ manager: CLLocationManager, didDetermineState state: CLRegionState, for region: CLRegion) {
-        
-        log?("State \(state.rawValue) for region")
-        
-        regionState = state
-        
-        
-        // do { try LockManager.shared.scan() }
-        // catch { print("Error scanning: \(error)") }
-        
-    }
 }
 
 // MARK: - Private

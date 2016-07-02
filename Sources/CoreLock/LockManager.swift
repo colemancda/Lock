@@ -126,6 +126,11 @@
             foundLocks.value = locks
         }
         
+        public func clear() {
+            
+            foundLocks.value = []
+        }
+        
         public func disconnect(lock: Lock) {
             
             internalManager.disconnect(peripheral: lock.peripheral)

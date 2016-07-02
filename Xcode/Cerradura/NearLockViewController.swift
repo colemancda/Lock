@@ -56,7 +56,14 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
         scanningObserver = LockManager.shared.scanning.observe(scanningStateChanged)
         
         // start scanning
-        scan()
+        if LockManager.shared.state.value == .poweredOn {
+            
+            self.scan()
+            
+        } else {
+            
+            self.state = .error(Error.bluetoothDisabled)
+        }
     }
     
     // MARK: - Actions
@@ -64,7 +71,9 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
     @IBAction func scan(_ sender: AnyObject? = nil) {
         
         // dont scan if already scanning
-        guard LockManager.shared.scanning.value == false else { return }
+        guard LockManager.shared.scanning.value == false
+            && LockManager.shared.state.value == .poweredOn
+            else { return }
         
         state = .scanning
         
