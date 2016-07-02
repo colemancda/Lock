@@ -11,9 +11,13 @@ import UIKit
 /// View for the empty state of a table view.
 final class EmptyTableView: UIView {
     
-    @IBOutlet weak var button: UIButton!
+    // MARK: - IB Outlets
     
     @IBOutlet weak var imageView: UIImageView!
+    
+    @IBOutlet weak var label: UILabel!
+    
+    // MARK: - Initialization
     
     static func loadFromNib() -> EmptyTableView {
         
@@ -30,19 +34,24 @@ final class EmptyTableView: UIView {
     var tableView: UITableView { get }
     
     var emptyTableView: EmptyTableView? { get set }
-    
-    func emptyTableViewAction(_ sender: UIButton)
 }
 
 extension EmptyTableViewController {
     
-    func showEmptyTableView(_ configure: (UIImageView) -> ()) {
+    func showEmptyTableView(_ configure: (EmptyTableView) -> ()) {
         
-        guard self.emptyTableView == nil else { return }
+        self.tableView.isScrollEnabled = false
+        
+        guard self.emptyTableView == nil else {
+            
+            configure(self.emptyTableView!)
+            
+            return
+        }
         
         let emptyTableView = EmptyTableView.loadFromNib()
         
-        configure(emptyTableView.imageView)
+        configure(emptyTableView)
         
         emptyTableView.frame = self.tableView.bounds
         

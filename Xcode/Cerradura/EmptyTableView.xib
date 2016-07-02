@@ -13,25 +13,39 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="scan4" translatesAutoresizingMaskIntoConstraints="NO" id="OPt-Ko-5gb">
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Io9-O3-kSU" userLabel="Center View">
+                    <subviews>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="scan4" translatesAutoresizingMaskIntoConstraints="NO" id="OPt-Ko-5gb">
+                            <constraints>
+                                <constraint firstAttribute="width" secondItem="OPt-Ko-5gb" secondAttribute="height" id="16I-pI-X6L"/>
+                                <constraint firstAttribute="height" constant="150" id="O4w-Oq-ttg"/>
+                            </constraints>
+                        </imageView>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Scanning..." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="48I-zY-llN">
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                    </subviews>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
-                        <constraint firstAttribute="width" secondItem="OPt-Ko-5gb" secondAttribute="height" id="16I-pI-X6L"/>
-                        <constraint firstAttribute="height" constant="150" id="O4w-Oq-ttg"/>
+                        <constraint firstItem="OPt-Ko-5gb" firstAttribute="top" secondItem="Io9-O3-kSU" secondAttribute="top" id="2Rs-82-UFL"/>
+                        <constraint firstItem="OPt-Ko-5gb" firstAttribute="centerX" secondItem="Io9-O3-kSU" secondAttribute="centerX" id="JqY-WY-8GG"/>
+                        <constraint firstAttribute="trailing" secondItem="48I-zY-llN" secondAttribute="trailing" id="UGy-lS-gUX"/>
+                        <constraint firstItem="48I-zY-llN" firstAttribute="top" secondItem="OPt-Ko-5gb" secondAttribute="bottom" constant="8" id="hB5-1E-Hij"/>
+                        <constraint firstItem="48I-zY-llN" firstAttribute="leading" secondItem="Io9-O3-kSU" secondAttribute="leading" id="hv9-q8-CKI"/>
+                        <constraint firstAttribute="bottom" secondItem="48I-zY-llN" secondAttribute="bottom" id="mm9-s5-aRb"/>
                     </constraints>
-                </imageView>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tXo-9h-UcQ"/>
+                </view>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
-                <constraint firstItem="tXo-9h-UcQ" firstAttribute="centerX" secondItem="OPt-Ko-5gb" secondAttribute="centerX" id="Az2-Mi-hFH"/>
-                <constraint firstItem="OPt-Ko-5gb" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="K0I-tW-7ef"/>
-                <constraint firstItem="tXo-9h-UcQ" firstAttribute="leading" secondItem="OPt-Ko-5gb" secondAttribute="leading" id="abv-Fl-4jz"/>
-                <constraint firstItem="tXo-9h-UcQ" firstAttribute="centerY" secondItem="OPt-Ko-5gb" secondAttribute="centerY" id="cja-Zk-CXL"/>
-                <constraint firstItem="tXo-9h-UcQ" firstAttribute="bottom" secondItem="OPt-Ko-5gb" secondAttribute="bottom" id="f43-x2-KS4"/>
-                <constraint firstItem="OPt-Ko-5gb" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="qqL-1S-DDt"/>
-                <constraint firstItem="tXo-9h-UcQ" firstAttribute="trailing" secondItem="OPt-Ko-5gb" secondAttribute="trailing" id="quz-V2-ZUC"/>
-                <constraint firstItem="tXo-9h-UcQ" firstAttribute="top" secondItem="OPt-Ko-5gb" secondAttribute="top" id="vyH-F0-Raz"/>
+                <constraint firstItem="Io9-O3-kSU" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="20" id="Ez9-zL-iI5"/>
+                <constraint firstItem="Io9-O3-kSU" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="LYC-D9-6tg"/>
+                <constraint firstAttribute="trailing" secondItem="Io9-O3-kSU" secondAttribute="trailing" constant="20" id="Pa2-WP-pWD"/>
+                <constraint firstItem="Io9-O3-kSU" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="wpW-oo-CFd"/>
             </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
             <point key="canvasLocation" x="32" y="26"/>
         </view>
     </objects>

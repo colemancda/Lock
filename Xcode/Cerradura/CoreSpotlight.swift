@@ -106,11 +106,11 @@ final class SpotlightController: NSObject, NSFetchedResultsControllerDelegate {
     
     var log: ((String) -> ())?
     
-    private lazy var fetchedResultsController: NSFetchedResultsController = {
+    private lazy var fetchedResultsController: NSFetchedResultsController<NSManagedObject> = {
         
-        let fetchRequest = NSFetchRequest(entityName: LockCache.entityName)
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: LockCache.entityName)
         
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: LockCache.Property.name.rawValue, ascending: true)]
+        fetchRequest.sortDescriptors = [SortDescriptor(key: LockCache.Property.name.rawValue, ascending: true)]
         
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: Store.shared.managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
         
@@ -133,7 +133,7 @@ final class SpotlightController: NSObject, NSFetchedResultsControllerDelegate {
     
     // MARK: - NSFetchedResultsControllerDelegate
     
-    func controller(_ controller: NSFetchedResultsController, didChange anObject: AnyObject, at indexPath: NSIndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
+    @objc private func controller(_ controller: NSFetchedResultsController<NSManagedObject>, didChange anObject: AnyObject, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
         
         let lockCache = LockCache(managedObject: anObject as! NSManagedObject)
         

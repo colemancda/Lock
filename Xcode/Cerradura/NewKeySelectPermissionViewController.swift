@@ -11,11 +11,7 @@ import UIKit
 import CoreLock
 import SwiftFoundation
 
-final class NewKeySelectPermissionViewController: UIViewController {
-    
-    // MARK: - IB Outlets
-    
-    @IBOutlet weak var tableView: UITableView!
+final class NewKeySelectPermissionViewController: UITableViewController {
     
     // MARK: - Properties
     
@@ -89,19 +85,19 @@ final class NewKeySelectPermissionViewController: UIViewController {
         cell.permissionDescriptionLabel.text = permissionText
     }
     
-    // MARK: - UITableViewDatasource
+    // MARK: - UITableViewDataSource
     
-    @objc func numberOfSectionsInTableView(_ tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         
         return 1
     }
     
-    @objc func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection: Int) -> Int {
         
         return permissionTypes.count
     }
     
-    @objc func tableView(_ tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: PermissionTypeTableViewCell.resuseIdentifier, for: indexPath) as! PermissionTypeTableViewCell
         
@@ -112,7 +108,7 @@ final class NewKeySelectPermissionViewController: UIViewController {
     
     // MARK: - UITableViewDelegate
     
-    func tableView(_ tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         tableView.deselectRow(at: indexPath, animated: true)
         
@@ -145,17 +141,4 @@ final class NewKeySelectPermissionViewController: UIViewController {
         case .owner: fatalError("Cannot create owner key")
         }
     }
-}
-
-// MARK: - Supporting Types
-
-final class PermissionTypeTableViewCell: UITableViewCell {
-    
-    static let resuseIdentifier = "PermissionTypeTableViewCell"
-    
-    @IBOutlet weak var permissionImageView: UIImageView!
-    
-    @IBOutlet weak var permissionTypeLabel: UILabel!
-    
-    @IBOutlet weak var permissionDescriptionLabel: UILabel!
 }

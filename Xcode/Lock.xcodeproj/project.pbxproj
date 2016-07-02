@@ -28,11 +28,10 @@
 		6E3065391CD049FB007424E0 /* NewKeySelectPermissionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3065381CD049FB007424E0 /* NewKeySelectPermissionViewController.swift */; };
 		6E30653B1CD04A2A007424E0 /* NewKeyScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E30653A1CD04A2A007424E0 /* NewKeyScheduleViewController.swift */; };
 		6E30653D1CD04AD3007424E0 /* NewKeyParentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E30653C1CD04AD3007424E0 /* NewKeyParentViewController.swift */; };
+		6E3E4ED21D2772C8000D13DF /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3E4ED11D2772C8000D13DF /* Constants.swift */; };
 		6E4E3F0C1CCBDBBD00196E39 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4E3F0B1CCBDBBD00196E39 /* Store.swift */; };
 		6E60B9E31CD5C70C002D788D /* AnimatedButtonController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E60B9E21CD5C70C002D788D /* AnimatedButtonController.swift */; };
 		6E6172271D0F629A006C1148 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EE605B11CC21C1A008EF0EE /* Assets.xcassets */; };
-		6E6212211D0F79E300FF5917 /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6212201D0F79E300FF5917 /* AppGroup.swift */; };
-		6E6212221D0F79F000FF5917 /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6212201D0F79E300FF5917 /* AppGroup.swift */; };
 		6E646CF21CC449770029A4B3 /* LockController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E646CF11CC449770029A4B3 /* LockController.swift */; };
 		6E646CF41CC4A5730029A4B3 /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E646CF31CC4A5730029A4B3 /* Version.swift */; };
 		6E646CF61CC4A8780029A4B3 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E646CF51CC4A8780029A4B3 /* main.swift */; };
@@ -89,7 +88,6 @@
 		6EB2E9EA1CD547CA000CF975 /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB2E9E81CD547CA000CF975 /* Observable.swift */; };
 		6EB4132D1CC2EE68005AB1E2 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB4132C1CC2EE68005AB1E2 /* Configuration.swift */; };
 		6EB413331CC317A3005AB1E2 /* Bool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB413321CC317A3005AB1E2 /* Bool.swift */; };
-		6EBAE76D1D0FAF0D008EADC7 /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E6212201D0F79E300FF5917 /* AppGroup.swift */; };
 		6EBAE7711D0FB2E8008EADC7 /* CoreSpotlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EBAE7701D0FB2E8008EADC7 /* CoreSpotlight.swift */; };
 		6EBAE7721D0FB347008EADC7 /* CoreSpotlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EBAE7701D0FB2E8008EADC7 /* CoreSpotlight.swift */; };
 		6EC7DB171D08D0DF000CA60A /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7DB161D08D0DF000CA60A /* File.swift */; };
@@ -267,10 +265,10 @@
 		6E3065381CD049FB007424E0 /* NewKeySelectPermissionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewKeySelectPermissionViewController.swift; sourceTree = "<group>"; };
 		6E30653A1CD04A2A007424E0 /* NewKeyScheduleViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewKeyScheduleViewController.swift; sourceTree = "<group>"; };
 		6E30653C1CD04AD3007424E0 /* NewKeyParentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewKeyParentViewController.swift; sourceTree = "<group>"; };
+		6E3E4ED11D2772C8000D13DF /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		6E4E3F0B1CCBDBBD00196E39 /* Store.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		6E5269841CCC205500AB20A2 /* KeysViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeysViewController.swift; sourceTree = "<group>"; };
 		6E60B9E21CD5C70C002D788D /* AnimatedButtonController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimatedButtonController.swift; sourceTree = "<group>"; };
-		6E6212201D0F79E300FF5917 /* AppGroup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppGroup.swift; sourceTree = "<group>"; };
 		6E646CF11CC449770029A4B3 /* LockController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockController.swift; sourceTree = "<group>"; };
 		6E646CF31CC4A5730029A4B3 /* Version.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
 		6E646CF51CC4A8780029A4B3 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
@@ -442,11 +440,11 @@
 			isa = PBXGroup;
 			children = (
 				6ED338671CC7C39200DF1461 /* NearLockViewController.swift */,
-				6E825E001D26ED2C003D728B /* LockViewController.swift */,
 				6E5269841CCC205500AB20A2 /* KeysViewController.swift */,
+				6E825E001D26ED2C003D728B /* LockViewController.swift */,
 				6E3065381CD049FB007424E0 /* NewKeySelectPermissionViewController.swift */,
-				6E30653A1CD04A2A007424E0 /* NewKeyScheduleViewController.swift */,
 				6E30653C1CD04AD3007424E0 /* NewKeyParentViewController.swift */,
+				6E30653A1CD04A2A007424E0 /* NewKeyScheduleViewController.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -619,7 +617,7 @@
 				6EE605B11CC21C1A008EF0EE /* Assets.xcassets */,
 				6EE605B31CC21C1A008EF0EE /* LaunchScreen.storyboard */,
 				6EE605AA1CC21C1A008EF0EE /* AppDelegate.swift */,
-				6E6212201D0F79E300FF5917 /* AppGroup.swift */,
+				6E3E4ED11D2772C8000D13DF /* Constants.swift */,
 				6ED338691CC7C7CB00DF1461 /* ErrorAlert.swift */,
 				6E7E65DC1D0D3619009E00C4 /* Async.swift */,
 				6EE5065E1D0DEFEA0018ABD2 /* BeaconController.swift */,
@@ -1086,7 +1084,6 @@
 				6EA7FC9C1D0FA71800F5D90B /* CoreDataDecodable.swift in Sources */,
 				6EA7FC9D1D0FA71800F5D90B /* EntityController.swift in Sources */,
 				6EA7FC981D0FA71800F5D90B /* Store.swift in Sources */,
-				6EBAE76D1D0FAF0D008EADC7 /* AppGroup.swift in Sources */,
 				6E0429DE1D0FA3AA005AF969 /* IndexRequestHandler.swift in Sources */,
 				6E0429E71D0FA411005AF969 /* Model.xcdatamodeld in Sources */,
 				6EBAE7721D0FB347008EADC7 /* CoreSpotlight.swift in Sources */,
@@ -1132,7 +1129,6 @@
 				6E0429D21D0F8950005AF969 /* CoreDataExtensions.swift in Sources */,
 				6E0429D51D0F8950005AF969 /* EntityController.swift in Sources */,
 				6E0429D61D0F8955005AF969 /* Model.xcdatamodeld in Sources */,
-				6E6212221D0F79F000FF5917 /* AppGroup.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1173,11 +1169,11 @@
 				6E1F60651CCB2D0A001914E7 /* LockCache.swift in Sources */,
 				6E30653D1CD04AD3007424E0 /* NewKeyParentViewController.swift in Sources */,
 				6E825E061D26FD79003D728B /* LockTableViewCell.swift in Sources */,
-				6E6212211D0F79E300FF5917 /* AppGroup.swift in Sources */,
 				6EE5065F1D0DEFEA0018ABD2 /* BeaconController.swift in Sources */,
 				6EE605AB1CC21C1A008EF0EE /* AppDelegate.swift in Sources */,
 				6E825E091D2702A6003D728B /* EmptyTableView.swift in Sources */,
 				6E1F60591CCB1D37001914E7 /* Model.xcdatamodeld in Sources */,
+				6E3E4ED21D2772C8000D13DF /* Constants.swift in Sources */,
 				6EBAE7711D0FB2E8008EADC7 /* CoreSpotlight.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

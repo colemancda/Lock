@@ -72,16 +72,12 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
             
             guard let controller = self else { return }
             
-            do { try LockManager.shared.scan(duration: 5) }
+            do { try LockManager.shared.scan(duration: 2) }
             
             catch { mainQueue { controller.state = .error(error) }; return }
             
             // callback will update UI
         }
-    }
-    
-    @IBAction func emptyTableViewAction(_ sender: UIButton) {
-        
     }
     
     // MARK: - Private Methods
@@ -96,7 +92,12 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
             
             self.tableView.reloadData()
             
+            self.showEmptyTableView {
             
+                $0.label.text = "Scanning..."
+                
+                $0.imageView.animationImages = [#imageLiteral(resourceName: "scan1"), #imageLiteral(resourceName: "scan2"), #imageLiteral(resourceName: "scan3"), #imageLiteral(resourceName: "scan4")]
+            }
             
         case let .error(error):
             

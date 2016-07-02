@@ -143,7 +143,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                         sleep(1)
                     }
                     
-                    try LockManager.shared.unlock(lock.identifier, key: lock.key.data)
+                    try LockManager.shared.unlock(lock.identifier, key: lock.key)
                 }
                 
                 catch { mainQueue { self.window?.rootViewController?.showErrorAlert("Could not unlock. \(error)") }; return }
@@ -157,10 +157,3 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 }
-
-/** Version of the app. */
-public let AppVersion = NSBundle.main().infoDictionary!["CFBundleShortVersionString"] as! String
-
-/** Build of the app. */
-public let AppBuild = NSBundle.main().infoDictionary!["CFBundleVersion"] as! String
-
