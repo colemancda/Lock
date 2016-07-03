@@ -171,7 +171,8 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
             
             cellDetail = lock.identifier.rawValue
             
-        case .unlock:
+        case .unlock, 
+             .newKey where Store.shared[cache: lock.identifier] != nil:
             
             cellImage = (#imageLiteral(resourceName: "unlockButton"), #imageLiteral(resourceName: "unlockButtonSelected"))
             

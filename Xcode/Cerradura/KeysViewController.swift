@@ -140,11 +140,22 @@ final class KeysViewController: UIViewController, UITableViewDataSource, UITable
         
         let lock = self.item(at: indexPath)
         
-        let lockVC = UIStoryboard(name: "LockDetail", bundle: nil).instantiateViewController(withIdentifier: "LockViewController") as! LockViewController
+        let navigationController = UIStoryboard(name: "LockDetail", bundle: nil).instantiateInitialViewController() as! UINavigationController
+        
+        let lockVC = navigationController.topViewController as! LockViewController
         
         lockVC.lockIdentifier = lock.identifier
         
-        self.show(lockVC, sender: self)
+        // iPhone
+        if splitViewController?.viewControllers.count == 1 {
+            
+            self.show(lockVC, sender: self)
+        }
+        // iPad
+        else {
+            
+            self.showDetailViewController(navigationController, sender: self)
+        }
     }
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {

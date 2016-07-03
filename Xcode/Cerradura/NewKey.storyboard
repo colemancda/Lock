@@ -11,12 +11,15 @@
         <!--Navigation Controller-->
         <scene sceneID="llz-Kj-ckk">
             <objects>
-                <navigationController storyboardIdentifier="newKeyNavigationStack" modalPresentationStyle="pageSheet" id="dyl-Rj-A58" sceneMemberID="viewController">
-                    <value key="contentSizeForViewInPopover" type="size" width="375" height="375"/>
+                <navigationController storyboardIdentifier="newKeyNavigationStack" modalPresentationStyle="formSheet" id="dyl-Rj-A58" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="ihy-hA-xZU">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="rGP-3F-7cp">
+                        <rect key="frame" x="0.0" y="623" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </toolbar>
                     <connections>
                         <segue destination="LAe-qz-LfN" kind="relationship" relationship="rootViewController" id="4bG-dz-elj"/>
                     </connections>
@@ -136,7 +139,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Kt2-GE-Io6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="764" y="2178"/>
+            <point key="canvasLocation" x="764" y="2152"/>
         </scene>
         <!--New Key-->
         <scene sceneID="qCm-sd-heG">

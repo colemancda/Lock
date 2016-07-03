@@ -56,7 +56,6 @@
 		6E729C7E1CC3C3FC0018A848 /* GATTProfileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E729C7D1CC3C3FC0018A848 /* GATTProfileTests.swift */; };
 		6E729C821CC3C6930018A848 /* Crypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E729C811CC3C6930018A848 /* Crypto.swift */; };
 		6E7504F01D0480BB00FC6A87 /* GPIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7504EF1D0480BB00FC6A87 /* GPIO.swift */; };
-		6E778D9B1CD5B70300AED11E /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E778D991CD5B70300AED11E /* Interface.storyboard */; };
 		6E778D9D1CD5B70300AED11E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6E778D9C1CD5B70300AED11E /* Assets.xcassets */; };
 		6E778DA41CD5B70300AED11E /* CerraduraWatch Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 6E778DA31CD5B70300AED11E /* CerraduraWatch Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		6E778DA91CD5B70300AED11E /* InterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E778DA81CD5B70300AED11E /* InterfaceController.swift */; };
@@ -119,6 +118,7 @@
 		6EED25A21D292AC000638377 /* KeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5269841CCC205500AB20A2 /* KeysViewController.swift */; };
 		6EED25A41D292EE300638377 /* NewKey.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6EED25A31D292EE300638377 /* NewKey.storyboard */; };
 		6EED25A61D292EEF00638377 /* LockDetail.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6EED25A51D292EEF00638377 /* LockDetail.storyboard */; };
+		6EED25AC1D29985000638377 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6EED25AB1D29985000638377 /* Main.storyboard */; };
 		6EF45F911CC6CAF9001F7A39 /* GATTProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA8996F1CC2E3F0005FC225 /* GATTProfile.swift */; };
 		6EF45F921CC6CAF9001F7A39 /* Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB413301CC30084005AB1E2 /* Status.swift */; };
 		6EF45F941CC6CAF9001F7A39 /* Bool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB413321CC317A3005AB1E2 /* Bool.swift */; };
@@ -292,7 +292,6 @@
 		6E729C811CC3C6930018A848 /* Crypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Crypto.swift; sourceTree = "<group>"; };
 		6E7504EF1D0480BB00FC6A87 /* GPIO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GPIO.swift; sourceTree = "<group>"; };
 		6E778D971CD5B70300AED11E /* CerraduraWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CerraduraWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		6E778D9A1CD5B70300AED11E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
 		6E778D9C1CD5B70300AED11E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6E778D9E1CD5B70300AED11E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6E778DA31CD5B70300AED11E /* CerraduraWatch Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "CerraduraWatch Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -351,6 +350,7 @@
 		6EED25A01D2923AF00638377 /* Preferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
 		6EED25A31D292EE300638377 /* NewKey.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewKey.storyboard; sourceTree = "<group>"; };
 		6EED25A51D292EEF00638377 /* LockDetail.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LockDetail.storyboard; sourceTree = "<group>"; };
+		6EED25AB1D29985000638377 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		6EF45FA01CC6CAF9001F7A39 /* CoreLock.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CoreLock.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -527,9 +527,9 @@
 		6E778D981CD5B70300AED11E /* CerraduraWatch */ = {
 			isa = PBXGroup;
 			children = (
-				6E778D991CD5B70300AED11E /* Interface.storyboard */,
 				6E778D9C1CD5B70300AED11E /* Assets.xcassets */,
 				6E778D9E1CD5B70300AED11E /* Info.plist */,
+				6EED25AB1D29985000638377 /* Main.storyboard */,
 			);
 			path = CerraduraWatch;
 			sourceTree = "<group>";
@@ -1021,7 +1021,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6E778D9D1CD5B70300AED11E /* Assets.xcassets in Resources */,
-				6E778D9B1CD5B70300AED11E /* Interface.storyboard in Resources */,
+				6EED25AC1D29985000638377 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1287,14 +1287,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		6E778D991CD5B70300AED11E /* Interface.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				6E778D9A1CD5B70300AED11E /* Base */,
-			);
-			name = Interface.storyboard;
-			sourceTree = "<group>";
-		};
 		6EDCE1ED1D0F34A300C3D3DC /* MainInterface.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (

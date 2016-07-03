@@ -89,6 +89,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         
+        // configure SplitVC
+        (self.window!.rootViewController as! UISplitViewController).preferredDisplayMode = .allVisible
+        
         return true
     }
 
