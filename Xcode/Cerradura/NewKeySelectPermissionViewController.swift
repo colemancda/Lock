@@ -17,13 +17,14 @@ final class NewKeySelectPermissionViewController: UITableViewController {
     
     var lockIdentifier: UUID!
     
-    private let permissionTypes: [PermissionType] = [.admin, .anytime /*, .scheduled*/]
+    private let permissionTypes: [PermissionType] = [.admin, .anytime /*, .scheduled */ ]
     
     // MARK: - Loading
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // setup table view
         self.tableView.estimatedRowHeight = 100
         self.tableView.rowHeight = UITableViewAutomaticDimension
     }
@@ -126,7 +127,7 @@ final class NewKeySelectPermissionViewController: UITableViewController {
             default: fatalError()
             }
             
-            let viewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "newKeyParent") as! NewKeyParentViewController
+            let viewController = UIStoryboard(name: "NewKey", bundle: nil).instantiateViewController(withIdentifier: "newKeyParent") as! NewKeyParentViewController
             
             viewController.newKey = (lockIdentifier, permission)
             

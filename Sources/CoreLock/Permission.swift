@@ -24,7 +24,7 @@ public enum Permission: Equatable {
     /// This key has anytime access.
     case anytime
     
-    //// This ket has access during certain hours and can expire.
+    //// This key has access during certain hours and can expire.
     case scheduled(Schedule)
     
     /// Byte value of the permission type.

@@ -10,4 +10,6 @@
 enum Error: ErrorProtocol {
     
     case bluetoothDisabled
+    case newKeyInvalidPIN
+    case newKeyInvalidName
 }

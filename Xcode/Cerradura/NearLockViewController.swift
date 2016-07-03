@@ -351,7 +351,43 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
             
         case .newKey:
             
-            break
+            // unlock if you already have a key.
+            guard Store.shared[lock.identifier] == nil
+                else { unlock(); return }
+            
+            requestNewKey { (textValues) in
+                
+                guard let (nameString, sharedSecretString) = textValues else { return }
+                
+                // build shared secret from text
+                guard let sharedSecret = SharedSecret(string: sharedSecretString)
+                    else { self.state = .error(Error.newKeyInvalidPIN); return }
+                
+                // valid name
+                guard let name = Key.Name(rawValue: nameString)
+                    else { self.state = .error(Error.newKeyInvalidName); return }
+                
+                async {
+                    
+                    do {
+                        
+                        let key = try LockManager.shared.recieveNewKey(lock.identifier, sharedSecret: sharedSecret, name: name)
+                        
+                        mainQueue {
+                            
+                            let lock = LockCache(identifier: lock.identifier, name: nameString, model: lock.model, version: lock.version, permission: key.permission, keyIdentifier: key.identifier)
+                            
+                            Store.shared[lock.identifier] = (lock, key.data)
+                            
+                            print("Successfully added new key for lock \(nameString)")
+                            
+                            mainQueue { self.updateUI() }
+                        }
+                    }
+                        
+                    catch { mainQueue { self.state = .error(error); return }; return }
+                }
+            }
         }
     }
     
