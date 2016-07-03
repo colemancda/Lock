@@ -17,8 +17,7 @@ let package = Package(
     ],
     dependencies: [
         .Package(url: "https://github.com/PureSwift/GATT", majorVersion: 1),
-        .Package(url: "https://github.com/ColemanCDA/CryptoSwift", majorVersion: 1),
-        .Package(url: "https://github.com/PureSwift/Cb64", majorVersion: 1)
+        .Package(url: "https://github.com/ColemanCDA/CryptoSwift", majorVersion: 1)
     ],
     exclude: ["Xcode", "Android"]
 )

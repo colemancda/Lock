@@ -15,15 +15,10 @@ struct Configuration: JSONEncodable, JSONDecodable {
     let identifier: UUID
     
     /// Whether HomeKit support is enabled.
-    var isHomeKitEnabled: Bool
+    var isHomeKitEnabled: Bool = false
     
     /// Initializes a new `Configuration`. 
-    init() {
-        
-        self.identifier = UUID()
-        
-        isHomeKitEnabled = false
-    }
+    init() { identifier = UUID() }
 }
 
 // MARK: - JSON
@@ -32,22 +27,25 @@ extension Configuration {
     
     enum JSONKey: String {
         
-        case identifier, model
+        case identifier, homekit
     }
     
     init?(JSONValue: JSON.Value) {
         
         guard let JSONObject = JSONValue.objectValue,
             let identifierString = JSONObject[JSONKey.identifier.rawValue]?.rawValue as? String,
-            let identifier = UUID(rawValue: identifierString)
+            let identifier = UUID(rawValue: identifierString),
+            let isHomeKitEnabled = JSONObject[JSONKey.homekit.rawValue]?.rawValue as? Bool
             else { return nil }
         
         self.identifier = identifier
+        self.isHomeKitEnabled = isHomeKitEnabled
     }
     
     func toJSON() -> JSON.Value {
         
-        return .Object([JSONKey.identifier.rawValue: .String(identifier.rawValue)])
+        return .object([JSONKey.identifier.rawValue: .string(identifier.rawValue),
+                        JSONKey.homekit.rawValue: .boolean(isHomeKitEnabled)])
     }
 }
 

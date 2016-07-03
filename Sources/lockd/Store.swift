@@ -16,14 +16,14 @@ final class Store {
     
     let filename: String
     
-    private(set) var data: [Data]
+    private(set) var keys: [Key]
     
     // MARK: - Initialization
     
     init(filename: String) {
         
         self.filename = filename
-        self.data = []
+        self.keys = []
         
         // try load existing data...
         
@@ -38,27 +38,25 @@ final class Store {
             let jsonString = String(UTF8Data: fileData),
             let json = JSON.Value(string: jsonString),
             let jsonArray = json.arrayValue,
-            let data = Data.fromJSON(JSONArray: jsonArray)
+            let keys = Key.from(JSON: jsonArray)
             else { return }
         
-        self.data = data
+        self.keys = keys
     }
     
     // MARK: - Methods
     
     func clear() {
         
-        data = []
+        keys = []
         
         // delete file
         try! FileManager.removeItem(path: filename)
     }
     
-    func add(key: Key) {
+    func add(_ key: Key) {
         
-        let newEntry = Store.Data(key: key)
-        
-        self.data.append(newEntry)
+        self.keys.append(key)
         
         do { try save() }
             
@@ -69,72 +67,11 @@ final class Store {
     
     private func save() throws {
         
-        guard let jsonString = self.data.toJSON().toString()
+        guard let jsonString = self.keys.toJSON().toString()
             else { fatalError("Could no encode to JSON string") }
         
         let data = jsonString.toUTF8Data()
         
         try FileManager.set(contents: data, at: filename)
-    }
-}
-
-// MARK: - Supporting Types
-
-extension Store {
-    
-    struct Data: JSONDecodable, JSONEncodable {
-        
-        enum JSONKey: String {
-            
-            case date, data, permission
-        }
-        
-        let date: Date
-        
-        let key: CoreLock.Key
-        
-        private init(key: Key) {
-            
-            self.date = Date()
-            self.key = key
-        }
-        
-        init?(JSONValue: JSON.Value) {
-            
-            guard let JSONObject = JSONValue.objectValue,
-                let date = JSONObject[JSONKey.date.rawValue]?.rawValue as? Double,
-                let keyDataString = JSONObject[JSONKey.data.rawValue]?.rawValue as? String,
-                let permissionDataString = JSONObject[JSONKey.permission.rawValue]?.rawValue as? String
-                else { return nil }
-            
-            let keyBytes = Base64.decode(keyDataString.toUTF8Data())
-            let permissionData = Base64.decode(permissionDataString.toUTF8Data())
-            
-            guard let permission = Permission(bigEndian: permissionData),
-                let keyData = KeyData(data: keyBytes)
-                else { return nil }
-            
-            self.date = Date(timeIntervalSince1970: date)
-            self.key = CoreLock.Key(data: keyData, permission: permission)
-        }
-        
-        func toJSON() -> JSON.Value {
-            
-            var JSONObject = JSON.Object(minimumCapacity: 3)
-            
-            JSONObject[JSONKey.date.rawValue] = .Number(.Double(date.timeIntervalSince1970))
-            
-            guard let encodedKeyData = String(UTF8Data: SwiftFoundation.Base64.encode(data: key.data.data))
-                else { fatalError("Could not encode KeyData to Base64") }
-            
-            JSONObject[JSONKey.data.rawValue] = .String(encodedKeyData)
-            
-            guard let encodedPermisson = String(UTF8Data: SwiftFoundation.Base64.encode(data: key.permission.toBigEndian()))
-                else { fatalError("Could not encode Permission to Base64") }
-            
-            JSONObject[JSONKey.permission.rawValue] = .String(encodedPermisson)
-            
-            return JSON.Value.Object(JSONObject)
-        }
     }
 }

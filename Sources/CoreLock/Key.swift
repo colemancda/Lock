@@ -8,7 +8,7 @@
 
 import SwiftFoundation
 
-public struct Key: Equatable {
+public struct Key: Equatable, JSONEncodable, JSONDecodable {
     
     public let identifier: UUID
     
@@ -19,7 +19,7 @@ public struct Key: Equatable {
     /// The name of the key.
     ///
     /// - Note: Not applicable for Owner keys. 
-    public let name: Name?
+    public var name: Name?
     
     public init(identifier: UUID = UUID(), name: Name? = nil, data: KeyData = KeyData(), permission: Permission = .owner) {
         
@@ -30,11 +30,72 @@ public struct Key: Equatable {
     }
 }
 
+// MARK: - Equatable
+
 public func == (lhs: Key, rhs: Key) -> Bool {
     
     return lhs.identifier == rhs.identifier
         && lhs.data == rhs.data
         && lhs.permission == rhs.permission
+        && lhs.name == rhs.name
+}
+
+// MARK: - JSON
+
+public extension Key {
+    
+    enum JSONKey: String {
+        
+        case identifier, data, permission, name
+    }
+    
+    init?(JSONValue: JSON.Value) {
+        
+        guard let JSONObject = JSONValue.objectValue,
+            let identifierString = JSONObject[JSONKey.identifier.rawValue]?.stringValue,
+            let identifier = UUID(rawValue: identifierString),
+            let dataString = JSONObject[JSONKey.data.rawValue]?.stringValue,
+            let data = Data(base64Encoded: dataString),
+            let keyData = KeyData(data: data),
+            let permissionDataString = JSONObject[JSONKey.permission.rawValue]?.stringValue,
+            let permissionData = Data(base64Encoded: permissionDataString),
+            let permission = Permission(bigEndian: permissionData)
+            else { return nil }
+        
+        self.identifier = identifier
+        self.data = keyData
+        self.permission = permission
+        
+        if let name = JSONObject[JSONKey.name.rawValue]?.stringValue {
+            
+            guard let keyName = Key.Name(rawValue: name)
+                else { return nil }
+            
+            self.name = keyName
+            
+        } else {
+            
+            self.name = nil
+        }
+    }
+    
+    func toJSON() -> JSON.Value {
+        
+        var jsonObject = JSON.Object(minimumCapacity: 4)
+        
+        jsonObject[JSONKey.identifier.rawValue] = .string(identifier.rawValue)
+        
+        jsonObject[JSONKey.data.rawValue] = .string(data.data.base64EncodedString())
+        
+        jsonObject[JSONKey.permission.rawValue] = .string(permission.toBigEndian().base64EncodedString())
+        
+        if let name = self.name {
+            
+            jsonObject[JSONKey.name.rawValue] = .string(name.rawValue)
+        }
+        
+        return .object(jsonObject)
+    }
 }
 
 // MARK: - Supporting Types
