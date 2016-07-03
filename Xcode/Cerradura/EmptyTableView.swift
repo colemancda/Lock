@@ -31,7 +31,7 @@ final class EmptyTableView: UIView {
 
 @objc protocol EmptyTableViewController: class {
     
-    var tableView: UITableView { get }
+    var tableView: UITableView! { get }
     
     var emptyTableView: EmptyTableView? { get set }
 }
@@ -42,7 +42,9 @@ extension EmptyTableViewController {
         
         guard self.emptyTableView == nil else { return }
         
-        tableView.tableFooterView = UIView()
+        self.tableView.setContentOffset(CGPoint.zero, animated: false)
+        
+        self.tableView.tableFooterView = UIView()
         
         self.tableView.isScrollEnabled = false
         

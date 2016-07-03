@@ -147,7 +147,7 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
     
     private func configure(cell: LockTableViewCell, at indexPath: IndexPath) {
         
-        guard case let .found(locks) = self.state else { fatalError("No locks found") }
+        guard case let .found(locks) = self.state else { fatalError("Invalid state: \(self.state)") }
         
         let lock = locks[indexPath.row]
         
@@ -169,13 +169,13 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
             
             cellTitle = "New Lock"
             
-            cellDetail = lock.UUID.rawValue
+            cellDetail = lock.identifier.rawValue
             
         case .unlock:
             
             cellImage = (#imageLiteral(resourceName: "unlockButton"), #imageLiteral(resourceName: "unlockButtonSelected"))
             
-            if let lockCache = Store.shared[cache: lock.UUID] {
+            if let lockCache = Store.shared[cache: lock.identifier] {
                 
                 enabled = true
                 
@@ -200,7 +200,7 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
                 
                 cellTitle = "Unknown lock"
                 
-                cellDetail = lock.UUID.rawValue
+                cellDetail = lock.identifier.rawValue
             }
             
         case .newKey:
@@ -211,7 +211,7 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
             
             cellTitle = "New Key"
             
-            cellDetail = lock.UUID.rawValue
+            cellDetail = lock.identifier.rawValue
         }
         
         // configure cell
@@ -233,6 +233,126 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
         cell.lockImageView.alpha = enabled ? 1.0 : 0.6
         
         cell.selectionStyle = enabled ? .default : .none
+    }
+    
+    /// Ask's the user for the lock's name.
+    private func requestLockName(_ completion: (String?) -> ()) {
+        
+        let alert = UIAlertController(title: NSLocalizedString("Lock Name", comment: "LockName"),
+                                      message: "Type a user friendly name for the lock.",
+                                      preferredStyle: UIAlertControllerStyle.alert)
+        
+        alert.addTextField { $0.text = "Lock" }
+        
+        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "OK"), style: UIAlertActionStyle.`default`, handler: { (UIAlertAction) in
+            
+            completion(alert.textFields![0].text)
+            
+            alert.dismiss(animated: true) {  }
+            
+        }))
+        
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: UIAlertActionStyle.destructive, handler: { (UIAlertAction) in
+            
+            completion(nil)
+            
+            alert.dismiss(animated: true) {  }
+        }))
+        
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    private func requestNewKey(_ completion: ((name: String, sharedSecret: String)?) -> ()) {
+        
+        let alert = UIAlertController(title: NSLocalizedString("New Key", comment: "NewKeyTitle"),
+                                      message: "Type a user friendly name for the lock and enter the PIN code.",
+                                      preferredStyle: UIAlertControllerStyle.alert)
+        
+        alert.addTextField { $0.text = "Lock" }
+        
+        alert.addTextField { $0.placeholder = "PIN Code"; $0.keyboardType = .numberPad }
+        
+        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "OK"), style: UIAlertActionStyle.`default`, handler: { (UIAlertAction) in
+            
+            completion((name: alert.textFields![0].text ?? "", sharedSecret: alert.textFields![1].text ?? ""))
+            
+            alert.dismiss(animated: true) {  }
+            
+        }))
+        
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: UIAlertActionStyle.destructive, handler: { (UIAlertAction) in
+            
+            completion(nil)
+            
+            alert.dismiss(animated: true) {  }
+        }))
+        
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    private func performAction(lock: LockManager.Lock) {
+        
+        func unlock() {
+            
+            print("Unlocking \(lock.identifier)")
+            
+            guard let (lockCache, keyData) = Store.shared[lock.identifier]
+                else { fatalError("No stored key for lock") } // FRC should prevent this
+            
+            async {
+                
+                do { try LockManager.shared.unlock(lock.identifier, key: (lockCache.keyIdentifier, keyData)) }
+                    
+                catch { mainQueue { self.state = .error(error) }; return }
+                
+                print("Successfully unlocked lock \"\(lock.identifier)\"")
+                
+                mainQueue { self.updateUI() }
+            }
+        }
+        
+        switch lock.status {
+            
+        case .setup:
+            
+            // ask for name
+            requestLockName { (lockName) in
+                
+                guard let name = lockName else { return }
+                
+                async {
+                    
+                    do {
+                        
+                        print("Setting up lock \(lock.identifier) (\(name))")
+                        
+                        let key = try LockManager.shared.setup(lock.identifier)
+                        
+                        mainQueue {
+                            
+                            // save in Store
+                            let cache = LockCache(identifier: lock.identifier, name: name, model: lock.model, version: lock.version, permission: key.permission, keyIdentifier: key.identifier)
+                            
+                            Store.shared[lock.identifier] = (cache, key.data)
+                            
+                            print("Successfully setup lock \(name) \(lock.identifier)")
+                            
+                            mainQueue { self.updateUI() }
+                        }
+                    }
+                        
+                    catch { mainQueue { self.state = .error(error) }; return }
+                }
+            }
+            
+        case .unlock:
+            
+            unlock()
+            
+        case .newKey:
+            
+            break
+        }
     }
     
     // MARK: Lock Manager Notifications
@@ -279,7 +399,8 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
         }
     }
     
-    // MARK: - UITableViewDataSource
+    // MARK: -
+    // MARK: UITableViewDataSource
     
     override func numberOfSections(in tableView: UITableView) -> Int {
         
@@ -316,7 +437,11 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
         
         // perform action
         
+        guard case let .found(locks) = self.state else { fatalError("Invalid state: \(self.state)") }
         
+        let lock = locks[indexPath.row]
+        
+        performAction(lock: lock)
     }
     
     override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {

@@ -54,11 +54,11 @@
         
         // MARK: - Subscripting
         
-        public private(set) subscript (UUID: SwiftFoundation.UUID) -> Lock? {
+        public private(set) subscript (identifier: UUID) -> Lock? {
             
             get {
                 
-                guard let index = foundLocks.value.index(where: { $0.UUID == UUID })
+                guard let index = foundLocks.value.index(where: { $0.identifier == identifier })
                     else { return nil }
                 
                 return foundLocks.value[index]
@@ -66,7 +66,7 @@
             
             set {
                 
-                guard let index = foundLocks.value.index(where: { $0.UUID == UUID })
+                guard let index = foundLocks.value.index(where: { $0.identifier == identifier })
                     else { fatalError("Invalid index") }
                 
                 guard let newLock = newValue
@@ -327,7 +327,7 @@
             
             log?("Lock \((peripheral, identifier.value, status.value, model.value, version.value))")
             
-            return Lock(peripheral: peripheral, UUID: identifier.value, status: status.value, model: model.value, version: version.value)
+            return Lock(peripheral: peripheral, identifier: identifier.value, status: status.value, model: model.value, version: version.value)
         }
     }
     
@@ -346,15 +346,15 @@
         public struct Lock {
             
             public let peripheral: Peripheral
-            public let UUID: SwiftFoundation.UUID
+            public let identifier: UUID
             public let model: Model
             public let version: UInt64
             public var status: Status
             
-            private init(peripheral: Peripheral, UUID: SwiftFoundation.UUID, status: Status, model: Model, version: UInt64) {
+            private init(peripheral: Peripheral, identifier: SwiftFoundation.UUID, status: Status, model: Model, version: UInt64) {
                 
                 self.peripheral = peripheral
-                self.UUID = UUID
+                self.identifier = identifier
                 self.status = status
                 self.model = model
                 self.version = version
