@@ -15,6 +15,8 @@ final class NewKeySelectPermissionViewController: UITableViewController {
     
     // MARK: - Properties
     
+    var completion: ((Bool) -> ())?
+    
     var lockIdentifier: UUID!
     
     private let permissionTypes: [PermissionType] = [.admin, .anytime /*, .scheduled */ ]
@@ -33,7 +35,9 @@ final class NewKeySelectPermissionViewController: UITableViewController {
     
     @IBAction func cancel(_ sender: AnyObject?) {
         
-        self.dismiss(animated: true, completion: nil)
+        let completion = self.completion // for ARC
+        
+        self.dismiss(animated: true) { completion?(false) }
     }
     
     // MARK: - Methods

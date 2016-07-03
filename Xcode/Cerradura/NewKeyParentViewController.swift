@@ -25,6 +25,8 @@ final class NewKeyParentViewController: UIViewController {
     
     // MARK: - Properties
     
+    var completion: ((Bool) -> ())?
+    
     var newKey: (identifier: UUID, permission: Permission)!
     
     // MARK: - Loading
@@ -45,7 +47,9 @@ final class NewKeyParentViewController: UIViewController {
     
     @IBAction func done(_ sender: AnyObject?) {
         
-        self.dismiss(animated: true, completion: nil)
+        let completion = self.completion // for ARC
+        
+        self.dismiss(animated: true) { completion?(true) }
     }
     
     // MARK: - Methods

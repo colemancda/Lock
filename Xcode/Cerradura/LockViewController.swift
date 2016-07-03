@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import JGProgressHUD
 import CoreLock
 
 final class LockViewController: UIViewController {
@@ -22,6 +23,10 @@ final class LockViewController: UIViewController {
         didSet { if isViewLoaded() { updateUI() } }
     }
     
+    // MARK: - Private Properties
+    
+    private let progressHUD = JGProgressHUD(style: .dark)!
+    
     // MARK: - Loading
     
     override func viewDidLoad() {
@@ -34,15 +39,45 @@ final class LockViewController: UIViewController {
     
     // MARK: - Actions
     
-    @IBAction func newKey(_ sender: UIBarButtonItem) {
+    @IBAction func showActionMenu(_ sender: UIBarButtonItem) {
         
-        let navigationController = UIStoryboard(name: "NewKey", bundle: nil).instantiateInitialViewController() as! UINavigationController
+        let lockIdentifier = self.lockIdentifier!
         
-        let destinationViewController = navigationController.viewControllers.first! as! NewKeySelectPermissionViewController
-        
-        destinationViewController.lockIdentifier = lockIdentifier
-        
-        self.present(navigationController, animated: true, completion: nil)
+        async { [weak self] in
+            
+            guard let controller = self else { return }
+            
+            // try to scan
+            if LockManager.shared[lockIdentifier] == nil
+                && LockManager.shared.scanning.value == false {
+                
+                mainQueue { controller.progressHUD.show(in: controller.view) }
+                
+                do { try LockManager.shared.scan() }
+                
+                catch {
+                    
+                    mainQueue {
+                        
+                        controller.showErrorAlert("\(error)")
+                        controller.progressHUD.dismiss(animated: false)
+                    }
+                }
+            }
+            
+            mainQueue {
+                
+                let activities = [NewKeyActivity()]
+                
+                let lockItem = LockActivityItem(identifier: lockIdentifier)
+                
+                let activityViewController = UIActivityViewController(activityItems: [lockItem], applicationActivities: activities)
+                activityViewController.modalPresentationStyle = .popover
+                activityViewController.popoverPresentationController?.barButtonItem = sender
+                
+                controller.present(activityViewController, animated: true, completion: nil)
+            }
+        }
     }
     
     @IBAction func unlock(_ sender: UIButton) {
@@ -90,20 +125,6 @@ final class LockViewController: UIViewController {
         
         // set lock name
         self.navigationItem.title = lockCache.name
-        
-        // setup new key button
-        switch lockCache.permission {
-            
-        case .owner, .admin:
-            
-            let newKeyBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(newKey))
-            
-            self.navigationItem.rightBarButtonItem = newKeyBarButtonItem
-            
-        default:
-            
-            self.navigationItem.rightBarButtonItem = nil
-        }
         
         // setup unlock button
         switch lockCache.permission {

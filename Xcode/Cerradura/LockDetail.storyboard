@@ -15,6 +15,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="tXp-L7-moZ">
+                        <rect key="frame" x="0.0" y="623" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </toolbar>
                     <connections>
                         <segue destination="fsH-O1-kTH" kind="relationship" relationship="rootViewController" id="Iqx-aZ-Xai"/>
                     </connections>
@@ -53,17 +57,14 @@
                             <constraint firstItem="kZj-aL-R4M" firstAttribute="centerX" secondItem="TKW-iH-6So" secondAttribute="centerX" id="oAr-52-8Dc"/>
                         </constraints>
                     </view>
-                    <toolbarItems>
-                        <barButtonItem style="plain" systemItem="flexibleSpace" id="Xe2-dZ-Ycz"/>
-                    </toolbarItems>
+                    <toolbarItems/>
                     <navigationItem key="navigationItem" title="Lock Name" id="jQe-rB-bMO">
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="6E7-Og-a9h">
+                        <barButtonItem key="rightBarButtonItem" systemItem="action" id="6E7-Og-a9h">
                             <connections>
-                                <action selector="newKey:" destination="fsH-O1-kTH" id="uwO-FY-h8m"/>
+                                <action selector="showActionMenu:" destination="fsH-O1-kTH" id="XhT-6L-wMe"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
-                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="unlockButton" destination="kZj-aL-R4M" id="naA-Gy-XTN"/>
                     </connections>

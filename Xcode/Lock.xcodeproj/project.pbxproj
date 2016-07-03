@@ -119,6 +119,7 @@
 		6EED25A41D292EE300638377 /* NewKey.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6EED25A31D292EE300638377 /* NewKey.storyboard */; };
 		6EED25A61D292EEF00638377 /* LockDetail.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6EED25A51D292EEF00638377 /* LockDetail.storyboard */; };
 		6EED25AC1D29985000638377 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6EED25AB1D29985000638377 /* Main.storyboard */; };
+		6EED25AE1D29B7C900638377 /* Activity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EED25AD1D29B7C900638377 /* Activity.swift */; };
 		6EF45F911CC6CAF9001F7A39 /* GATTProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA8996F1CC2E3F0005FC225 /* GATTProfile.swift */; };
 		6EF45F921CC6CAF9001F7A39 /* Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB413301CC30084005AB1E2 /* Status.swift */; };
 		6EF45F941CC6CAF9001F7A39 /* Bool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB413321CC317A3005AB1E2 /* Bool.swift */; };
@@ -351,6 +352,7 @@
 		6EED25A31D292EE300638377 /* NewKey.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewKey.storyboard; sourceTree = "<group>"; };
 		6EED25A51D292EEF00638377 /* LockDetail.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LockDetail.storyboard; sourceTree = "<group>"; };
 		6EED25AB1D29985000638377 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		6EED25AD1D29B7C900638377 /* Activity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Activity.swift; sourceTree = "<group>"; };
 		6EF45FA01CC6CAF9001F7A39 /* CoreLock.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CoreLock.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -466,6 +468,7 @@
 		6E3E4ED41D278FEC000D13DF /* iOS Technologies Support */ = {
 			isa = PBXGroup;
 			children = (
+				6EED25AF1D29C6B200638377 /* UIActivity */,
 				6E3E4ED31D278FDB000D13DF /* Beacon */,
 				6EBAE76F1D0FB2C2008EADC7 /* Spotlight */,
 				6E68EEBB1CD5DD950068C7B4 /* WatchKit */,
@@ -712,6 +715,14 @@
 			);
 			name = lockd;
 			path = ../Sources/lockd;
+			sourceTree = "<group>";
+		};
+		6EED25AF1D29C6B200638377 /* UIActivity */ = {
+			isa = PBXGroup;
+			children = (
+				6EED25AD1D29B7C900638377 /* Activity.swift */,
+			);
+			name = UIActivity;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1184,6 +1195,7 @@
 				6E1F60671CCB3885001914E7 /* CoreDataExtensions.swift in Sources */,
 				6ED338681CC7C39200DF1461 /* NearLockViewController.swift in Sources */,
 				6E7E65DD1D0D3619009E00C4 /* Async.swift in Sources */,
+				6EED25AE1D29B7C900638377 /* Activity.swift in Sources */,
 				6E1F60621CCB2C0C001914E7 /* EntityController.swift in Sources */,
 				6EED25A21D292AC000638377 /* KeysViewController.swift in Sources */,
 				6ED3386A1CC7C7CB00DF1461 /* ErrorAlert.swift in Sources */,

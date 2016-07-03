@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import CoreData
 import CoreBluetooth
 import SwiftFoundation
 import Bluetooth
@@ -15,7 +16,7 @@ import GATT
 import CoreLock
 
 /// Displays a list of nearby locks.
-final class NearLockViewController: UITableViewController, EmptyTableViewController {
+final class NearLockViewController: UITableViewController, EmptyTableViewController, NSFetchedResultsControllerDelegate {
     
     // MARK: - Properties
     
@@ -33,6 +34,19 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
     private var locksObserver: Int!
     
     private var scanningObserver: Int!
+    
+    private lazy var fetchedResultsController: NSFetchedResultsController<NSManagedObject> = {
+        
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: LockCache.entityName)
+        
+        fetchRequest.sortDescriptors = [SortDescriptor(key: LockCache.Property.name.rawValue, ascending: true)]
+        
+        let controller = NSFetchedResultsController<NSManagedObject>(fetchRequest: fetchRequest, managedObjectContext: Store.shared.managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
+        
+        controller.delegate = self
+        
+        return controller
+    }()
     
     // MARK: - Loading
     
@@ -64,6 +78,9 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
             
             self.state = .error(Error.bluetoothDisabled)
         }
+        
+        // start observing Core Data context
+        try! fetchedResultsController.performFetch()
     }
     
     // MARK: - Actions
@@ -486,6 +503,14 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
         let cell = tableView.cellForRow(at: indexPath) as! LockTableViewCell
         
         cell.imageView?.isHighlighted = true
+    }
+    
+    // MARK: - NSFetchedResultsControllerDelegate
+    
+    @objc(controllerDidChangeContent:)
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        
+        self.updateUI()
     }
 }
 
