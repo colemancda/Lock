@@ -25,6 +25,8 @@ final class NewKeyParentViewController: UIViewController {
     
     // MARK: - Properties
     
+    var completion: ((Bool) -> ())?
+    
     var newKey: (identifier: UUID, permission: Permission)!
     
     // MARK: - Loading
@@ -45,15 +47,19 @@ final class NewKeyParentViewController: UIViewController {
     
     @IBAction func done(_ sender: AnyObject?) {
         
-        self.dismiss(animated: true, completion: nil)
+        let completion = self.completion // for ARC
+        
+        self.dismiss(animated: true) { completion?(true) }
     }
     
     // MARK: - Methods
     
     private func setupNewKey() {
         
-        guard let parentKey = Store.shared[key: newKey.identifier]
+        guard let (lockCache, parentKeyData) = Store.shared[newKey.identifier]
             else { newKeyError("The key for the specified lock has been deleted from the database."); return }
+        
+        let parentKey = (lockCache.keyIdentifier, parentKeyData)
         
         print("Setting up new key for lock \(newKey.identifier)...")
         

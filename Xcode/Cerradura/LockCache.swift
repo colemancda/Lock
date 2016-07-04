@@ -6,7 +6,7 @@
 //  Copyright © 2016 ColemanCDA. All rights reserved.
 //
 
-import SwiftFoundation
+import Foundation
 import CoreLock
 import CoreData
 
@@ -22,6 +22,8 @@ struct LockCache: CoreDataEncodable, CoreDataDecodable {
     let version: UInt64
     
     let permission: Permission
+    
+    let keyIdentifier: UUID
 }
 
 // MARK: - CoreData
@@ -32,7 +34,7 @@ extension LockCache {
     
     enum Property: String {
         
-        case identifier, name, model, version, permission
+        case identifier, name, model, version, permission, keyIdentifier
     }
     
     func save(context: NSManagedObjectContext) throws -> NSManagedObject {
@@ -44,7 +46,8 @@ extension LockCache {
         managedObject.setValue(name, forKey: Property.name.rawValue)
         managedObject.setValue(NSNumber(value: Int16(model.rawValue)), forKey: Property.model.rawValue)
         managedObject.setValue(NSNumber(value: version), forKey: Property.version.rawValue)
-        managedObject.setValue(permission.toBigEndian().toFoundation(), forKey: Property.permission.rawValue)
+        managedObject.setValue(permission.toBigEndian(), forKey: Property.permission.rawValue)
+        managedObject.setValue(keyIdentifier.rawValue, forKey: Property.keyIdentifier.rawValue)
         
         try context.save()
         
@@ -58,14 +61,17 @@ extension LockCache {
         let identifierString = managedObject.value(forKey: Property.identifier.rawValue) as! String
         self.identifier = UUID(rawValue: identifierString)!
         
-        self.name = managedObject.value(forKey: Property.name.rawValue) as! NSString as String
+        self.name = managedObject.value(forKey: Property.name.rawValue) as! String
         
         let modelValue = managedObject.value(forKey: Property.model.rawValue) as! NSNumber
         self.model = Model(rawValue: modelValue.uint8Value)!
         
         self.version = (managedObject.value(forKey: Property.version.rawValue) as! NSNumber).uint64Value
         
-        let permissionData = managedObject.value(forKey: Property.permission.rawValue) as! NSData
-        self.permission = Permission(bigEndian: Data(foundation: permissionData))!
+        let permissionData = managedObject.value(forKey: Property.permission.rawValue) as! Data
+        self.permission = Permission(bigEndian: permissionData)!
+        
+        let keyIdentifierString = managedObject.value(forKey: Property.keyIdentifier.rawValue) as! String
+        self.keyIdentifier = UUID(rawValue: keyIdentifierString)!
     }
 }

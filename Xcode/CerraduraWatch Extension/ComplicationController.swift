@@ -20,33 +20,29 @@ final class ComplicationController: NSObject, CLKComplicationDataSource {
     
     // MARK: - Timeline Configuration
     
-    @objc(getSupportedTimeTravelDirectionsForComplication:withHandler:)
     func getSupportedTimeTravelDirections(for complication: CLKComplication, withHandler handler: (CLKComplicationTimeTravelDirections) -> ()) {
         
         handler([.backward])
     }
     
-     @objc(getTimelineStartDateForComplication:withHandler:)
-    func getTimelineStartDate(for complication: CLKComplication, withHandler handler: (NSDate?) -> ()) {
+    func getTimelineStartDate(for complication: CLKComplication, withHandler handler: (Date?) -> Void) {
         
-        let date = History.shared.events.first?.date ?? NSDate()
+        let date = History.shared.events.first?.date ?? Date()
         
         print("Complication timeline start date: \(date)")
         
         handler(date)
     }
     
-    @objc(getTimelineEndDateForComplication:withHandler:)
-    func getTimelineEndDate(for complication: CLKComplication, withHandler handler: (NSDate?) -> ()) {
+    func getTimelineEndDate(for complication: CLKComplication, withHandler handler: (Date?) -> ()) {
         
-        let date = History.shared.events.last?.date ?? NSDate()
+        let date = History.shared.events.last?.date ?? Date()
         
         print("Complication timeline end date: \(date)")
         
         handler(date)
     }
     
-    @objc(getPrivacyBehaviorForComplication:withHandler:)
     func getPrivacyBehavior(for complication: CLKComplication, withHandler handler: (CLKComplicationPrivacyBehavior) -> ()) {
         
         handler(.showOnLockScreen)
@@ -54,7 +50,6 @@ final class ComplicationController: NSObject, CLKComplicationDataSource {
     
     // MARK: - Timeline Population
     
-    @objc(getCurrentTimelineEntryForComplication:withHandler:)
     func getCurrentTimelineEntry(for complication: CLKComplication, withHandler handler: (CLKComplicationTimelineEntry?) -> ()) {
         // Call the handler with the current timeline entry
         
@@ -64,7 +59,7 @@ final class ComplicationController: NSObject, CLKComplicationDataSource {
         
         let template = self.template(for: complication, event: event)
         
-        handler(CLKComplicationTimelineEntry(date: NSDate(), complicationTemplate: template))
+        handler(CLKComplicationTimelineEntry(date: Date(), complicationTemplate: template))
     }
     
     /*
@@ -100,7 +95,6 @@ final class ComplicationController: NSObject, CLKComplicationDataSource {
     
     // MARK: - Placeholder Templates
     
-    @objc(getPlaceholderTemplateForComplication:withHandler:)
     func getPlaceholderTemplate(for complication: CLKComplication, withHandler handler: (CLKComplicationTemplate?) -> ()) {
         // This method will be called once per supported complication, and the results will be cached
         

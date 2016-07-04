@@ -11,23 +11,22 @@ import UIKit
 import CoreLock
 import SwiftFoundation
 
-final class NewKeySelectPermissionViewController: UIViewController {
-    
-    // MARK: - IB Outlets
-    
-    @IBOutlet weak var tableView: UITableView!
+final class NewKeySelectPermissionViewController: UITableViewController {
     
     // MARK: - Properties
     
-    var lockIdentifier: SwiftFoundation.UUID!
+    var completion: ((Bool) -> ())?
     
-    private let permissionTypes: [PermissionType] = [.admin, .anytime /*, .scheduled*/]
+    var lockIdentifier: UUID!
+    
+    private let permissionTypes: [PermissionType] = [.admin, .anytime /*, .scheduled */ ]
     
     // MARK: - Loading
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // setup table view
         self.tableView.estimatedRowHeight = 100
         self.tableView.rowHeight = UITableViewAutomaticDimension
     }
@@ -36,7 +35,9 @@ final class NewKeySelectPermissionViewController: UIViewController {
     
     @IBAction func cancel(_ sender: AnyObject?) {
         
-        self.dismiss(animated: true, completion: nil)
+        let completion = self.completion // for ARC
+        
+        self.dismiss(animated: true) { completion?(false) }
     }
     
     // MARK: - Methods
@@ -89,19 +90,19 @@ final class NewKeySelectPermissionViewController: UIViewController {
         cell.permissionDescriptionLabel.text = permissionText
     }
     
-    // MARK: - UITableViewDatasource
+    // MARK: - UITableViewDataSource
     
-    @objc func numberOfSectionsInTableView(_ tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         
         return 1
     }
     
-    @objc func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection: Int) -> Int {
         
         return permissionTypes.count
     }
     
-    @objc func tableView(_ tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: PermissionTypeTableViewCell.resuseIdentifier, for: indexPath) as! PermissionTypeTableViewCell
         
@@ -112,7 +113,7 @@ final class NewKeySelectPermissionViewController: UIViewController {
     
     // MARK: - UITableViewDelegate
     
-    func tableView(_ tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         tableView.deselectRow(at: indexPath, animated: true)
         
@@ -130,7 +131,7 @@ final class NewKeySelectPermissionViewController: UIViewController {
             default: fatalError()
             }
             
-            let viewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "newKeyParent") as! NewKeyParentViewController
+            let viewController = UIStoryboard(name: "NewKey", bundle: nil).instantiateViewController(withIdentifier: "newKeyParent") as! NewKeyParentViewController
             
             viewController.newKey = (lockIdentifier, permission)
             

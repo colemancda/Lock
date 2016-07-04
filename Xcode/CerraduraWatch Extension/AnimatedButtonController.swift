@@ -15,17 +15,17 @@ public final class AnimatedButtonController {
     public let images: [String]
     
     /// The interval between images.
-    public let interval: NSTimeInterval
+    public let interval: TimeInterval
     
     public weak var target: WKInterfaceButton?
     
     private var currentImageIndex = 0
     
-    private var timer: NSTimer?
+    private var timer: Timer?
     
     deinit { stopAnimating() }
     
-    public init(images: [String], interval: NSTimeInterval, target: WKInterfaceButton?) {
+    public init(images: [String], interval: TimeInterval, target: WKInterfaceButton?) {
         
         assert(images.count >= 2, "Must provide at least two images")
         
@@ -44,7 +44,7 @@ public final class AnimatedButtonController {
         
         updateImage()
         
-        self.timer = NSTimer.scheduledTimer(timeInterval: interval, target: self, selector: #selector(updateImage), userInfo: nil, repeats: true)
+        self.timer = Timer.scheduledTimer(timeInterval: interval, target: self, selector: #selector(updateImage), userInfo: nil, repeats: true)
     }
     
     public func stopAnimating() {

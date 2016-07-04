@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11129.15" systemVersion="16A201w" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" colorMatched="YES" initialViewController="Ztn-ki-Hvr">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11103.10"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Navigation Controller-->
+        <scene sceneID="d39-6J-UUz">
+            <objects>
+                <navigationController id="Ztn-ki-Hvr" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="cC2-7i-7rO">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="tXp-L7-moZ">
+                        <rect key="frame" x="0.0" y="623" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </toolbar>
+                    <connections>
+                        <segue destination="fsH-O1-kTH" kind="relationship" relationship="rootViewController" id="Iqx-aZ-Xai"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="5HK-Vh-agl" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-825" y="136.73499999999999"/>
+        </scene>
+        <!--Lock Name-->
+        <scene sceneID="eY5-WG-Vay">
+            <objects>
+                <viewController storyboardIdentifier="LockViewController" id="fsH-O1-kTH" customClass="LockViewController" customModule="Cerradura" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="xG4-8w-9TQ"/>
+                        <viewControllerLayoutGuide type="bottom" id="C5a-l3-NcD"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="TKW-iH-6So">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kZj-aL-R4M">
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="200" id="68a-pg-HEa"/>
+                                    <constraint firstAttribute="width" secondItem="kZj-aL-R4M" secondAttribute="height" id="grc-I2-tWG"/>
+                                </constraints>
+                                <state key="normal" image="unlockButton"/>
+                                <state key="highlighted" image="unlockButtonSelected"/>
+                                <connections>
+                                    <action selector="unlock:" destination="fsH-O1-kTH" eventType="touchUpInside" id="3kT-54-F39"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="kZj-aL-R4M" firstAttribute="centerY" secondItem="TKW-iH-6So" secondAttribute="centerY" id="ilS-c1-dwG"/>
+                            <constraint firstItem="kZj-aL-R4M" firstAttribute="centerX" secondItem="TKW-iH-6So" secondAttribute="centerX" id="oAr-52-8Dc"/>
+                        </constraints>
+                    </view>
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" title="Lock Name" id="jQe-rB-bMO">
+                        <barButtonItem key="rightBarButtonItem" systemItem="action" id="6E7-Og-a9h">
+                            <connections>
+                                <action selector="showActionMenu:" destination="fsH-O1-kTH" id="XhT-6L-wMe"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="unlockButton" destination="kZj-aL-R4M" id="naA-Gy-XTN"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Hoe-Sx-tfS" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-144.375" y="136.73499999999999"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="unlockButton" width="230" height="230"/>
+        <image name="unlockButtonSelected" width="230" height="230"/>
+    </resources>
+    <simulatedMetricsContainer key="defaultSimulatedMetrics">
+        <simulatedStatusBarMetrics key="statusBar"/>
+        <simulatedOrientationMetrics key="orientation"/>
+        <simulatedScreenMetrics key="destination" type="retina4_7.fullscreen"/>
+    </simulatedMetricsContainer>
+</document>

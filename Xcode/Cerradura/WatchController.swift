@@ -94,7 +94,7 @@ final class WatchController: NSObject, WCSessionDelegate {
             guard let cachedLock = Store.shared[foundLock.UUID]
                 else { replyHandler(UnlockResponse(error: "No stored key for lock").toMessage()); return }
             
-            do { try LockManager.shared.unlock(foundLock.UUID, key: cachedLock.key.data) }
+            do { try LockManager.shared.unlock(foundLock.UUID, key: cachedLock.key) }
             
             catch { replyHandler(UnlockResponse(error: "\(error)").toMessage()); return }
             

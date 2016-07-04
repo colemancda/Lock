@@ -8,4 +8,4 @@
 
 import SwiftFoundation
 
-public let LockBeaconUUID = SwiftFoundation.UUID(rawValue: "5109BE6D-3918-43FE-A629-CB2E0707EA5F")!
+public let LockBeaconUUID = UUID(rawValue: "5109BE6D-3918-43FE-A629-CB2E0707EA5F")!

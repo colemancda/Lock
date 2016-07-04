@@ -14,7 +14,11 @@ import KeychainAccess
 /// Store for saving and retrieving lock keys.
 final class Store {
     
+    // MARK: - Singleton
+    
     static let shared = Store()
+    
+    // MARK: - Properties
     
     /// The managed object context used for caching.
     let managedObjectContext: NSManagedObjectContext
@@ -22,7 +26,13 @@ final class Store {
     /// A convenience variable for the managed object model.
     let managedObjectModel: NSManagedObjectModel
     
-    private let keychain = Keychain(accessGroup: AppGroup)
+    let keychain = Keychain(accessGroup: AppGroup)
+    
+    // MARK: - Private Properties
+    
+    private lazy var lockCacheEntity: NSEntityDescription = self.managedObjectContext.persistentStoreCoordinator!.managedObjectModel.entitiesByName[LockCache.entityName]!
+    
+    // MARK: - Initialization
     
     private init() {
         
@@ -33,141 +43,68 @@ final class Store {
         self.managedObjectContext.persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
     }
     
+    // MARK: - Methods
+    
     /// Remove the specified key / lock pair from the database, along with its cached info.
-    func remove(_ UUID: SwiftFoundation.UUID) {
+    func remove(_ identifier: UUID) {
         
         // remove from CoreData
-        let entity = managedObjectContext.persistentStoreCoordinator!.managedObjectModel.entitiesByName[LockCache.entityName]!
-        
-        guard let managedObject = try! managedObjectContext.find(entity: entity, resourceID: UUID.rawValue, identifierProperty: LockCache.Property.identifier.rawValue)
-            else { fatalError("Tried to remove nonexistent lock \(UUID)") }
+        guard let managedObject = try! managedObjectContext.find(entity: lockCacheEntity, resourceID: identifier.rawValue, identifierProperty: LockCache.Property.identifier.rawValue)
+            else { fatalError("Tried to remove nonexistent lock \(identifier)") }
         
         managedObjectContext.delete(managedObject)
         
         try! managedObjectContext.save()
         
         // remove from Keychain
-        try! keychain.remove(key: UUID.rawValue)
+        try! keychain.remove(key: identifier.rawValue)
     }
     
-    /// Get the key data and cached lock info for the specified lock.
-    subscript (UUID: SwiftFoundation.UUID) -> Lock? {
+    // MARK: - Subscripting
+    
+    /// Get the cached lock info for the specified lock.
+    subscript (identifier: UUID) -> (LockCache, KeyData)? {
         
         get {
             
-            let entity = managedObjectContext.persistentStoreCoordinator!.managedObjectModel.entitiesByName[LockCache.entityName]!
-            
-            guard let keyData = try! keychain.getData(key: UUID.rawValue),
-                let key = KeyData(data: Data(foundation: keyData)),
-                let managedObject = try! managedObjectContext.find(entity: entity, resourceID: UUID.rawValue, identifierProperty: LockCache.Property.identifier.rawValue)
+            guard let keyData = try! keychain.getData(key: identifier.rawValue),
+                let key = KeyData(data: keyData as Data),
+                let managedObject = try! managedObjectContext.find(entity: lockCacheEntity, resourceID: identifier.rawValue, identifierProperty: LockCache.Property.identifier.rawValue)
                 else { return nil }
             
             let lockCache = LockCache(managedObject: managedObject)
             
-            return Lock(keyData: key, lockCache: lockCache)
+            return (lockCache, key)
         }
         
         set {
             
-            guard let lock = newValue
-                else { remove(UUID); return }
-            
-            let lockCache = LockCache(lock)
+            guard let (lockCache, key) = newValue
+                else { remove(identifier); return }
             
             let _ = try! lockCache.save(context: managedObjectContext)
             
-            try! keychain.set(value: lock.key.data.data.toFoundation(), key: UUID.rawValue)
+            try! keychain.set(value: key.data, key: identifier.rawValue)
         }
     }
     
-    /// Subscript to get key.
-    subscript (key UUID:  SwiftFoundation.UUID) -> KeyData? {
+    /// Subscript to get key with the lock identifier.
+    subscript (key lockIdentifier: UUID) -> KeyData? {
         
-        guard let data = try! keychain.getData(key: UUID.rawValue)
+        guard let data = try! keychain.getData(key: lockIdentifier.rawValue)
             else { return nil }
         
-        return KeyData(data: Data(foundation: data))
+        return KeyData(data: data as Data)
     }
     
-    subscript (cache UUID: SwiftFoundation.UUID) -> LockCache? {
+    subscript (cache identifier: UUID) -> LockCache? {
         
         let entity = managedObjectContext.persistentStoreCoordinator!.managedObjectModel.entitiesByName[LockCache.entityName]!
         
-        guard let managedObject = try! managedObjectContext.find(entity: entity, resourceID: UUID.rawValue, identifierProperty: LockCache.Property.identifier.rawValue)
+        guard let managedObject = try! managedObjectContext.find(entity: entity, resourceID: identifier.rawValue, identifierProperty: LockCache.Property.identifier.rawValue)
             else { return nil }
         
-        let lockCache = LockCache(managedObject: managedObject)
-        
-        return lockCache
-    }
-
-    /// Returns the entire cache.
-    var cache: [LockCache] {
-        
-        let entity = managedObjectContext.persistentStoreCoordinator!.managedObjectModel.entitiesByName[LockCache.entityName]!
-        
-        let fetchRequest = NSFetchRequest(entityName: entity.name!)
-        
-        fetchRequest.includesSubentities = false
-        
-        fetchRequest.returnsObjectsAsFaults = false
-        
-        fetchRequest.sortDescriptors = [NSSortDescriptor.init(key: LockCache.Property.identifier.rawValue, ascending: true)]
-        
-        var cache: [LockCache]!
-        
-        NSOperationQueue.main().addOperations([NSBlockOperation(block: {
-            
-            cache = try! self.managedObjectContext.fetch(fetchRequest)
-            
-        })], waitUntilFinished: true)
-        
-        return cache
-    }
-}
-
-// MARK: - Supporting Types
-
-struct Lock {
-    
-    let identifier: UUID
-    
-    var name: String
-    
-    let model: Model
-    
-    let version: UInt64
-    
-    let key: Key
-    
-    private init(keyData: KeyData, lockCache: LockCache) {
-        
-        self.key = Key(data: keyData, permission: lockCache.permission)
-        self.identifier = lockCache.identifier
-        self.name = lockCache.name
-        self.version = lockCache.version
-        self.model = lockCache.model
-    }
-    
-    init(identifier: UUID, name: String, model: Model, version: UInt64, key: Key) {
-        
-        self.identifier = identifier
-        self.name = name
-        self.model = model
-        self.version = version
-        self.key = key
-    }
-}
-
-private extension LockCache {
-    
-    init(_ lock: Lock) {
-        
-        self.identifier = lock.identifier
-        self.name = lock.name
-        self.model = lock.model
-        self.version = lock.version
-        self.permission = lock.key.permission
+        return LockCache(managedObject: managedObject)
     }
 }
 
@@ -175,7 +112,7 @@ private extension LockCache {
 
 private func LoadManagedObjectModel() -> NSManagedObjectModel {
     
-    let bundle = NSBundle(for: Store.self)
+    let bundle = Bundle(for: Store.self)
     
     let modelURL = bundle.urlForResource("Model", withExtension: "momd")!
     
@@ -201,11 +138,11 @@ func RemovePersistentStore() throws {
     
     let url = SQLiteStoreFileURL
     
-    if NSFileManager.default().fileExists(atPath: url.path!) {
+    if FileManager.default().fileExists(atPath: url.path!) {
         
         // delete file
         
-        try NSFileManager.default().removeItem(at: url)
+        try FileManager.default().removeItem(at: url)
     }
     
     if let store = PersistentStore {
@@ -219,12 +156,12 @@ func RemovePersistentStore() throws {
     }
 }
 
-let SQLiteStoreFileURL: NSURL = {
+let SQLiteStoreFileURL: URL = {
     
-    guard let cacheURL = NSFileManager.default().containerURLForSecurityApplicationGroupIdentifier(AppGroup)
+    guard let cacheURL = FileManager.default().containerURLForSecurityApplicationGroupIdentifier(AppGroup)
         else { fatalError("Could not get URL for Core Data cache: App Group Error") }
     
-    let fileURL = cacheURL.appendingPathComponent("cache.sqlite")
+    let fileURL = try! cacheURL.appendingPathComponent("cache.sqlite")
     
     return fileURL
 }()

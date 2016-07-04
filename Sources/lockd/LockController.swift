@@ -31,7 +31,7 @@ final class LockController {
         didSet { didChangeStatus(oldValue: oldValue) }
     }
     
-    let configuration = try! Configuration.load(File.configuration)
+    var configuration = try! Configuration.load(File.configuration)
     
     let model: Model = .orangePiOne
     
@@ -41,15 +41,13 @@ final class LockController {
     
     private var newKey: Key?
     
-    private var resetSwitchLastFallDate = Date()
-    
-    private var resetThread: Thread?
+    private var homeKitDeamon: pid_t?
     
     // MARK: - Intialization
     
     private init() {
         
-        if store.data.first == nil {
+        if store.keys.first == nil {
             
             status = .setup
             
@@ -83,7 +81,7 @@ final class LockController {
         AppLED.value = 1
         
         // listen to reset switch
-        ResetSwitch.onRaising(resetSwitch)
+        ResetSwitch.onChange(resetSwitch)
         
         // start GATT server
         
@@ -96,6 +94,9 @@ final class LockController {
         do { try peripheral.start() }
         catch { fatalError("Could not start peripheral: \(error)") }
         #endif
+        
+        // start HomeKit deamon
+        updateHomeKitSupport()
         
         print("Status: \(status)")
     }
@@ -126,13 +127,15 @@ final class LockController {
         
         let unlock = Characteristic(UUID: LockService.Unlock.UUID, permissions: [.Write], properties: [.Write])
         
-        let newKeyParent = Characteristic(UUID: LockService.NewKeyParentSharedSecret.UUID, permissions: [.Write], properties: [.Write])
+        let newKeyParent = Characteristic(UUID: LockService.NewKeyParent.UUID, permissions: [.Write], properties: [.Write])
         
-        let newKeyChild = Characteristic(UUID: LockService.NewKeyChildSharedSecret.UUID, value: Data(), permissions: [.Read], properties: [.Read])
+        let newKeyChild = Characteristic(UUID: LockService.NewKeyChild.UUID, value: Data(), permissions: [.Read], properties: [.Read])
         
         let newKeyFinish = Characteristic(UUID: LockService.NewKeyFinish.UUID, value: Data(), permissions: [.Write], properties: [.Write])
         
-        let lockService = Service(UUID: LockService.UUID, primary: true, characteristics: [identifier, model, version, status, setup, unlock, newKeyParent, newKeyChild, newKeyFinish])
+        let homeKitEnable = Characteristic(UUID: LockService.HomeKitEnable.UUID, value: Data(), permissions: [.Write], properties: [.Write])
+        
+        let lockService = Service(UUID: LockService.UUID, primary: true, characteristics: [identifier, model, version, status, setup, unlock, newKeyParent, newKeyChild, newKeyFinish, homeKitEnable])
         
         let _ = try! peripheral.add(service: lockService)
     }
@@ -144,11 +147,11 @@ final class LockController {
         peripheral[characteristic: LockService.Status.UUID] = LockService.Status(value: self.status).toBigEndian()
     }
     
-    private func willRead(central: Central, UUID: Bluetooth.UUID, value: Data, offset: Int) -> Bluetooth.ATT.Error? {
+    private func willRead(central: Central, UUID: BluetoothUUID, value: Data, offset: Int) -> Bluetooth.ATT.Error? {
         
         switch UUID {
             
-        case LockService.NewKeyChildSharedSecret.UUID:
+        case LockService.NewKeyChild.UUID:
             
             return nil
             
@@ -156,7 +159,7 @@ final class LockController {
         }
     }
     
-    private func willWrite(central: Central, UUID: Bluetooth.UUID, value: Data, newValue: Data) -> Bluetooth.ATT.Error? {
+    private func willWrite(central: Central, UUID: BluetoothUUID, value: Data, newValue: Data) -> Bluetooth.ATT.Error? {
         
         switch UUID {
             
@@ -173,7 +176,7 @@ final class LockController {
             
         case LockService.Unlock.UUID:
             
-            guard status == .unlock
+            guard status != .setup
                 else { return ATT.Error.WriteNotPermitted }
             
             // deserialize
@@ -182,11 +185,11 @@ final class LockController {
             
             var authenticatedKey: Key!
             
-            for storeData in store.data {
+            for key in store.keys {
                 
-                if unlock.authenticated(with: storeData.key.data) {
+                if unlock.authenticated(with: key.data) {
                     
-                    authenticatedKey = storeData.key
+                    authenticatedKey = key
                     
                     break
                 }
@@ -212,22 +215,22 @@ final class LockController {
             
             print("Unlocked by central \(central.identifier)")
             
-        case LockService.NewKeyParentSharedSecret.UUID:
+        case LockService.NewKeyParent.UUID:
             
             guard status == .unlock
                 else { return ATT.Error.WriteNotPermitted }
             
             // deserialize
-            guard let newKeyParent = LockService.NewKeyParentSharedSecret.init(bigEndian: newValue)
+            guard let newKeyParent = LockService.NewKeyParent.init(bigEndian: newValue)
                 else { return ATT.Error.InvalidAttributeValueLength }
             
             var authenticatedKey: Key!
             
-            for storeData in store.data {
+            for key in store.keys {
                 
-                if newKeyParent.authenticated(with: storeData.key.data) {
+                if newKeyParent.authenticated(with: key.data) {
                     
-                    authenticatedKey = storeData.key
+                    authenticatedKey = key
                     
                     break
                 }
@@ -253,19 +256,56 @@ final class LockController {
             guard let _ = LockService.NewKeyFinish.init(bigEndian: newValue)
                 else { return ATT.Error.InvalidAttributeValueLength }
             
+        case LockService.HomeKitEnable.UUID:
+            
+            guard status != .setup
+                else { return ATT.Error.WriteNotPermitted }
+            
+            // deserialize
+            guard let homeKit = LockService.HomeKitEnable.init(bigEndian: newValue)
+                else { return ATT.Error.InvalidAttributeValueLength }
+            
+            var authenticatedKey: Key!
+            
+            for key in store.keys {
+                
+                if homeKit.authenticated(with: key.data) {
+                    
+                    authenticatedKey = key
+                    
+                    break
+                }
+            }
+            
+            // not authenticated
+            guard authenticatedKey != nil
+                else { return ATT.Error.WriteNotPermitted }
+            
+            // verify permission
+            guard authenticatedKey.permission == .owner
+                else { return ATT.Error.WriteNotPermitted }
+            
+            // enable HomeKit
+            self.configuration.isHomeKitEnabled = homeKit.enable
+            try! self.configuration.save(File.configuration)
+            
+            updateHomeKitSupport()
+            
+            print("HomeKit enabled: \(configuration.isHomeKitEnabled)")
+            
         default: fatalError("Writing to unknown characteristic \(UUID)")
         }
         
         return nil
     }
     
-    private func didWrite(central: Central, UUID: Bluetooth.UUID, value: SwiftFoundation.Data, newValue: SwiftFoundation.Data){
+    private func didWrite(central: Central, UUID: BluetoothUUID, value: SwiftFoundation.Data, newValue: SwiftFoundation.Data){
         
         switch UUID {
             
         case LockService.Setup.UUID:
             
-            assert(store.data.isEmpty, "Lock already setup")
+            assert(store.keys.isEmpty, "Lock already setup")
             
             // deserialize
             let key = LockService.Setup.init(bigEndian: newValue)!
@@ -275,7 +315,7 @@ final class LockController {
                 else { fatalError("Unauthenticated setup key") }
             
             // set key
-            store.add(key: Key(data: key.value, permission: .owner))
+            store.add(Key(data: key.value, permission: .owner))
             
             print("Lock setup by central \(central.identifier)")
             
@@ -285,19 +325,19 @@ final class LockController {
             
             assert(status != .setup)
             
-        case LockService.NewKeyParentSharedSecret.UUID:
+        case LockService.NewKeyParent.UUID:
             
             assert(status == .unlock)
             
-            let newKeyParent = LockService.NewKeyParentSharedSecret.init(bigEndian: newValue)!
+            let newKeyParent = LockService.NewKeyParent.init(bigEndian: newValue)!
             
             var authenticatedKey: Key!
             
-            for storeData in store.data {
+            for key in store.keys {
                 
-                if newKeyParent.authenticated(with: storeData.key.data) {
+                if newKeyParent.authenticated(with: key.data) {
                     
-                    authenticatedKey = storeData.key
+                    authenticatedKey = key
                     
                     break
                 }
@@ -312,9 +352,9 @@ final class LockController {
             self.newKey = newKey
             
             // new child value
-            let newKeyChild = LockService.NewKeyChildSharedSecret(sharedSecret: sharedSecret, newKey: newKey)
+            let newKeyChild = LockService.NewKeyChild(sharedSecret: sharedSecret, newKey: newKey)
             
-            peripheral[characteristic: LockService.NewKeyChildSharedSecret.UUID] = newKeyChild.toBigEndian()
+            peripheral[characteristic: LockService.NewKeyChild.UUID] = newKeyChild.toBigEndian()
             
         case LockService.NewKeyFinish.UUID:
             
@@ -339,8 +379,12 @@ final class LockController {
             
             // update status
             self.status = .unlock
-            self.store.add(key: newKey)
+            self.store.add(newKey)
             self.newKey = nil
+            
+        case LockService.HomeKitEnable.UUID:
+            
+            assert(status != .setup) // nothing to do here
             
         default: fatalError("Writing to characteristic \(UUID)")
         }
@@ -348,45 +392,82 @@ final class LockController {
     
     // MARK: GPIO
     
-    private func resetSwitch(gpio: GPIO) {
+    private func resetSwitch(_ gpio: GPIO) {
         
-        assert(gpio === ResetSwitch)
+        // reset DB
+        print("Resetting...")
         
-        resetSwitchLastFallDate = Date()
+        AppLED.value = 0
         
-        if resetThread == nil {
+        // reset config
+        let newConfiguration = Configuration()
+        try! newConfiguration.save(File.configuration)
+        
+        // clear store
+        self.store.clear()
+        
+        // reset HomeKit
+        if configuration.isHomeKitEnabled {
             
-            // create the reset checking thread
-            resetThread = try! Thread { [weak self] in
-                
-                while self != nil {
-                    
-                    let controller = self!
-                    
-                    guard Date() - controller.resetSwitchLastFallDate < 10 else {
-                        
-                        ResetSwitch.clearListeners()
-                        
-                        // reset DB
-                        
-                        print("Resetting...")
-                        
-                        AppLED.value = 0
-                        
-                        // reset config
-                        let newConfiguration = Configuration()
-                        try! newConfiguration.save(File.configuration)
-                        
-                        // clear store
-                        controller.store.clear()
-                        
-                        // reboot
-                        system("reboot")
-                        
-                        return
-                    }
-                }
+            configuration.isHomeKitEnabled = false
+            updateHomeKitSupport()
+        }
+        
+        // reboot
+        #if os(Linux)
+        system(Command.reboot)
+        #endif
+        
+        return
+    }
+    
+    // MARK: HomeKit
+    
+    private func updateHomeKitSupport() {
+        
+        if configuration.isHomeKitEnabled {
+            
+            guard self.homeKitDeamon == nil
+                else { return }
+            
+            let launchPath = File.nodejs
+            
+            let argument = File.homeKitDaemon
+            
+            var args = [launchPath, argument]
+            
+            let argv : UnsafeMutablePointer<UnsafeMutablePointer<Int8>?> = args.withUnsafeBufferPointer {
+                let array : UnsafeBufferPointer<String> = $0
+                let buffer = UnsafeMutablePointer<UnsafeMutablePointer<Int8>?>(allocatingCapacity: array.count + 1)
+                buffer.initializeFrom(array.map { $0.withCString(strdup) })
+                buffer[array.count] = nil
+                return buffer
             }
+            
+            defer {
+                for arg in argv ..< argv + args.count {
+                    free(UnsafeMutablePointer<Void>(arg.pointee))
+                }
+                
+                argv.deallocateCapacity(args.count + 1)
+            }
+            
+            var pid = pid_t()
+            guard posix_spawn(&pid, launchPath, nil, nil, argv, nil) == 0
+                else { fatalError("Could not start HomeKit Daemon: \(POSIXError.fromErrno!)") }
+            
+            self.homeKitDeamon = pid
+            
+        } else {
+            
+            guard let pid = self.homeKitDeamon
+                else { return }
+            
+            kill(pid, SIGKILL);
+            
+            self.homeKitDeamon = nil
+            
+            do { try FileManager.removeItem(path: File.homeKitData) } catch { } // ignore error
         }
     }
 }

@@ -12,11 +12,11 @@ final class History {
     
     static let shared = History()
     
-    private(set) var events = [(date: NSDate, event: Event)]()
+    private(set) var events = [(date: Date, event: Event)]()
     
     func add(event: Event) {
         
-        events.append((date: NSDate(), event: event))
+        events.append((date: Date(), event: event))
     }
 }
 

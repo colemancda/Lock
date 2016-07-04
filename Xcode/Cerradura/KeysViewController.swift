@@ -21,28 +21,30 @@ final class KeysViewController: UIViewController, UITableViewDataSource, UITable
     
     // MARK: - Properties
     
-    private lazy var fetchedResultsController: NSFetchedResultsController = {
+    private lazy var fetchedResultsController: NSFetchedResultsController<NSManagedObject> = {
         
-        let fetchRequest = NSFetchRequest(entityName: LockCache.entityName)
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: LockCache.entityName)
         
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: LockCache.Property.name.rawValue, ascending: true)]
+        fetchRequest.sortDescriptors = [SortDescriptor(key: LockCache.Property.name.rawValue, ascending: true)]
         
-        let controller = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: Store.shared.managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
+        let controller = NSFetchedResultsController<NSManagedObject>(fetchRequest: fetchRequest, managedObjectContext: Store.shared.managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
+        
+        controller.delegate = self
         
         return controller
     }()
+    
+    private var stateObserver: Int!
     
     // MARK: - Loading
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let _ = LockManager.shared.state.observe(stateChanged)
+        // setup table view
+        tableView.register(LockTableViewCell.nib, forCellReuseIdentifier: LockTableViewCell.reuseIdentifier)
         
-        fetchedResultsController.delegate = self
-        tableView.dataSource = self
-        tableView.delegate = self
-        
+        // start observing Core Data context
         try! fetchedResultsController.performFetch()
     }
     
@@ -56,16 +58,16 @@ final class KeysViewController: UIViewController, UITableViewDataSource, UITable
         }
     }
     
-    private func item(at indexPath: NSIndexPath) -> LockCache {
+    private func item(at indexPath: IndexPath) -> LockCache {
         
-        let managedObject = fetchedResultsController.object(at: indexPath) as! NSManagedObject
+        let managedObject = fetchedResultsController.object(at: indexPath)
         
         let lock = LockCache(managedObject: managedObject)
         
         return lock
     }
     
-    private func configure(cell: KeyTableViewCell, at indexPath: NSIndexPath) {
+    private func configure(cell: LockTableViewCell, at indexPath: IndexPath) {
         
         let lock = item(at: indexPath)
         
@@ -77,34 +79,34 @@ final class KeysViewController: UIViewController, UITableViewDataSource, UITable
             
         case .owner:
             
-            permissionImage = UIImage(named: "permissionBadgeOwner")!
+            permissionImage = #imageLiteral(resourceName: "permissionBadgeOwner")
             
             permissionText = "Owner"
             
         case .admin:
             
-            permissionImage = UIImage(named: "permissionBadgeAdmin")!
+            permissionImage = #imageLiteral(resourceName: "permissionBadgeAdmin")
             
             permissionText = "Admin"
             
         case .anytime:
             
-            permissionImage = UIImage(named: "permissionBadgeAnytime")!
+            permissionImage = #imageLiteral(resourceName: "permissionBadgeAnytime")
             
             permissionText = "Anytime"
             
-        case let .scheduled(schedule):
+        case .scheduled:
             
-            permissionImage = UIImage(named: "permissionBadgeScheduled")!
+            permissionImage = #imageLiteral(resourceName: "permissionBadgeScheduled")
             
-            permissionText = "Scheduled" // FIXME
+            permissionText = "Scheduled" // FIXME: Localized Schedule text
         }
         
-        cell.lockNameLabel.text = lock.name
+        cell.lockTitleLabel.text = lock.name
         
-        cell.permissionImageView.image = permissionImage
+        cell.lockDetailLabel.text = permissionText
         
-        cell.permissionLabel.text = permissionText
+        cell.lockImageView.image = permissionImage
     }
     
     // MARK: - UITableViewDatasource
@@ -119,9 +121,9 @@ final class KeysViewController: UIViewController, UITableViewDataSource, UITable
         return fetchedResultsController.fetchedObjects?.count ?? 0
     }
     
-    @objc func tableView(_ tableView: UITableView, cellForRowAt indexPath: NSIndexPath) -> UITableViewCell {
+    @objc func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: KeyTableViewCell.resuseIdentifier, for: indexPath) as! KeyTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: LockTableViewCell.reuseIdentifier, for: indexPath) as! LockTableViewCell
         
         configure(cell: cell, at: indexPath)
         
@@ -130,13 +132,39 @@ final class KeysViewController: UIViewController, UITableViewDataSource, UITable
     
     // MARK: - UITableViewDelegate
     
-    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: NSIndexPath) -> [UITableViewRowAction]? {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        defer { tableView.deselectRow(at: indexPath, animated: true) }
+        
+        // show LockVC
+        
+        let lock = self.item(at: indexPath)
+        
+        let navigationController = UIStoryboard(name: "LockDetail", bundle: nil).instantiateInitialViewController() as! UINavigationController
+        
+        let lockVC = navigationController.topViewController as! LockViewController
+        
+        lockVC.lockIdentifier = lock.identifier
+        
+        // iPhone
+        if splitViewController?.viewControllers.count == 1 {
+            
+            self.show(lockVC, sender: self)
+        }
+        // iPad
+        else {
+            
+            self.showDetailViewController(navigationController, sender: self)
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         
         var actions = [UITableViewRowAction]()
         
         let lockCache = self.item(at: indexPath)
         
-        let delete = UITableViewRowAction(style: UITableViewRowActionStyle.destructive, title: "Delete") {
+        let delete = UITableViewRowAction(style: .destructive, title: "Delete") {
             
             assert($0.1 == indexPath)
             
@@ -144,14 +172,14 @@ final class KeysViewController: UIViewController, UITableViewDataSource, UITable
                                           message: "Are you sure you want to delete this key?",
                                           preferredStyle: UIAlertControllerStyle.alert)
             
-            alert.addAction(UIAlertAction(title: NSLocalizedString("Delete", comment: "Delete"), style: UIAlertActionStyle.destructive, handler: { (UIAlertAction) in
-                
-                Store.shared.remove(lockCache.identifier)
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: { (UIAlertAction) in
                 
                 alert.dismiss(animated: true, completion: nil)
             }))
             
-            alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: UIAlertActionStyle.`default`, handler: { (UIAlertAction) in
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Delete", comment: "Delete"), style: .destructive, handler: { (UIAlertAction) in
+                
+                Store.shared.remove(lockCache.identifier)
                 
                 alert.dismiss(animated: true, completion: nil)
             }))
@@ -161,82 +189,24 @@ final class KeysViewController: UIViewController, UITableViewDataSource, UITable
         
         actions.append(delete)
         
-        let unlock = UITableViewRowAction(style: UITableViewRowActionStyle.normal, title: "Unlock") { (action, index) in
-            
-            let key = Store.shared[key: lockCache.identifier]!
-            
-            print("Unlocking \"\(lockCache.name)\"...")
-            
-            tableView.setEditing(false, animated: true)
-            
-            async {
-                
-                do { try LockManager.shared.unlock(lockCache.identifier, key: key) }
-                    
-                catch { mainQueue { self.showErrorAlert("Could not unlock. (\(error))") }; return }
-                
-                print("Successfully unlocked \"\(lockCache.name)\"")
-            }
-        }
-        
-        // make sure the peripheral has been discovered
-        if LockManager.shared.foundLocks.value.contains({ $0.UUID == lockCache.identifier }) && LockManager.shared.state.value == .poweredOn {
-            
-            // validate permission for unlocking
-            if case let .scheduled(schedule) = lockCache.permission where schedule.valid() {
-                
-                actions.append(unlock)
-                
-            } else {
-                
-                actions.append(unlock)
-            }
-        }
-        
-        let newKey = UITableViewRowAction(style: UITableViewRowActionStyle.normal, title: "New key") { (action, index) in
-            
-            tableView.setEditing(false, animated: true)
-            
-            let navigationController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "newKeyNavigationStack") as! UINavigationController
-            
-            let destinationViewController = navigationController.viewControllers.first! as! NewKeySelectPermissionViewController
-            
-            destinationViewController.lockIdentifier = lockCache.identifier
-            
-            self.present(navigationController, animated: true, completion: nil)
-        }
-        
-        newKey.backgroundColor = UIColor.green()
-        
-        // Bluetooth must be on and only Admin and Owner can create keys
-        if LockManager.shared.state.value == .poweredOn
-            && (lockCache.permission == .owner || lockCache.permission == .admin) {
-            
-            actions.append(newKey)
-        }
-        
         return actions
     }
     
     // MARK: - NSFetchedResultsControllerDelegate
     
-    @objc func controllerWillChangeContent(_ controller: NSFetchedResultsController) {
+    @objc(controllerWillChangeContent:)
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         
         tableView.beginUpdates()
     }
     
-    @objc func controllerDidChangeContent(_ controller: NSFetchedResultsController) {
+    @objc(controllerDidChangeContent:)
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         
         tableView.endUpdates()
     }
     
-    @objc func controller(_ controller: NSFetchedResultsController,
-                          didChange anObject: AnyObject,
-                          at indexPath: NSIndexPath?,
-                          for type: NSFetchedResultsChangeType,
-                          newIndexPath: NSIndexPath?) {
-        
-        sleep(1)
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: AnyObject, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
         
         switch type {
             
@@ -256,7 +226,7 @@ final class KeysViewController: UIViewController, UITableViewDataSource, UITable
             
             if let indexPath = indexPath {
                 
-                if let cell = tableView.cellForRow(at: indexPath) as? KeyTableViewCell {
+                if let cell = tableView.cellForRow(at: indexPath) as? LockTableViewCell {
                     
                     self.configure(cell: cell, at: indexPath)
                 }
@@ -274,17 +244,4 @@ final class KeysViewController: UIViewController, UITableViewDataSource, UITable
             }
         }
     }
-}
-
-// MARK: - Supporting Types
-
-final class KeyTableViewCell: UITableViewCell {
-    
-    static let resuseIdentifier = "KeyTableViewCell"
-    
-    @IBOutlet weak var permissionImageView: UIImageView!
-    
-    @IBOutlet weak var lockNameLabel: UILabel!
-    
-    @IBOutlet weak var permissionLabel: UILabel!
 }

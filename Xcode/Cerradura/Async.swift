@@ -10,13 +10,14 @@ import Foundation
 
 func mainQueue(_ block: () -> ()) {
     
-    NSOperationQueue.main().addOperation(block)
+    OperationQueue.main().addOperation(block)
 }
 
 /// Perform a task on the internal queue.
+@inline(__always)
 func async(_ block: () -> ()) {
     
-    dispatch_async(queue) { block() }
+    queue.async { block() }
 }
 
-private let queue: dispatch_queue_t = dispatch_queue_create("Cerradura Internal Queue", DISPATCH_QUEUE_SERIAL)
+private let queue = DispatchQueue(label: "Cerradura Queue", attributes: .serial)

@@ -25,7 +25,7 @@ final class TodayViewController: UIViewController, NCWidgetProviding {
     
     
     
-    private var foundLock: (lock: SwiftFoundation.UUID, key: KeyData)? {
+    private var foundLock: (lock: UUID, key: KeyData)? {
         
         didSet { updateUI() }
     }

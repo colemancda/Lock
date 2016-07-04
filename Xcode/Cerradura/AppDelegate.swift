@@ -21,6 +21,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     
     var active = true
+    
+    var firstLaunch = false
         
     @objc(application:didFinishLaunchingWithOptions:)
     func application(_ application: UIApplication, didFinishLaunchingWithOptions didFinishLaunchingWithLaunchOptions: [NSObject: AnyObject]?) -> Bool {
@@ -29,11 +31,31 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         // print app info
         print("Launching Cerradura v\(AppVersion) Build \(AppBuild)")
         
+        // reset Keychain if first launch
+        if Preferences.shared.isAppInstalled == false {
+            
+            try! Store.shared.keychain.removeAll()
+            
+            Preferences.shared.isAppInstalled = true
+            
+            firstLaunch = true
+        }
+        
         // add NSPersistentStore to Cerradura.Store
-        try! LoadPersistentStore()
+        do { try LoadPersistentStore() }
+        
+        catch {
+            
+            print("Nuking cache")
+            
+            try! RemovePersistentStore()
+            try! LoadPersistentStore()
+            try! Store.shared.keychain.removeAll()
+        }
         
         LockManager.shared.log = { print("LockManager: " + $0) }
         
+        /*
         // Apple Watch support
         if #available(iOS 9.3, *) {
             
@@ -43,7 +65,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                 
                 WatchController.shared.activate()
             }
-        }
+        }*/
         
         // iBeacon
         BeaconController.shared.log = { print("BeaconController: " + $0) }
@@ -66,6 +88,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                 try! SpotlightController.shared.startObserving()
             }
         }
+        
+        // configure SplitVC
+        (self.window!.rootViewController as! UISplitViewController).preferredDisplayMode = .allVisible
         
         return true
     }
@@ -114,28 +139,29 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                 else { return false }
             
             guard let identifierString = userActivity.userInfo?[CSSearchableItemActivityIdentifier] as? String,
-                let identifier = SwiftFoundation.UUID(rawValue: identifierString)
+                let identifier = UUID(rawValue: identifierString)
                 else { return false }
             
-            guard let lock = Store.shared[identifier]
+            guard let (lockCache, keyData) = Store.shared[identifier]
                 else { return false }
             
-            print("Selected lock \(lock.identifier) from CoreSpotlight")
+            print("Selected lock \(identifier) from CoreSpotlight")
             
             async {
                 
                 do {
-                    var foundLock = LockManager.shared[lock.identifier]
+                    var foundLock = LockManager.shared[identifier]
                     
                     // scan if not prevously found
                     if foundLock == nil {
                         
                         try LockManager.shared.scan()
                         
-                        foundLock = LockManager.shared[lock.identifier]
+                        foundLock = LockManager.shared[identifier]
                     }
                     
-                    guard foundLock != nil else { mainQueue { self.window?.rootViewController?.showErrorAlert("Could not unlock. Not in range.") }; return }
+                    guard foundLock != nil
+                        else { mainQueue { self.window?.rootViewController?.showErrorAlert("Could not unlock. Not in range.") }; return }
                     
                     // wait until other scanning completes
                     while LockManager.shared.scanning.value {
@@ -143,7 +169,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                         sleep(1)
                     }
                     
-                    try LockManager.shared.unlock(lock.identifier, key: lock.key.data)
+                    let key = (lockCache.keyIdentifier, keyData)
+                    
+                    try LockManager.shared.unlock(identifier, key: key)
                 }
                 
                 catch { mainQueue { self.window?.rootViewController?.showErrorAlert("Could not unlock. \(error)") }; return }
@@ -157,10 +185,3 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 }
-
-/** Version of the app. */
-public let AppVersion = NSBundle.main().infoDictionary!["CFBundleShortVersionString"] as! String
-
-/** Build of the app. */
-public let AppBuild = NSBundle.main().infoDictionary!["CFBundleVersion"] as! String
-

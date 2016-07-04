@@ -30,25 +30,25 @@ extension LockCache {
             
         case .owner:
             
-            permissionImage = UIImage(named: "permissionBadgeOwner")!
+            permissionImage = #imageLiteral(resourceName: "permissionBadgeOwner")
             
             permissionText = "Owner"
             
         case .admin:
             
-            permissionImage = UIImage(named: "permissionBadgeAdmin")!
+            permissionImage = #imageLiteral(resourceName: "permissionBadgeAdmin")
             
             permissionText = "Admin"
             
         case .anytime:
             
-            permissionImage = UIImage(named: "permissionBadgeAnytime")!
+            permissionImage = #imageLiteral(resourceName: "permissionBadgeAnytime")
             
             permissionText = "Anytime"
             
-        case let .scheduled(schedule):
+        case .scheduled:
             
-            permissionImage = UIImage(named: "permissionBadgeScheduled")!
+            permissionImage = #imageLiteral(resourceName: "permissionBadgeScheduled")
             
             permissionText = "Scheduled" // FIXME
         }
@@ -80,10 +80,10 @@ func UpdateSpotlight(_ index: CSSearchableIndex = CSSearchableIndex.default(), c
         managedObjectContext.persistentStoreCoordinator = Store.shared.managedObjectContext.persistentStoreCoordinator!
         
         let entity = managedObjectContext.persistentStoreCoordinator!.managedObjectModel.entitiesByName[LockCache.entityName]!
-        let fetchRequest = NSFetchRequest(entityName: entity.name!)
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: entity.name!)
         fetchRequest.includesSubentities = false
         fetchRequest.returnsObjectsAsFaults = false
-        fetchRequest.sortDescriptors = [NSSortDescriptor.init(key: LockCache.Property.identifier.rawValue, ascending: true)]
+        fetchRequest.sortDescriptors = [SortDescriptor.init(key: LockCache.Property.identifier.rawValue, ascending: true)]
         
         managedObjectContext.perform {
             
@@ -106,11 +106,11 @@ final class SpotlightController: NSObject, NSFetchedResultsControllerDelegate {
     
     var log: ((String) -> ())?
     
-    private lazy var fetchedResultsController: NSFetchedResultsController = {
+    private lazy var fetchedResultsController: NSFetchedResultsController<NSManagedObject> = {
         
-        let fetchRequest = NSFetchRequest(entityName: LockCache.entityName)
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: LockCache.entityName)
         
-        fetchRequest.sortDescriptors = [NSSortDescriptor(key: LockCache.Property.name.rawValue, ascending: true)]
+        fetchRequest.sortDescriptors = [SortDescriptor(key: LockCache.Property.name.rawValue, ascending: true)]
         
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: Store.shared.managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
         
@@ -133,7 +133,7 @@ final class SpotlightController: NSObject, NSFetchedResultsControllerDelegate {
     
     // MARK: - NSFetchedResultsControllerDelegate
     
-    func controller(_ controller: NSFetchedResultsController, didChange anObject: AnyObject, at indexPath: NSIndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
+    @objc private func controller(_ controller: NSFetchedResultsController<NSManagedObject>, didChange anObject: AnyObject, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
         
         let lockCache = LockCache(managedObject: anObject as! NSManagedObject)
         

@@ -2,11 +2,6 @@ import PackageDescription
 
 let package = Package(
     name: "Lock",
-    dependencies: [
-        .Package(url: "https://github.com/PureSwift/GATT.git", majorVersion: 1),
-        .Package(url: "https://github.com/ColemanCDA/CryptoSwift", majorVersion: 1),
-        .Package(url: "https://github.com/PureSwift/Cb64", majorVersion: 1)
-    ],
     targets: [
         Target(
             name: "lockd",
@@ -19,6 +14,10 @@ let package = Package(
         Target(
             name: "CoreLock"
         )
+    ],
+    dependencies: [
+        .Package(url: "https://github.com/PureSwift/GATT", majorVersion: 1),
+        .Package(url: "https://github.com/ColemanCDA/CryptoSwift", majorVersion: 1)
     ],
     exclude: ["Xcode", "Android"]
 )
