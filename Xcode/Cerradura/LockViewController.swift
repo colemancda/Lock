@@ -43,15 +43,20 @@ final class LockViewController: UIViewController {
         
         let lockIdentifier = self.lockIdentifier!
         
+        let foundLock = LockManager.shared[lockIdentifier]
+        
+        if foundLock == nil {
+            
+            self.progressHUD.show(in: self.view)
+        }
+        
         async { [weak self] in
             
             guard let controller = self else { return }
             
-            // try to scan
-            if LockManager.shared[lockIdentifier] == nil
+            // try to scan if not in range
+            if foundLock == nil
                 && LockManager.shared.scanning.value == false {
-                
-                mainQueue { controller.progressHUD.show(in: controller.view) }
                 
                 do { try LockManager.shared.scan() }
                 
