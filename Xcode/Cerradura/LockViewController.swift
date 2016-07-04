@@ -59,15 +59,17 @@ final class LockViewController: UIViewController {
                     
                     mainQueue {
                         
-                        controller.showErrorAlert("\(error)")
                         controller.progressHUD.dismiss(animated: false)
+                        controller.showErrorAlert("\(error)")
                     }
                 }
             }
             
             mainQueue {
                 
-                let activities = [NewKeyActivity()]
+                controller.progressHUD.dismiss()
+                
+                let activities = [NewKeyActivity(), HomeKitEnableActivity(), DeleteLockActivity()]
                 
                 let lockItem = LockActivityItem(identifier: lockIdentifier)
                 

@@ -1103,6 +1103,7 @@
 				"$(SRCROOT)/../Carthage/Build/iOS/CryptoSwift.framework",
 				"$(SRCROOT)/../Carthage/Build/iOS/GATT.framework",
 				"$(SRCROOT)/../Carthage/Build/iOS/KeychainAccess.framework",
+				"$(SRCROOT)/../Carthage/Build/iOS/JGProgressHUD.framework",
 			);
 			name = "Copy Frameworks";
 			outputPaths = (

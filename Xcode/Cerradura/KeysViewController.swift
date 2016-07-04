@@ -179,7 +179,7 @@ final class KeysViewController: UIViewController, UITableViewDataSource, UITable
                 alert.dismiss(animated: true, completion: nil)
             }))
             
-            alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .`default`, handler: { (UIAlertAction) in
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: { (UIAlertAction) in
                 
                 alert.dismiss(animated: true, completion: nil)
             }))
