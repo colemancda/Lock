@@ -467,7 +467,7 @@ final class LockController {
             
             self.homeKitDeamon = nil
             
-            try! FileManager.removeItem(path: File.homeKitData)
+            do { try FileManager.removeItem(path: File.homeKitData) } catch { } // ignore error
         }
     }
 }
