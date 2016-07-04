@@ -616,7 +616,7 @@ public struct LockService: GATTProfileService {
             self.identifier = identifier
             self.nonce = Nonce(data: Data(bytes: nonceBytes))!
             self.authentication =  Data(bytes: hmac)
-            self.enable = BluetoothBool(rawValue: bytes[UUIDLength + Nonce.length + HMACSize + 1])!.boolValue
+            self.enable = BluetoothBool(rawValue: bytes[UUIDLength + Nonce.length + HMACSize])!.boolValue
         }
         
         public func toBigEndian() -> Data {

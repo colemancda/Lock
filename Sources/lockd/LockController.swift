@@ -384,7 +384,7 @@ final class LockController {
             
         case LockService.HomeKitEnable.UUID:
             
-            break // nothing to do here
+            assert(status != .setup) // nothing to do here
             
         default: fatalError("Writing to characteristic \(UUID)")
         }
@@ -421,7 +421,7 @@ final class LockController {
         return
     }
     
-    // MARK: Other
+    // MARK: HomeKit
     
     private func updateHomeKitSupport() {
         

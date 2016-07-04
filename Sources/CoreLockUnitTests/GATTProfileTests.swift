@@ -187,4 +187,28 @@ final class GATTProfileTests: XCTestCase {
         XCTAssert(newKeyFinishDeserialzed.authenticated(with: newKey.data))
         XCTAssert(newKeyFinishDeserialzed.authenticated(with: KeyData()) == false)
     }
+    
+    func testHomeKitEnable() {
+        
+        // enable HomeKit
+        
+        let key = KeyData()
+        
+        let nonce = Nonce()
+        
+        let identifier = UUID()
+        
+        let request = LockService.HomeKitEnable.init(identifier: identifier, nonce: nonce, key: key)
+        
+        let requestData = request.toBigEndian()
+        
+        guard let deserialized = LockService.HomeKitEnable.init(bigEndian: requestData)
+            else { XCTFail(); return }
+        
+        XCTAssert(deserialized.identifier == identifier)
+        XCTAssert(deserialized.nonce == nonce)
+        XCTAssert(deserialized.authenticated(with: key))
+        XCTAssert(deserialized.authenticated(with: KeyData()) == false)
+        XCTAssert(deserialized.enable == request.enable)
+    }
 }

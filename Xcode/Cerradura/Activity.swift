@@ -190,12 +190,12 @@ final class HomeKitEnableActivity: UIActivity {
         
         func enableHomeKit(_ enable: Bool = true) {
             
-            guard let keyData = Store.shared[key: lockItem.identifier]
+            guard let (lockCache, keyData) = Store.shared[lockItem.identifier]
                 else { alert.dismiss(animated: true) { self.activityDidFinish(false) }; return }
             
             async {
                 
-                do { try LockManager.shared.enableHomeKit(lockItem.identifier, key: (lockItem.identifier, keyData), enable: enable) }
+                do { try LockManager.shared.enableHomeKit(lockItem.identifier, key: (lockCache.keyIdentifier, keyData), enable: enable) }
                 
                 catch { mainQueue { alert.showErrorAlert("\(error)"); self.activityDidFinish(false) }; return }
                 

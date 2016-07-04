@@ -246,11 +246,11 @@
             
             return try lockAction(peripheral: lock.peripheral, characteristics: [LockService.HomeKitEnable.UUID]) {
                 
-                // unlock
+                // enable Homekit
                 
-                let unlock = LockService.HomeKitEnable.init(identifier: key.0, key: key.1, enable: enable)
+                let homeKit = LockService.HomeKitEnable.init(identifier: key.0, key: key.1, enable: enable)
                 
-                try self.internalManager.write(data: unlock.toBigEndian(), response: true, characteristic: LockService.HomeKitEnable.UUID, service: LockService.UUID, peripheral: lock.peripheral)
+                try self.internalManager.write(data: homeKit.toBigEndian(), response: true, characteristic: LockService.HomeKitEnable.UUID, service: LockService.UUID, peripheral: lock.peripheral)
             }
         }
         
