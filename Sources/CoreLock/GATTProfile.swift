@@ -566,6 +566,69 @@ public struct LockService: GATTProfileService {
         }
     }
     
+    /// Used enable / disable HomeKit.
+    ///
+    /// Key UUID + nonce + HMAC(key, nonce) + enable (16 + 16 + 64 + 1 bytes) (write-only)
+    public struct HomeKitEnable: AuthenticatedCharacteristic {
+        
+        public static let length = SwiftFoundation.UUID.length + Nonce.length + HMACSize + 1
+        
+        public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "A187317C-6DE5-4842-800A-0D7C7529B4E7")!)
+        
+        public let identifier: SwiftFoundation.UUID
+        
+        public let nonce: Nonce
+        
+        /// HMAC of key and nonce
+        public let authentication: Data
+        
+        public let enable: Bool
+        
+        public init(identifier: SwiftFoundation.UUID, nonce: Nonce = Nonce(), key: KeyData, enable: Bool = true) {
+            
+            self.identifier = identifier
+            self.nonce = nonce
+            self.authentication = HMAC(key: key, message: nonce)
+            self.enable = enable
+            
+            assert(authentication.bytes.count == HMACSize)
+        }
+        
+        public init?(bigEndian: Data) {
+            
+            let bytes = bigEndian.bytes
+            
+            guard bytes.count == self.dynamicType.length
+                else { return nil }
+            
+            let UUIDLength = SwiftFoundation.UUID.length
+            
+            let identifier = SwiftFoundation.UUID(bigEndian: Data(bytes: Array(bytes[0 ..< UUIDLength])))!
+            
+            let nonceBytes = Array(bytes[UUIDLength ..< UUIDLength + Nonce.length])
+            
+            assert(nonceBytes.count == Nonce.length)
+            
+            let hmac = Array(bytes[UUIDLength + Nonce.length ..< UUIDLength + Nonce.length + HMACSize])
+            
+            assert(hmac.count == HMACSize)
+            
+            self.identifier = identifier
+            self.nonce = Nonce(data: Data(bytes: nonceBytes))!
+            self.authentication =  Data(bytes: hmac)
+            self.enable = BluetoothBool(rawValue: bytes[UUIDLength + Nonce.length + HMACSize + 1])!.boolValue
+        }
+        
+        public func toBigEndian() -> Data {
+            
+            let data = identifier.toBigEndian() + nonce.data + authentication + BluetoothBool(enable).toData()
+            
+            assert(data.count == self.dynamicType.length)
+            
+            return data
+        }
+    }
+    
     public struct ListKeys {
         
         

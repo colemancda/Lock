@@ -238,6 +238,22 @@
             }
         }
         
+        /// Put the lock in HomeKit mode.
+        public func enableHomeKit(_ identifier: UUID, key: (UUID, KeyData), enable: Bool = true) throws {
+            
+            guard let lock = self[identifier]
+                else { throw Error.NoLock }
+            
+            return try lockAction(peripheral: lock.peripheral, characteristics: [LockService.HomeKitEnable.UUID]) {
+                
+                // unlock
+                
+                let unlock = LockService.HomeKitEnable.init(identifier: key.0, key: key.1, enable: enable)
+                
+                try self.internalManager.write(data: unlock.toBigEndian(), response: true, characteristic: LockService.HomeKitEnable.UUID, service: LockService.UUID, peripheral: lock.peripheral)
+            }
+        }
+        
         // MARK: - Private Methods
         
         /// Connects to the lock, fetches the data, and performs the action, and disconnects.

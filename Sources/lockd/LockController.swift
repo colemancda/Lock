@@ -31,7 +31,7 @@ final class LockController {
         didSet { didChangeStatus(oldValue: oldValue) }
     }
     
-    let configuration = try! Configuration.load(File.configuration)
+    var configuration = try! Configuration.load(File.configuration)
     
     let model: Model = .orangePiOne
     
@@ -40,6 +40,8 @@ final class LockController {
     // MARK: - Private Properties
     
     private var newKey: Key?
+    
+    private var homeKitDeamon: pid_t?
     
     // MARK: - Intialization
     
@@ -93,6 +95,9 @@ final class LockController {
         catch { fatalError("Could not start peripheral: \(error)") }
         #endif
         
+        // start HomeKit deamon
+        updateHomeKitSupport()
+        
         print("Status: \(status)")
     }
     
@@ -128,7 +133,9 @@ final class LockController {
         
         let newKeyFinish = Characteristic(UUID: LockService.NewKeyFinish.UUID, value: Data(), permissions: [.Write], properties: [.Write])
         
-        let lockService = Service(UUID: LockService.UUID, primary: true, characteristics: [identifier, model, version, status, setup, unlock, newKeyParent, newKeyChild, newKeyFinish])
+        let homeKitEnable = Characteristic(UUID: LockService.HomeKitEnable.UUID, value: Data(), permissions: [.Write], properties: [.Write])
+        
+        let lockService = Service(UUID: LockService.UUID, primary: true, characteristics: [identifier, model, version, status, setup, unlock, newKeyParent, newKeyChild, newKeyFinish, homeKitEnable])
         
         let _ = try! peripheral.add(service: lockService)
     }
@@ -169,7 +176,7 @@ final class LockController {
             
         case LockService.Unlock.UUID:
             
-            guard status == .unlock
+            guard status != .setup
                 else { return ATT.Error.WriteNotPermitted }
             
             // deserialize
@@ -248,6 +255,43 @@ final class LockController {
             // deserialize
             guard let _ = LockService.NewKeyFinish.init(bigEndian: newValue)
                 else { return ATT.Error.InvalidAttributeValueLength }
+            
+        case LockService.HomeKitEnable.UUID:
+            
+            guard status != .setup
+                else { return ATT.Error.WriteNotPermitted }
+            
+            // deserialize
+            guard let homeKit = LockService.HomeKitEnable.init(bigEndian: newValue)
+                else { return ATT.Error.InvalidAttributeValueLength }
+            
+            var authenticatedKey: Key!
+            
+            for key in store.keys {
+                
+                if homeKit.authenticated(with: key.data) {
+                    
+                    authenticatedKey = key
+                    
+                    break
+                }
+            }
+            
+            // not authenticated
+            guard authenticatedKey != nil
+                else { return ATT.Error.WriteNotPermitted }
+            
+            // verify permission
+            guard authenticatedKey.permission == .owner
+                else { return ATT.Error.WriteNotPermitted }
+            
+            // enable HomeKit
+            self.configuration.isHomeKitEnabled = homeKit.enable
+            try! self.configuration.save(File.configuration)
+            
+            updateHomeKitSupport()
+            
+            print("HomeKit enabled: \(configuration.isHomeKitEnabled)")
             
         default: fatalError("Writing to unknown characteristic \(UUID)")
         }
@@ -338,6 +382,10 @@ final class LockController {
             self.store.add(newKey)
             self.newKey = nil
             
+        case LockService.HomeKitEnable.UUID:
+            
+            break // nothing to do here
+            
         default: fatalError("Writing to characteristic \(UUID)")
         }
     }
@@ -347,7 +395,6 @@ final class LockController {
     private func resetSwitch(_ gpio: GPIO) {
         
         // reset DB
-        
         print("Resetting...")
         
         AppLED.value = 0
@@ -359,11 +406,68 @@ final class LockController {
         // clear store
         self.store.clear()
         
+        // reset HomeKit
+        if configuration.isHomeKitEnabled {
+            
+            configuration.isHomeKitEnabled = false
+            updateHomeKitSupport()
+        }
+        
         // reboot
         #if os(Linux)
-        system("reboot")
+        system(Command.reboot)
         #endif
         
         return
+    }
+    
+    // MARK: Other
+    
+    private func updateHomeKitSupport() {
+        
+        if configuration.isHomeKitEnabled {
+            
+            guard self.homeKitDeamon == nil
+                else { return }
+            
+            let launchPath = File.nodejs
+            
+            let argument = File.homeKitDaemon
+            
+            var args = [launchPath, argument]
+            
+            let argv : UnsafeMutablePointer<UnsafeMutablePointer<Int8>?> = args.withUnsafeBufferPointer {
+                let array : UnsafeBufferPointer<String> = $0
+                let buffer = UnsafeMutablePointer<UnsafeMutablePointer<Int8>?>(allocatingCapacity: array.count + 1)
+                buffer.initializeFrom(array.map { $0.withCString(strdup) })
+                buffer[array.count] = nil
+                return buffer
+            }
+            
+            defer {
+                for arg in argv ..< argv + args.count {
+                    free(UnsafeMutablePointer<Void>(arg.pointee))
+                }
+                
+                argv.deallocateCapacity(args.count + 1)
+            }
+            
+            var pid = pid_t()
+            guard posix_spawn(&pid, launchPath, nil, nil, argv, nil) == 0
+                else { fatalError("Could not start HomeKit Daemon: \(POSIXError.fromErrno!)") }
+            
+            self.homeKitDeamon = pid
+            
+        } else {
+            
+            guard let pid = self.homeKitDeamon
+                else { return }
+            
+            kill(pid, SIGKILL);
+            
+            self.homeKitDeamon = nil
+            
+            try! FileManager.removeItem(path: File.homeKitData)
+        }
     }
 }

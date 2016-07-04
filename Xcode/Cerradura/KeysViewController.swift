@@ -172,14 +172,14 @@ final class KeysViewController: UIViewController, UITableViewDataSource, UITable
                                           message: "Are you sure you want to delete this key?",
                                           preferredStyle: UIAlertControllerStyle.alert)
             
-            alert.addAction(UIAlertAction(title: NSLocalizedString("Delete", comment: "Delete"), style: .destructive, handler: { (UIAlertAction) in
-                
-                Store.shared.remove(lockCache.identifier)
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: { (UIAlertAction) in
                 
                 alert.dismiss(animated: true, completion: nil)
             }))
             
-            alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: { (UIAlertAction) in
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Delete", comment: "Delete"), style: .destructive, handler: { (UIAlertAction) in
+                
+                Store.shared.remove(lockCache.identifier)
                 
                 alert.dismiss(animated: true, completion: nil)
             }))

@@ -126,16 +126,16 @@ final class DeleteLockActivity: UIActivity {
                                       message: "Are you sure you want to delete this key?",
                                       preferredStyle: UIAlertControllerStyle.alert)
         
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: { (UIAlertAction) in
+            
+            alert.dismiss(animated: true) { self.activityDidFinish(false) }
+        }))
+        
         alert.addAction(UIAlertAction(title: NSLocalizedString("Delete", comment: "Delete"), style: .destructive, handler: { (UIAlertAction) in
             
             Store.shared.remove(self.item.identifier)
             
             alert.dismiss(animated: true) { self.activityDidFinish(true) }
-        }))
-        
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: { (UIAlertAction) in
-            
-            alert.dismiss(animated: true) { self.activityDidFinish(false) }
         }))
         
         return alert
@@ -182,10 +182,27 @@ final class HomeKitEnableActivity: UIActivity {
     
     override func activityViewController() -> UIViewController? {
         
+        let lockItem = self.item!
+        
         let alert = UIAlertController(title: "Home Mode",
                                       message: "Enable Home Mode on this device?",
                                       preferredStyle: .alert)
         
+        func enableHomeKit(_ enable: Bool = true) {
+            
+            guard let keyData = Store.shared[key: lockItem.identifier]
+                else { alert.dismiss(animated: true) { self.activityDidFinish(false) }; return }
+            
+            async {
+                
+                do { try LockManager.shared.enableHomeKit(lockItem.identifier, key: (lockItem.identifier, keyData), enable: enable) }
+                
+                catch { mainQueue { alert.showErrorAlert("\(error)"); self.activityDidFinish(false) }; return }
+                
+                mainQueue { alert.dismiss(animated: true) { self.activityDidFinish(true) } }
+            }
+        }
+            
         alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: { (UIAlertAction) in
                         
             alert.dismiss(animated: true) { self.activityDidFinish(false) }
@@ -193,12 +210,12 @@ final class HomeKitEnableActivity: UIActivity {
         
         alert.addAction(UIAlertAction(title: NSLocalizedString("Yes", comment: "Yes"), style: .`default`, handler: { (UIAlertAction) in
             
-            alert.dismiss(animated: true) { self.activityDidFinish(true) }
+            enableHomeKit()
         }))
         
         alert.addAction(UIAlertAction(title: NSLocalizedString("No", comment: "No"), style: .`default`, handler: { (UIAlertAction) in
             
-            alert.dismiss(animated: true) { self.activityDidFinish(true) }
+            enableHomeKit(false)
         }))
         
         return alert
