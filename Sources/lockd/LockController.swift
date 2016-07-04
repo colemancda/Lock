@@ -463,7 +463,7 @@ final class LockController {
             guard let pid = self.homeKitDeamon
                 else { return }
             
-            kill(pid, SIGKILL);
+            kill(pid, SIGKILL)
             
             self.homeKitDeamon = nil
             

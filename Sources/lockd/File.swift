@@ -14,7 +14,7 @@ struct File {
     
     static let homeKitDaemon = "/opt/colemancda/HAP-NodeJS/Core.js"
         
-    static let homeKitData = "/opt/colemancda/HAP-NodeJS/persist"
+    static let homeKitData = "/persist"
     
     static let nodejs = "/usr/bin/node"
 }
