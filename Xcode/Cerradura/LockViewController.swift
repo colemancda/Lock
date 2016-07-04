@@ -45,21 +45,37 @@ final class LockViewController: UIViewController {
         
         let foundLock = LockManager.shared[lockIdentifier]
         
-        if foundLock == nil {
+        let isScanning = LockManager.shared.scanning.value == false
+        
+        let shouldScan = foundLock == nil && isScanning == false
+        
+        func show() {
             
-            self.progressHUD.show(in: self.view)
+            let activities = [NewKeyActivity(), HomeKitEnableActivity(), DeleteLockActivity()]
+            
+            let lockItem = LockActivityItem(identifier: lockIdentifier)
+            
+            let items = [lockItem, lockItem.text, lockItem.image]
+            
+            let activityViewController = UIActivityViewController(activityItems: items, applicationActivities: activities)
+            activityViewController.excludedActivityTypes = LockActivityItem.excludedActivityTypes
+            activityViewController.modalPresentationStyle = .popover
+            activityViewController.popoverPresentationController?.barButtonItem = sender
+            
+            self.present(activityViewController, animated: true, completion: nil)
         }
         
-        async { [weak self] in
+        if shouldScan {
             
-            guard let controller = self else { return }
+            self.progressHUD.show(in: self.view)
             
-            // try to scan if not in range
-            if foundLock == nil
-                && LockManager.shared.scanning.value == false {
+            async { [weak self] in
                 
+                guard let controller = self else { return }
+                
+                // try to scan if not in range
                 do { try LockManager.shared.scan() }
-                
+                    
                 catch {
                     
                     mainQueue {
@@ -68,22 +84,17 @@ final class LockViewController: UIViewController {
                         controller.showErrorAlert("\(error)")
                     }
                 }
+                
+                mainQueue {
+                    
+                    controller.progressHUD.dismiss()
+                    show()
+                }
             }
             
-            mainQueue {
-                
-                controller.progressHUD.dismiss()
-                
-                let activities = [NewKeyActivity(), HomeKitEnableActivity(), DeleteLockActivity()]
-                
-                let lockItem = LockActivityItem(identifier: lockIdentifier)
-                
-                let activityViewController = UIActivityViewController(activityItems: [lockItem], applicationActivities: activities)
-                activityViewController.modalPresentationStyle = .popover
-                activityViewController.popoverPresentationController?.barButtonItem = sender
-                
-                controller.present(activityViewController, animated: true, completion: nil)
-            }
+        } else {
+            
+            show()
         }
     }
     

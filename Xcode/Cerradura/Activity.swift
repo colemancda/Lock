@@ -10,7 +10,14 @@ import Foundation
 import UIKit
 import CoreLock
 
-final class LockActivityItem: NSObject, UIActivityItemSource {
+final class LockActivityItem: NSObject {
+    
+    static let excludedActivityTypes = [UIActivityTypePrint,
+                                     UIActivityTypeAssignToContact,
+                                     UIActivityTypeAirDrop,
+                                     UIActivityTypeCopyToPasteboard,
+                                     UIActivityTypeSaveToCameraRoll,
+                                     UIActivityTypePostToFlickr]
     
     let identifier: UUID
     
@@ -19,12 +26,20 @@ final class LockActivityItem: NSObject, UIActivityItemSource {
         self.identifier = identifier
     }
     
-    // MARK: - Private Methods
+    // MARK: - Activity Values
     
-    private func image(size: CGSize? = nil) -> UIImage? {
+    var text: String {
         
         guard let lockCache = Store.shared[cache: identifier]
-            else { return nil }
+            else { fatalError("Lock not in cache") }
+        
+        return "I unlocked my door \"\(lockCache.name)\" with Cerradura"
+    }
+    
+    var image: UIImage {
+        
+        guard let lockCache = Store.shared[cache: identifier]
+            else { fatalError("Lock not in cache") }
         
         switch lockCache.permission {
             
@@ -32,53 +47,6 @@ final class LockActivityItem: NSObject, UIActivityItemSource {
         case .admin: return #imageLiteral(resourceName: "permissionBadgeAdmin")
         case .anytime: return #imageLiteral(resourceName: "permissionBadgeAnytime")
         case .scheduled: return #imageLiteral(resourceName: "permissionBadgeScheduled")
-        }
-    }
-    
-    // MARK: UIActivityItemSource
-    
-    func activityViewControllerPlaceholderItem(_ activityViewController: UIActivityViewController) -> AnyObject {
-        
-        return UIImage()
-    }
-    
-    func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: String) -> AnyObject? {
-        
-        guard let lockCache = Store.shared[cache: identifier]
-            else { return nil }
-        
-        switch activityType {
-            
-        case UIActivityTypePostToFacebook, UIActivityTypePostToTwitter, UIActivityTypeMail, UIActivityTypeMessage:
-            
-           return "I unlocked my door \"\(lockCache.name)\" with Cerradura"
-            
-        case UIActivityTypeAssignToContact, UIActivityTypePrint, UIActivityTypePostToVimeo, UIActivityTypeCopyToPasteboard, UIActivityTypeAirDrop, UIActivityTypeSaveToCameraRoll:
-            
-            return nil
-            
-        default:
-            
-            return self
-        }
-    }
-    
-    func activityViewController(_ activityViewController: UIActivityViewController, subjectForActivityType activityType: String?) -> String {
-        
-        return "Smart Lock LATAM"
-    }
-    
-    func activityViewController(_ activityViewController: UIActivityViewController, thumbnailImageForActivityType activityType: String?, suggestedSize size: CGSize) -> UIImage? {
-        
-        switch activityType! {
-            
-        case UIActivityTypePostToFacebook, UIActivityTypePostToTwitter, UIActivityTypeMail, UIActivityTypeMessage:
-            
-            return image(size: size)
-            
-        default:
-            
-            return nil
         }
     }
 }
