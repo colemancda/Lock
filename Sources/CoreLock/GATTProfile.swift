@@ -200,6 +200,11 @@ public struct LockService: GATTProfileService {
         /// HMAC of key and nonce
         public let authentication: Data
         
+        public static func canWrite(status: CoreLock.Status) -> Bool {
+            
+            return status == .setup
+        }
+        
         public init(identifier: SwiftFoundation.UUID, value: KeyData, nonce: Nonce = Nonce()) {
             
             self.identifier = identifier
@@ -273,6 +278,14 @@ public struct LockService: GATTProfileService {
         /// HMAC of key and nonce
         public let authentication: Data
         
+        public static func canWrite(status: CoreLock.Status) -> Bool {
+            
+            switch status {
+            case .unlock, .newKey, .update: return true
+            case .setup: return false
+            }
+        }
+        
         public init(identifier: SwiftFoundation.UUID, nonce: Nonce = Nonce(), key: KeyData) {
             
             self.identifier = identifier
@@ -322,6 +335,14 @@ public struct LockService: GATTProfileService {
         public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "3A9EE5A8-044D-11E6-90F2-09AB70D5A8C7")!)
         
         public static let length = SwiftFoundation.UUID.length + Nonce.length + IVSize + 16 + HMACSize + Permission.length
+        
+        public static func canWrite(status: CoreLock.Status) -> Bool {
+            
+            switch status {
+            case .unlock: return true
+            case .setup, .newKey, .update: return false
+            }
+        }
         
         /// The parent key identifier.
         public let identifier: SwiftFoundation.UUID
@@ -515,6 +536,14 @@ public struct LockService: GATTProfileService {
         
         public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "C52B681E-0CE4-11E6-9998-AC69ADB65F8F")!)
         
+        public static func canWrite(status: CoreLock.Status) -> Bool {
+            
+            switch status {
+            case .newKey: return true
+            case .setup, .unlock, .update: return false
+            }
+        }
+        
         /// The name of the new key. 
         public let name: Key.Name
         
@@ -574,6 +603,14 @@ public struct LockService: GATTProfileService {
         public static let length = SwiftFoundation.UUID.length + Nonce.length + HMACSize + 1
         
         public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "A187317C-6DE5-4842-800A-0D7C7529B4E7")!)
+        
+        public static func canWrite(status: CoreLock.Status) -> Bool {
+            
+            switch status {
+            case .unlock: return true
+            case .setup, .newKey, .update: return false
+            }
+        }
         
         public let identifier: SwiftFoundation.UUID
         
@@ -637,6 +674,14 @@ public struct LockService: GATTProfileService {
         public static let length = SwiftFoundation.UUID.length + Nonce.length + HMACSize
         
         public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "17CA5159-1DAF-431A-8CF0-A9CAD500BD96")!)
+        
+        public static func canWrite(status: CoreLock.Status) -> Bool {
+            
+            switch status {
+            case .unlock: return true
+            case .setup, .newKey, .update: return false
+            }
+        }
         
         public let identifier: SwiftFoundation.UUID
         

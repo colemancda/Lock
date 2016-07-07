@@ -21,7 +21,7 @@ public struct Key: Equatable, JSONEncodable, JSONDecodable {
     /// - Note: Not applicable for Owner keys. 
     public var name: Name?
     
-    public init(identifier: UUID = UUID(), name: Name? = nil, data: KeyData = KeyData(), permission: Permission = .owner) {
+    public init(identifier: UUID = UUID(), name: Name? = nil, data: KeyData = KeyData(), permission: Permission) {
         
         self.identifier = identifier
         self.name = name
