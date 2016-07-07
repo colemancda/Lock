@@ -254,6 +254,22 @@
             }
         }
         
+        /// Update the lock device.
+        public func update(_ identifier: UUID, key: (UUID, KeyData)) throws {
+            
+            guard let lock = self[identifier]
+                else { throw Error.NoLock }
+            
+            return try lockAction(peripheral: lock.peripheral, characteristics: [LockService.Update.UUID]) {
+                
+                // unlock
+                
+                let unlock = LockService.Update.init(identifier: key.0, key: key.1)
+                
+                try self.internalManager.write(data: unlock.toBigEndian(), response: true, characteristic: LockService.Update.UUID, service: LockService.UUID, peripheral: lock.peripheral)
+            }
+        }
+        
         // MARK: - Private Methods
         
         /// Connects to the lock, fetches the data, and performs the action, and disconnects.

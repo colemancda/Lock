@@ -19,7 +19,57 @@ public enum Status: UInt8 {
     
     /// New Key being added to database.
     case newKey
+    
+    /// The lock is being updated.
+    case update
 }
+
+// MARK: - Accessors
+
+public extension Status {
+    
+    var canUnlock: Bool {
+        
+        switch self {
+            
+        case .setup: return false
+            
+        case .unlock, .newKey, .update: return true
+        }
+    }
+    
+    var canUpdate: Bool {
+        
+        switch self {
+            
+        case .setup, .unlock: return true
+            
+        case .newKey, .update: return false
+        }
+    }
+    
+    var canCreateNewKey: Bool {
+        
+        switch self {
+            
+        case .setup, .unlock: return true
+            
+        case .newKey, .update: return false
+        }
+    }
+    
+    var canEnableHomeKit: Bool {
+        
+        switch self {
+            
+        case .setup, .unlock: return true
+            
+        case .newKey, .update: return false
+        }
+    }
+}
+
+// MARK: - DataConvertible
 
 extension Status: DataConvertible {
     

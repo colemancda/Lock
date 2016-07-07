@@ -217,7 +217,7 @@ final class LockController {
             
         case LockService.NewKeyParent.UUID:
             
-            guard status == .unlock
+            guard status.canCreateNewKey
                 else { return ATT.Error.WriteNotPermitted }
             
             // deserialize
@@ -258,7 +258,7 @@ final class LockController {
             
         case LockService.HomeKitEnable.UUID:
             
-            guard status != .setup
+            guard status.canEnableHomeKit
                 else { return ATT.Error.WriteNotPermitted }
             
             // deserialize
@@ -292,6 +292,47 @@ final class LockController {
             updateHomeKitSupport()
             
             print("HomeKit enabled: \(configuration.isHomeKitEnabled)")
+            
+        case LockService.Update.UUID:
+            
+            guard status.canUpdate
+                else { return ATT.Error.WriteNotPermitted }
+            
+            // deserialize
+            guard let unlock = LockService.Unlock.init(bigEndian: newValue)
+                else { return ATT.Error.InvalidAttributeValueLength }
+            
+            var authenticatedKey: Key!
+            
+            for key in store.keys {
+                
+                if unlock.authenticated(with: key.data) {
+                    
+                    authenticatedKey = key
+                    
+                    break
+                }
+            }
+            
+            // not authenticated
+            guard authenticatedKey != nil
+                else { return ATT.Error.WriteNotPermitted }
+            
+            // verify permission
+            switch authenticatedKey.permission {
+                
+            case .owner, .admin, .anytime: break // can open
+                
+            case let .scheduled(schedule):
+                
+                guard schedule.valid()
+                    else { return ATT.Error.WriteNotPermitted }
+            }
+            
+            // send signal to GPIO
+            UnlockIO()
+            
+            print("Unlocked by central \(central.identifier)")
             
         default: fatalError("Writing to unknown characteristic \(UUID)")
         }
@@ -421,7 +462,7 @@ final class LockController {
         return
     }
     
-    // MARK: HomeKit
+    // MARK: Actions
     
     private func updateHomeKitSupport() {
         
@@ -469,5 +510,10 @@ final class LockController {
             
             do { try FileManager.removeItem(path: File.homeKitData) } catch { } // ignore error
         }
+    }
+    
+    private func updateSoftware() {
+        
+        
     }
 }

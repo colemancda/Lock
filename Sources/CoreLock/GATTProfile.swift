@@ -629,6 +629,63 @@ public struct LockService: GATTProfileService {
         }
     }
     
+    /// Used to update device. (Should only be sent by lock owner)
+    ///
+    /// Key UUID + nonce + HMAC(key, nonce) (16 + 16 + 64 bytes) (write-only)
+    public struct Update: AuthenticatedCharacteristic {
+        
+        public static let length = SwiftFoundation.UUID.length + Nonce.length + HMACSize
+        
+        public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "17CA5159-1DAF-431A-8CF0-A9CAD500BD96")!)
+        
+        public let identifier: SwiftFoundation.UUID
+        
+        public let nonce: Nonce
+        
+        /// HMAC of key and nonce
+        public let authentication: Data
+        
+        public init(identifier: SwiftFoundation.UUID, nonce: Nonce = Nonce(), key: KeyData) {
+            
+            self.identifier = identifier
+            self.nonce = nonce
+            self.authentication = HMAC(key: key, message: nonce)
+            
+            assert(authentication.bytes.count == HMACSize)
+        }
+        
+        public init?(bigEndian: Data) {
+            
+            let bytes = bigEndian.bytes
+            
+            guard bytes.count == self.dynamicType.length
+                else { return nil }
+            
+            let identifier = SwiftFoundation.UUID(bigEndian: Data(bytes: Array(bytes[0 ..< 16])))!
+            
+            let nonceBytes = Array(bytes[16 ..< 16 + Nonce.length])
+            
+            assert(nonceBytes.count == Nonce.length)
+            
+            let hmac = Array(bytes.suffix(from: 16 + Nonce.length))
+            
+            assert(hmac.count == HMACSize)
+            
+            self.identifier = identifier
+            self.nonce = Nonce(data: Data(bytes: nonceBytes))!
+            self.authentication =  Data(bytes: hmac)
+        }
+        
+        public func toBigEndian() -> Data {
+            
+            let bytes = identifier.toBigEndian().bytes + nonce.data.bytes + authentication.bytes
+            
+            assert(bytes.count == self.dynamicType.length)
+            
+            return Data(bytes: bytes)
+        }
+    }
+    
     public struct ListKeys {
         
         

@@ -12,7 +12,7 @@ import CoreLock
 
 final class GATTProfileTests: XCTestCase {
     
-    static let allTests: [(String, (GATTProfileTests) -> () throws -> Void)] = [("testLockIdentifier", testLockIdentifier), ("testLockSetup", testLockSetup), ("testUnlock", testUnlock), ("testNewChildKey", testNewChildKey)]
+    static let allTests: [(String, (GATTProfileTests) -> () throws -> Void)] = [("testLockIdentifier", testLockIdentifier), ("testLockSetup", testLockSetup), ("testUnlock", testUnlock), ("testNewChildKey", testNewChildKey), ("testHomeKitEnable", testHomeKitEnable), ]
     
     func testLockIdentifier() {
         
@@ -210,5 +210,30 @@ final class GATTProfileTests: XCTestCase {
         XCTAssert(deserialized.authenticated(with: key))
         XCTAssert(deserialized.authenticated(with: KeyData()) == false)
         XCTAssert(deserialized.enable == request.enable)
+    }
+    
+    func testUpdate() {
+        
+        // lock update
+        
+        let requestType = LockService.Update.self
+        
+        let key = KeyData()
+        
+        let nonce = Nonce()
+        
+        let identifier = UUID()
+        
+        let request = requestType.init(identifier: identifier, nonce: nonce, key: key)
+        
+        let requestData = request.toBigEndian()
+        
+        guard let deserialized = requestType.init(bigEndian: requestData)
+            else { XCTFail(); return }
+        
+        XCTAssert(deserialized.identifier == identifier)
+        XCTAssert(deserialized.nonce == nonce)
+        XCTAssert(deserialized.authenticated(with: key))
+        XCTAssert(deserialized.authenticated(with: KeyData()) == false)
     }
 }
