@@ -129,6 +129,10 @@
 		6EF2323F1D2F77D5004B4855 /* SessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF2323E1D2F77D5004B4855 /* SessionController.swift */; };
 		6EF232401D2F819E004B4855 /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB2E9E81CD547CA000CF975 /* Observable.swift */; };
 		6EF232421D2F8C55004B4855 /* ErrorAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF232411D2F8C55004B4855 /* ErrorAlert.swift */; };
+		6EF232581D2F9782004B4855 /* JSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EF232521D2F9704004B4855 /* JSON.framework */; };
+		6EF232591D2F9782004B4855 /* JSON.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6EF232521D2F9704004B4855 /* JSON.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6EF2325A1D2F9782004B4855 /* SwiftFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EF232561D2F9704004B4855 /* SwiftFoundation.framework */; };
+		6EF2325B1D2F9782004B4855 /* SwiftFoundation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6EF232561D2F9704004B4855 /* SwiftFoundation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6EF45F911CC6CAF9001F7A39 /* GATTProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA8996F1CC2E3F0005FC225 /* GATTProfile.swift */; };
 		6EF45F921CC6CAF9001F7A39 /* Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB413301CC30084005AB1E2 /* Status.swift */; };
 		6EF45F941CC6CAF9001F7A39 /* Bool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB413321CC317A3005AB1E2 /* Bool.swift */; };
@@ -259,6 +263,18 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		6EF2325C1D2F9782004B4855 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				6EF232591D2F9782004B4855 /* JSON.framework in Embed Frameworks */,
+				6EF2325B1D2F9782004B4855 /* SwiftFoundation.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -364,6 +380,9 @@
 		6EF2323C1D2F7769004B4855 /* KeysInterfaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeysInterfaceController.swift; sourceTree = "<group>"; };
 		6EF2323E1D2F77D5004B4855 /* SessionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionController.swift; sourceTree = "<group>"; };
 		6EF232411D2F8C55004B4855 /* ErrorAlert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorAlert.swift; sourceTree = "<group>"; };
+		6EF232431D2F96D5004B4855 /* CerraduraWatch.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = CerraduraWatch.entitlements; sourceTree = "<group>"; };
+		6EF232521D2F9704004B4855 /* JSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JSON.framework; sourceTree = "<group>"; };
+		6EF232561D2F9704004B4855 /* SwiftFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SwiftFoundation.framework; sourceTree = "<group>"; };
 		6EF45FA01CC6CAF9001F7A39 /* CoreLock.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CoreLock.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -387,6 +406,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6EF232581D2F9782004B4855 /* JSON.framework in Frameworks */,
+				6EF2325A1D2F9782004B4855 /* SwiftFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -507,6 +528,7 @@
 		6E729C5F1CC3BC200018A848 /* Dependencies */ = {
 			isa = PBXGroup;
 			children = (
+				6EF232441D2F9704004B4855 /* watchOS */,
 				6E729C601CC3BC330018A848 /* Mac */,
 			);
 			name = Dependencies;
@@ -541,6 +563,7 @@
 		6E778D981CD5B70300AED11E /* CerraduraWatch */ = {
 			isa = PBXGroup;
 			children = (
+				6EF232431D2F96D5004B4855 /* CerraduraWatch.entitlements */,
 				6E778D9C1CD5B70300AED11E /* Assets.xcassets */,
 				6E778D9E1CD5B70300AED11E /* Info.plist */,
 				6EED25AB1D29985000638377 /* Main.storyboard */,
@@ -738,6 +761,16 @@
 			name = UIActivity;
 			sourceTree = "<group>";
 		};
+		6EF232441D2F9704004B4855 /* watchOS */ = {
+			isa = PBXGroup;
+			children = (
+				6EF232521D2F9704004B4855 /* JSON.framework */,
+				6EF232561D2F9704004B4855 /* SwiftFoundation.framework */,
+			);
+			name = watchOS;
+			path = ../Carthage/Build/watchOS;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -821,7 +854,7 @@
 				6E778D9F1CD5B70300AED11E /* Sources */,
 				6E778DA01CD5B70300AED11E /* Frameworks */,
 				6E778DA11CD5B70300AED11E /* Resources */,
-				6EF232381D2F503E004B4855 /* Copy Frameworks */,
+				6EF2325C1D2F9782004B4855 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1131,22 +1164,6 @@
 			shellPath = /bin/sh;
 			shellScript = "/usr/local/bin/carthage copy-frameworks";
 		};
-		6EF232381D2F503E004B4855 /* Copy Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/../Carthage/Build/WatchOS/SwiftFoundation.framework",
-				"$(SRCROOT)/../Carthage/Build/WatchOS/JSON.framework",
-			);
-			name = "Copy Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks";
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -1443,7 +1460,6 @@
 				INFOPLIST_FILE = CerraduraWatch/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.colemancda.Cerradura.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 4;
@@ -1461,7 +1477,6 @@
 				INFOPLIST_FILE = CerraduraWatch/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.colemancda.Cerradura.watchkitapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = 4;

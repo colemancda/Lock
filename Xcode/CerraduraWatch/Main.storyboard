@@ -23,10 +23,17 @@
                                             <segue destination="THD-pU-r9U" kind="push" identifier="showLock" id="b3s-Bs-IoX"/>
                                         </connections>
                                     </group>
+                                    <connections>
+                                        <outlet property="imageView" destination="Wdf-UD-vtu" id="XyS-qj-rzE"/>
+                                        <outlet property="label" destination="0Gj-9R-ZkY" id="jx8-jR-fKz"/>
+                                    </connections>
                                 </tableRow>
                             </items>
                         </table>
                     </items>
+                    <connections>
+                        <outlet property="tableView" destination="uJp-2T-A2L" id="OpF-l3-im9"/>
+                    </connections>
                 </controller>
             </objects>
             <point key="canvasLocation" x="51" y="18"/>

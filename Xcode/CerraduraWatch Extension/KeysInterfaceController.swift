@@ -33,7 +33,10 @@ final class KeysInterfaceController: WKInterfaceController {
         // This method is called when watch view controller is about to be visible to user
         super.willActivate()
         
-        self.reloadData()
+        if SessionController.shared.session.activationState == .activated {
+            
+            self.reloadData()
+        }
     }
     
     override func didDeactivate() {
