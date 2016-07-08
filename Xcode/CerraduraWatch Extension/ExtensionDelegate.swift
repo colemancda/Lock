@@ -15,10 +15,21 @@ final class ExtensionDelegate: NSObject, WKExtensionDelegate {
         
         // print app info
         print("Launching Cerradura Watch v\(AppVersion) Build \(AppBuild)")
+        
+        // set SessionController log
+        SessionController.shared.log = { print("SessionController: " + $0) }
     }
 
     func applicationDidBecomeActive() {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+        
+        // reactivate
+        if SessionController.shared.session.activationState != .activated {
+            
+            do { try SessionController.shared.activate() }
+            
+            catch {  }
+        }
     }
 
     func applicationWillResignActive() {

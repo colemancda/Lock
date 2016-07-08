@@ -27,6 +27,7 @@ let WatchMessageIdentifierKey = "message"
 
 enum WatchMessageType: UInt8 {
     
+    case LocksRequest
     case LocksUpdatedNotification
     case UnlockRequest
     case UnlockResponse
@@ -102,6 +103,26 @@ extension LockCache {
                 Property.version.rawValue: NSNumber(value: version),
                 Property.permission.rawValue: permission.toBigEndian(),
                 Property.keyIdentifier.rawValue: keyIdentifier]
+    }
+}
+
+struct LocksRequest {
+    
+    static let messageType = WatchMessageType.LocksRequest
+    
+    init() { }
+    
+    init?(message: [String: AnyObject]) {
+        
+        guard let identifier = message[WatchMessageIdentifierKey] as? NSNumber,
+            let messageType = WatchMessageType(rawValue: identifier.uint8Value)
+            where messageType == self.dynamicType.messageType
+            else { return nil }
+    }
+    
+    func toMessage() -> [String: AnyObject] {
+        
+        return [WatchMessageIdentifierKey: NSNumber(value: self.dynamicType.messageType.rawValue)]
     }
 }
 

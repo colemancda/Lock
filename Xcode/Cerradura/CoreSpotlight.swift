@@ -62,9 +62,7 @@ extension LockCache {
 }
 
 @available(iOS 9.0, *)
-func UpdateSpotlight(_ index: CSSearchableIndex = CSSearchableIndex.default(), completionHandler: ((NSError?) -> Void)? = nil) {
-    
-    print(kUTTypeText as String)
+func UpdateSpotlight(_ index: CSSearchableIndex = CSSearchableIndex.default(), completionHandler: ((NSError?) -> ())? = nil) {
     
     index.deleteAllSearchableItems { (deleteError) in
         

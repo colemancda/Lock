@@ -125,6 +125,10 @@
 		6EF232361D2F4F65004B4855 /* Permission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED338641CC7C1A800DF1461 /* Permission.swift */; };
 		6EF232391D2F5218004B4855 /* ComplicationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA944C61CD6275500D776E5 /* ComplicationController.swift */; };
 		6EF2323B1D2F56E4004B4855 /* Bool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB413321CC317A3005AB1E2 /* Bool.swift */; };
+		6EF2323D1D2F7769004B4855 /* KeysInterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF2323C1D2F7769004B4855 /* KeysInterfaceController.swift */; };
+		6EF2323F1D2F77D5004B4855 /* SessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF2323E1D2F77D5004B4855 /* SessionController.swift */; };
+		6EF232401D2F819E004B4855 /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB2E9E81CD547CA000CF975 /* Observable.swift */; };
+		6EF232421D2F8C55004B4855 /* ErrorAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF232411D2F8C55004B4855 /* ErrorAlert.swift */; };
 		6EF45F911CC6CAF9001F7A39 /* GATTProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA8996F1CC2E3F0005FC225 /* GATTProfile.swift */; };
 		6EF45F921CC6CAF9001F7A39 /* Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB413301CC30084005AB1E2 /* Status.swift */; };
 		6EF45F941CC6CAF9001F7A39 /* Bool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB413321CC317A3005AB1E2 /* Bool.swift */; };
@@ -357,6 +361,9 @@
 		6EED25AB1D29985000638377 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		6EED25AD1D29B7C900638377 /* Activity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Activity.swift; sourceTree = "<group>"; };
 		6EED25B01D2A218A00638377 /* Command.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Command.swift; sourceTree = "<group>"; };
+		6EF2323C1D2F7769004B4855 /* KeysInterfaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeysInterfaceController.swift; sourceTree = "<group>"; };
+		6EF2323E1D2F77D5004B4855 /* SessionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionController.swift; sourceTree = "<group>"; };
+		6EF232411D2F8C55004B4855 /* ErrorAlert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorAlert.swift; sourceTree = "<group>"; };
 		6EF45FA01CC6CAF9001F7A39 /* CoreLock.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CoreLock.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -546,9 +553,12 @@
 			children = (
 				6E0429CF1D0F8842005AF969 /* CerraduraWatch Extension.entitlements */,
 				6E778DAA1CD5B70300AED11E /* ExtensionDelegate.swift */,
-				6E778DA81CD5B70300AED11E /* InterfaceController.swift */,
-				6E60B9E21CD5C70C002D788D /* AnimatedButtonController.swift */,
+				6EF2323E1D2F77D5004B4855 /* SessionController.swift */,
+				6EF2323C1D2F7769004B4855 /* KeysInterfaceController.swift */,
+				6EF232411D2F8C55004B4855 /* ErrorAlert.swift */,
 				6EA944C61CD6275500D776E5 /* ComplicationController.swift */,
+				6E60B9E21CD5C70C002D788D /* AnimatedButtonController.swift */,
+				6E778DA81CD5B70300AED11E /* InterfaceController.swift */,
 				6E778DAC1CD5B70300AED11E /* Assets.xcassets */,
 				6E778DAE1CD5B70300AED11E /* Info.plist */,
 			);
@@ -1172,8 +1182,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				6EF232351D2F4F4A004B4855 /* Model.swift in Sources */,
+				6EF2323F1D2F77D5004B4855 /* SessionController.swift in Sources */,
 				6E778DAB1CD5B70300AED11E /* ExtensionDelegate.swift in Sources */,
+				6EF232421D2F8C55004B4855 /* ErrorAlert.swift in Sources */,
 				6E68EEBE1CD5DFEE0068C7B4 /* WatchMessage.swift in Sources */,
+				6EF232401D2F819E004B4855 /* Observable.swift in Sources */,
+				6EF2323D1D2F7769004B4855 /* KeysInterfaceController.swift in Sources */,
 				6EF232361D2F4F65004B4855 /* Permission.swift in Sources */,
 				6E60B9E31CD5C70C002D788D /* AnimatedButtonController.swift in Sources */,
 				6EF2323B1D2F56E4004B4855 /* Bool.swift in Sources */,

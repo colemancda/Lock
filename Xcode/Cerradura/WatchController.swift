@@ -47,38 +47,20 @@ final class WatchController: NSObject, WCSessionDelegate, NSFetchedResultsContro
         try! fetchedResultsController.performFetch()
     }
     
-    // MARK: - Private Methods
-    /*
-    private func foundLocks(locks: [LockManager.Lock]) {
-        
-        guard session.activationState == .activated
-            else { log?("Could not send found lock notification to Watch app, session not activated."); return }
-        
-        guard session.isReachable
-            else { log?("Could not send found lock notification to Watch app, the counterpart app is not available for live messaging."); return }
-        
-        let message: FoundLockNotification
-        
-        if let foundLock = locks.first, let cachedLock = Store.shared[foundLock.UUID] {
-            
-            message = FoundLockNotification(permission: cachedLock.key.permission.type)
-            
-        } else {
-            
-            message = FoundLockNotification()
-        }
-        
-        session.sendMessage(message.toMessage(),
-                            replyHandler: nil,
-                            errorHandler: { self.log?("Error sending found lock notification: \($0.localizedDescription)") })
-    }*/
-    
     // MARK: - NSFetchedResultsControllerDelegate
     
     @objc(controllerDidChangeContent:)
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         
+        /*
         guard session.activationState == .activated
+            else { log?("Could not send found lock notification to Watch app, session not activated."); return }
+        
+        guard session.isReachable
+            else { log?("Could not send found lock notification to Watch app, the counterpart app is not available for live messaging."); return }
+        */
+        
+        guard session.activationState == .activated && session.isReachable
             else { return }
         
         let managedObjects = (controller.fetchedObjects ?? []) as! [NSManagedObject]
