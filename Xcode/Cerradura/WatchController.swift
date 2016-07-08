@@ -75,11 +75,21 @@ final class WatchController: NSObject, WCSessionDelegate, NSFetchedResultsContro
     
     // MARK: - NSFetchedResultsControllerDelegate
     
-    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSManagedObject>) {
+    @objc(controllerDidChangeContent:)
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         
-        let managedObjects: [NSManagedObject] = controller.fetchedObjects ?? []
+        guard session.activationState == .activated
+            else { return }
         
-        managedObjects.map {  }
+        let managedObjects = (controller.fetchedObjects ?? []) as! [NSManagedObject]
+        
+        let locks = LockCache.from(managedObjects: managedObjects)
+        
+        let notification = LocksUpdatedNotification(locks: locks)
+        
+        session.sendMessage(notification.toMessage(),
+                            replyHandler: nil,
+                            errorHandler: { self.log?("Error sending locks updated notification: \($0.localizedDescription)") } )
     }
     
     // MARK: - WCSessionDelegate
@@ -99,7 +109,7 @@ final class WatchController: NSObject, WCSessionDelegate, NSFetchedResultsContro
     }
     
     @objc(session:didReceiveMessage:replyHandler:)
-    func session(_ session: WCSession, didReceiveMessage message: [String : AnyObject], replyHandler: ([String : AnyObject]) -> Swift.Void) {
+    func session(_ session: WCSession, didReceiveMessage message: [String : AnyObject], replyHandler: ([String : AnyObject]) -> ()) {
         
         guard let identifierNumber = message[WatchMessageIdentifierKey] as? NSNumber,
             let identifier = WatchMessageType(rawValue: identifierNumber.uint8Value)
@@ -111,47 +121,35 @@ final class WatchController: NSObject, WCSessionDelegate, NSFetchedResultsContro
             
             log?("Recieved unlock request")
             
-            guard let foundLock = LockManager.shared.foundLocks.value.first
+            guard let unlockRequest = UnlockRequest(message: message)
+                else { fatalError("Invalid message: \(message)") }
+            
+            guard LockManager.shared.foundLocks.value.contains({ $0.identifier == unlockRequest.lock })
                 else { replyHandler(UnlockResponse(error: "Lock disconnected").toMessage()); return }
             
-            guard let cachedLock = Store.shared[foundLock.UUID]
+            guard let (lockCache, keyData) = Store.shared[unlockRequest.lock]
                 else { replyHandler(UnlockResponse(error: "No stored key for lock").toMessage()); return }
             
-            do { try LockManager.shared.unlock(foundLock.UUID, key: cachedLock.key) }
+            do { try LockManager.shared.unlock(unlockRequest.lock, key: (lockCache.keyIdentifier, keyData)) }
             
             catch { replyHandler(UnlockResponse(error: "\(error)").toMessage()); return }
             
             /// Success
             replyHandler(UnlockResponse().toMessage())
             
-            print("Unlocked from Watch")
-            
-        case .CurrentLockRequest:
-            
-            log?("Recieved current lock request")
-            
-            if LockManager.shared.foundLocks.value.first == nil
-                && LockManager.shared.scanning.value == false {
-                
-                // scan in background
-                async {
-                    
-                    sleep(1)
-                    
-                    do { try LockManager.shared.scan() }
-                    catch { }
-                }
-            }
-            
-            guard let foundLock = LockManager.shared.foundLocks.value.first,
-                let cachedLock = Store.shared[foundLock.UUID]
-                else { replyHandler(CurrentLockResponse().toMessage()); return }
-            
-            let response = CurrentLockResponse(permission: cachedLock.key.permission.type)
-            
-            replyHandler(response.toMessage())
+            log?("Unlocked \(unlockRequest.lock) from Watch")
             
         default: fatalError("Unexpected message: \(message)")
         }
+    }
+    
+    func sessionDidBecomeInactive(_ session: WCSession) {
+        
+        log?("Session inactive")
+    }
+    
+    func sessionDidDeactivate(_ session: WCSession) {
+        
+        log?("Session deactivated")
     }
 }
