@@ -28,16 +28,3 @@ final class ExtensionDelegate: NSObject, WKExtensionDelegate {
 
 }
 
-@inline(__always)
-func mainQueue(_ block: () -> ()) {
-    
-    OperationQueue.main().addOperation(block)
-}
-
-/** Version of the app. */
-public let AppVersion = Bundle.main().infoDictionary!["CFBundleShortVersionString"] as! String
-
-/** Build of the app. */
-public let AppBuild = Bundle.main().infoDictionary!["CFBundleVersion"] as! String
-
-

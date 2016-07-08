@@ -11,9 +11,10 @@ import WatchConnectivity
 import SwiftFoundation
 import CoreLock
 import GATT
+import CoreData
 
 @available(iOS 9.3, *)
-final class WatchController: NSObject, WCSessionDelegate {
+final class WatchController: NSObject, WCSessionDelegate, NSFetchedResultsControllerDelegate {
     
     static let shared = WatchController()
     
@@ -23,18 +24,31 @@ final class WatchController: NSObject, WCSessionDelegate {
     
     private let session = WCSession.default()
     
+    private lazy var fetchedResultsController: NSFetchedResultsController<NSManagedObject> = {
+        
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: LockCache.entityName)
+        
+        fetchRequest.sortDescriptors = [SortDescriptor(key: LockCache.Property.name.rawValue, ascending: true)]
+        
+        let controller = NSFetchedResultsController<NSManagedObject>(fetchRequest: fetchRequest, managedObjectContext: Store.shared.managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
+        
+        controller.delegate = self
+        
+        return controller
+    }()
+    
     // MARK: - Methods
     
     func activate() {
         
-        let _ = LockManager.shared.foundLocks.observe(foundLocks)
-        
         session.delegate = self
         session.activate()
+        
+        try! fetchedResultsController.performFetch()
     }
     
     // MARK: - Private Methods
-    
+    /*
     private func foundLocks(locks: [LockManager.Lock]) {
         
         guard session.activationState == .activated
@@ -57,6 +71,15 @@ final class WatchController: NSObject, WCSessionDelegate {
         session.sendMessage(message.toMessage(),
                             replyHandler: nil,
                             errorHandler: { self.log?("Error sending found lock notification: \($0.localizedDescription)") })
+    }*/
+    
+    // MARK: - NSFetchedResultsControllerDelegate
+    
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSManagedObject>) {
+        
+        let managedObjects: [NSManagedObject] = controller.fetchedObjects ?? []
+        
+        managedObjects.map {  }
     }
     
     // MARK: - WCSessionDelegate
