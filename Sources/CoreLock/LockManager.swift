@@ -187,7 +187,7 @@
             }
         }
         
-        public func createNewKey(_ identifier: UUID, parentKey: (UUID, KeyData), childKey: (UUID, Permission), sharedSecret: KeyData) throws {
+        public func createNewKey(_ identifier: UUID, parentKey: (UUID, KeyData), childKey: (UUID, Permission, Key.Name), sharedSecret: KeyData) throws {
             
             assert(childKey.1 != .owner, "Cannot create owner keys")
             
@@ -203,35 +203,16 @@
             }
         }
         
-        public func recieveNewKey(_ identifier: UUID, sharedSecret: KeyData, name: Key.Name) throws -> Key {
+        public func recieveNewKey(_ identifier: UUID, sharedSecret: KeyData, newKey: (UUID, KeyData)) throws {
             
             guard let lock = self[identifier]
                 else { throw Error.NoLock }
             
-            return try lockAction(peripheral: lock.peripheral, characteristics: [LockService.NewKeyChild.UUID, LockService.NewKeyFinish.UUID]) {
+            return try lockAction(peripheral: lock.peripheral, characteristics: [LockService.NewKeyChild.UUID]) {
                 
-                // read new key child characteristic
+                let newKeyChild = LockService.NewKeyChild.init(sharedSecret: sharedSecret, newKey: newKey)
                 
-                let newKeyChildValue = try self.internalManager.read(characteristic: LockService.NewKeyChild.UUID, service: LockService.UUID, peripheral: lock.peripheral)
-                
-                guard let newKeyChild = LockService.NewKeyChild.init(bigEndian: newKeyChildValue)
-                    else { throw Error.InvalidCharacteristicValue(LockService.NewKeyChild.UUID) }
-                
-                guard let keyData = newKeyChild.decrypt(sharedSecret: sharedSecret)
-                    else { throw Error.InvalidSharedSecret }
-                
-                // write confirmation value (sets name, and verifies that the KeyData can be used to unlock)
-                
-                let newKeyFinish = LockService.NewKeyFinish.init(name: name, key: keyData)
-                
-                try self.internalManager.write(data: newKeyFinish.toBigEndian(), response: true, characteristic: LockService.NewKeyFinish.UUID, service: LockService.UUID, peripheral: lock.peripheral)
-                
-                // success!
-                
-                // update cached status
-                self[identifier]?.status = .unlock
-                
-                return Key(identifier: newKeyChild.identifier, name: name, data: keyData, permission: newKeyChild.permission)
+                try self.internalManager.write(data: newKeyChild.toBigEndian(), response: true, characteristic: LockService.NewKeyChild.UUID, service: LockService.UUID, peripheral: lock.peripheral)
             }
         }
         
@@ -350,9 +331,6 @@
             
             guard characteristics.contains({ $0.UUID == LockService.NewKeyChild.UUID })
                 else { throw Error.CharacteristicNotFound(LockService.NewKeyChild.UUID) }
-            
-            guard characteristics.contains({ $0.UUID == LockService.NewKeyFinish.UUID })
-                else { throw Error.CharacteristicNotFound(LockService.NewKeyFinish.UUID) }
             
             log?("Lock \((peripheral, identifier.value, status.value, model.value, version.value))")
             

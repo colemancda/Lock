@@ -118,40 +118,34 @@ final class GATTProfileTests: XCTestCase {
         
         let schedule = Permission.Schedule(expiry: expiry, weekdays: weekdays)
         
-        let permission = Permission.scheduled(schedule)
+        let sharedSecret = KeyData()
         
-        let sharedSecret = SharedSecret()
+        let parentKey = Key(identifier: UUID(), data: KeyData(), permission: .owner)
         
-        let parentKeyIdentifier = UUID()
+        let newKey = Key(identifier: UUID(), name: Key.Name(rawValue: "New Key")!, data: KeyData(), permission: Permission.scheduled(schedule))
         
-        let parentKeyData = KeyData()
-        
-        let parentNonce = Nonce()
-        
-        let parentRequest = LockService.NewKeyParent.init(nonce: parentNonce, sharedSecret: sharedSecret, parentKey: (parentKeyIdentifier, parentKeyData), permission: permission)
+        let parentRequest = LockService.NewKeyParent.init(sharedSecret: sharedSecret, parentKey: (parentKey.identifier, parentKey.data), childKey: (newKey.identifier, newKey.permission, newKey.name!))
         
         let parentRequestData = parentRequest.toBigEndian()
         
         guard let parentDeserialized = LockService.NewKeyParent.init(bigEndian: parentRequestData)
             else { XCTFail(); return }
         
-        guard let decryptedSharedSecret = parentDeserialized.decrypt(key: parentKeyData)
+        guard let decryptedSharedSecret = parentDeserialized.decrypt(key: parentKey.data)
             else { XCTFail(); return }
         
-        XCTAssert(parentDeserialized.identifier == parentKeyIdentifier)
-        XCTAssert(parentDeserialized.nonce == parentNonce)
-        XCTAssert(parentDeserialized.authenticated(with: parentKeyData))
+        XCTAssert(parentDeserialized.parent == parentKey.identifier)
+        XCTAssert(parentDeserialized.child == newKey.identifier)
+        XCTAssert(parentDeserialized.name == newKey.name)
+        XCTAssert(parentDeserialized.nonce == parentRequest.nonce)
+        XCTAssert(parentDeserialized.permission == newKey.permission)
+        XCTAssert(parentDeserialized.authenticated(with: parentKey.data))
         XCTAssert(parentDeserialized.authenticated(with: KeyData()) == false)
-        XCTAssert(parentDeserialized.permission == permission, "\(parentDeserialized.permission) == \(permission)")
         XCTAssert(decryptedSharedSecret == sharedSecret)
         
         // child
         
-        let childNonce = Nonce()
-        
-        let newKey = Key(data: KeyData(), permission: permission)
-        
-        let childRequest = LockService.NewKeyChild.init(nonce: childNonce, sharedSecret: sharedSecret, newKey: newKey)
+        let childRequest = LockService.NewKeyChild.init(sharedSecret: sharedSecret, newKey: (newKey.identifier, newKey.data))
         
         let childRequestData = childRequest.toBigEndian()
         
@@ -162,30 +156,10 @@ final class GATTProfileTests: XCTestCase {
             else { XCTFail(); return }
         
         XCTAssert(childDeserialized.identifier == childRequest.identifier)
-        XCTAssert(childDeserialized.nonce == childNonce)
-        XCTAssert(childDeserialized.authenticated(with: sharedSecret.toKeyData()))
+        XCTAssert(childDeserialized.nonce == childRequest.nonce)
+        XCTAssert(childDeserialized.authenticated(with: sharedSecret))
         XCTAssert(childDeserialized.authenticated(with: KeyData()) == false)
-        XCTAssert(childDeserialized.permission == permission)
         XCTAssert(decryptedNewKey == newKey.data)
-        XCTAssert(childDeserialized.permission == newKey.permission)
-        XCTAssert(childDeserialized.identifier == newKey.identifier)
-        
-        // finish
-        
-        let childKeyName = Key.Name(rawValue: "New Key")!
-        
-        let newKeyFinish = LockService.NewKeyFinish.init(name: childKeyName, key: newKey.data)
-        
-        let newKeyFinishData = newKeyFinish.toBigEndian()
-        
-        guard let newKeyFinishDeserialzed = LockService.NewKeyFinish.init(bigEndian: newKeyFinishData)
-            else { XCTFail(); return }
-        
-        XCTAssert(newKeyFinishDeserialzed.name == newKeyFinish.name)
-        XCTAssert(newKeyFinishDeserialzed.nonce == newKeyFinish.nonce)
-        XCTAssert(newKeyFinishDeserialzed.authentication == newKeyFinish.authentication)
-        XCTAssert(newKeyFinishDeserialzed.authenticated(with: newKey.data))
-        XCTAssert(newKeyFinishDeserialzed.authenticated(with: KeyData()) == false)
     }
     
     func testHomeKitEnable() {

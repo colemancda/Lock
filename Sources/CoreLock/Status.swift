@@ -16,9 +16,6 @@ public enum Status: UInt8 {
     
     /// Idle / Unlock Mode
     case unlock
-    
-    //
-    case recieveNewKey
 }
 
 // MARK: - DataConvertible
