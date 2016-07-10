@@ -55,7 +55,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         
         LockManager.shared.log = { print("LockManager: " + $0) }
         
-        /*
+        
         // Apple Watch support
         if #available(iOS 9.3, *) {
             
@@ -65,7 +65,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                 
                 WatchController.shared.activate()
             }
-        }*/
+        }
         
         // iBeacon
         BeaconController.shared.log = { print("BeaconController: " + $0) }

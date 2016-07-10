@@ -60,6 +60,18 @@ final class Store {
         try! keychain.remove(key: identifier.rawValue)
     }
     
+    var locks: [LockCache] {
+        
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: LockCache.entityName)
+        fetchRequest.includesSubentities = false
+        fetchRequest.returnsObjectsAsFaults = false
+        fetchRequest.sortDescriptors = [SortDescriptor(key: LockCache.Property.identifier.rawValue, ascending: true)]
+        
+        let results = try! managedObjectContext.fetch(fetchRequest)
+        
+        return LockCache.from(managedObjects: results)
+    }
+    
     // MARK: - Subscripting
     
     /// Get the cached lock info for the specified lock.

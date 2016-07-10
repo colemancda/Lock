@@ -28,9 +28,7 @@ final class ExtensionDelegate: NSObject, WKExtensionDelegate {
             
             if SessionController.shared.session.activationState != .activated {
                 
-                do { try SessionController.shared.activate() }
-                    
-                catch {  }
+                do { try SessionController.shared.activate() } catch {  }
             }
         }
     }

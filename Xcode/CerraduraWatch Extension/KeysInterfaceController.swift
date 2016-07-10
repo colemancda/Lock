@@ -8,6 +8,7 @@
 
 import Foundation
 import WatchKit
+import enum WatchConnectivity.WCSessionActivationState
 
 final class KeysInterfaceController: WKInterfaceController {
     
@@ -21,12 +22,15 @@ final class KeysInterfaceController: WKInterfaceController {
     
     private var locksObserver: Int!
     
+    private var activationObserver: Int!
+    
     // MARK: - Loading
     
     override func awake(withContext context: AnyObject?) {
         super.awake(withContext: context)
         
         locksObserver = SessionController.shared.locks.observe(locksUpdated)
+        activationObserver = SessionController.shared.activationState.observe(activationStateChanged)
     }
     
     override func willActivate() {
@@ -48,11 +52,16 @@ final class KeysInterfaceController: WKInterfaceController {
     
     private func reloadData() {
         
-        // request current locks
-        do { try SessionController.shared.requestLocks() }
+        async {
             
-        catch { showError("\(error)"); return }
+            // request current locks
+            do { try SessionController.shared.requestLocks() }
+                
+            catch { mainQueue { self.showError("\(error)"); return } }
+        }
     }
+    
+    // MARK: - Session Controller Notifications
     
     private func locksUpdated(_ locks: [LockCache]) {
         
@@ -72,16 +81,40 @@ final class KeysInterfaceController: WKInterfaceController {
                 let image: UIImage
                 
                 switch lock.permission {
-                    
-                case .owner: image = #imageLiteral(resourceName: "modularSmallOwner")
-                case .admin: image = #imageLiteral(resourceName: "modularSmallAdmin")
-                case .anytime: image = #imageLiteral(resourceName: "modularSmallAnytime")
-                case .scheduled: image = #imageLiteral(resourceName: "modularSmallScheduled")
+                case .owner: image = #imageLiteral(resourceName: "watchOwner")
+                case .admin: image = #imageLiteral(resourceName: "watchAdmin")
+                case .anytime: image = #imageLiteral(resourceName: "watchAnytime")
+                case .scheduled: image = #imageLiteral(resourceName: "watchScheduled")
                 }
                 
                 rowController.imageView.setImage(image)
             }
         }
+    }
+    
+    private func activationStateChanged(_ state: WCSessionActivationState) {
+        
+        mainQueue {
+            
+            if SessionController.shared.session.activationState == .activated {
+                
+                self.reloadData()
+                
+            } else {
+                
+                // could not activate
+                self.showError("Could not activate communicate with iPhone. ")
+            }
+        }
+    }
+    
+    // MARK: - Segue
+    
+    override func contextForSegue(withIdentifier segueIdentifier: String, in table: WKInterfaceTable, rowIndex: Int) -> AnyObject? {
+        
+        let lock = locks[rowIndex]
+        
+        return LockContext(lock: lock)
     }
 }
 

@@ -9,6 +9,7 @@
 import UIKit
 import JGProgressHUD
 import CoreLock
+import CoreData
 
 final class LockViewController: UIViewController {
     
@@ -29,10 +30,19 @@ final class LockViewController: UIViewController {
     
     // MARK: - Loading
     
+    deinit {
+        
+        NotificationCenter.default().removeObserver(self)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         guard lockIdentifier != nil else { fatalError("Lock identifer not set") }
+        
+        // observe context
+        NotificationCenter.default().addObserver(self, selector: #selector(contextObjectsDidChange), name: Notification.Name.NSManagedObjectContextObjectsDidChange, object: Store.shared.managedObjectContext)
+        
         
         self.updateUI()
     }
@@ -135,11 +145,8 @@ final class LockViewController: UIViewController {
     private func updateUI() {
         
         // Lock has been deleted
-        guard let lockCache = Store.shared[cache: lockIdentifier] else {
-            
-            // FIXME: handle deletion
-            return
-        }
+        guard let lockCache = Store.shared[cache: lockIdentifier]
+            else { return }
         
         // set lock name
         self.navigationItem.title = lockCache.name
@@ -156,5 +163,29 @@ final class LockViewController: UIViewController {
             self.unlockButton.isEnabled = schedule.valid()
         }
         
+    }
+    
+    // MARK: Notifications
+    
+    @objc private func contextObjectsDidChange(_ notification: Notification) {
+        
+        // check if deleted
+        guard let deletedObjects = notification.userInfo?[NSDeletedObjectsKey] as? [NSManagedObject]
+            where deletedObjects.contains({ LockCache(managedObject: $0).identifier == self.lockIdentifier })
+            else { return }
+        
+        if let navigationIndex = navigationController?.viewControllers.index(of: self)
+            where navigationIndex > 0 {
+            
+            let previousVC = navigationController!.viewControllers[navigationIndex - 1]
+            
+            let _ = navigationController?.popToViewController(previousVC, animated: true)
+            
+        } else {
+            
+            let emptyVC = UIStoryboard(name: "main", bundle: nil).instantiateViewController(withIdentifier: "EmptyViewController")
+            
+            navigationController?.viewControllers = [emptyVC]
+        }
     }
 }

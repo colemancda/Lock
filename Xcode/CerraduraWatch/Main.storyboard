@@ -38,10 +38,10 @@
             </objects>
             <point key="canvasLocation" x="51" y="18"/>
         </scene>
-        <!--Interface Controller-->
+        <!--Lock Interface Controller-->
         <scene sceneID="0oW-Fi-cfs">
             <objects>
-                <controller id="THD-pU-r9U">
+                <controller id="THD-pU-r9U" customClass="LockInterfaceController" customModule="CerraduraWatch_Extension">
                     <items>
                         <button alignment="left" id="VDJ-YA-Zqp">
                             <group key="contentGroup" width="1" height="1" alignment="left" id="3Tv-Hr-S99">
@@ -49,8 +49,15 @@
                                     <imageView width="0.90000000000000002" height="1" heightAdjustment="0.90000000000000002" alignment="center" verticalAlignment="center" image="watchAdmin" contentMode="scaleAspectFit" id="6cD-Jd-Vzx"/>
                                 </items>
                             </group>
+                            <connections>
+                                <action selector="unlock:" destination="THD-pU-r9U" id="ohM-I7-oIY"/>
+                            </connections>
                         </button>
                     </items>
+                    <connections>
+                        <outlet property="button" destination="VDJ-YA-Zqp" id="fnq-5G-8bn"/>
+                        <outlet property="imageView" destination="6cD-Jd-Vzx" id="kbG-SN-hAk"/>
+                    </connections>
                 </controller>
             </objects>
             <point key="canvasLocation" x="343" y="18"/>

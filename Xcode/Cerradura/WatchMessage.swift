@@ -77,14 +77,16 @@ extension LockCache {
     
     init?(message: [String: AnyObject]) {
         
-        guard let identifier = message[Property.identifier.rawValue] as? UUID,
+        guard let identifierString = message[Property.identifier.rawValue] as? String,
+            let identifier = UUID(rawValue: identifierString),
             let name = message[Property.name.rawValue] as? String,
             let modelRawValue = (message[Property.model.rawValue] as? NSNumber)?.uint8Value,
             let model = Model(rawValue: modelRawValue),
             let version = (message[Property.version.rawValue] as? NSNumber)?.uint64Value,
             let permissionData = message[Property.permission.rawValue] as? Data,
             let permission = Permission(bigEndian: permissionData),
-            let keyIdentifier = message[Property.keyIdentifier.rawValue] as? UUID
+            let keyIdentifierString = message[Property.keyIdentifier.rawValue] as? String,
+            let keyIdentifier = UUID(rawValue: keyIdentifierString)
             else { return nil }
         
         self.identifier = identifier
@@ -97,12 +99,12 @@ extension LockCache {
     
     func toMessage() -> [String: AnyObject] {
         
-        return [Property.identifier.rawValue: identifier,
+        return [Property.identifier.rawValue: identifier.rawValue,
                 Property.name.rawValue: name,
                 Property.model.rawValue: NSNumber(value: model.rawValue),
                 Property.version.rawValue: NSNumber(value: version),
                 Property.permission.rawValue: permission.toBigEndian(),
-                Property.keyIdentifier.rawValue: keyIdentifier]
+                Property.keyIdentifier.rawValue: keyIdentifier.rawValue]
     }
 }
 
@@ -176,7 +178,8 @@ struct UnlockRequest: WatchMessage {
         guard let identifier = message[WatchMessageIdentifierKey] as? NSNumber,
             let messageType = WatchMessageType(rawValue: identifier.uint8Value)
             where messageType == self.dynamicType.messageType,
-            let lock = message[Key.lock.rawValue] as? UUID
+            let lockString = message[Key.lock.rawValue] as? String,
+            let lock = UUID(rawValue: lockString)
             else { return nil }
         
         self.lock = lock
@@ -185,7 +188,7 @@ struct UnlockRequest: WatchMessage {
     func toMessage() -> [String: AnyObject] {
         
         return [WatchMessageIdentifierKey: NSNumber(value: self.dynamicType.messageType.rawValue),
-                Key.lock.rawValue: lock]
+                Key.lock.rawValue: lock.rawValue]
     }
 }
 

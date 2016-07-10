@@ -25,6 +25,8 @@ final class SessionController: NSObject, WCSessionDelegate {
     
     let locks = Observable([LockCache]())
     
+    let activationState = Observable(WCSessionActivationState.notActivated)
+    
     private var operationState: (semaphore: DispatchSemaphore, error: ErrorProtocol?)!
     
     // MARK: - Methods
@@ -41,18 +43,35 @@ final class SessionController: NSObject, WCSessionDelegate {
     func requestLocks() throws {
         
         guard session.isReachable
-            else { throw Error.NotReachable }
+            else { throw Error.notReachable }
         
         guard session.activationState == .activated
-            else { throw Error.NotActivated }
+            else { throw Error.notActivated }
         
         // request current locks
         session.sendMessage(LocksRequest().toMessage(),
                             replyHandler: locksResponse,
-                            errorHandler: { self.stopWaiting($0) })
+                            errorHandler: { if self.operationState != nil { self.stopWaiting($0) } })
         
         guard try wait(timeout)
-            else { throw Error.Timeout }
+            else { throw Error.timeout }
+    }
+    
+    func unlock(_ lock: UUID) throws {
+        
+        guard session.isReachable
+            else { throw Error.notReachable }
+        
+        guard session.activationState == .activated
+            else { throw Error.notActivated }
+        
+        // request current locks
+        session.sendMessage(UnlockRequest(lock: lock).toMessage(),
+                            replyHandler: unlockResponse,
+                            errorHandler: { if self.operationState != nil { self.stopWaiting($0) } })
+        
+        guard try wait(timeout)
+            else { throw Error.timeout }
     }
     
     // MARK: - Private Methods
@@ -69,6 +88,26 @@ final class SessionController: NSObject, WCSessionDelegate {
         if operationState != nil {
             
             stopWaiting()
+        }
+    }
+    
+    private func unlockResponse(_ message: [String: AnyObject]) {
+        
+        log?("Recieved unlock response")
+        
+        guard let response = UnlockResponse(message: message)
+            else { fatalError("Invalid message: \(message)") }
+        
+        if operationState != nil {
+            
+            if let errorText = response.error {
+                
+                stopWaiting(Error.unlock(errorText))
+                
+            } else {
+                
+                stopWaiting()
+            }
         }
     }
     
@@ -125,9 +164,12 @@ final class SessionController: NSObject, WCSessionDelegate {
     @objc(session:activationDidCompleteWithState:error:)
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: NSError?) {
         
+        // inform observers
+        self.activationState.value = activationState
+        
         guard activationState == .activated && session.isReachable else {
             
-            let error: ErrorProtocol = error ?? Error.NotReachable
+            let error: ErrorProtocol = error ?? Error.notReachable
             
             log?("Error activating: \(error)")
             
@@ -174,7 +216,8 @@ final class SessionController: NSObject, WCSessionDelegate {
 
 enum SessionControllerError: ErrorProtocol {
     
-    case NotReachable
-    case NotActivated
-    case Timeout
+    case notReachable
+    case notActivated
+    case timeout
+    case unlock(String)
 }

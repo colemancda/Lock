@@ -99,6 +99,18 @@ final class WatchController: NSObject, WCSessionDelegate, NSFetchedResultsContro
         
         switch identifier {
             
+        case .LocksRequest:
+            
+            log?("Recieved locks request")
+            
+            let managedObjects = (fetchedResultsController.fetchedObjects ?? [])
+            
+            let locks = LockCache.from(managedObjects: managedObjects)
+            
+            let notification = LocksUpdatedNotification(locks: locks)
+            
+            replyHandler(notification.toMessage())
+            
         case .UnlockRequest:
             
             log?("Recieved unlock request")
@@ -106,8 +118,16 @@ final class WatchController: NSObject, WCSessionDelegate, NSFetchedResultsContro
             guard let unlockRequest = UnlockRequest(message: message)
                 else { fatalError("Invalid message: \(message)") }
             
+            // scan if not in range
+            if LockManager.shared.foundLocks.value.contains({ $0.identifier == unlockRequest.lock }) == false {
+                
+                do { try LockManager.shared.scan() }
+                
+                catch { replyHandler(UnlockResponse(error: "Could not scan. (\(error))").toMessage()); return }
+            }
+            
             guard LockManager.shared.foundLocks.value.contains({ $0.identifier == unlockRequest.lock })
-                else { replyHandler(UnlockResponse(error: "Lock disconnected").toMessage()); return }
+                else { replyHandler(UnlockResponse(error: "Lock not in range").toMessage()); return }
             
             guard let (lockCache, keyData) = Store.shared[unlockRequest.lock]
                 else { replyHandler(UnlockResponse(error: "No stored key for lock").toMessage()); return }
