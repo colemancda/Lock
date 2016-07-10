@@ -200,11 +200,6 @@ public struct LockService: GATTProfileService {
         /// HMAC of key and nonce
         public let authentication: Data
         
-        public static func canWrite(status: CoreLock.Status) -> Bool {
-            
-            return status == .setup
-        }
-        
         public init(identifier: SwiftFoundation.UUID, value: KeyData, nonce: Nonce = Nonce()) {
             
             self.identifier = identifier
@@ -278,14 +273,6 @@ public struct LockService: GATTProfileService {
         /// HMAC of key and nonce
         public let authentication: Data
         
-        public static func canWrite(status: CoreLock.Status) -> Bool {
-            
-            switch status {
-            case .unlock, .newKey, .update: return true
-            case .setup: return false
-            }
-        }
-        
         public init(identifier: SwiftFoundation.UUID, nonce: Nonce = Nonce(), key: KeyData) {
             
             self.identifier = identifier
@@ -329,23 +316,18 @@ public struct LockService: GATTProfileService {
     
     /// New Key Parent Shared Secret (write-only)
     ///
-    /// parent key UUID + nonce + IV + encrypt(parentKey, iv, sharedSecret) + HMAC(parentKey, nonce) + permission
+    /// parent key UUID + nonce + IV + encrypt(parentKey, iv, sharedSecret) + HMAC(parentKey, nonce) + permission + child key UUID
     public struct NewKeyParent: AuthenticatedCharacteristic {
         
         public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "3A9EE5A8-044D-11E6-90F2-09AB70D5A8C7")!)
         
-        public static let length = SwiftFoundation.UUID.length + Nonce.length + IVSize + 16 + HMACSize + Permission.length
-        
-        public static func canWrite(status: CoreLock.Status) -> Bool {
-            
-            switch status {
-            case .unlock: return true
-            case .setup, .newKey, .update: return false
-            }
-        }
+        public static let length = SwiftFoundation.UUID.length + Nonce.length + IVSize + 16 + HMACSize + Permission.length + SwiftFoundation.UUID.length
         
         /// The parent key identifier.
-        public let identifier: SwiftFoundation.UUID
+        public let parent: SwiftFoundation.UUID
+        
+        /// The child key identifier.
+        public let child: SwiftFoundation.UUID
         
         /// The permission of the new key.
         public let permission: Permission
@@ -360,14 +342,18 @@ public struct LockService: GATTProfileService {
         
         public let initializationVector: InitializationVector
         
-        public init(nonce: Nonce = Nonce(), sharedSecret: SharedSecret, parentKey: (identifier: SwiftFoundation.UUID, data: KeyData), permission: Permission) {
+        public init(nonce: Nonce = Nonce(),
+                    sharedSecret: KeyData,
+                    parentKey: (identifier: SwiftFoundation.UUID, data: KeyData),
+                    childKey: (identifier: SwiftFoundation.UUID, permission: Permission)) {
             
-            self.identifier = parentKey.identifier
-            self.permission = permission
+            self.parent = parentKey.identifier
+            self.child = childKey.identifier
+            self.permission = childKey.permission
             self.nonce = nonce
             self.authentication = HMAC(key: parentKey.data, message: nonce)
             
-            let (encryptedSharedSecret, iv) = encrypt(key: parentKey.data.data, data: sharedSecret.toData())
+            let (encryptedSharedSecret, iv) = encrypt(key: parentKey.data.data, data: sharedSecret.data)
             
             self.initializationVector = iv
             self.encryptedSharedSecret = encryptedSharedSecret
@@ -380,7 +366,7 @@ public struct LockService: GATTProfileService {
             guard bytes.count == self.dynamicType.length
                 else { return nil }
             
-            self.identifier = SwiftFoundation.UUID(bigEndian: Data(bytes: Array(bytes[0 ..< 16])))!
+            self.parent = SwiftFoundation.UUID(bigEndian: Data(bytes: Array(bytes[0 ..< 16])))!
             
             let nonceBytes = Array(bytes[16 ..< 16 + Nonce.length])
             
@@ -404,18 +390,16 @@ public struct LockService: GATTProfileService {
                 else { return nil }
             
             self.permission = permission
+            
+            self.child = SwiftFoundation.UUID(bigEndian: Data(bytes: Array(bytes[16 + Nonce.length + IVSize + 16 + HMACSize + Permission.length ..< 16 + Nonce.length + IVSize + 16 + HMACSize + Permission.length + 16])))!
         }
         
         public func toBigEndian() -> Data {
-                        
-            let bytes = identifier.toBigEndian().bytes + nonce.data.bytes + initializationVector.data.bytes + encryptedSharedSecret.bytes + authentication.bytes + permission.toBigEndian().bytes
             
-            assert(bytes.count == self.dynamicType.length)
-            
-            return Data(bytes: bytes)
+            return parent.toBigEndian() + nonce.data + initializationVector.data + encryptedSharedSecret + authentication + permission.toBigEndian() + child.toBigEndian()
         }
         
-        public func decrypt(key parentKey: KeyData) -> SharedSecret? {
+        public func decrypt(key parentKey: KeyData) -> KeyData? {
             
             // make sure its authenticated
             guard authenticated(with: parentKey)
@@ -423,9 +407,9 @@ public struct LockService: GATTProfileService {
             
             let decryptedData = CoreLock.decrypt(key: parentKey.data, iv: initializationVector, data: encryptedSharedSecret)
             
-            assert(decryptedData.bytes.count == SharedSecret.length)
+            assert(decryptedData.bytes.count == KeyData.length)
             
-            guard let sharedSecret = SharedSecret(data: decryptedData)
+            guard let sharedSecret = KeyData(data: decryptedData)
                 else { return nil }
             
             return sharedSecret
@@ -454,14 +438,14 @@ public struct LockService: GATTProfileService {
         
         public let initializationVector: InitializationVector
         
-        public init(nonce: Nonce = Nonce(), sharedSecret: SharedSecret, newKey: Key) {
+        public init(nonce: Nonce = Nonce(), sharedSecret: KeyData, newKey: Key) {
             
             self.identifier = newKey.identifier
             self.permission = newKey.permission
             self.nonce = nonce
-            self.authentication = HMAC(key: sharedSecret.toKeyData(), message: nonce)
+            self.authentication = HMAC(key: sharedSecret, message: nonce)
             
-            let (encryptedNewKey, iv) = encrypt(key: sharedSecret.toKeyData().data, data: newKey.data.data)
+            let (encryptedNewKey, iv) = encrypt(key: sharedSecret.data, data: newKey.data.data)
             
             self.initializationVector = iv
             self.encryptedNewKey = encryptedNewKey
@@ -511,15 +495,13 @@ public struct LockService: GATTProfileService {
             return Data(bytes: bytes)
         }
         
-        public func decrypt(sharedSecret: SharedSecret) -> KeyData? {
-            
-            let sharedSecretKey = sharedSecret.toKeyData()
+        public func decrypt(sharedSecret: KeyData) -> KeyData? {
             
             // make sure its authenticated
-            guard authenticated(with: sharedSecretKey)
+            guard authenticated(with: sharedSecret)
                 else { return nil }
             
-            let decryptedData = CoreLock.decrypt(key: sharedSecretKey.data, iv: initializationVector, data: encryptedNewKey)
+            let decryptedData = CoreLock.decrypt(key: sharedSecret.data, iv: initializationVector, data: encryptedNewKey)
             
             assert(decryptedData.bytes.count == KeyData.length)
             
@@ -535,14 +517,6 @@ public struct LockService: GATTProfileService {
         public static let length = (min: Nonce.length + HMACSize + 1, max: Nonce.length + HMACSize + Key.Name.maxLength)
         
         public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "C52B681E-0CE4-11E6-9998-AC69ADB65F8F")!)
-        
-        public static func canWrite(status: CoreLock.Status) -> Bool {
-            
-            switch status {
-            case .newKey: return true
-            case .setup, .unlock, .update: return false
-            }
-        }
         
         /// The name of the new key. 
         public let name: Key.Name
@@ -603,14 +577,6 @@ public struct LockService: GATTProfileService {
         public static let length = SwiftFoundation.UUID.length + Nonce.length + HMACSize + 1
         
         public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "A187317C-6DE5-4842-800A-0D7C7529B4E7")!)
-        
-        public static func canWrite(status: CoreLock.Status) -> Bool {
-            
-            switch status {
-            case .unlock: return true
-            case .setup, .newKey, .update: return false
-            }
-        }
         
         public let identifier: SwiftFoundation.UUID
         
@@ -674,14 +640,6 @@ public struct LockService: GATTProfileService {
         public static let length = SwiftFoundation.UUID.length + Nonce.length + HMACSize
         
         public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "17CA5159-1DAF-431A-8CF0-A9CAD500BD96")!)
-        
-        public static func canWrite(status: CoreLock.Status) -> Bool {
-            
-            switch status {
-            case .unlock: return true
-            case .setup, .newKey, .update: return false
-            }
-        }
         
         public let identifier: SwiftFoundation.UUID
         

@@ -165,7 +165,7 @@ final class LockController {
             
         case LockService.Setup.UUID:
             
-            guard LockService.Setup.canWrite(status: status)
+            guard status == .setup
                 else { return ATT.Error.WriteNotPermitted }
             
             guard let key = LockService.Setup.init(bigEndian: newValue)
@@ -176,7 +176,7 @@ final class LockController {
             
         case LockService.Unlock.UUID:
             
-            guard LockService.Unlock.canWrite(status: status)
+            guard status == .unlock
                 else { return ATT.Error.WriteNotPermitted }
             
             // deserialize
@@ -206,6 +206,7 @@ final class LockController {
                 
             case let .scheduled(schedule):
                 
+                // validate schedule
                 guard schedule.valid()
                     else { return ATT.Error.WriteNotPermitted }
             }
@@ -217,7 +218,7 @@ final class LockController {
             
         case LockService.NewKeyParent.UUID:
             
-            guard LockService.NewKeyParent.canWrite(status: status)
+            guard status == .unlock
                 else { return ATT.Error.WriteNotPermitted }
             
             // deserialize
@@ -249,7 +250,7 @@ final class LockController {
             
         case LockService.NewKeyFinish.UUID:
             
-            guard LockService.NewKeyFinish.canWrite(status: status)
+            guard status == .unlock
                 else { return ATT.Error.WriteNotPermitted }
             
             // deserialize
@@ -258,7 +259,7 @@ final class LockController {
             
         case LockService.HomeKitEnable.UUID:
             
-            guard LockService.HomeKitEnable.canWrite(status: status)
+            guard status == .unlock
                 else { return ATT.Error.WriteNotPermitted }
             
             // deserialize
@@ -295,7 +296,7 @@ final class LockController {
             
         case LockService.Update.UUID:
             
-            guard LockService.Update.canWrite(status: status)
+            guard status == .unlock
                 else { return ATT.Error.WriteNotPermitted }
             
             // deserialize
@@ -357,11 +358,11 @@ final class LockController {
             
         case LockService.Unlock.UUID:
             
-            assert(LockService.Unlock.canWrite(status: status))
+            assert(status == .unlock)
             
         case LockService.NewKeyParent.UUID:
             
-            assert(LockService.NewKeyParent.canWrite(status: status))
+            assert(status == .unlock)
             
             let newKeyParent = LockService.NewKeyParent.init(bigEndian: newValue)!
             
@@ -378,9 +379,6 @@ final class LockController {
             }
             
             let sharedSecret = newKeyParent.decrypt(key: authenticatedKey.data)!
-            
-            // update status
-            status = .newKey
             
             let newKey = Key(data: KeyData(), permission: newKeyParent.permission)
             self.newKey = newKey

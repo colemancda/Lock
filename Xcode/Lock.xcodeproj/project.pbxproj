@@ -69,8 +69,6 @@
 		6E825E091D2702A6003D728B /* EmptyTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E825E081D2702A6003D728B /* EmptyTableView.swift */; };
 		6E825E0B1D2702BA003D728B /* EmptyTableView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E825E0A1D2702BA003D728B /* EmptyTableView.xib */; };
 		6E825E0D1D273503003D728B /* LockTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E825E0C1D273503003D728B /* LockTableViewCell.xib */; };
-		6E9923791CCDE6CD00C0B92C /* SharedSecret.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9923781CCDE6CD00C0B92C /* SharedSecret.swift */; };
-		6E99237A1CCDE6CD00C0B92C /* SharedSecret.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E9923781CCDE6CD00C0B92C /* SharedSecret.swift */; };
 		6EA7FC981D0FA71800F5D90B /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F604A1CCAF290001914E7 /* Store.swift */; };
 		6EA7FC991D0FA71800F5D90B /* LockCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F60641CCB2D0A001914E7 /* LockCache.swift */; };
 		6EA7FC9A1D0FA71800F5D90B /* CoreDataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F60661CCB3885001914E7 /* CoreDataExtensions.swift */; };
@@ -336,7 +334,6 @@
 		6E825E081D2702A6003D728B /* EmptyTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyTableView.swift; sourceTree = "<group>"; };
 		6E825E0A1D2702BA003D728B /* EmptyTableView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EmptyTableView.xib; sourceTree = "<group>"; };
 		6E825E0C1D273503003D728B /* LockTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LockTableViewCell.xib; sourceTree = "<group>"; };
-		6E9923781CCDE6CD00C0B92C /* SharedSecret.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedSecret.swift; sourceTree = "<group>"; };
 		6EA8996F1CC2E3F0005FC225 /* GATTProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTProfile.swift; sourceTree = "<group>"; };
 		6EA944C61CD6275500D776E5 /* ComplicationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComplicationController.swift; sourceTree = "<group>"; };
 		6EB2E9E51CD54721000CF975 /* LockManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockManager.swift; sourceTree = "<group>"; };
@@ -730,7 +727,6 @@
 				6EB413301CC30084005AB1E2 /* Status.swift */,
 				6EB413321CC317A3005AB1E2 /* Bool.swift */,
 				6E729C411CC32F890018A848 /* SecureData.swift */,
-				6E9923781CCDE6CD00C0B92C /* SharedSecret.swift */,
 				6E729C811CC3C6930018A848 /* Crypto.swift */,
 				6E729C4B1CC3B8220018A848 /* Model.swift */,
 				6E1F604D1CCB0130001914E7 /* Key.swift */,
@@ -1296,7 +1292,6 @@
 				6E1F604E1CCB0130001914E7 /* Key.swift in Sources */,
 				6EDC70131CC3E2260085180A /* Status.swift in Sources */,
 				6EB413331CC317A3005AB1E2 /* Bool.swift in Sources */,
-				6E9923791CCDE6CD00C0B92C /* SharedSecret.swift in Sources */,
 				6E729C4C1CC3B8220018A848 /* Model.swift in Sources */,
 				6EE5065C1D0DEBD20018ABD2 /* Beacon.swift in Sources */,
 				6ED338651CC7C1A800DF1461 /* Permission.swift in Sources */,
@@ -1316,7 +1311,6 @@
 				6E1F604F1CCB0130001914E7 /* Key.swift in Sources */,
 				6EF45F921CC6CAF9001F7A39 /* Status.swift in Sources */,
 				6EF45F941CC6CAF9001F7A39 /* Bool.swift in Sources */,
-				6E99237A1CCDE6CD00C0B92C /* SharedSecret.swift in Sources */,
 				6EF45F951CC6CAF9001F7A39 /* Model.swift in Sources */,
 				6EE5065D1D0DEBD20018ABD2 /* Beacon.swift in Sources */,
 				6ED338661CC7C1A800DF1461 /* Permission.swift in Sources */,

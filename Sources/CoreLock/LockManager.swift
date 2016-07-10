@@ -187,9 +187,9 @@
             }
         }
         
-        public func createNewKey(_ identifier: UUID, permission: Permission, parentKey: (UUID, KeyData), sharedSecret: SharedSecret) throws {
+        public func createNewKey(_ identifier: UUID, parentKey: (UUID, KeyData), childKey: (UUID, Permission), sharedSecret: KeyData) throws {
             
-            assert(permission != .owner, "Cannot create owner keys")
+            assert(childKey.1 != .owner, "Cannot create owner keys")
             
             guard let lock = self[identifier]
                 else { throw Error.NoLock }
@@ -197,16 +197,13 @@
             return try lockAction(peripheral: lock.peripheral, characteristics: [LockService.NewKeyParent.UUID]) {
              
                 // create new parent key
-                let parentNewKey = LockService.NewKeyParent.init(sharedSecret: sharedSecret, parentKey: parentKey, permission: permission)
+                let parentNewKey = LockService.NewKeyParent.init(sharedSecret: sharedSecret, parentKey: parentKey, childKey: childKey)
                 
                 try self.internalManager.write(data: parentNewKey.toBigEndian(), response: true, characteristic: LockService.NewKeyParent.UUID, service: LockService.UUID, peripheral: lock.peripheral)
-                
-                // update cached status
-                self[identifier]?.status = .newKey
             }
         }
         
-        public func recieveNewKey(_ identifier: UUID, sharedSecret: SharedSecret, name: Key.Name) throws -> Key {
+        public func recieveNewKey(_ identifier: UUID, sharedSecret: KeyData, name: Key.Name) throws -> Key {
             
             guard let lock = self[identifier]
                 else { throw Error.NoLock }
