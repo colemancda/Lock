@@ -212,7 +212,13 @@ private extension AppDelegate {
                 let newKey = NewKeyInvitation(JSONValue: json)
                 else { return false }
             
+            let navigationController = UIStoryboard(name: "NewKeyInvitation", bundle: nil).instantiateInitialViewController() as! UINavigationController
             
+            let newKeyVC = navigationController.topViewController as! NewKeyRecieveViewController
+            
+            newKeyVC.newKey = newKey
+            
+            self.window!.rootViewController?.present(navigationController, animated: true, completion: nil)
             
             return true
             
