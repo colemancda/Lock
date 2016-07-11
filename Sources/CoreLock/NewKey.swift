@@ -23,6 +23,8 @@ public struct NewKey: Equatable, JSONEncodable, JSONDecodable {
     
     public init(identifier: UUID, date: Date = Date(), name: Key.Name, sharedSecret: KeyData, permission: Permission) {
         
+        assert(permission != .owner, "Cannot create owner new key")
+        
         self.identifier = identifier
         self.name = name
         self.sharedSecret = sharedSecret

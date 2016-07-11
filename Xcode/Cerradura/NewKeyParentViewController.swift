@@ -69,10 +69,7 @@ final class NewKeyParentViewController: UIViewController {
             
             // write to parent new key characteristic
             
-            do {
-                
-                try LockManager.shared.createNewKey(self.newKey.identifier, permission: self.newKey.permission, parentKey: parentKey, sharedSecret: sharedSecret)
-            }
+            do { try LockManager.shared.createNewKey(self.newKey.identifier, permission: self.newKey.permission, parentKey: parentKey, sharedSecret: sharedSecret)  }
                 
             catch { mainQueue { self.newKeyError("Could not create new key. (\(error))") }; return }
             

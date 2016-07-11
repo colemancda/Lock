@@ -11,7 +11,7 @@ import UIKit
 import CoreLock
 import SwiftFoundation
 
-final class NewKeySelectPermissionViewController: UITableViewController {
+final class NewKeySelectPermissionViewController: UITableViewController, NewKeyViewController {
     
     // MARK: - Properties
     
@@ -42,7 +42,7 @@ final class NewKeySelectPermissionViewController: UITableViewController {
     
     // MARK: - Methods
     
-    private func configure(cell: PermissionTypeTableViewCell, at indexPath: NSIndexPath) {
+    private func configure(cell: PermissionTypeTableViewCell, at indexPath: IndexPath) {
         
         let permissionType = permissionTypes[indexPath.row]
         
@@ -131,11 +131,7 @@ final class NewKeySelectPermissionViewController: UITableViewController {
             default: fatalError()
             }
             
-            let viewController = UIStoryboard(name: "NewKey", bundle: nil).instantiateViewController(withIdentifier: "newKeyParent") as! NewKeyParentViewController
-            
-            viewController.newKey = (lockIdentifier, permission)
-            
-            self.show(viewController, sender: self)
+            newKey(permission: permission)
             
         case .scheduled:
             
