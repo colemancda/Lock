@@ -25,7 +25,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     var firstLaunch = false
         
     @objc(application:didFinishLaunchingWithOptions:)
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions didFinishLaunchingWithLaunchOptions: [NSObject: AnyObject]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
         
         // print app info
@@ -92,6 +92,13 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         // configure SplitVC
         (self.window!.rootViewController as! UISplitViewController).preferredDisplayMode = .allVisible
         
+        // handle url
+        if let url = launchOptions?[UIApplicationLaunchOptionsURLKey] as? URL {
+            
+            guard openURL(url)
+                else { return false }
+        }
+        
         return true
     }
 
@@ -127,6 +134,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         
         //BeaconController.shared.stop()
+    }
+    
+    func application(_ application: UIApplication, handleOpen url: URL) -> Bool {
+        
+        return openURL(url)
     }
     
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: ([AnyObject]?) -> ()) -> Bool {
@@ -180,6 +192,33 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             return true
             
         } else {
+            
+            return false
+        }
+    }
+}
+
+private extension AppDelegate {
+    
+    func openURL(_ url: URL) -> Bool {
+        
+        if url.isFileURL {
+            
+            // open eKey file
+            
+            guard let data = try? Data(contentsOf: url),
+                let jsonString = String(UTF8Data: data),
+                let json = JSON.Value(string: jsonString),
+                let newKey = NewKeyInvitation(JSONValue: json)
+                else { return false }
+            
+            
+            
+            return true
+            
+        } else {
+            
+            // handle custom URL
             
             return false
         }

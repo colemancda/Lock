@@ -83,6 +83,8 @@
 		6EB413331CC317A3005AB1E2 /* Bool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB413321CC317A3005AB1E2 /* Bool.swift */; };
 		6EBAE7711D0FB2E8008EADC7 /* CoreSpotlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EBAE7701D0FB2E8008EADC7 /* CoreSpotlight.swift */; };
 		6EBAE7721D0FB347008EADC7 /* CoreSpotlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EBAE7701D0FB2E8008EADC7 /* CoreSpotlight.swift */; };
+		6EC1CEF61D337159001D31F3 /* eKeyDocument.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 6EC1CEF51D337159001D31F3 /* eKeyDocument.pdf */; };
+		6EC1CEF81D337373001D31F3 /* NewKeyInvitation.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6EC1CEF71D337373001D31F3 /* NewKeyInvitation.storyboard */; };
 		6EC7DB171D08D0DF000CA60A /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC7DB161D08D0DF000CA60A /* File.swift */; };
 		6ED338651CC7C1A800DF1461 /* Permission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED338641CC7C1A800DF1461 /* Permission.swift */; };
 		6ED338661CC7C1A800DF1461 /* Permission.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED338641CC7C1A800DF1461 /* Permission.swift */; };
@@ -347,6 +349,8 @@
 		6EB413301CC30084005AB1E2 /* Status.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Status.swift; sourceTree = "<group>"; };
 		6EB413321CC317A3005AB1E2 /* Bool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Bool.swift; sourceTree = "<group>"; };
 		6EBAE7701D0FB2E8008EADC7 /* CoreSpotlight.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreSpotlight.swift; sourceTree = "<group>"; };
+		6EC1CEF51D337159001D31F3 /* eKeyDocument.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = eKeyDocument.pdf; sourceTree = "<group>"; };
+		6EC1CEF71D337373001D31F3 /* NewKeyInvitation.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewKeyInvitation.storyboard; sourceTree = "<group>"; };
 		6EC7DB161D08D0DF000CA60A /* File.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		6ED338641CC7C1A800DF1461 /* Permission.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Permission.swift; sourceTree = "<group>"; };
 		6ED338671CC7C39200DF1461 /* NearLockViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NearLockViewController.swift; sourceTree = "<group>"; };
@@ -690,6 +694,8 @@
 				6EE605AE1CC21C1A008EF0EE /* Main.storyboard */,
 				6EED25A51D292EEF00638377 /* LockDetail.storyboard */,
 				6EED25A31D292EE300638377 /* NewKey.storyboard */,
+				6EC1CEF71D337373001D31F3 /* NewKeyInvitation.storyboard */,
+				6EC1CEF51D337159001D31F3 /* eKeyDocument.pdf */,
 				6EE605B11CC21C1A008EF0EE /* Assets.xcassets */,
 				6EE605B31CC21C1A008EF0EE /* LaunchScreen.storyboard */,
 				6EE605AA1CC21C1A008EF0EE /* AppDelegate.swift */,
@@ -1131,8 +1137,10 @@
 				6EE605B51CC21C1A008EF0EE /* LaunchScreen.storyboard in Resources */,
 				6EED25A41D292EE300638377 /* NewKey.storyboard in Resources */,
 				6E825E0B1D2702BA003D728B /* EmptyTableView.xib in Resources */,
+				6EC1CEF81D337373001D31F3 /* NewKeyInvitation.storyboard in Resources */,
 				6EED25A61D292EEF00638377 /* LockDetail.storyboard in Resources */,
 				6EE605B21CC21C1A008EF0EE /* Assets.xcassets in Resources */,
+				6EC1CEF61D337159001D31F3 /* eKeyDocument.pdf in Resources */,
 				6EE605B01CC21C1A008EF0EE /* Main.storyboard in Resources */,
 				6E825E0D1D273503003D728B /* LockTableViewCell.xib in Resources */,
 			);

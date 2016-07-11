@@ -4,6 +4,26 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeIconFiles</key>
+			<array>
+				<string>eKeyDocument</string>
+				<string>eKeyDocument</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Cerradura eKey File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>com.colemancda.cerradura.ekey</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -47,6 +67,30 @@
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.json</string>
+			</array>
+			<key>UTTypeDescription</key>
+			<string>Cerradura eKey File</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.colemancda.cerradura.ekey</string>
+			<key>UTTypeSize320IconFile</key>
+			<string>eKeyDocument</string>
+			<key>UTTypeSize64IconFile</key>
+			<string>eKeyDocument</string>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<string>ekey</string>
+				<key>public.mime-type</key>
+				<string>cerradura/x-ekey</string>
+			</dict>
+		</dict>
 	</array>
 </dict>
 </plist>
