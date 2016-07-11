@@ -111,12 +111,21 @@ final class Store {
     
     subscript (cache identifier: UUID) -> LockCache? {
         
-        let entity = managedObjectContext.persistentStoreCoordinator!.managedObjectModel.entitiesByName[LockCache.entityName]!
+        get {
+            
+            guard let managedObject = try! managedObjectContext.find(entity: lockCacheEntity, resourceID: identifier.rawValue, identifierProperty: LockCache.Property.identifier.rawValue)
+                else { return nil }
+            
+            return LockCache(managedObject: managedObject)
+        }
         
-        guard let managedObject = try! managedObjectContext.find(entity: entity, resourceID: identifier.rawValue, identifierProperty: LockCache.Property.identifier.rawValue)
-            else { return nil }
-        
-        return LockCache(managedObject: managedObject)
+        set {
+            
+            guard let lockCache = newValue
+                else { remove(identifier); return }
+            
+            let _ = try! lockCache.save(context: managedObjectContext)
+        }
     }
 }
 
