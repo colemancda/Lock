@@ -204,14 +204,21 @@ private extension AppDelegate {
         
         if url.isFileURL {
             
-            // open eKey file
-            
+            // parse eKey file
             guard let data = try? Data(contentsOf: url),
                 let jsonString = String(UTF8Data: data),
                 let json = JSON.Value(string: jsonString),
                 let newKey = NewKeyInvitation(JSONValue: json)
                 else { return false }
             
+            // only one key per lock
+            guard Store.shared[cache: newKey.lock] == nil else {
+                
+                self.window!.rootViewController?.showErrorAlert("You already have a key for lock \(newKey.lock).")
+                return false
+            }
+            
+            // show NewKeyReceiveVC
             let navigationController = UIStoryboard(name: "NewKeyInvitation", bundle: nil).instantiateInitialViewController() as! UINavigationController
             
             let newKeyVC = navigationController.topViewController as! NewKeyRecieveViewController
