@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import CoreLock
 import SwiftFoundation
+import JGProgressHUD
 
 final class NewKeySelectPermissionViewController: UITableViewController, NewKeyViewController {
     
@@ -18,6 +19,8 @@ final class NewKeySelectPermissionViewController: UITableViewController, NewKeyV
     var completion: ((Bool) -> ())?
     
     var lockIdentifier: UUID!
+    
+    let progressHUD = JGProgressHUD(style: .dark)!
     
     private let permissionTypes: [PermissionType] = [.admin, .anytime /*, .scheduled */ ]
     

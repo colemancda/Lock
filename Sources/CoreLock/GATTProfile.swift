@@ -306,11 +306,7 @@ public struct LockService: GATTProfileService {
         
         public func toBigEndian() -> Data {
             
-            let bytes = identifier.toBigEndian().bytes + nonce.data.bytes + authentication.bytes
-            
-            assert(bytes.count == self.dynamicType.length)
-            
-            return Data(bytes: bytes)
+            return identifier.toBigEndian() + nonce.data + authentication
         }
     }
     
@@ -403,9 +399,7 @@ public struct LockService: GATTProfileService {
         
         public func toBigEndian() -> Data {
             
-            let bytes = parent.toBigEndian().bytes + nonce.data.bytes + initializationVector.data.bytes + encryptedSharedSecret.bytes + authentication.bytes + permission.toBigEndian().bytes + child.toBigEndian().bytes + name.toData().bytes
-            
-            return Data(bytes: bytes)
+            return parent.toBigEndian() + nonce.data + initializationVector.data + encryptedSharedSecret + authentication + permission.toBigEndian() + child.toBigEndian() + name.toData()
         }
         
         public func decrypt(key parentKey: KeyData) -> KeyData? {

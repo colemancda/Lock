@@ -295,20 +295,8 @@ final class LockController {
             guard let update = LockService.Update.init(bigEndian: newValue)
                 else { return ATT.Error.InvalidAttributeValueLength }
             
-            var authenticatedKey: Key!
-            
-            for key in store.keys {
-                
-                if update.authenticated(with: key.data) {
-                    
-                    authenticatedKey = key
-                    
-                    break
-                }
-            }
-            
-            // not authenticated
-            guard authenticatedKey != nil
+            // authenticate
+            guard let authenticatedKey = authenticate(key: update.identifier, characteristic: update)
                 else { return ATT.Error.WriteNotPermitted }
             
             // verify permission (only owner can update)
@@ -342,7 +330,7 @@ final class LockController {
                 else { fatalError("Unauthenticated setup key") }
             
             // set key
-            store.add(key: Key(data: key.value, permission: .owner))
+            store.add(key: Key(identifier: key.identifier, data: key.value, permission: .owner))
             
             print("Lock setup by central \(central.identifier)")
             

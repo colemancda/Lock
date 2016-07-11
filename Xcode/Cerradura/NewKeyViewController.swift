@@ -18,7 +18,9 @@ protocol NewKeyViewController: class {
     
     var view: UIView! { get }
     
-    func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> ())?)
+    var progressHUD: JGProgressHUD { get }
+    
+    func present(_ viewControllerToPresent: UIViewController, animated: Bool, completion: (() -> ())?)
     
     func dismiss(animated: Bool, completion: (() -> ())?)
     
@@ -47,18 +49,7 @@ extension NewKeyViewController {
             
             print("Setting up new key for lock \(lockIdentifier)")
             
-            let progressHUD = JGProgressHUD(style: .dark)!
-            
-            progressHUD.show(in: self.view)
-            
-            self.view.isUserInteractionEnabled = false
-            
-            func dismissProgressHUD(_ animated: Bool = true) {
-                
-                self.view.isUserInteractionEnabled = true
-                
-                progressHUD.dismiss(animated: animated)
-            }
+            self.showProgressHUD()
             
             // add new key to lock
             async {
@@ -67,9 +58,9 @@ extension NewKeyViewController {
                 
                 do { try LockManager.shared.createNewKey(lockIdentifier, parentKey: parentKey, childKey: (newKey.identifier, newKey.permission, newKey.name), sharedSecret: newKey.sharedSecret)  }
                     
-                catch { mainQueue { dismissProgressHUD(false); self.newKeyError("Could not create new key. (\(error))") }; return }
+                catch { mainQueue { self.dismissProgressHUD(false); self.newKeyError("Could not create new key. (\(error))") }; return }
                 
-                print("Created new key \(newKey.identifier) (\(newKey.permission))")
+                print("Created new key \(newKey.identifier) (\(newKey.permission.type))")
                 
                 // save invitation file
                 
@@ -85,11 +76,11 @@ extension NewKeyViewController {
                 // share new key
                 mainQueue {
                     
-                    dismissProgressHUD()
+                    self.dismissProgressHUD()
                     
                     // show activity controller
                     
-                    let activityController = UIActivityViewController(activityItems: [NSURL(string: filePath)!], applicationActivities: nil)
+                    let activityController = UIActivityViewController(activityItems: [URL(fileURLWithPath: filePath)], applicationActivities: nil)
                     
                     activityController.excludedActivityTypes = [UIActivityTypePostToTwitter, UIActivityTypePostToFacebook,
                                                                 UIActivityTypePostToWeibo,
@@ -98,6 +89,11 @@ extension NewKeyViewController {
                                                                 UIActivityTypeAssignToContact, UIActivityTypeSaveToCameraRoll,
                                                                 UIActivityTypeAddToReadingList, UIActivityTypePostToFlickr,
                                                                 UIActivityTypePostToVimeo, UIActivityTypePostToTencentWeibo]
+                    
+                    activityController.completionWithItemsHandler = { (activityType, completed, items, error) in
+                        
+                        self.dismiss(animated: true, completion: nil)
+                    }
                     
                     self.present(activityController, animated: true, completion: nil)
                 }
@@ -134,5 +130,19 @@ extension NewKeyViewController {
     private func newKeyError(_ error: String) {
         
         self.showErrorAlert(error, okHandler: { self.dismiss(animated: true, completion: nil) }, retryHandler: nil)
+    }
+    
+    func showProgressHUD() {
+        
+        self.view.isUserInteractionEnabled = false
+        
+        progressHUD.show(in: self.view)
+    }
+    
+    func dismissProgressHUD(_ animated: Bool = true) {
+        
+        self.view.isUserInteractionEnabled = true
+        
+        progressHUD.dismiss(animated: animated)
     }
 }
