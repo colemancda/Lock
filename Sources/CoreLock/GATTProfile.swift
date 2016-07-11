@@ -321,7 +321,7 @@ public struct LockService: GATTProfileService {
         
         public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "3A9EE5A8-044D-11E6-90F2-09AB70D5A8C7")!)
         
-        public static let length = (min: SwiftFoundation.UUID.length + Nonce.length + IVSize + 16 + HMACSize + Permission.length + SwiftFoundation.UUID.length + 1, max: SwiftFoundation.UUID.length + Nonce.length + IVSize + 16 + HMACSize + Permission.length + SwiftFoundation.UUID.length + Key.Name.maxLength)
+        public static let length = (min: SwiftFoundation.UUID.length + Nonce.length + IVSize + 48 + HMACSize + Permission.length + SwiftFoundation.UUID.length + 1, max: SwiftFoundation.UUID.length + Nonce.length + IVSize + 48 + HMACSize + Permission.length + SwiftFoundation.UUID.length + Key.Name.maxLength)
         
         /// The parent key identifier.
         public let parent: SwiftFoundation.UUID
@@ -338,7 +338,7 @@ public struct LockService: GATTProfileService {
         /// The nonce of the shared secret.
         public let nonce: Nonce
         
-        /// HMAC of key and nonce
+        /// HMAC of parent key and nonce
         public let authentication: Data
         
         public let encryptedSharedSecret: Data
@@ -381,24 +381,24 @@ public struct LockService: GATTProfileService {
             
             self.initializationVector = InitializationVector(data: Data(bytes: ivBytes))!
             
-            self.encryptedSharedSecret = Data(bytes: Array(bytes[16 + Nonce.length + IVSize ..< 16 + Nonce.length + IVSize + 16]))
+            self.encryptedSharedSecret = Data(bytes: Array(bytes[16 + Nonce.length + IVSize ..< 16 + Nonce.length + IVSize + 48]))
                         
-            let hmac = Array(bytes[16 + Nonce.length + IVSize + 16 ..< 16 + Nonce.length + IVSize + 16 + HMACSize])
+            let hmac = Array(bytes[16 + Nonce.length + IVSize + 48 ..< 16 + Nonce.length + IVSize + 48 + HMACSize])
             
             assert(hmac.count == HMACSize)
             
             self.authentication = Data(bytes: hmac)
             
-            let permissionBytes = Array(bytes[16 + Nonce.length + IVSize + 16 + HMACSize ..< 16 + Nonce.length + IVSize + 16 + HMACSize + Permission.length])
+            let permissionBytes = Array(bytes[16 + Nonce.length + IVSize + 48 + HMACSize ..< 16 + Nonce.length + IVSize + 48 + HMACSize + Permission.length])
             
             guard let permission = Permission(bigEndian: Data(bytes: permissionBytes))
                 else { return nil }
             
             self.permission = permission
             
-            self.child = SwiftFoundation.UUID(bigEndian: Data(bytes: Array(bytes[16 + Nonce.length + IVSize + 16 + HMACSize + Permission.length ..< 16 + Nonce.length + IVSize + 16 + HMACSize + Permission.length + 16])))!
+            self.child = SwiftFoundation.UUID(bigEndian: Data(bytes: Array(bytes[16 + Nonce.length + IVSize + 48 + HMACSize + Permission.length ..< 16 + Nonce.length + IVSize + 48 + HMACSize + Permission.length + 16])))!
             
-            self.name = Key.Name(data: Data(bytes: bytes.suffix(from: SwiftFoundation.UUID.length + Nonce.length + IVSize + 16 + HMACSize + Permission.length + SwiftFoundation.UUID.length)))!
+            self.name = Key.Name(data: Data(bytes: bytes.suffix(from: SwiftFoundation.UUID.length + Nonce.length + IVSize + 48 + HMACSize + Permission.length + SwiftFoundation.UUID.length)))!
         }
         
         public func toBigEndian() -> Data {

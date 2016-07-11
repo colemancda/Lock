@@ -128,6 +128,10 @@ final class GATTProfileTests: XCTestCase {
         
         let parentRequestData = parentRequest.toBigEndian()
         
+        let expectedSize = 16 + Nonce.length + IVSize + 48 + HMACSize + Permission.length + 16 + "New Key".toUTF8Data().count
+        
+        XCTAssert(parentRequestData.count == expectedSize, "\(parentRequestData.count) == \(expectedSize)")
+        
         guard let parentDeserialized = LockService.NewKeyParent.init(bigEndian: parentRequestData)
             else { XCTFail(); return }
         
