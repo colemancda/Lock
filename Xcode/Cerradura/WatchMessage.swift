@@ -10,11 +10,11 @@ import Foundation
 import WatchConnectivity
 
 #if os(iOS)
-import enum CoreLock.PermissionType
+import CoreLock
 #endif
 
 /// Messages to send using `WatchConnectivity`.
-public protocol WatchMessage {
+protocol WatchMessage {
     
     static var messageType: WatchMessageType { get }
     
@@ -25,65 +25,96 @@ public protocol WatchMessage {
 
 let WatchMessageIdentifierKey = "message"
 
-public enum WatchMessageType: UInt8 {
+enum WatchMessageType: UInt8 {
     
-    case FoundLockNotification
+    case LocksRequest
+    case LocksUpdatedNotification
     case UnlockRequest
     case UnlockResponse
-    case CurrentLockRequest
-    case CurrentLockResponse
 }
 
-public struct FoundLockNotification: WatchMessage {
-    
-    enum Key: String { case permission }
-    
-    public static let messageType = WatchMessageType.FoundLockNotification
-    
-    public var permission: PermissionType?
-    
-    public init(permission: PermissionType? = nil) {
+// Declare LockCache for WatchOS
+#if os(watchOS)
+
+    struct LockCache {
         
-        self.permission = permission
+        enum Property: String {
+            
+            case identifier, name, model, version, permission, keyIdentifier
+        }
+        
+        let identifier: UUID
+        
+        let name: String
+        
+        let model: Model
+        
+        let version: UInt64
+        
+        let permission: Permission
+        
+        let keyIdentifier: UUID
     }
     
-    public init?(message: [String: AnyObject]) {
+#endif
+
+extension LockCache {
+    
+    static func from(message: [[String: AnyObject]]) -> [LockCache]? {
         
-        guard let identifier = message[WatchMessageIdentifierKey] as? NSNumber,
-            let messageType = WatchMessageType(rawValue: identifier.uint8Value)
-            where messageType == self.dynamicType.messageType
-            else { return nil }
+        var values = [LockCache]()
         
-        /// optional value
-        if let permissionRawValue = message[Key.permission.rawValue] as? NSNumber {
+        for encoded in message {
             
-            guard let permission = PermissionType(rawValue: permissionRawValue.uint8Value)
+            guard let value = LockCache(message: encoded)
                 else { return nil }
             
-            self.permission = permission
+            values.append(value)
         }
+        
+        return values
     }
     
-    public func toMessage() -> [String: AnyObject] {
+    init?(message: [String: AnyObject]) {
         
-        var message = [WatchMessageIdentifierKey: NSNumber(value: self.dynamicType.messageType.rawValue)]
+        guard let identifierString = message[Property.identifier.rawValue] as? String,
+            let identifier = UUID(rawValue: identifierString),
+            let name = message[Property.name.rawValue] as? String,
+            let modelRawValue = (message[Property.model.rawValue] as? NSNumber)?.uint8Value,
+            let model = Model(rawValue: modelRawValue),
+            let version = (message[Property.version.rawValue] as? NSNumber)?.uint64Value,
+            let permissionData = message[Property.permission.rawValue] as? Data,
+            let permission = Permission(bigEndian: permissionData),
+            let keyIdentifierString = message[Property.keyIdentifier.rawValue] as? String,
+            let keyIdentifier = UUID(rawValue: keyIdentifierString)
+            else { return nil }
         
-        if let permission = self.permission {
-            
-            message[Key.permission.rawValue] = NSNumber(value: permission.rawValue)
-        }
+        self.identifier = identifier
+        self.name = name
+        self.model = model
+        self.version = version
+        self.permission = permission
+        self.keyIdentifier = keyIdentifier
+    }
+    
+    func toMessage() -> [String: AnyObject] {
         
-        return message
+        return [Property.identifier.rawValue: identifier.rawValue,
+                Property.name.rawValue: name,
+                Property.model.rawValue: NSNumber(value: model.rawValue),
+                Property.version.rawValue: NSNumber(value: version),
+                Property.permission.rawValue: permission.toBigEndian(),
+                Property.keyIdentifier.rawValue: keyIdentifier.rawValue]
     }
 }
 
-public struct UnlockRequest: WatchMessage {
+struct LocksRequest {
     
-    public static let messageType = WatchMessageType.UnlockRequest
+    static let messageType = WatchMessageType.LocksRequest
     
-    public init() { }
+    init() { }
     
-    public init?(message: [String: AnyObject]) {
+    init?(message: [String: AnyObject]) {
         
         guard let identifier = message[WatchMessageIdentifierKey] as? NSNumber,
             let messageType = WatchMessageType(rawValue: identifier.uint8Value)
@@ -91,26 +122,90 @@ public struct UnlockRequest: WatchMessage {
             else { return nil }
     }
     
-    public func toMessage() -> [String: AnyObject] {
+    func toMessage() -> [String: AnyObject] {
         
         return [WatchMessageIdentifierKey: NSNumber(value: self.dynamicType.messageType.rawValue)]
     }
 }
 
-public struct UnlockResponse: WatchMessage {
+struct LocksUpdatedNotification: WatchMessage {
+    
+    enum Key: String { case locks }
+    
+    static let messageType = WatchMessageType.LocksUpdatedNotification
+    
+    let locks: [LockCache]
+    
+    init(locks: [LockCache]) {
+        
+        self.locks = locks
+    }
+    
+    init?(message: [String: AnyObject]) {
+        
+        guard let identifier = message[WatchMessageIdentifierKey] as? NSNumber,
+            let messageType = WatchMessageType(rawValue: identifier.uint8Value),
+            let locksMessage = message[Key.locks.rawValue] as? [[String: AnyObject]],
+            let locks = LockCache.from(message: locksMessage)
+            where messageType == self.dynamicType.messageType
+            else { return nil }
+        
+        self.locks = locks
+    }
+    
+    func toMessage() -> [String: AnyObject] {
+        
+        return [WatchMessageIdentifierKey: NSNumber(value: self.dynamicType.messageType.rawValue),
+                Key.locks.rawValue: locks.map({ $0.toMessage() })]
+    }
+}
+
+struct UnlockRequest: WatchMessage {
+    
+    enum Key: String { case lock }
+    
+    static let messageType = WatchMessageType.UnlockRequest
+    
+    let lock: UUID
+    
+    init(lock: UUID) {
+        
+        self.lock = lock
+    }
+    
+    init?(message: [String: AnyObject]) {
+        
+        guard let identifier = message[WatchMessageIdentifierKey] as? NSNumber,
+            let messageType = WatchMessageType(rawValue: identifier.uint8Value)
+            where messageType == self.dynamicType.messageType,
+            let lockString = message[Key.lock.rawValue] as? String,
+            let lock = UUID(rawValue: lockString)
+            else { return nil }
+        
+        self.lock = lock
+    }
+    
+    func toMessage() -> [String: AnyObject] {
+        
+        return [WatchMessageIdentifierKey: NSNumber(value: self.dynamicType.messageType.rawValue),
+                Key.lock.rawValue: lock.rawValue]
+    }
+}
+
+struct UnlockResponse: WatchMessage {
     
     enum Key: String { case error }
     
-    public static let messageType = WatchMessageType.UnlockResponse
+    static let messageType = WatchMessageType.UnlockResponse
     
-    public var error: String?
+    var error: String?
     
-    public init(error: String? = nil) {
+    init(error: String? = nil) {
         
         self.error = error
     }
     
-    public init?(message: [String: AnyObject]) {
+    init?(message: [String: AnyObject]) {
         
         guard let identifier = message[WatchMessageIdentifierKey] as? NSNumber,
             let messageType = WatchMessageType(rawValue: identifier.uint8Value)
@@ -124,74 +219,11 @@ public struct UnlockResponse: WatchMessage {
         }
     }
     
-    public func toMessage() -> [String: AnyObject] {
+    func toMessage() -> [String: AnyObject] {
         
         var message: [String: AnyObject] = [WatchMessageIdentifierKey: NSNumber(value: self.dynamicType.messageType.rawValue)]
         
         message[Key.error.rawValue] = self.error
-        
-        return message
-    }
-}
-
-public struct CurrentLockRequest {
-    
-    public static let messageType = WatchMessageType.CurrentLockRequest
-    
-    public init() { }
-    
-    public init?(message: [String: AnyObject]) {
-        
-        guard let identifier = message[WatchMessageIdentifierKey] as? NSNumber,
-            let messageType = WatchMessageType(rawValue: identifier.uint8Value)
-            where messageType == self.dynamicType.messageType
-            else { return nil }
-    }
-    
-    public func toMessage() -> [String: AnyObject] {
-        
-        return [WatchMessageIdentifierKey: NSNumber(value: self.dynamicType.messageType.rawValue)]
-    }
-}
-
-public struct CurrentLockResponse: WatchMessage {
-    
-    enum Key: String { case permission }
-    
-    public static let messageType = WatchMessageType.CurrentLockResponse
-    
-    public var permission: PermissionType?
-    
-    public init(permission: PermissionType? = nil) {
-        
-        self.permission = permission
-    }
-    
-    public init?(message: [String: AnyObject]) {
-        
-        guard let identifier = message[WatchMessageIdentifierKey] as? NSNumber,
-            let messageType = WatchMessageType(rawValue: identifier.uint8Value)
-            where messageType == self.dynamicType.messageType
-            else { return nil }
-        
-        /// optional value
-        if let permissionRawValue = message[Key.permission.rawValue] as? NSNumber {
-            
-            guard let permission = PermissionType(rawValue: permissionRawValue.uint8Value)
-                else { return nil }
-            
-            self.permission = permission
-        }
-    }
-    
-    public func toMessage() -> [String: AnyObject] {
-        
-        var message = [WatchMessageIdentifierKey: NSNumber(value: self.dynamicType.messageType.rawValue)]
-        
-        if let permission = self.permission {
-            
-            message[Key.permission.rawValue] = NSNumber(value: permission.rawValue)
-        }
         
         return message
     }

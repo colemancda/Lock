@@ -12,7 +12,7 @@ import CoreLock
 
 final class CryptoTests: XCTestCase {
     
-    static let allTests: [(String, (CryptoTests) -> () throws -> Void)] = [("testHMAC", testHMAC), ("testEncrypt", testEncrypt), ("testFailEncrypt", testFailEncrypt), ("testEncryptKeyData", testEncryptKeyData), ("testEncryptChildKeyData", testEncryptChildKeyData)]
+    static let allTests: [(String, (CryptoTests) -> () throws -> Void)] = [("testHMAC", testHMAC), ("testEncrypt", testEncrypt), ("testFailEncrypt", testFailEncrypt), ("testEncryptKeyData", testEncryptKeyData)]
     
     func testHMAC() {
         
@@ -66,39 +66,5 @@ final class CryptoTests: XCTestCase {
         let decryptedData = decrypt(key: salt.data, iv: iv, data: encryptedData)
         
         XCTAssert(decryptedData == key.data)
-    }
-    
-    func testEncryptSharedSecret() {
-        
-        let parentKey = KeyData()
-        
-        let sharedSecret = SharedSecret()
-        
-        print("Shared Secret: \(sharedSecret.toData().bytes)")
-        
-        let (encryptedData, iv) = encrypt(key: parentKey.data, data: sharedSecret.toData())
-        
-        print("Encrypted shared secret is \(encryptedData.bytes.count) bytes")
-        
-        let decryptedData = decrypt(key: parentKey.data, iv: iv, data: encryptedData)
-        
-        XCTAssert(decryptedData == sharedSecret.toData())
-    }
-    
-    func testEncryptChildKeyData() {
-        
-        let childKey = KeyData()
-        
-        let sharedSecret = SharedSecret()
-        
-        let sharedSecretKey = sharedSecret.toKeyData()
-        
-        let (encryptedData, iv) = encrypt(key: sharedSecretKey.data, data: childKey.data)
-        
-        print("Encrypted Child Key (4 repetitions) is \(encryptedData.bytes.count) bytes")
-        
-        let decryptedData = decrypt(key: sharedSecretKey.data, iv: iv, data: encryptedData)
-        
-        XCTAssert(decryptedData == childKey.data)
     }
 }

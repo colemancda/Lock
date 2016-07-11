@@ -11,9 +11,10 @@ import WatchConnectivity
 import SwiftFoundation
 import CoreLock
 import GATT
+import CoreData
 
 @available(iOS 9.3, *)
-final class WatchController: NSObject, WCSessionDelegate {
+final class WatchController: NSObject, WCSessionDelegate, NSFetchedResultsControllerDelegate {
     
     static let shared = WatchController()
     
@@ -23,40 +24,54 @@ final class WatchController: NSObject, WCSessionDelegate {
     
     private let session = WCSession.default()
     
+    private lazy var fetchedResultsController: NSFetchedResultsController<NSManagedObject> = {
+        
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: LockCache.entityName)
+        
+        fetchRequest.sortDescriptors = [SortDescriptor(key: LockCache.Property.name.rawValue, ascending: true)]
+        
+        let controller = NSFetchedResultsController<NSManagedObject>(fetchRequest: fetchRequest, managedObjectContext: Store.shared.managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
+        
+        controller.delegate = self
+        
+        return controller
+    }()
+    
     // MARK: - Methods
     
     func activate() {
         
-        let _ = LockManager.shared.foundLocks.observe(foundLocks)
-        
         session.delegate = self
         session.activate()
+        
+        try! fetchedResultsController.performFetch()
     }
     
-    // MARK: - Private Methods
+    // MARK: - NSFetchedResultsControllerDelegate
     
-    private func foundLocks(locks: [LockManager.Lock]) {
+    @objc(controllerDidChangeContent:)
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         
+        /*
         guard session.activationState == .activated
             else { log?("Could not send found lock notification to Watch app, session not activated."); return }
         
         guard session.isReachable
             else { log?("Could not send found lock notification to Watch app, the counterpart app is not available for live messaging."); return }
+        */
         
-        let message: FoundLockNotification
+        guard session.activationState == .activated && session.isReachable
+            else { return }
         
-        if let foundLock = locks.first, let cachedLock = Store.shared[foundLock.UUID] {
-            
-            message = FoundLockNotification(permission: cachedLock.key.permission.type)
-            
-        } else {
-            
-            message = FoundLockNotification()
-        }
+        let managedObjects = (controller.fetchedObjects ?? []) as! [NSManagedObject]
         
-        session.sendMessage(message.toMessage(),
+        let locks = LockCache.from(managedObjects: managedObjects)
+        
+        let notification = LocksUpdatedNotification(locks: locks)
+        
+        session.sendMessage(notification.toMessage(),
                             replyHandler: nil,
-                            errorHandler: { self.log?("Error sending found lock notification: \($0.localizedDescription)") })
+                            errorHandler: { self.log?("Error sending locks updated notification: \($0.localizedDescription)") } )
     }
     
     // MARK: - WCSessionDelegate
@@ -76,7 +91,7 @@ final class WatchController: NSObject, WCSessionDelegate {
     }
     
     @objc(session:didReceiveMessage:replyHandler:)
-    func session(_ session: WCSession, didReceiveMessage message: [String : AnyObject], replyHandler: ([String : AnyObject]) -> Swift.Void) {
+    func session(_ session: WCSession, didReceiveMessage message: [String : AnyObject], replyHandler: ([String : AnyObject]) -> ()) {
         
         guard let identifierNumber = message[WatchMessageIdentifierKey] as? NSNumber,
             let identifier = WatchMessageType(rawValue: identifierNumber.uint8Value)
@@ -84,51 +99,59 @@ final class WatchController: NSObject, WCSessionDelegate {
         
         switch identifier {
             
+        case .LocksRequest:
+            
+            log?("Recieved locks request")
+            
+            let managedObjects = (fetchedResultsController.fetchedObjects ?? [])
+            
+            let locks = LockCache.from(managedObjects: managedObjects)
+            
+            let notification = LocksUpdatedNotification(locks: locks)
+            
+            replyHandler(notification.toMessage())
+            
         case .UnlockRequest:
             
             log?("Recieved unlock request")
             
-            guard let foundLock = LockManager.shared.foundLocks.value.first
-                else { replyHandler(UnlockResponse(error: "Lock disconnected").toMessage()); return }
+            guard let unlockRequest = UnlockRequest(message: message)
+                else { fatalError("Invalid message: \(message)") }
             
-            guard let cachedLock = Store.shared[foundLock.UUID]
+            // scan if not in range
+            if LockManager.shared.foundLocks.value.contains({ $0.identifier == unlockRequest.lock }) == false {
+                
+                do { try LockManager.shared.scan() }
+                
+                catch { replyHandler(UnlockResponse(error: "Could not scan. (\(error))").toMessage()); return }
+            }
+            
+            guard LockManager.shared.foundLocks.value.contains({ $0.identifier == unlockRequest.lock })
+                else { replyHandler(UnlockResponse(error: "Lock not in range").toMessage()); return }
+            
+            guard let (lockCache, keyData) = Store.shared[unlockRequest.lock]
                 else { replyHandler(UnlockResponse(error: "No stored key for lock").toMessage()); return }
             
-            do { try LockManager.shared.unlock(foundLock.UUID, key: cachedLock.key) }
+            do { try LockManager.shared.unlock(unlockRequest.lock, key: (lockCache.keyIdentifier, keyData)) }
             
             catch { replyHandler(UnlockResponse(error: "\(error)").toMessage()); return }
             
             /// Success
             replyHandler(UnlockResponse().toMessage())
             
-            print("Unlocked from Watch")
-            
-        case .CurrentLockRequest:
-            
-            log?("Recieved current lock request")
-            
-            if LockManager.shared.foundLocks.value.first == nil
-                && LockManager.shared.scanning.value == false {
-                
-                // scan in background
-                async {
-                    
-                    sleep(1)
-                    
-                    do { try LockManager.shared.scan() }
-                    catch { }
-                }
-            }
-            
-            guard let foundLock = LockManager.shared.foundLocks.value.first,
-                let cachedLock = Store.shared[foundLock.UUID]
-                else { replyHandler(CurrentLockResponse().toMessage()); return }
-            
-            let response = CurrentLockResponse(permission: cachedLock.key.permission.type)
-            
-            replyHandler(response.toMessage())
+            log?("Unlocked \(unlockRequest.lock) from Watch")
             
         default: fatalError("Unexpected message: \(message)")
         }
+    }
+    
+    func sessionDidBecomeInactive(_ session: WCSession) {
+        
+        log?("Session inactive")
+    }
+    
+    func sessionDidDeactivate(_ session: WCSession) {
+        
+        log?("Session deactivated")
     }
 }

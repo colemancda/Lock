@@ -25,7 +25,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     var firstLaunch = false
         
     @objc(application:didFinishLaunchingWithOptions:)
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions didFinishLaunchingWithLaunchOptions: [NSObject: AnyObject]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
         
         // print app info
@@ -55,7 +55,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         
         LockManager.shared.log = { print("LockManager: " + $0) }
         
-        /*
+        
         // Apple Watch support
         if #available(iOS 9.3, *) {
             
@@ -65,7 +65,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                 
                 WatchController.shared.activate()
             }
-        }*/
+        }
         
         // iBeacon
         BeaconController.shared.log = { print("BeaconController: " + $0) }
@@ -91,6 +91,13 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // configure SplitVC
         (self.window!.rootViewController as! UISplitViewController).preferredDisplayMode = .allVisible
+        
+        // handle url
+        if let url = launchOptions?[UIApplicationLaunchOptionsURLKey] as? URL {
+            
+            guard openURL(url)
+                else { return false }
+        }
         
         return true
     }
@@ -127,6 +134,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         
         //BeaconController.shared.stop()
+    }
+    
+    func application(_ application: UIApplication, handleOpen url: URL) -> Bool {
+        
+        return openURL(url)
     }
     
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: ([AnyObject]?) -> ()) -> Bool {
@@ -180,6 +192,46 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             return true
             
         } else {
+            
+            return false
+        }
+    }
+}
+
+private extension AppDelegate {
+    
+    func openURL(_ url: URL) -> Bool {
+        
+        if url.isFileURL {
+            
+            // parse eKey file
+            guard let data = try? Data(contentsOf: url),
+                let jsonString = String(UTF8Data: data),
+                let json = JSON.Value(string: jsonString),
+                let newKey = NewKeyInvitation(JSONValue: json)
+                else { return false }
+            
+            // only one key per lock
+            guard Store.shared[cache: newKey.lock] == nil else {
+                
+                self.window!.rootViewController?.showErrorAlert("You already have a key for lock \(newKey.lock).")
+                return false
+            }
+            
+            // show NewKeyReceiveVC
+            let navigationController = UIStoryboard(name: "NewKeyInvitation", bundle: nil).instantiateInitialViewController() as! UINavigationController
+            
+            let newKeyVC = navigationController.topViewController as! NewKeyRecieveViewController
+            
+            newKeyVC.newKey = newKey
+            
+            self.window!.rootViewController?.present(navigationController, animated: true, completion: nil)
+            
+            return true
+            
+        } else {
+            
+            // handle custom URL
             
             return false
         }

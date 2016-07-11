@@ -16,17 +16,20 @@ public struct Key: Equatable, JSONEncodable, JSONDecodable {
     
     public let permission: Permission
     
+    public let date: Date
+    
     /// The name of the key.
     ///
     /// - Note: Not applicable for Owner keys. 
     public var name: Name?
     
-    public init(identifier: UUID = UUID(), name: Name? = nil, data: KeyData = KeyData(), permission: Permission = .owner) {
+    public init(identifier: UUID = UUID(), name: Name? = nil, data: KeyData = KeyData(), permission: Permission, date: Date = Date()) {
         
         self.identifier = identifier
         self.name = name
         self.data = data
         self.permission = permission
+        self.date = date
     }
 }
 
@@ -38,6 +41,7 @@ public func == (lhs: Key, rhs: Key) -> Bool {
         && lhs.data == rhs.data
         && lhs.permission == rhs.permission
         && lhs.name == rhs.name
+        && lhs.date == rhs.date
 }
 
 // MARK: - JSON
@@ -46,7 +50,7 @@ public extension Key {
     
     enum JSONKey: String {
         
-        case identifier, data, permission, name
+        case identifier, data, permission, name, date
     }
     
     init?(JSONValue: JSON.Value) {
@@ -59,12 +63,14 @@ public extension Key {
             let keyData = KeyData(data: data),
             let permissionDataString = JSONObject[JSONKey.permission.rawValue]?.stringValue,
             let permissionData = Data(base64Encoded: permissionDataString),
-            let permission = Permission(bigEndian: permissionData)
+            let permission = Permission(bigEndian: permissionData),
+            let date = JSONObject[JSONKey.date.rawValue]?.doubleValue
             else { return nil }
         
         self.identifier = identifier
         self.data = keyData
         self.permission = permission
+        self.date = Date(timeIntervalSince1970: date)
         
         if let name = JSONObject[JSONKey.name.rawValue]?.stringValue {
             
@@ -81,13 +87,15 @@ public extension Key {
     
     func toJSON() -> JSON.Value {
         
-        var jsonObject = JSON.Object(minimumCapacity: 4)
+        var jsonObject = JSON.Object(minimumCapacity: 5)
         
         jsonObject[JSONKey.identifier.rawValue] = .string(identifier.rawValue)
         
         jsonObject[JSONKey.data.rawValue] = .string(data.data.base64EncodedString())
         
         jsonObject[JSONKey.permission.rawValue] = .string(permission.toBigEndian().base64EncodedString())
+        
+        jsonObject[JSONKey.date.rawValue] = .double(date.timeIntervalSince1970)
         
         if let name = self.name {
             

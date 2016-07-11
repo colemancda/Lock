@@ -62,9 +62,7 @@ extension LockCache {
 }
 
 @available(iOS 9.0, *)
-func UpdateSpotlight(_ index: CSSearchableIndex = CSSearchableIndex.default(), completionHandler: ((NSError?) -> Void)? = nil) {
-    
-    print(kUTTypeText as String)
+func UpdateSpotlight(_ index: CSSearchableIndex = CSSearchableIndex.default(), completionHandler: ((NSError?) -> ())? = nil) {
     
     index.deleteAllSearchableItems { (deleteError) in
         
@@ -83,7 +81,7 @@ func UpdateSpotlight(_ index: CSSearchableIndex = CSSearchableIndex.default(), c
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: entity.name!)
         fetchRequest.includesSubentities = false
         fetchRequest.returnsObjectsAsFaults = false
-        fetchRequest.sortDescriptors = [SortDescriptor.init(key: LockCache.Property.identifier.rawValue, ascending: true)]
+        fetchRequest.sortDescriptors = [SortDescriptor(key: LockCache.Property.identifier.rawValue, ascending: true)]
         
         managedObjectContext.perform {
             

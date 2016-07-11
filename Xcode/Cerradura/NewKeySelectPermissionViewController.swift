@@ -10,14 +10,17 @@ import Foundation
 import UIKit
 import CoreLock
 import SwiftFoundation
+import JGProgressHUD
 
-final class NewKeySelectPermissionViewController: UITableViewController {
+final class NewKeySelectPermissionViewController: UITableViewController, NewKeyViewController {
     
     // MARK: - Properties
     
     var completion: ((Bool) -> ())?
     
     var lockIdentifier: UUID!
+    
+    let progressHUD = JGProgressHUD(style: .dark)!
     
     private let permissionTypes: [PermissionType] = [.admin, .anytime /*, .scheduled */ ]
     
@@ -42,7 +45,7 @@ final class NewKeySelectPermissionViewController: UITableViewController {
     
     // MARK: - Methods
     
-    private func configure(cell: PermissionTypeTableViewCell, at indexPath: NSIndexPath) {
+    private func configure(cell: PermissionTypeTableViewCell, at indexPath: IndexPath) {
         
         let permissionType = permissionTypes[indexPath.row]
         
@@ -131,11 +134,7 @@ final class NewKeySelectPermissionViewController: UITableViewController {
             default: fatalError()
             }
             
-            let viewController = UIStoryboard(name: "NewKey", bundle: nil).instantiateViewController(withIdentifier: "newKeyParent") as! NewKeyParentViewController
-            
-            viewController.newKey = (lockIdentifier, permission)
-            
-            self.show(viewController, sender: self)
+            newKey(permission: permission)
             
         case .scheduled:
             

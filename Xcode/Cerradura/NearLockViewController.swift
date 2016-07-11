@@ -188,8 +188,7 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
             
             cellDetail = lock.identifier.rawValue
             
-        case .unlock, 
-             .newKey where Store.shared[cache: lock.identifier] != nil:
+        case .unlock:
             
             cellImage = (#imageLiteral(resourceName: "unlockButton"), #imageLiteral(resourceName: "unlockButtonSelected"))
             
@@ -220,16 +219,6 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
                 
                 cellDetail = lock.identifier.rawValue
             }
-            
-        case .newKey:
-            
-            enabled = true
-            
-            cellImage = (#imageLiteral(resourceName: "setupKey"), #imageLiteral(resourceName: "setupKeySelected"))
-            
-            cellTitle = "New Key"
-            
-            cellDetail = lock.identifier.rawValue
         }
         
         // configure cell
@@ -280,54 +269,7 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
         self.present(alert, animated: true, completion: nil)
     }
     
-    private func requestNewKey(_ completion: ((name: String, sharedSecret: String)?) -> ()) {
-        
-        let alert = UIAlertController(title: NSLocalizedString("New Key", comment: "NewKeyTitle"),
-                                      message: "Type a user friendly name for the lock and enter the PIN code.",
-                                      preferredStyle: UIAlertControllerStyle.alert)
-        
-        alert.addTextField { $0.text = "Lock" }
-        
-        alert.addTextField { $0.placeholder = "PIN Code"; $0.keyboardType = .numberPad }
-        
-        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "OK"), style: UIAlertActionStyle.`default`, handler: { (UIAlertAction) in
-            
-            completion((name: alert.textFields![0].text ?? "", sharedSecret: alert.textFields![1].text ?? ""))
-            
-            alert.dismiss(animated: true) {  }
-            
-        }))
-        
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: UIAlertActionStyle.destructive, handler: { (UIAlertAction) in
-            
-            completion(nil)
-            
-            alert.dismiss(animated: true) {  }
-        }))
-        
-        self.present(alert, animated: true, completion: nil)
-    }
-    
     private func performAction(lock: LockManager.Lock) {
-        
-        func unlock() {
-            
-            print("Unlocking \(lock.identifier)")
-            
-            guard let (lockCache, keyData) = Store.shared[lock.identifier]
-                else { fatalError("No stored key for lock") } // FRC should prevent this
-            
-            async {
-                
-                do { try LockManager.shared.unlock(lock.identifier, key: (lockCache.keyIdentifier, keyData)) }
-                    
-                catch { mainQueue { self.state = .error(error) }; return }
-                
-                print("Successfully unlocked lock \"\(lock.identifier)\"")
-                
-                mainQueue { self.updateUI() }
-            }
-        }
         
         switch lock.status {
             
@@ -365,46 +307,20 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
             
         case .unlock:
             
-            unlock()
+            print("Unlocking \(lock.identifier)")
             
-        case .newKey:
+            guard let (lockCache, keyData) = Store.shared[lock.identifier]
+                else { fatalError("No stored key for lock") } // FRC should prevent this
             
-            // unlock if you already have a key.
-            guard Store.shared[lock.identifier] == nil
-                else { unlock(); return }
-            
-            requestNewKey { (textValues) in
+            async {
                 
-                guard let (nameString, sharedSecretString) = textValues else { return }
-                
-                // build shared secret from text
-                guard let sharedSecret = SharedSecret(string: sharedSecretString)
-                    else { self.state = .error(Error.newKeyInvalidPIN); return }
-                
-                // valid name
-                guard let name = Key.Name(rawValue: nameString)
-                    else { self.state = .error(Error.newKeyInvalidName); return }
-                
-                async {
+                do { try LockManager.shared.unlock(lock.identifier, key: (lockCache.keyIdentifier, keyData)) }
                     
-                    do {
-                        
-                        let key = try LockManager.shared.recieveNewKey(lock.identifier, sharedSecret: sharedSecret, name: name)
-                        
-                        mainQueue {
-                            
-                            let lock = LockCache(identifier: lock.identifier, name: nameString, model: lock.model, version: lock.version, permission: key.permission, keyIdentifier: key.identifier)
-                            
-                            Store.shared[lock.identifier] = (lock, key.data)
-                            
-                            print("Successfully added new key for lock \(nameString)")
-                            
-                            mainQueue { self.updateUI() }
-                        }
-                    }
-                        
-                    catch { mainQueue { self.state = .error(error); return }; return }
-                }
+                catch { mainQueue { self.state = .error(error) }; return }
+                
+                print("Successfully unlocked lock \"\(lock.identifier)\"")
+                
+                mainQueue { self.updateUI() }
             }
         }
     }

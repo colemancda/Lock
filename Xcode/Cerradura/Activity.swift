@@ -10,7 +10,14 @@ import Foundation
 import UIKit
 import CoreLock
 
-final class LockActivityItem: NSObject /*, UIActivityItemSource */ {
+final class LockActivityItem: NSObject {
+    
+    static let excludedActivityTypes = [UIActivityTypePrint,
+                                     UIActivityTypeAssignToContact,
+                                     UIActivityTypeAirDrop,
+                                     UIActivityTypeCopyToPasteboard,
+                                     UIActivityTypeSaveToCameraRoll,
+                                     UIActivityTypePostToFlickr]
     
     let identifier: UUID
     
@@ -19,16 +26,37 @@ final class LockActivityItem: NSObject /*, UIActivityItemSource */ {
         self.identifier = identifier
     }
     
-    // MARK: UIActivityItemSource
+    // MARK: - Activity Values
     
-    // FIXME: Implement UIActivityItemSource
+    var text: String {
+        
+        guard let lockCache = Store.shared[cache: identifier]
+            else { fatalError("Lock not in cache") }
+        
+        return "I unlocked my door \"\(lockCache.name)\" with Cerradura"
+    }
+    
+    var image: UIImage {
+        
+        guard let lockCache = Store.shared[cache: identifier]
+            else { fatalError("Lock not in cache") }
+        
+        switch lockCache.permission {
+            
+        case .owner: return #imageLiteral(resourceName: "permissionBadgeOwner")
+        case .admin: return #imageLiteral(resourceName: "permissionBadgeAdmin")
+        case .anytime: return #imageLiteral(resourceName: "permissionBadgeAnytime")
+        case .scheduled: return #imageLiteral(resourceName: "permissionBadgeScheduled")
+        }
+    }
 }
 
 /// `UIActivity` types
 enum LockActivity: String {
     
     case newKey = "com.colemancda.cerradura.activity.newKey"
-    case deleteLock = "com.colemancda.cerradura.activity.deleteLock"
+    case delete = "com.colemancda.cerradura.activity.delete"
+    case rename = "com.colemancda.cerradura.activity.rename"
     case homeKitEnable = "com.colemancda.cerradura.activity.homeKitEnable"
 }
 
@@ -97,7 +125,7 @@ final class DeleteLockActivity: UIActivity {
     
     override func activityType() -> String? {
         
-        return LockActivity.deleteLock.rawValue
+        return LockActivity.delete.rawValue
     }
     
     override func activityTitle() -> String? {
@@ -136,6 +164,63 @@ final class DeleteLockActivity: UIActivity {
             Store.shared.remove(self.item.identifier)
             
             alert.dismiss(animated: true) { self.activityDidFinish(true) }
+        }))
+        
+        return alert
+    }
+}
+
+/// Activity for renaming a lock.
+final class RenameActivity: UIActivity {
+    
+    override static func activityCategory() -> UIActivityCategory { return .action }
+    
+    private var item: LockActivityItem!
+    
+    override func activityType() -> String? {
+        
+        return LockActivity.rename.rawValue
+    }
+    
+    override func activityTitle() -> String? {
+        
+        return "Rename"
+    }
+    
+    override func activityImage() -> UIImage? {
+        
+        return #imageLiteral(resourceName: "activityRename")
+    }
+    
+    override func canPerform(withActivityItems activityItems: [AnyObject]) -> Bool {
+        
+        return activityItems.first as? LockActivityItem != nil
+    }
+    
+    override func prepare(withActivityItems activityItems: [AnyObject]) {
+        
+        self.item = activityItems.first as! LockActivityItem
+    }
+    
+    override func activityViewController() -> UIViewController? {
+        
+        let alert = UIAlertController(title: "Rename",
+                                      message: "Type a user friendly name for this lock.",
+                                      preferredStyle: .alert)
+        
+        alert.addTextField { $0.text = Store.shared[cache: self.item.identifier]!.name }
+        
+        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "OK"), style: .`default`, handler: { (UIAlertAction) in
+            
+            Store.shared[cache: self.item.identifier]!.name = alert.textFields![0].text ?? ""
+            
+            alert.dismiss(animated: true) { self.activityDidFinish(true) }
+            
+        }))
+        
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .destructive, handler: { (UIAlertAction) in
+            
+            alert.dismiss(animated: true) { self.activityDidFinish(false) }
         }))
         
         return alert

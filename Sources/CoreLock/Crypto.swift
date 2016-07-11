@@ -29,7 +29,7 @@ public func HMAC(key: KeyData, message: Nonce) -> Data {
     return Data(bytes: hmac)
 }
 
-let IVSize = AES.blockSize
+public let IVSize = AES.blockSize
 
 /// Encrypt data
 public func encrypt(key: Data, data: Data) -> (encrypted: Data, iv: InitializationVector) {

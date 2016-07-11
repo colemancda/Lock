@@ -142,61 +142,6 @@
             <point key="canvasLocation" x="764" y="2152"/>
         </scene>
         <!--New Key-->
-        <scene sceneID="qCm-sd-heG">
-            <objects>
-                <viewController storyboardIdentifier="newKeyParent" id="wGI-4r-hQw" customClass="NewKeyParentViewController" customModule="Cerradura" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="WTI-aC-GMY"/>
-                        <viewControllerLayoutGuide type="bottom" id="ptD-hE-ego"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="pgs-5g-uX5">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="12345678" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ySb-Z2-2kK">
-                                <fontDescription key="fontDescription" type="system" pointSize="35"/>
-                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enter this PIN code on the device you wish to receive the new key." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NkL-Vo-laL">
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="akw-X0-AOH">
-                                <color key="color" red="0.33333333329999998" green="0.33333333329999998" blue="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                            </activityIndicatorView>
-                        </subviews>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <constraints>
-                            <constraint firstItem="NkL-Vo-laL" firstAttribute="centerX" secondItem="pgs-5g-uX5" secondAttribute="centerX" id="1ft-ZH-3BP"/>
-                            <constraint firstItem="NkL-Vo-laL" firstAttribute="leading" secondItem="pgs-5g-uX5" secondAttribute="leadingMargin" id="L9V-3z-xza"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="NkL-Vo-laL" secondAttribute="trailing" id="WCs-zI-egh"/>
-                            <constraint firstItem="ySb-Z2-2kK" firstAttribute="centerY" secondItem="pgs-5g-uX5" secondAttribute="centerY" id="X5d-Yl-pl7"/>
-                            <constraint firstItem="ySb-Z2-2kK" firstAttribute="centerX" secondItem="pgs-5g-uX5" secondAttribute="centerX" id="dGx-wu-O63"/>
-                            <constraint firstItem="akw-X0-AOH" firstAttribute="centerX" secondItem="pgs-5g-uX5" secondAttribute="centerX" id="ewW-14-NPh"/>
-                            <constraint firstItem="NkL-Vo-laL" firstAttribute="top" secondItem="WTI-aC-GMY" secondAttribute="bottom" constant="20" id="fGU-jZ-pgL"/>
-                            <constraint firstItem="akw-X0-AOH" firstAttribute="centerY" secondItem="pgs-5g-uX5" secondAttribute="centerY" id="vyq-Pv-6az"/>
-                        </constraints>
-                    </view>
-                    <navigationItem key="navigationItem" title="New Key" id="KSh-TY-i7d">
-                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="PAD-Xv-rtL">
-                            <connections>
-                                <action selector="done:" destination="wGI-4r-hQw" id="bOe-i8-Vsh"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
-                    <connections>
-                        <outlet property="activityIndicatorView" destination="akw-X0-AOH" id="t57-fh-Jdp"/>
-                        <outlet property="codeLabel" destination="ySb-Z2-2kK" id="jSN-lF-5SW"/>
-                        <outlet property="doneBarItem" destination="PAD-Xv-rtL" id="Ey3-Hw-HVA"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Htp-X5-Z2Q" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1675" y="1379"/>
-        </scene>
-        <!--New Key-->
         <scene sceneID="xW5-f1-LSq">
             <objects>
                 <tableViewController id="LAe-qz-LfN" customClass="NewKeySelectPermissionViewController" customModule="Cerradura" customModuleProvider="target" sceneMemberID="viewController">
@@ -266,9 +211,6 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
-                    <connections>
-                        <segue destination="wGI-4r-hQw" kind="show" id="ZaH-bG-Rsp"/>
-                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dhB-4U-Z8x" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

@@ -16,10 +16,9 @@ public enum Status: UInt8 {
     
     /// Idle / Unlock Mode
     case unlock
-    
-    /// New Key being added to database.
-    case newKey
 }
+
+// MARK: - DataConvertible
 
 extension Status: DataConvertible {
     

@@ -60,6 +60,18 @@ final class Store {
         try! keychain.remove(key: identifier.rawValue)
     }
     
+    var locks: [LockCache] {
+        
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: LockCache.entityName)
+        fetchRequest.includesSubentities = false
+        fetchRequest.returnsObjectsAsFaults = false
+        fetchRequest.sortDescriptors = [SortDescriptor(key: LockCache.Property.identifier.rawValue, ascending: true)]
+        
+        let results = try! managedObjectContext.fetch(fetchRequest)
+        
+        return LockCache.from(managedObjects: results)
+    }
+    
     // MARK: - Subscripting
     
     /// Get the cached lock info for the specified lock.
@@ -99,12 +111,21 @@ final class Store {
     
     subscript (cache identifier: UUID) -> LockCache? {
         
-        let entity = managedObjectContext.persistentStoreCoordinator!.managedObjectModel.entitiesByName[LockCache.entityName]!
+        get {
+            
+            guard let managedObject = try! managedObjectContext.find(entity: lockCacheEntity, resourceID: identifier.rawValue, identifierProperty: LockCache.Property.identifier.rawValue)
+                else { return nil }
+            
+            return LockCache(managedObject: managedObject)
+        }
         
-        guard let managedObject = try! managedObjectContext.find(entity: entity, resourceID: identifier.rawValue, identifierProperty: LockCache.Property.identifier.rawValue)
-            else { return nil }
-        
-        return LockCache(managedObject: managedObject)
+        set {
+            
+            guard let lockCache = newValue
+                else { remove(identifier); return }
+            
+            let _ = try! lockCache.save(context: managedObjectContext)
+        }
     }
 }
 

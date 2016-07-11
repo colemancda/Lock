@@ -15,10 +15,22 @@ final class ExtensionDelegate: NSObject, WKExtensionDelegate {
         
         // print app info
         print("Launching Cerradura Watch v\(AppVersion) Build \(AppBuild)")
+        
+        // set SessionController log
+        SessionController.shared.log = { print("SessionController: " + $0) }
     }
 
     func applicationDidBecomeActive() {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+        
+        // reactivate
+        async {
+            
+            if SessionController.shared.session.activationState != .activated {
+                
+                do { try SessionController.shared.activate() } catch {  }
+            }
+        }
     }
 
     func applicationWillResignActive() {
@@ -27,17 +39,4 @@ final class ExtensionDelegate: NSObject, WKExtensionDelegate {
     }
 
 }
-
-@inline(__always)
-func mainQueue(_ block: () -> ()) {
-    
-    OperationQueue.main().addOperation(block)
-}
-
-/** Version of the app. */
-public let AppVersion = Bundle.main().infoDictionary!["CFBundleShortVersionString"] as! String
-
-/** Build of the app. */
-public let AppBuild = Bundle.main().infoDictionary!["CFBundleVersion"] as! String
-
 
