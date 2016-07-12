@@ -60,7 +60,6 @@
 		6E778DA41CD5B70300AED11E /* CerraduraWatch Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 6E778DA31CD5B70300AED11E /* CerraduraWatch Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		6E778DAB1CD5B70300AED11E /* ExtensionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E778DAA1CD5B70300AED11E /* ExtensionDelegate.swift */; };
 		6E778DAD1CD5B70300AED11E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6E778DAC1CD5B70300AED11E /* Assets.xcassets */; };
-		6E778DB11CD5B70300AED11E /* CerraduraWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 6E778D971CD5B70300AED11E /* CerraduraWatch.app */; };
 		6E7E65DD1D0D3619009E00C4 /* Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7E65DC1D0D3619009E00C4 /* Async.swift */; };
 		6E825E011D26ED2C003D728B /* LockViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E825E001D26ED2C003D728B /* LockViewController.swift */; };
 		6E825E031D26FB65003D728B /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E825E021D26FB65003D728B /* Error.swift */; };
@@ -237,7 +236,6 @@
 			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
 			dstSubfolderSpec = 16;
 			files = (
-				6E778DB11CD5B70300AED11E /* CerraduraWatch.app in Embed Watch Content */,
 			);
 			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
