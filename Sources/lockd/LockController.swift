@@ -45,6 +45,8 @@ final class LockController {
         
     private var homeKitDeamon: pid_t?
     
+    private var updating = false
+    
     // MARK: - Intialization
     
     private init() {
@@ -433,7 +435,23 @@ final class LockController {
     
     private func updateSoftware() {
         
+        guard updating == false else { return }
         
+        // run update commands
+        
+        updating = true
+        
+        Thread {
+            
+            #if os(Linux)
+                system(Command.updatePackageList)
+                system(Command.updateLock)
+                
+                print("Will reboot for update")
+                
+                system(Command.reboot)
+            #endif
+        }
     }
     
     // MARK: Utility

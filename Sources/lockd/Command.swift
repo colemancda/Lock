@@ -9,4 +9,8 @@
 struct Command {
     
     static let reboot = "reboot"
+    
+    static let updatePackageList = "apt-get update"
+    
+    static let updateLock = "apt-get install -q -y --force-yes lockd"
 }

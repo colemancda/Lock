@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import CoreLock
+import JGProgressHUD
 
 final class LockActivityItem: NSObject {
     
@@ -57,6 +58,7 @@ enum LockActivity: String {
     case newKey = "com.colemancda.cerradura.activity.newKey"
     case delete = "com.colemancda.cerradura.activity.delete"
     case rename = "com.colemancda.cerradura.activity.rename"
+    case update = "com.colemancda.cerradura.activity.update"
     case homeKitEnable = "com.colemancda.cerradura.activity.homeKitEnable"
 }
 
@@ -301,6 +303,94 @@ final class HomeKitEnableActivity: UIActivity {
         alert.addAction(UIAlertAction(title: NSLocalizedString("No", comment: "No"), style: .`default`, handler: { (UIAlertAction) in
             
             enableHomeKit(false)
+        }))
+        
+        return alert
+    }
+}
+
+final class UpdateSoftware: UIActivity {
+    
+    override static func activityCategory() -> UIActivityCategory { return .action }
+    
+    private var item: LockActivityItem!
+    
+    override func activityType() -> String? {
+        
+        return LockActivity.homeKitEnable.rawValue
+    }
+    
+    override func activityTitle() -> String? {
+        
+        return "Update"
+    }
+    
+    override func activityImage() -> UIImage? {
+        
+        return #imageLiteral(resourceName: "activityUpdate")
+    }
+    
+    override func canPerform(withActivityItems activityItems: [AnyObject]) -> Bool {
+        
+        guard let lockItem = activityItems.first as? LockActivityItem,
+            let lockCache = Store.shared[cache: lockItem.identifier],
+            let _ = LockManager.shared[lockItem.identifier] // Lock must be reachable
+            where lockCache.permission == .owner
+            else { return false }
+        
+        return true
+    }
+    
+    override func prepare(withActivityItems activityItems: [AnyObject]) {
+        
+        self.item = activityItems.first as! LockActivityItem
+    }
+    
+    override func activityViewController() -> UIViewController? {
+        
+        let lockItem = self.item!
+        
+        let alert = UIAlertController(title: "Update Lock",
+                                      message: "Are you sure you want to update the lock's software?",
+                                      preferredStyle: .alert)
+        
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Cancel"), style: .cancel, handler: { (UIAlertAction) in
+            
+            alert.dismiss(animated: true) { self.activityDidFinish(false) }
+        }))
+        
+        alert.addAction(UIAlertAction(title: "Update", style: .`default`, handler: { (UIAlertAction) in
+            
+            let progressHUD = JGProgressHUD(style: .dark)!
+            
+            func showProgressHUD() {
+                
+                progressHUD.show(in: alert.view)
+                
+                alert.view.isUserInteractionEnabled = false
+            }
+            
+            func dismissProgressHUD(_ animated: Bool = true) {
+                
+                progressHUD.dismiss()
+                
+                alert.view.isUserInteractionEnabled = true
+            }
+            
+            // fetch cache
+            guard let (lockCache, keyData) = Store.shared[lockItem.identifier]
+                else { alert.dismiss(animated: true) { self.activityDidFinish(false) }; return }
+            
+            showProgressHUD()
+            
+            async {
+                
+                do { try LockManager.shared.update(lockItem.identifier, key: (lockCache.keyIdentifier, keyData)) }
+                    
+                catch { mainQueue { dismissProgressHUD(false); alert.showErrorAlert("\(error)"); self.activityDidFinish(false) }; return }
+                
+                mainQueue { dismissProgressHUD(); alert.dismiss(animated: true) { self.activityDidFinish(true) } }
+            }
         }))
         
         return alert
