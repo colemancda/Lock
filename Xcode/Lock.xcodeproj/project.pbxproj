@@ -172,13 +172,6 @@
 			remoteGlobalIDString = 6E778DA21CD5B70300AED11E;
 			remoteInfo = "CerraduraWatch Extension";
 		};
-		6E778DAF1CD5B70300AED11E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6EE6058A1CC21941008EF0EE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 6E778D961CD5B70300AED11E;
-			remoteInfo = CerraduraWatch;
-		};
 		6EA7FC961D0FA6A100F5D90B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6EE6058A1CC21941008EF0EE /* Project object */;
@@ -228,16 +221,6 @@
 				6E778DA41CD5B70300AED11E /* CerraduraWatch Extension.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		6E778DB91CD5B70300AED11E /* Embed Watch Content */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		6ED338711CC7D1EE00DF1461 /* Embed Frameworks */ = {
@@ -930,13 +913,11 @@
 				6EE605A61CC21C1A008EF0EE /* Resources */,
 				6ED3386C1CC7D1DA00DF1461 /* Copy Frameworks */,
 				6ED338711CC7D1EE00DF1461 /* Embed Frameworks */,
-				6E778DB91CD5B70300AED11E /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				6ED338701CC7D1EE00DF1461 /* PBXTargetDependency */,
-				6E778DB01CD5B70300AED11E /* PBXTargetDependency */,
 			);
 			name = Cerradura;
 			productName = Cerradura;
@@ -1363,11 +1344,6 @@
 			isa = PBXTargetDependency;
 			target = 6E778DA21CD5B70300AED11E /* CerraduraWatch Extension */;
 			targetProxy = 6E778DA51CD5B70300AED11E /* PBXContainerItemProxy */;
-		};
-		6E778DB01CD5B70300AED11E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 6E778D961CD5B70300AED11E /* CerraduraWatch */;
-			targetProxy = 6E778DAF1CD5B70300AED11E /* PBXContainerItemProxy */;
 		};
 		6EA7FC971D0FA6A100F5D90B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
