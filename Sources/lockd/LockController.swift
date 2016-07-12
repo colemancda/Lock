@@ -443,7 +443,7 @@ final class LockController {
         
         updating = true
         
-        Thread {
+        let _ = try! Thread {
             
             #if os(Linux)
                 system(Command.updatePackageList)
