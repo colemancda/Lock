@@ -137,7 +137,9 @@ final class LockController {
         
         let homeKitEnable = Characteristic(UUID: LockService.HomeKitEnable.UUID, value: Data(), permissions: [.Write], properties: [.Write])
         
-        let lockService = Service(UUID: LockService.UUID, primary: true, characteristics: [identifier, model, version, status, setup, unlock, newKeyParent, newKeyChild, homeKitEnable])
+         let update = Characteristic(UUID: LockService.Update.UUID, value: Data(), permissions: [.Write], properties: [.Write])
+        
+        let lockService = Service(UUID: LockService.UUID, primary: true, characteristics: [identifier, model, version, status, setup, unlock, newKeyParent, newKeyChild, homeKitEnable, update])
         
         let _ = try! peripheral.add(service: lockService)
     }

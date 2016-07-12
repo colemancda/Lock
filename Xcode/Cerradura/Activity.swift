@@ -309,7 +309,7 @@ final class HomeKitEnableActivity: UIActivity {
     }
 }
 
-final class UpdateSoftware: UIActivity {
+final class UpdateActivity: UIActivity {
     
     override static func activityCategory() -> UIActivityCategory { return .action }
     
