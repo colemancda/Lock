@@ -55,7 +55,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         
         LockManager.shared.log = { print("LockManager: " + $0) }
         
-        
         // Apple Watch support
         if #available(iOS 9.3, *) {
             

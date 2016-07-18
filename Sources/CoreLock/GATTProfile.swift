@@ -14,6 +14,7 @@
 
 import SwiftFoundation
 import Bluetooth
+import BSON
 
 public protocol GATTProfileService {
     
@@ -620,9 +621,188 @@ public struct LockService: GATTProfileService {
         }
     }
     
-    public struct ListKeys {
+    /// Used to encrypt and publish the list of keys on the device.
+    ///
+    /// - Note: Only owner and admin have access to key list.
+    ///
+    /// Key UUID + nonce + HMAC(key, nonce) (16 + 16 + 64 bytes) (write-only)
+    public struct ListKeysCommand: AuthenticatedCharacteristic {
         
+        public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "CF1F3211-8D4E-4717-B31A-2A100ABEF700")!)
         
+        public static let length = SwiftFoundation.UUID.length + Nonce.length + HMACSize
+        
+        public let identifier: SwiftFoundation.UUID
+        
+        public let nonce: Nonce
+        
+        /// HMAC of key and nonce
+        public let authentication: Data
+        
+        public init(identifier: SwiftFoundation.UUID, nonce: Nonce = Nonce(), key: KeyData) {
+            
+            self.identifier = identifier
+            self.nonce = nonce
+            self.authentication = HMAC(key: key, message: nonce)
+            
+            assert(authentication.bytes.count == HMACSize)
+        }
+        
+        public init?(bigEndian: Data) {
+            
+            let bytes = bigEndian.bytes
+            
+            guard bytes.count == self.dynamicType.length
+                else { return nil }
+            
+            let identifier = SwiftFoundation.UUID(bigEndian: Data(bytes: Array(bytes[0 ..< 16])))!
+            
+            let nonceBytes = Array(bytes[16 ..< 16 + Nonce.length])
+            
+            assert(nonceBytes.count == Nonce.length)
+            
+            let hmac = Array(bytes.suffix(from: 16 + Nonce.length))
+            
+            assert(hmac.count == HMACSize)
+            
+            self.identifier = identifier
+            self.nonce = Nonce(data: Data(bytes: nonceBytes))!
+            self.authentication =  Data(bytes: hmac)
+        }
+        
+        public func toBigEndian() -> Data {
+            
+            let bytes = identifier.toBigEndian().bytes + nonce.data.bytes + authentication.bytes
+            
+            assert(bytes.count == self.dynamicType.length)
+            
+            return Data(bytes: bytes)
+        }
+    }
+    
+    /// Encrypted BSON of keys (e.g. `[UUID: String]`) (read-only)
+    ///
+    /// nonce + IV + HMAC(sharedSecret, nonce) + encrypt(sharedSecret, iv, childKey)
+    public struct ListKeysValue: AuthenticatedCharacteristic {
+        
+        public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "D2F5F81C-C3DF-4626-9207-212029EA2F6F")!)
+        
+        public static let minimumLength = Nonce.length + IVSize + HMACSize + 1
+        
+        public let nonce: Nonce
+        
+        /// HMAC of key and nonce
+        public let authentication: Data
+        
+        public let encryptedKeys: Data
+        
+        public let initializationVector: InitializationVector
+        
+        public init(nonce: Nonce = Nonce(), keys: [ListKeysValue.KeyEntry], key: KeyData) {
+            
+            // convert keys to BSON data
+            let keysBSONArray = keys.map { $0.toBSON() }
+            let document = BSON.Document(array: keysBSONArray)
+            let bsonData = Data(bytes: document.bytes)
+            
+            // set authentication
+            self.nonce = nonce
+            self.authentication = HMAC(key: key, message: nonce)
+            
+            // encrypt
+            let (encryptedKeys, iv) = encrypt(key: key.data, data: bsonData)
+            
+            self.initializationVector = iv
+            self.encryptedKeys = encryptedKeys
+        }
+        
+        public init?(bigEndian data: Data) {
+            
+            guard data.count >= ListKeysValue.minimumLength
+                else { return nil }
+            
+            let nonceData = data[0 ..< Nonce.length]
+            let ivData = data[Nonce.length ..< Nonce.length + IVSize]
+            let authentication = data[Nonce.length + IVSize ..< Nonce.length + IVSize + HMACSize]
+            let encryptedKeys = data.suffix(from: Nonce.length + IVSize + HMACSize)
+            
+            
+        }
+        
+        public func toBigEndian() -> Data {
+            
+            return nonce.data + initializationVector.data + authentication + encryptedKeys
+        }
+        
+        public func decrypt(key: KeyData) -> [KeyEntry]? {
+            
+            // make sure its authenticated
+            guard authenticated(with: key)
+                else { return nil }
+            
+            let decryptedData = CoreLock.decrypt(key: key.data, iv: initializationVector, data: encryptedKeys)
+            
+            let bson = BSON.Document(data: decryptedData.bytes)
+            
+            var keys = [KeyEntry]()
+            
+            for bsonValue in bson.arrayValue {
+                
+                guard let key = KeyEntry(BSONValue: bsonValue)
+                    else { return nil }
+                
+                keys.append(key)
+            }
+            
+            return keys
+        }
+        
+        public struct KeyEntry {
+            
+            private enum DocumentIndex: Int {
+                
+                static let count = 3
+                
+                case identifier, name, date
+            }
+            
+            public let identifier: UUID
+            
+            public let name: Key.Name
+            
+            public let date: Date
+            
+            public init?(BSONValue: BSON.Value) {
+                
+                guard let array = BSONValue.documentValue?.arrayValue
+                    where array.count == DocumentIndex.count
+                    else { return nil }
+                
+                let identifierBSON = array[DocumentIndex.identifier.rawValue]
+                let nameBSON = array[DocumentIndex.name.rawValue]
+                let dateBSON = array[DocumentIndex.date.rawValue]
+                
+                guard case let .binary(.generic, uuidData) = identifierBSON,
+                    let identifier = SwiftFoundation.UUID(bigEndian: Data(bytes: uuidData)),
+                    let nameString = nameBSON.stringValue,
+                    let name = Key.Name(rawValue: nameString),
+                    let dateDouble = dateBSON.doubleValue
+                    else { return nil }
+                
+                self.identifier = identifier
+                self.name = name
+                self.date = Date(timeIntervalSince1970: dateDouble)
+            }
+            
+            public func toBSON() -> BSON.Value {
+                
+                let bsonArray = [BSON.Value.binary(subtype: .generic, data: identifier.toBigEndian().bytes),
+                                 BSON.Value.string(name.rawValue),
+                                 BSON.Value.double(date.timeIntervalSince1970)]
+                
+                return .array(BSON.Document(array: bsonArray))
+            }
+        }
     }
     
     public struct RemoveKey {

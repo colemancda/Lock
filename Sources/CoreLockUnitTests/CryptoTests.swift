@@ -67,4 +67,19 @@ final class CryptoTests: XCTestCase {
         
         XCTAssert(decryptedData == key.data)
     }
+    
+    func testEncryptKeyList() {
+        
+        let keys = UUID().toBigEndian() + UUID().toBigEndian() + UUID().toBigEndian()
+        
+        let salt = KeyData()
+        
+        let (encryptedData, iv) = encrypt(key: salt.data, data: keys)
+        
+        print("Encrypted key list is \(encryptedData.bytes.count) bytes")
+        
+        let decryptedData = decrypt(key: salt.data, iv: iv, data: encryptedData)
+        
+        //XCTAssert(decryptedData == key.data)
+    }
 }
