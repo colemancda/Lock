@@ -721,12 +721,15 @@ public struct LockService: GATTProfileService {
             guard data.count >= ListKeysValue.minimumLength
                 else { return nil }
             
-            let nonceData = data[0 ..< Nonce.length]
-            let ivData = data[Nonce.length ..< Nonce.length + IVSize]
-            let authentication = data[Nonce.length + IVSize ..< Nonce.length + IVSize + HMACSize]
-            let encryptedKeys = data.suffix(from: Nonce.length + IVSize + HMACSize)
+            let nonceData = data.bytes[0 ..< Nonce.length]
+            let ivData = data.bytes[Nonce.length ..< Nonce.length + IVSize]
+            let authenticationBytes = data.bytes[Nonce.length + IVSize ..< Nonce.length + IVSize + HMACSize]
+            let encryptedKeysBytes = data.bytes.suffix(from: Nonce.length + IVSize + HMACSize)
             
-            
+            self.nonce = Nonce(data: Data(bytes: nonceData))!
+            self.initializationVector = InitializationVector(data: Data(bytes: ivData))!
+            self.authentication = Data(bytes: authenticationBytes)
+            self.encryptedKeys = Data(bytes: encryptedKeysBytes)
         }
         
         public func toBigEndian() -> Data {
@@ -757,13 +760,13 @@ public struct LockService: GATTProfileService {
             return keys
         }
         
-        public struct KeyEntry {
+        public struct KeyEntry: Equatable {
             
             private enum DocumentIndex: Int {
                 
-                static let count = 3
+                static let count = 4
                 
-                case identifier, name, date
+                case identifier, name, date, permission
             }
             
             public let identifier: UUID
@@ -771,6 +774,16 @@ public struct LockService: GATTProfileService {
             public let name: Key.Name
             
             public let date: Date
+            
+            public let permission: Permission
+            
+            public init(identifier: UUID, name: Key.Name, date: Date, permission: Permission) {
+                
+                self.identifier = identifier
+                self.name = name
+                self.date = date
+                self.permission = permission
+            }
             
             public init?(BSONValue: BSON.Value) {
                 
@@ -781,24 +794,29 @@ public struct LockService: GATTProfileService {
                 let identifierBSON = array[DocumentIndex.identifier.rawValue]
                 let nameBSON = array[DocumentIndex.name.rawValue]
                 let dateBSON = array[DocumentIndex.date.rawValue]
+                let permissionBSON = array[DocumentIndex.permission.rawValue]
                 
                 guard case let .binary(.generic, uuidData) = identifierBSON,
                     let identifier = SwiftFoundation.UUID(bigEndian: Data(bytes: uuidData)),
                     let nameString = nameBSON.stringValue,
                     let name = Key.Name(rawValue: nameString),
-                    let dateDouble = dateBSON.doubleValue
+                    let dateDouble = dateBSON.doubleValue,
+                    case let .binary(.generic, permissionData) = permissionBSON,
+                    let permission = Permission(bigEndian: Data(bytes: permissionData))
                     else { return nil }
                 
                 self.identifier = identifier
                 self.name = name
                 self.date = Date(timeIntervalSince1970: dateDouble)
+                self.permission = permission
             }
             
             public func toBSON() -> BSON.Value {
                 
                 let bsonArray = [BSON.Value.binary(subtype: .generic, data: identifier.toBigEndian().bytes),
                                  BSON.Value.string(name.rawValue),
-                                 BSON.Value.double(date.timeIntervalSince1970)]
+                                 BSON.Value.double(date.timeIntervalSince1970),
+                                 BSON.Value.binary(subtype: .generic, data: permission.toBigEndian().bytes)]
                 
                 return .array(BSON.Document(array: bsonArray))
             }
@@ -809,6 +827,16 @@ public struct LockService: GATTProfileService {
         
         
     }
+}
+
+// MARK: - Equatable
+
+public func == (lhs: LockService.ListKeysValue.KeyEntry, rhs: LockService.ListKeysValue.KeyEntry) -> Bool {
+    
+    return lhs.identifier == rhs.identifier
+        && lhs.name == rhs.name
+        && lhs.date == rhs.date
+        && lhs.permission == rhs.permission
 }
 
 // MARK: - Extension

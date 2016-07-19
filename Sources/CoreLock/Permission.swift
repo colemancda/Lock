@@ -39,7 +39,7 @@ public enum Permission: Equatable {
         }
     }
     
-    public static let length = 1 + sizeof(Int64) + (2 * sizeof(UInt16)) + Schedule.Weekdays.length // 20
+    public static let length = 1 + sizeof(Int64.self) + (2 * sizeof(UInt16.self)) + Schedule.Weekdays.length // 20
     
     public func toBigEndian() -> Data {
         
@@ -49,7 +49,7 @@ public enum Permission: Equatable {
             
             var expiryBigEndianValue = Int64(schedule.expiry.timeIntervalSince1970).bigEndian
             
-            var expiryBytes = [UInt8](repeating: 0, count: sizeof(Int64))
+            var expiryBytes = [UInt8](repeating: 0, count: sizeof(Int64.self))
             
             withUnsafePointer(&expiryBigEndianValue) { let _ = memcpy(&expiryBytes, $0, sizeof(Int64.self)) }
             
@@ -95,24 +95,24 @@ public enum Permission: Equatable {
         // scheduled
         case PermissionType.scheduled.rawValue:
             
-            var dateBytes = Array(byteValue[1 ..< 1 + sizeof(Int64)])
+            var dateBytes = Array(byteValue[1 ..< 1 + sizeof(Int64.self)])
             
             var dateValue: Int64 = 0
             
-            withUnsafeMutablePointer(&dateValue) { let _ = memcpy($0, &dateBytes, sizeof(Int64)) }
+            withUnsafeMutablePointer(&dateValue) { let _ = memcpy($0, &dateBytes, sizeof(Int64.self)) }
             
             dateValue = dateValue.bigEndian
             
-            let start = UInt16.init(bytes: (byteValue[sizeof(Int64) + 1], byteValue[sizeof(Int64) + 2])).bigEndian
+            let start = UInt16.init(bytes: (byteValue[sizeof(Int64.self) + 1], byteValue[sizeof(Int64.self) + 2])).bigEndian
             
-            let end = UInt16.init(bytes: (byteValue[sizeof(Int64) + 3], byteValue[sizeof(Int64) + 4])).bigEndian
+            let end = UInt16.init(bytes: (byteValue[sizeof(Int64.self) + 3], byteValue[sizeof(Int64.self) + 4])).bigEndian
             
             guard start <= end else { return nil }
             
             guard let interval = Schedule.Interval(rawValue: start ... end)
                 else { return nil }
             
-            let weekdaysBytes = Array(byteValue[sizeof(Int64) + 5 ..< sizeof(Int64) + 5 + Schedule.Weekdays.length])
+            let weekdaysBytes = Array(byteValue[sizeof(Int64.self) + 5 ..< sizeof(Int64.self) + 5 + Schedule.Weekdays.length])
             
             guard let weekdays = Schedule.Weekdays(data: Data(bytes: weekdaysBytes))
                 else { return nil }

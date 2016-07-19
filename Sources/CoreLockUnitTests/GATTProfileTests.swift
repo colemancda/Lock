@@ -214,4 +214,38 @@ final class GATTProfileTests: XCTestCase {
         XCTAssert(deserialized.authenticated(with: key))
         XCTAssert(deserialized.authenticated(with: KeyData()) == false)
     }
+    
+    func testListKeys() {
+        
+        let key = KeyData()
+        
+        // list keys command
+        
+        let command = LockService.ListKeysCommand.init(identifier: UUID(), nonce: Nonce(), key: key)
+        
+        guard let deserializedCommand = LockService.ListKeysCommand.init(bigEndian: command.toBigEndian())
+            else { XCTFail(); return }
+        
+        XCTAssert(deserializedCommand.identifier == command.identifier)
+        XCTAssert(deserializedCommand.nonce == command.nonce)
+        XCTAssert(deserializedCommand.authenticated(with: key))
+        XCTAssert(deserializedCommand.authenticated(with: KeyData()) == false)
+        
+        // list keys value
+        
+        let keys = [LockService.ListKeysValue.KeyEntry.init(identifier: UUID(), name: Key.Name(rawValue: "My Key")!, date: Date(timeIntervalSinceReferenceDate: TimeInterval(Int(Date.timeIntervalSinceReferenceDate))), permission: .admin)]
+        
+        let keysValue = LockService.ListKeysValue.init(keys: keys, key: key)
+        
+        guard let deserializedValue = LockService.ListKeysValue.init(bigEndian: keysValue.toBigEndian())
+            else { XCTFail(); return }
+        
+        guard let decryptedKeys = deserializedValue.decrypt(key: key)
+            else { XCTFail(); return }
+        
+        XCTAssert(deserializedValue.nonce == keysValue.nonce)
+        XCTAssert(deserializedValue.authenticated(with: key))
+        XCTAssert(deserializedValue.authenticated(with: KeyData()) == false)
+        XCTAssert(decryptedKeys == keys, "\(decryptedKeys) == \(keys)")
+    }
 }
