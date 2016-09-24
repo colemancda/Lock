@@ -14,8 +14,6 @@
 		6E0429D41D0F8950005AF969 /* CoreDataDecodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F605E1CCB2C0C001914E7 /* CoreDataDecodable.swift */; };
 		6E0429D51D0F8950005AF969 /* EntityController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F605F1CCB2C0C001914E7 /* EntityController.swift */; };
 		6E0429D61D0F8955005AF969 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F60571CCB1D37001914E7 /* Model.xcdatamodeld */; };
-		6E0429DE1D0FA3AA005AF969 /* IndexRequestHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E0429DD1D0FA3AA005AF969 /* IndexRequestHandler.swift */; };
-		6E0429E71D0FA411005AF969 /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F60571CCB1D37001914E7 /* Model.xcdatamodeld */; };
 		6E1F604C1CCB00DB001914E7 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F604A1CCAF290001914E7 /* Store.swift */; };
 		6E1F604E1CCB0130001914E7 /* Key.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F604D1CCB0130001914E7 /* Key.swift */; };
 		6E1F604F1CCB0130001914E7 /* Key.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F604D1CCB0130001914E7 /* Key.swift */; };
@@ -30,9 +28,6 @@
 		6E3E4ED21D2772C8000D13DF /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3E4ED11D2772C8000D13DF /* Constants.swift */; };
 		6E4E3F0C1CCBDBBD00196E39 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4E3F0B1CCBDBBD00196E39 /* Store.swift */; };
 		6E59F2221D971CA5002EEF94 /* CerraduraWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 6E778D971CD5B70300AED11E /* CerraduraWatch.app */; };
-		6E59F2431D972E2A002EEF94 /* CryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E59F2401D972E2A002EEF94 /* CryptoTests.swift */; };
-		6E59F2441D972E2A002EEF94 /* GATTProfileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E59F2411D972E2A002EEF94 /* GATTProfileTests.swift */; };
-		6E59F2451D972E2A002EEF94 /* SerializationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E59F2421D972E2A002EEF94 /* SerializationTests.swift */; };
 		6E60B9E31CD5C70C002D788D /* AnimatedButtonController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E60B9E21CD5C70C002D788D /* AnimatedButtonController.swift */; };
 		6E6172271D0F629A006C1148 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EE605B11CC21C1A008EF0EE /* Assets.xcassets */; };
 		6E646CF21CC449770029A4B3 /* LockController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E646CF11CC449770029A4B3 /* LockController.swift */; };
@@ -68,14 +63,11 @@
 		6E825E091D2702A6003D728B /* EmptyTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E825E081D2702A6003D728B /* EmptyTableView.swift */; };
 		6E825E0B1D2702BA003D728B /* EmptyTableView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E825E0A1D2702BA003D728B /* EmptyTableView.xib */; };
 		6E825E0D1D273503003D728B /* LockTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6E825E0C1D273503003D728B /* LockTableViewCell.xib */; };
+		6E89C9E01D97489C0028BF04 /* CryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E89C9DD1D97489C0028BF04 /* CryptoTests.swift */; };
+		6E89C9E11D97489C0028BF04 /* GATTProfileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E89C9DE1D97489C0028BF04 /* GATTProfileTests.swift */; };
+		6E89C9E21D97489C0028BF04 /* SerializationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E89C9DF1D97489C0028BF04 /* SerializationTests.swift */; };
 		6E8E39911D3DE6D3006419A8 /* BSON.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6E8E39901D3DE6D3006419A8 /* BSON.framework */; };
 		6E8E39921D3DE6E0006419A8 /* BSON.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 6E8E39901D3DE6D3006419A8 /* BSON.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		6EA7FC981D0FA71800F5D90B /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F604A1CCAF290001914E7 /* Store.swift */; };
-		6EA7FC991D0FA71800F5D90B /* LockCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F60641CCB2D0A001914E7 /* LockCache.swift */; };
-		6EA7FC9A1D0FA71800F5D90B /* CoreDataExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F60661CCB3885001914E7 /* CoreDataExtensions.swift */; };
-		6EA7FC9B1D0FA71800F5D90B /* CoreDataEncodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F605D1CCB2C0C001914E7 /* CoreDataEncodable.swift */; };
-		6EA7FC9C1D0FA71800F5D90B /* CoreDataDecodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F605E1CCB2C0C001914E7 /* CoreDataDecodable.swift */; };
-		6EA7FC9D1D0FA71800F5D90B /* EntityController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1F605F1CCB2C0C001914E7 /* EntityController.swift */; };
 		6EA899701CC2E3F0005FC225 /* GATTProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EA8996F1CC2E3F0005FC225 /* GATTProfile.swift */; };
 		6EB2E9E61CD54721000CF975 /* LockManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB2E9E51CD54721000CF975 /* LockManager.swift */; };
 		6EB2E9E71CD54721000CF975 /* LockManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB2E9E51CD54721000CF975 /* LockManager.swift */; };
@@ -84,7 +76,6 @@
 		6EB4132D1CC2EE68005AB1E2 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB4132C1CC2EE68005AB1E2 /* Configuration.swift */; };
 		6EB413331CC317A3005AB1E2 /* Bool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EB413321CC317A3005AB1E2 /* Bool.swift */; };
 		6EBAE7711D0FB2E8008EADC7 /* CoreSpotlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EBAE7701D0FB2E8008EADC7 /* CoreSpotlight.swift */; };
-		6EBAE7721D0FB347008EADC7 /* CoreSpotlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EBAE7701D0FB2E8008EADC7 /* CoreSpotlight.swift */; };
 		6EC1CEF61D337159001D31F3 /* eKeyDocument.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 6EC1CEF51D337159001D31F3 /* eKeyDocument.pdf */; };
 		6EC1CEF81D337373001D31F3 /* NewKeyInvitation.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6EC1CEF71D337373001D31F3 /* NewKeyInvitation.storyboard */; };
 		6EC1CEFA1D3379E7001D31F3 /* NewKeyRecieveViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC1CEF91D3379E7001D31F3 /* NewKeyRecieveViewController.swift */; };
@@ -180,13 +171,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 6E778DA21CD5B70300AED11E;
 			remoteInfo = "CerraduraWatch Extension";
-		};
-		6EA7FC961D0FA6A100F5D90B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 6EE6058A1CC21941008EF0EE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 6EF45F8F1CC6CAF9001F7A39;
-			remoteInfo = "CoreLock iOS";
 		};
 		6ED3386F1CC7D1EE00DF1461 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -288,10 +272,6 @@
 
 /* Begin PBXFileReference section */
 		6E0429CF1D0F8842005AF969 /* CerraduraWatch Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "CerraduraWatch Extension.entitlements"; sourceTree = "<group>"; };
-		6E0429DB1D0FA3AA005AF969 /* CerraduraSpotlightIndex.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CerraduraSpotlightIndex.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		6E0429DD1D0FA3AA005AF969 /* IndexRequestHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexRequestHandler.swift; sourceTree = "<group>"; };
-		6E0429DF1D0FA3AA005AF969 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		6E0429E61D0FA3B4005AF969 /* CerraduraSpotlightIndex.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = CerraduraSpotlightIndex.entitlements; sourceTree = "<group>"; };
 		6E1F604A1CCAF290001914E7 /* Store.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		6E1F604D1CCB0130001914E7 /* Key.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Key.swift; sourceTree = "<group>"; };
 		6E1F60581CCB1D37001914E7 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
@@ -306,9 +286,6 @@
 		6E3E4ED11D2772C8000D13DF /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		6E4E3F0B1CCBDBBD00196E39 /* Store.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		6E5269841CCC205500AB20A2 /* KeysViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeysViewController.swift; sourceTree = "<group>"; };
-		6E59F2401D972E2A002EEF94 /* CryptoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CryptoTests.swift; path = ../../Tests/CoreLockUnitTests/CryptoTests.swift; sourceTree = "<group>"; };
-		6E59F2411D972E2A002EEF94 /* GATTProfileTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GATTProfileTests.swift; path = ../../Tests/CoreLockUnitTests/GATTProfileTests.swift; sourceTree = "<group>"; };
-		6E59F2421D972E2A002EEF94 /* SerializationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SerializationTests.swift; path = ../../Tests/CoreLockUnitTests/SerializationTests.swift; sourceTree = "<group>"; };
 		6E60B9E21CD5C70C002D788D /* AnimatedButtonController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimatedButtonController.swift; sourceTree = "<group>"; };
 		6E646CF11CC449770029A4B3 /* LockController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockController.swift; sourceTree = "<group>"; };
 		6E646CF31CC4A5730029A4B3 /* Version.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
@@ -343,6 +320,9 @@
 		6E825E081D2702A6003D728B /* EmptyTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyTableView.swift; sourceTree = "<group>"; };
 		6E825E0A1D2702BA003D728B /* EmptyTableView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = EmptyTableView.xib; sourceTree = "<group>"; };
 		6E825E0C1D273503003D728B /* LockTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LockTableViewCell.xib; sourceTree = "<group>"; };
+		6E89C9DD1D97489C0028BF04 /* CryptoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CryptoTests.swift; sourceTree = "<group>"; };
+		6E89C9DE1D97489C0028BF04 /* GATTProfileTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTProfileTests.swift; sourceTree = "<group>"; };
+		6E89C9DF1D97489C0028BF04 /* SerializationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerializationTests.swift; sourceTree = "<group>"; };
 		6E8E39901D3DE6D3006419A8 /* BSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = BSON.framework; sourceTree = "<group>"; };
 		6EA8996F1CC2E3F0005FC225 /* GATTProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTProfile.swift; sourceTree = "<group>"; };
 		6EA944C61CD6275500D776E5 /* ComplicationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComplicationController.swift; sourceTree = "<group>"; };
@@ -403,13 +383,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		6E0429D81D0FA3AA005AF969 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		6E729C511CC3BC030018A848 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -469,16 +442,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		6E0429DC1D0FA3AA005AF969 /* CerraduraSpotlightIndex */ = {
-			isa = PBXGroup;
-			children = (
-				6E0429E61D0FA3B4005AF969 /* CerraduraSpotlightIndex.entitlements */,
-				6E0429DD1D0FA3AA005AF969 /* IndexRequestHandler.swift */,
-				6E0429DF1D0FA3AA005AF969 /* Info.plist */,
-			);
-			path = CerraduraSpotlightIndex;
-			sourceTree = "<group>";
-		};
 		6E1F605A1CCB1DE0001914E7 /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -571,12 +534,12 @@
 		6E729C7C1CC3BD4A0018A848 /* UnitTests */ = {
 			isa = PBXGroup;
 			children = (
-				6E59F2401D972E2A002EEF94 /* CryptoTests.swift */,
-				6E59F2411D972E2A002EEF94 /* GATTProfileTests.swift */,
-				6E59F2421D972E2A002EEF94 /* SerializationTests.swift */,
+				6E89C9DD1D97489C0028BF04 /* CryptoTests.swift */,
+				6E89C9DE1D97489C0028BF04 /* GATTProfileTests.swift */,
+				6E89C9DF1D97489C0028BF04 /* SerializationTests.swift */,
 			);
 			name = UnitTests;
-			path = CoreLockUnitTests;
+			path = ../Tests/UnitTests;
 			sourceTree = "<group>";
 		};
 		6E778D981CD5B70300AED11E /* CerraduraWatch */ = {
@@ -662,7 +625,6 @@
 				6E778D981CD5B70300AED11E /* CerraduraWatch */,
 				6E778DA71CD5B70300AED11E /* CerraduraWatch Extension */,
 				6EDCE1EA1D0F34A300C3D3DC /* CerraduraToday Extension */,
-				6E0429DC1D0FA3AA005AF969 /* CerraduraSpotlightIndex */,
 				6EDCE1E71D0F34A300C3D3DC /* Frameworks */,
 				6EE605931CC21941008EF0EE /* Products */,
 			);
@@ -679,7 +641,6 @@
 				6E778D971CD5B70300AED11E /* CerraduraWatch.app */,
 				6E778DA31CD5B70300AED11E /* CerraduraWatch Extension.appex */,
 				6EDCE1E61D0F34A200C3D3DC /* CerraduraToday Extension.appex */,
-				6E0429DB1D0FA3AA005AF969 /* CerraduraSpotlightIndex.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -817,24 +778,6 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		6E0429DA1D0FA3AA005AF969 /* CerraduraSpotlightIndex */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 6E0429E31D0FA3AB005AF969 /* Build configuration list for PBXNativeTarget "CerraduraSpotlightIndex" */;
-			buildPhases = (
-				6E0429D71D0FA3AA005AF969 /* Sources */,
-				6E0429D81D0FA3AA005AF969 /* Frameworks */,
-				6E0429D91D0FA3AA005AF969 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				6EA7FC971D0FA6A100F5D90B /* PBXTargetDependency */,
-			);
-			name = CerraduraSpotlightIndex;
-			productName = CerraduraSpotlightIndex;
-			productReference = 6E0429DB1D0FA3AA005AF969 /* CerraduraSpotlightIndex.appex */;
-			productType = "com.apple.product-type.app-extension";
-		};
 		6E729C531CC3BC030018A848 /* CoreLockTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6E729C5C1CC3BC030018A848 /* Build configuration list for PBXNativeTarget "CoreLockTests" */;
@@ -997,15 +940,6 @@
 				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = ColemanCDA;
 				TargetAttributes = {
-					6E0429DA1D0FA3AA005AF969 = {
-						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = 4W79SG34MW;
-						SystemCapabilities = {
-							com.apple.ApplicationGroups.iOS = {
-								enabled = 1;
-							};
-						};
-					};
 					6E729C531CC3BC030018A848 = {
 						CreatedOnToolsVersion = 7.3;
 						LastSwiftMigration = 0800;
@@ -1087,19 +1021,11 @@
 				6E778D961CD5B70300AED11E /* CerraduraWatch */,
 				6E778DA21CD5B70300AED11E /* CerraduraWatch Extension */,
 				6EDCE1E51D0F34A200C3D3DC /* CerraduraToday Extension */,
-				6E0429DA1D0FA3AA005AF969 /* CerraduraSpotlightIndex */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		6E0429D91D0FA3AA005AF969 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		6E729C521CC3BC030018A848 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1240,29 +1166,13 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		6E0429D71D0FA3AA005AF969 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				6EA7FC9A1D0FA71800F5D90B /* CoreDataExtensions.swift in Sources */,
-				6EA7FC9C1D0FA71800F5D90B /* CoreDataDecodable.swift in Sources */,
-				6EA7FC9D1D0FA71800F5D90B /* EntityController.swift in Sources */,
-				6EA7FC981D0FA71800F5D90B /* Store.swift in Sources */,
-				6E0429DE1D0FA3AA005AF969 /* IndexRequestHandler.swift in Sources */,
-				6E0429E71D0FA411005AF969 /* Model.xcdatamodeld in Sources */,
-				6EBAE7721D0FB347008EADC7 /* CoreSpotlight.swift in Sources */,
-				6EA7FC9B1D0FA71800F5D90B /* CoreDataEncodable.swift in Sources */,
-				6EA7FC991D0FA71800F5D90B /* LockCache.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		6E729C501CC3BC030018A848 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6E59F2431D972E2A002EEF94 /* CryptoTests.swift in Sources */,
-				6E59F2451D972E2A002EEF94 /* SerializationTests.swift in Sources */,
-				6E59F2441D972E2A002EEF94 /* GATTProfileTests.swift in Sources */,
+				6E89C9E01D97489C0028BF04 /* CryptoTests.swift in Sources */,
+				6E89C9E21D97489C0028BF04 /* SerializationTests.swift in Sources */,
+				6E89C9E11D97489C0028BF04 /* GATTProfileTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1420,11 +1330,6 @@
 			target = 6E778DA21CD5B70300AED11E /* CerraduraWatch Extension */;
 			targetProxy = 6E778DA51CD5B70300AED11E /* PBXContainerItemProxy */;
 		};
-		6EA7FC971D0FA6A100F5D90B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 6EF45F8F1CC6CAF9001F7A39 /* CoreLock iOS */;
-			targetProxy = 6EA7FC961D0FA6A100F5D90B /* PBXContainerItemProxy */;
-		};
 		6ED338701CC7D1EE00DF1461 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 6EF45F8F1CC6CAF9001F7A39 /* CoreLock iOS */;
@@ -1465,37 +1370,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		6E0429E41D0FA3AB005AF969 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = CerraduraSpotlightIndex/CerraduraSpotlightIndex.entitlements;
-				FRAMEWORK_SEARCH_PATHS = $SRCROOT/../Carthage/Build/iOS;
-				INFOPLIST_FILE = CerraduraSpotlightIndex/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.colemancda.Cerradura.CerraduraSpotlightIndex;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		6E0429E51D0FA3AB005AF969 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = CerraduraSpotlightIndex/CerraduraSpotlightIndex.entitlements;
-				FRAMEWORK_SEARCH_PATHS = $SRCROOT/../Carthage/Build/iOS;
-				INFOPLIST_FILE = CerraduraSpotlightIndex/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.colemancda.Cerradura.CerraduraSpotlightIndex;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
 		6E729C5D1CC3BC030018A848 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1908,15 +1782,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		6E0429E31D0FA3AB005AF969 /* Build configuration list for PBXNativeTarget "CerraduraSpotlightIndex" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				6E0429E41D0FA3AB005AF969 /* Debug */,
-				6E0429E51D0FA3AB005AF969 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		6E729C5C1CC3BC030018A848 /* Build configuration list for PBXNativeTarget "CoreLockTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

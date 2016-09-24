@@ -260,8 +260,8 @@ final class HomeKitEnableActivity: UIActivity {
         
         guard let lockItem = activityItems.first as? LockActivityItem,
             let lockCache = Store.shared[cache: lockItem.identifier],
-            let _ = LockManager.shared[lockItem.identifier] // Lock must be reachable
-            , lockCache.permission == .owner
+            let _ = LockManager.shared[lockItem.identifier], // Lock must be reachable
+            lockCache.permission == .owner
             else { return false }
         
         return true
