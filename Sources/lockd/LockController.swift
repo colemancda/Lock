@@ -402,18 +402,18 @@ final class LockController {
             
             let argv : UnsafeMutablePointer<UnsafeMutablePointer<Int8>?> = args.withUnsafeBufferPointer {
                 let array : UnsafeBufferPointer<String> = $0
-                let buffer = UnsafeMutablePointer<UnsafeMutablePointer<Int8>?>(allocatingCapacity: array.count + 1)
-                buffer.initializeFrom(array.map { $0.withCString(strdup) })
+                let buffer = UnsafeMutablePointer<UnsafeMutablePointer<Int8>?>.allocate(capacity: array.count + 1)
+                buffer.initialize(from: array.map { $0.withCString(strdup) })
                 buffer[array.count] = nil
                 return buffer
             }
             
             defer {
                 for arg in argv ..< argv + args.count {
-                    free(UnsafeMutablePointer<Void>(arg.pointee))
+                    free(UnsafeMutableRawPointer(arg.pointee))
                 }
                 
-                argv.deallocateCapacity(args.count + 1)
+                argv.deallocate(capacity: args.count + 1)
             }
             
             var pid = pid_t()
@@ -443,7 +443,7 @@ final class LockController {
         
         updating = true
         
-        let _ = try! Thread {
+        let _ = try! SwiftFoundation.Thread {
             
             #if os(Linux)
                 system(Command.updatePackageList)

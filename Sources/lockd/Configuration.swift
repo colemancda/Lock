@@ -69,7 +69,7 @@ extension Configuration {
     
     func save(_ filename: String) throws {
         
-        let data = self.toJSON().toString(options: [JSON.WritingOption.Pretty])!.toUTF8Data()
+        let data = self.toJSON().toString(options: [JSON.WritingOption.pretty])!.toUTF8Data()
         
         // create file if not created
         if FileManager.fileExists(at: filename) == false {
