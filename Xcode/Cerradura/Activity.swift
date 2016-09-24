@@ -11,14 +11,14 @@ import UIKit
 import CoreLock
 import JGProgressHUD
 
-final class LockActivityItem: NSObject {
+struct LockActivityItem {
     
-    static let excludedActivityTypes = [UIActivityTypePrint,
-                                     UIActivityTypeAssignToContact,
-                                     UIActivityTypeAirDrop,
-                                     UIActivityTypeCopyToPasteboard,
-                                     UIActivityTypeSaveToCameraRoll,
-                                     UIActivityTypePostToFlickr]
+    static let excludedActivityTypes: [UIActivityType] = [.print,
+                                                          .assignToContact,
+                                                          .airDrop,
+                                                          .copyToPasteboard,
+                                                          .saveToCameraRoll,
+                                                          .postToFlickr]
     
     let identifier: UUID
     
@@ -60,31 +60,36 @@ enum LockActivity: String {
     case rename = "com.colemancda.cerradura.activity.rename"
     case update = "com.colemancda.cerradura.activity.update"
     case homeKitEnable = "com.colemancda.cerradura.activity.homeKitEnable"
+    
+    var activityType: UIActivityType {
+        
+        return UIActivityType(rawValue: self.rawValue)
+    }
 }
 
 /// Activity for sharing a key.
 final class NewKeyActivity: UIActivity {
     
-    override static func activityCategory() -> UIActivityCategory { return .action }
+    override class var activityCategory: UIActivityCategory { return .action }
     
     private var item: LockActivityItem!
     
-    override func activityType() -> String? {
+    override var activityType: UIActivityType? {
         
-        return LockActivity.newKey.rawValue
+        return LockActivity.newKey.activityType
     }
     
-    override func activityTitle() -> String? {
+    override var activityTitle: String? {
         
         return "Share Key"
     }
     
-    override func activityImage() -> UIImage? {
+    override var activityImage: UIImage? {
         
         return #imageLiteral(resourceName: "activityNewKey")
     }
     
-    override func canPerform(withActivityItems activityItems: [AnyObject]) -> Bool {
+    override func canPerform(withActivityItems activityItems: [Any]) -> Bool {
         
         guard let lockItem = activityItems.first as? LockActivityItem,
             let lockCache = Store.shared[cache: lockItem.identifier],
@@ -99,12 +104,12 @@ final class NewKeyActivity: UIActivity {
         }
     }
     
-    override func prepare(withActivityItems activityItems: [AnyObject]) {
+    override func prepare(withActivityItems activityItems: [Any]) {
         
         self.item = activityItems.first as! LockActivityItem
     }
     
-    override func activityViewController() -> UIViewController? {
+    override var activityViewController: UIViewController? {
         
         let navigationController = UIStoryboard(name: "NewKey", bundle: nil).instantiateInitialViewController() as! UINavigationController
         
@@ -121,36 +126,36 @@ final class NewKeyActivity: UIActivity {
 /// Activity for deleting the lock locally.
 final class DeleteLockActivity: UIActivity {
     
-    override static func activityCategory() -> UIActivityCategory { return .action }
+    override class var activityCategory: UIActivityCategory { return .action }
     
     private var item: LockActivityItem!
     
-    override func activityType() -> String? {
+    override var activityType: UIActivityType? {
         
-        return LockActivity.delete.rawValue
+        return LockActivity.delete.activityType
     }
     
-    override func activityTitle() -> String? {
+    override var activityTitle: String? {
         
         return "Delete"
     }
     
-    override func activityImage() -> UIImage? {
+    override var activityImage: UIImage? {
         
         return #imageLiteral(resourceName: "activityDelete")
     }
     
-    override func canPerform(withActivityItems activityItems: [AnyObject]) -> Bool {
+    override func canPerform(withActivityItems activityItems: [Any]) -> Bool {
         
         return activityItems.first as? LockActivityItem != nil
     }
     
-    override func prepare(withActivityItems activityItems: [AnyObject]) {
+    override func prepare(withActivityItems activityItems: [Any]) {
         
         self.item = activityItems.first as! LockActivityItem
     }
     
-    override func activityViewController() -> UIViewController? {
+    override var activityViewController: UIViewController? {
         
         let alert = UIAlertController(title: NSLocalizedString("Confirmation", comment: "DeletionConfirmation"),
                                       message: "Are you sure you want to delete this key?",
@@ -175,36 +180,36 @@ final class DeleteLockActivity: UIActivity {
 /// Activity for renaming a lock.
 final class RenameActivity: UIActivity {
     
-    override static func activityCategory() -> UIActivityCategory { return .action }
+    override class var activityCategory: UIActivityCategory { return .action }
     
     private var item: LockActivityItem!
     
-    override func activityType() -> String? {
+    override var activityType: UIActivityType? {
         
-        return LockActivity.rename.rawValue
+        return LockActivity.rename.activityType
     }
     
-    override func activityTitle() -> String? {
+    override var activityTitle: String? {
         
         return "Rename"
     }
     
-    override func activityImage() -> UIImage? {
+    override var activityImage: UIImage? {
         
         return #imageLiteral(resourceName: "activityRename")
     }
     
-    override func canPerform(withActivityItems activityItems: [AnyObject]) -> Bool {
+    override func canPerform(withActivityItems activityItems: [Any]) -> Bool {
         
         return activityItems.first as? LockActivityItem != nil
     }
     
-    override func prepare(withActivityItems activityItems: [AnyObject]) {
+    override func prepare(withActivityItems activityItems: [Any]) {
         
         self.item = activityItems.first as! LockActivityItem
     }
     
-    override func activityViewController() -> UIViewController? {
+    override var activityViewController: UIViewController? {
         
         let alert = UIAlertController(title: "Rename",
                                       message: "Type a user friendly name for this lock.",
@@ -232,26 +237,26 @@ final class RenameActivity: UIActivity {
 /// Activity for enabling HomeKit.
 final class HomeKitEnableActivity: UIActivity {
     
-    override static func activityCategory() -> UIActivityCategory { return .action }
+    override class var activityCategory: UIActivityCategory { return .action }
     
     private var item: LockActivityItem!
     
-    override func activityType() -> String? {
+    override var activityType: UIActivityType? {
         
-        return LockActivity.homeKitEnable.rawValue
+        return LockActivity.homeKitEnable.activityType
     }
     
-    override func activityTitle() -> String? {
+    override var activityTitle: String? {
         
         return "Home Mode"
     }
     
-    override func activityImage() -> UIImage? {
+    override var activityImage: UIImage? {
         
         return #imageLiteral(resourceName: "activityHomeKit")
     }
     
-    override func canPerform(withActivityItems activityItems: [AnyObject]) -> Bool {
+    override func canPerform(withActivityItems activityItems: [Any]) -> Bool {
         
         guard let lockItem = activityItems.first as? LockActivityItem,
             let lockCache = Store.shared[cache: lockItem.identifier],
@@ -262,12 +267,12 @@ final class HomeKitEnableActivity: UIActivity {
         return true
     }
     
-    override func prepare(withActivityItems activityItems: [AnyObject]) {
+    override func prepare(withActivityItems activityItems: [Any]) {
         
         self.item = activityItems.first as! LockActivityItem
     }
     
-    override func activityViewController() -> UIViewController? {
+    override var activityViewController: UIViewController? {
         
         let lockItem = self.item!
         
@@ -311,26 +316,26 @@ final class HomeKitEnableActivity: UIActivity {
 
 final class UpdateActivity: UIActivity {
     
-    override static func activityCategory() -> UIActivityCategory { return .action }
+    override class var activityCategory: UIActivityCategory { return .action }
     
     private var item: LockActivityItem!
     
-    override func activityType() -> String? {
+    override var activityType: UIActivityType? {
         
-        return LockActivity.homeKitEnable.rawValue
+        return LockActivity.homeKitEnable.activityType
     }
     
-    override func activityTitle() -> String? {
+    override var activityTitle: String? {
         
         return "Update"
     }
     
-    override func activityImage() -> UIImage? {
+    override var activityImage: UIImage? {
         
         return #imageLiteral(resourceName: "activityUpdate")
     }
     
-    override func canPerform(withActivityItems activityItems: [AnyObject]) -> Bool {
+    override func canPerform(withActivityItems activityItems: [Any]) -> Bool {
         
         guard let lockItem = activityItems.first as? LockActivityItem,
             let lockCache = Store.shared[cache: lockItem.identifier],
@@ -341,12 +346,12 @@ final class UpdateActivity: UIActivity {
         return true
     }
     
-    override func prepare(withActivityItems activityItems: [AnyObject]) {
+    override func prepare(withActivityItems activityItems: [Any]) {
         
         self.item = activityItems.first as! LockActivityItem
     }
     
-    override func activityViewController() -> UIViewController? {
+    override var activityViewController: UIViewController? {
         
         let lockItem = self.item!
         

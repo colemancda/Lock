@@ -56,19 +56,16 @@ final class BeaconController: NSObject, CLLocationManagerDelegate {
     
     // MARK: - CLLocationManagerDelegate
     
-    @objc(locationManager:didStartMonitoringForRegion:)
     func locationManager(_ manager: CLLocationManager, didStartMonitoringFor region: CLRegion) {
         
         log?("Started iBeacon monitoring")
     }
     
-    @objc(locationManager:monitoringDidFailForRegion:withError:)
-    func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: NSError) {
+    func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
         
         log?("Could not start iBeacon monitoring. (\(error))")
     }
     
-    @objc(locationManager:didDetermineState:forRegion:)
     func locationManager(_ manager: CLLocationManager, didDetermineState state: CLRegionState, for region: CLRegion) {
         
         guard regionState != state else {
@@ -83,6 +80,7 @@ final class BeaconController: NSObject, CLLocationManagerDelegate {
         // state changed
         regionState = state
         
+        /*
         if state == .inside {
             
             // dont scan if already scanning
@@ -101,11 +99,10 @@ final class BeaconController: NSObject, CLLocationManagerDelegate {
             
             LockManager.shared.clear()
         }
-        
+        */
     }
     
     /*
-    @objc(locationManager:didEnterRegion:)
     func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
         
         log?("Did enter region")
@@ -113,7 +110,6 @@ final class BeaconController: NSObject, CLLocationManagerDelegate {
         
     }
     
-    @objc(locationManager:didExitRegion:)
     func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
         
         log?("Did exit region")

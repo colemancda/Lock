@@ -39,7 +39,7 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
         
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: LockCache.entityName)
         
-        fetchRequest.sortDescriptors = [SortDescriptor(key: LockCache.Property.name.rawValue, ascending: true)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: LockCache.Property.name.rawValue, ascending: true)]
         
         let controller = NSFetchedResultsController<NSManagedObject>(fetchRequest: fetchRequest, managedObjectContext: Store.shared.managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
         
@@ -76,7 +76,7 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
             
         } else {
             
-            self.state = .error(Error.bluetoothDisabled)
+            self.state = .error(AppError.bluetoothDisabled)
         }
         
         // start observing Core Data context
@@ -134,7 +134,7 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
             
             do { throw error }
             
-            catch Error.bluetoothDisabled {
+            catch AppError.bluetoothDisabled {
                 
                 showEmptyTableView()
                 
@@ -243,7 +243,7 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
     }
     
     /// Ask's the user for the lock's name.
-    private func requestLockName(_ completion: (String?) -> ()) {
+    private func requestLockName(_ completion: @escaping (String?) -> ()) {
         
         let alert = UIAlertController(title: NSLocalizedString("Lock Name", comment: "LockName"),
                                       message: "Type a user friendly name for the lock.",
@@ -340,7 +340,7 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
             // bluetooth disabled
             else {
                 
-                self.state = .error(Error.bluetoothDisabled)
+                self.state = .error(AppError.bluetoothDisabled)
             }
         }
     }
@@ -437,7 +437,7 @@ extension NearLockViewController {
     enum State {
         
         case scanning
-        case error(ErrorProtocol)
+        case error(Swift.Error)
         case found([LockManager.Lock])
     }
 }

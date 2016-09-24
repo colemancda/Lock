@@ -35,7 +35,7 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
     override func awake(withContext context: AnyObject?) {
         super.awake(withContext: context)
                 
-        session = WCSession.default()
+        session = WCSession.default
         session.delegate = self
     }
 
@@ -147,7 +147,7 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
         }
     }
     
-    private func currentLockResponse(message: [String: AnyObject]) {
+    private func currentLockResponse(message: [String: Any]) {
         
         print("Recieved current lock response")
         
@@ -157,7 +157,7 @@ final class InterfaceController: WKInterfaceController, WCSessionDelegate {
         mainQueue { self.lock = response.permission }
     }
     
-    private func unlockResponse(message: [String: AnyObject]) {
+    private func unlockResponse(message: [String: Any]) {
         
         print("Recieved unlock response")
         

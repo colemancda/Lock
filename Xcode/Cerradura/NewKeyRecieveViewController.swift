@@ -67,7 +67,7 @@ final class NewKeyRecieveViewController: UITableViewController {
             do {
                 
                 // scan lock is not cached
-                if LockManager.shared.foundLocks.value.contains({ $0.identifier == newKeyInvitation.lock }) == false {
+                if LockManager.shared.foundLocks.value.contains(where: { $0.identifier == newKeyInvitation.lock }) == false {
                     
                     try LockManager.shared.scan()
                 }
@@ -75,7 +75,7 @@ final class NewKeyRecieveViewController: UITableViewController {
                 foundLock = LockManager.shared[newKeyInvitation.lock]
                 
                 guard foundLock != nil
-                    else { throw Error.lockNotInRange }
+                    else { throw AppError.lockNotInRange }
                 
                 // recieve new key
                 try LockManager.shared.recieveNewKey(newKeyInvitation.lock, sharedSecret: newKeyInvitation.key.sharedSecret, newKey: (newKeyInvitation.key.identifier, keyData))

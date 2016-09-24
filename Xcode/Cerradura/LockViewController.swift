@@ -21,7 +21,7 @@ final class LockViewController: UIViewController {
     
     var lockIdentifier: UUID! {
         
-        didSet { if isViewLoaded() { updateUI() } }
+        didSet { if self.isViewLoaded { self.updateUI() } }
     }
     
     // MARK: - Private Properties
@@ -32,7 +32,7 @@ final class LockViewController: UIViewController {
     
     deinit {
         
-        NotificationCenter.default().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
     override func viewDidLoad() {
@@ -41,7 +41,7 @@ final class LockViewController: UIViewController {
         guard lockIdentifier != nil else { fatalError("Lock identifer not set") }
         
         // observe context
-        NotificationCenter.default().addObserver(self, selector: #selector(contextObjectsDidChange), name: Notification.Name.NSManagedObjectContextObjectsDidChange, object: Store.shared.managedObjectContext)
+        NotificationCenter.default.addObserver(self, selector: #selector(contextObjectsDidChange), name: Notification.Name.NSManagedObjectContextObjectsDidChange, object: Store.shared.managedObjectContext)
         
         
         self.updateUI()
@@ -65,7 +65,7 @@ final class LockViewController: UIViewController {
             
             let lockItem = LockActivityItem(identifier: lockIdentifier)
             
-            let items = [lockItem, lockItem.text, lockItem.image]
+            let items = [lockItem, lockItem.text, lockItem.image] as [Any]
             
             let activityViewController = UIActivityViewController(activityItems: items, applicationActivities: activities)
             activityViewController.excludedActivityTypes = LockActivityItem.excludedActivityTypes
@@ -171,7 +171,7 @@ final class LockViewController: UIViewController {
         
         // check if deleted
         guard let deletedObjects = notification.userInfo?[NSDeletedObjectsKey] as? [NSManagedObject],
-            deletedObjects.contains({ LockCache(managedObject: $0).identifier == self.lockIdentifier })
+            deletedObjects.contains(where: { LockCache(managedObject: $0).identifier == self.lockIdentifier })
             else { return }
         
         if let navigationIndex = navigationController?.viewControllers.index(of: self),

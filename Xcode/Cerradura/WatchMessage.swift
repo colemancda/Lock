@@ -18,9 +18,9 @@ protocol WatchMessage {
     
     static var messageType: WatchMessageType { get }
     
-    init?(message: [String: AnyObject])
+    init?(message: [String: Any])
     
-    func toMessage() -> [String: AnyObject]
+    func toMessage() -> [String: Any]
 }
 
 let WatchMessageIdentifierKey = "message"
@@ -60,7 +60,7 @@ enum WatchMessageType: UInt8 {
 
 extension LockCache {
     
-    static func from(message: [[String: AnyObject]]) -> [LockCache]? {
+    static func from(message: [[String: Any]]) -> [LockCache]? {
         
         var values = [LockCache]()
         
@@ -75,7 +75,7 @@ extension LockCache {
         return values
     }
     
-    init?(message: [String: AnyObject]) {
+    init?(message: [String: Any]) {
         
         guard let identifierString = message[Property.identifier.rawValue] as? String,
             let identifier = UUID(rawValue: identifierString),
@@ -97,7 +97,7 @@ extension LockCache {
         self.keyIdentifier = keyIdentifier
     }
     
-    func toMessage() -> [String: AnyObject] {
+    func toMessage() -> [String: Any] {
         
         return [Property.identifier.rawValue: identifier.rawValue,
                 Property.name.rawValue: name,
@@ -114,17 +114,17 @@ struct LocksRequest {
     
     init() { }
     
-    init?(message: [String: AnyObject]) {
+    init?(message: [String: Any]) {
         
         guard let identifier = message[WatchMessageIdentifierKey] as? NSNumber,
             let messageType = WatchMessageType(rawValue: identifier.uint8Value),
-            messageType == Self.messageType
+            messageType == type(of: self).messageType
             else { return nil }
     }
     
-    func toMessage() -> [String: AnyObject] {
+    func toMessage() -> [String: Any] {
         
-        return [WatchMessageIdentifierKey: NSNumber(value: Self.messageType.rawValue)]
+        return [WatchMessageIdentifierKey: NSNumber(value: type(of: self).messageType.rawValue)]
     }
 }
 
@@ -141,21 +141,21 @@ struct LocksUpdatedNotification: WatchMessage {
         self.locks = locks
     }
     
-    init?(message: [String: AnyObject]) {
+    init?(message: [String: Any]) {
         
         guard let identifier = message[WatchMessageIdentifierKey] as? NSNumber,
             let messageType = WatchMessageType(rawValue: identifier.uint8Value),
             let locksMessage = message[Key.locks.rawValue] as? [[String: AnyObject]],
             let locks = LockCache.from(message: locksMessage),
-            messageType == Self.messageType
+            messageType == type(of: self).messageType
             else { return nil }
         
         self.locks = locks
     }
     
-    func toMessage() -> [String: AnyObject] {
+    func toMessage() -> [String: Any] {
         
-        return [WatchMessageIdentifierKey: NSNumber(value: Self.messageType.rawValue),
+        return [WatchMessageIdentifierKey: NSNumber(value: type(of: self).messageType.rawValue),
                 Key.locks.rawValue: locks.map({ $0.toMessage() })]
     }
 }
@@ -173,11 +173,11 @@ struct UnlockRequest: WatchMessage {
         self.lock = lock
     }
     
-    init?(message: [String: AnyObject]) {
+    init?(message: [String: Any]) {
         
         guard let identifier = message[WatchMessageIdentifierKey] as? NSNumber,
             let messageType = WatchMessageType(rawValue: identifier.uint8Value),
-            messageType == Self.messageType,
+            messageType == type(of: self).messageType,
             let lockString = message[Key.lock.rawValue] as? String,
             let lock = UUID(rawValue: lockString)
             else { return nil }
@@ -185,9 +185,9 @@ struct UnlockRequest: WatchMessage {
         self.lock = lock
     }
     
-    func toMessage() -> [String: AnyObject] {
+    func toMessage() -> [String: Any] {
         
-        return [WatchMessageIdentifierKey: NSNumber(value: Self.messageType.rawValue),
+        return [WatchMessageIdentifierKey: NSNumber(value: type(of: self).messageType.rawValue),
                 Key.lock.rawValue: lock.rawValue]
     }
 }
@@ -205,11 +205,11 @@ struct UnlockResponse: WatchMessage {
         self.error = error
     }
     
-    init?(message: [String: AnyObject]) {
+    init?(message: [String: Any]) {
         
         guard let identifier = message[WatchMessageIdentifierKey] as? NSNumber,
             let messageType = WatchMessageType(rawValue: identifier.uint8Value),
-            messageType == Self.messageType
+            messageType == type(of: self).messageType
             else { return nil }
         
         /// optional value
@@ -219,9 +219,9 @@ struct UnlockResponse: WatchMessage {
         }
     }
     
-    func toMessage() -> [String: AnyObject] {
+    func toMessage() -> [String: Any] {
         
-        var message: [String: AnyObject] = [WatchMessageIdentifierKey: NSNumber(value: Self.messageType.rawValue)]
+        var message: [String: Any] = [WatchMessageIdentifierKey: NSNumber(value: type(of: self).messageType.rawValue)]
         
         message[Key.error.rawValue] = self.error
         

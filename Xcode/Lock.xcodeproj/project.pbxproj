@@ -29,6 +29,7 @@
 		6E30653B1CD04A2A007424E0 /* NewKeyScheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E30653A1CD04A2A007424E0 /* NewKeyScheduleViewController.swift */; };
 		6E3E4ED21D2772C8000D13DF /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3E4ED11D2772C8000D13DF /* Constants.swift */; };
 		6E4E3F0C1CCBDBBD00196E39 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4E3F0B1CCBDBBD00196E39 /* Store.swift */; };
+		6E59F2221D971CA5002EEF94 /* CerraduraWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 6E778D971CD5B70300AED11E /* CerraduraWatch.app */; };
 		6E60B9E31CD5C70C002D788D /* AnimatedButtonController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E60B9E21CD5C70C002D788D /* AnimatedButtonController.swift */; };
 		6E6172271D0F629A006C1148 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EE605B11CC21C1A008EF0EE /* Assets.xcassets */; };
 		6E646CF21CC449770029A4B3 /* LockController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E646CF11CC449770029A4B3 /* LockController.swift */; };
@@ -153,6 +154,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		6E59F2231D971DFC002EEF94 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6EE6058A1CC21941008EF0EE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E778D961CD5B70300AED11E;
+			remoteInfo = CerraduraWatch;
+		};
 		6E6172251D0F548B006C1148 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6EE6058A1CC21941008EF0EE /* Project object */;
@@ -198,6 +206,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		6E59F2211D971C86002EEF94 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				6E59F2221D971CA5002EEF94 /* CerraduraWatch.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6E729C6F1CC3BC6E0018A848 /* Copy Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -863,6 +882,7 @@
 				6E778DA01CD5B70300AED11E /* Frameworks */,
 				6E778DA11CD5B70300AED11E /* Resources */,
 				6EF2325C1D2F9782004B4855 /* Embed Frameworks */,
+				6E59F2201D971C52002EEF94 /* Increment Build */,
 			);
 			buildRules = (
 			);
@@ -919,10 +939,14 @@
 				6EE605A61CC21C1A008EF0EE /* Resources */,
 				6ED3386C1CC7D1DA00DF1461 /* Copy Frameworks */,
 				6ED338711CC7D1EE00DF1461 /* Embed Frameworks */,
+				6E59F21E1D971BF0002EEF94 /* Increment Build */,
+				6E59F21F1D971BFB002EEF94 /* Increment WatchOS Build */,
+				6E59F2211D971C86002EEF94 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				6E59F2241D971DFC002EEF94 /* PBXTargetDependency */,
 				6ED338701CC7D1EE00DF1461 /* PBXTargetDependency */,
 			);
 			name = Cerradura;
@@ -1151,6 +1175,48 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		6E59F21E1D971BF0002EEF94 /* Increment Build */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Increment Build";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#!/bin/bash\n\n#  update_build_number.sh\n#  Usage: `update_build_number.sh [branch]`\n#  Run this script after the 'Copy Bundle Resources' build phase\n#  Ref: http://tgoode.com/2014/06/05/sensible-way-increment-bundle-version-cfbundleversion-xcode/\n\nif [ $TRAVIS == \"true\" ]\nthen echo \"Updating build number to TRAVISCI.\"\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion TRAVISCI\" \"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\nelse branch=${1:-'develop'}\nbuildNumber=$(expr $(git rev-list $branch --count) - $(git rev-list HEAD..$branch --count))\necho \"Updating build number to $buildNumber using branch '$branch'.\"\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\nfi";
+		};
+		6E59F21F1D971BFB002EEF94 /* Increment WatchOS Build */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Increment WatchOS Build";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#!/bin/bash\n\n#  update_build_number.sh\n#  Usage: `update_build_number.sh [branch]`\n#  Run this script after the 'Copy Bundle Resources' build phase\n#  Ref: http://tgoode.com/2014/06/05/sensible-way-increment-bundle-version-cfbundleversion-xcode/\n\nif [ $TRAVIS == \"true\" ]\nthen echo \"Updating build number to TRAVISCI.\"\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion TRAVISCI\" \"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\nelse branch=${1:-'develop'}\nbuildNumber=$(expr $(git rev-list $branch --count) - $(git rev-list HEAD..$branch --count))\nfi\nif [ $EFFECTIVE_PLATFORM_NAME == \"-iphonesimulator\" ]\nthen infoPlistPath=\"${BUILD_DIR}/${CONFIGURATION}-watchsimulator/CerraduraWatch.app/Info.plist\"\nelse infoPlistPath=\"${BUILD_DIR}/${CONFIGURATION}-watchos/CerraduraWatch.app/Info.plist\"\necho \"Updating build number to $buildNumber using branch '$branch'.\"\necho $infoPlistPath\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"$infoPlistPath\"\nfi";
+		};
+		6E59F2201D971C52002EEF94 /* Increment Build */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Increment Build";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#!/bin/bash\n\n#  update_build_number.sh\n#  Usage: `update_build_number.sh [branch]`\n#  Run this script after the 'Copy Bundle Resources' build phase\n#  Ref: http://tgoode.com/2014/06/05/sensible-way-increment-bundle-version-cfbundleversion-xcode/\n\nif [ $TRAVIS == \"true\" ]\nthen echo \"Updating build number to TRAVISCI.\"\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion TRAVISCI\" \"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\nelse branch=${1:-'develop'}\nbuildNumber=$(expr $(git rev-list $branch --count) - $(git rev-list HEAD..$branch --count))\necho \"Updating build number to $buildNumber using branch '$branch'.\"\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\nfi";
+		};
 		6ED3386C1CC7D1DA00DF1461 /* Copy Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1164,6 +1230,7 @@
 				"$(SRCROOT)/../Carthage/Build/iOS/GATT.framework",
 				"$(SRCROOT)/../Carthage/Build/iOS/KeychainAccess.framework",
 				"$(SRCROOT)/../Carthage/Build/iOS/JGProgressHUD.framework",
+				"$(SRCROOT)/../Carthage/Build/iOS/BSON.framework",
 			);
 			name = "Copy Frameworks";
 			outputPaths = (
@@ -1336,6 +1403,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		6E59F2241D971DFC002EEF94 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6E778D961CD5B70300AED11E /* CerraduraWatch */;
+			targetProxy = 6E59F2231D971DFC002EEF94 /* PBXContainerItemProxy */;
+		};
 		6E6172261D0F548B006C1148 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 6EF45F8F1CC6CAF9001F7A39 /* CoreLock iOS */;

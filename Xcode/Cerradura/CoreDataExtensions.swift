@@ -13,9 +13,9 @@ public extension NSManagedObjectContext {
     
     /// Wraps the block to allow for error throwing.
     @available(OSX 10.7, *)
-    func performErrorBlockAndWait(_ block: () throws -> ()) throws {
+    func performErrorBlockAndWait(_ block: @escaping () throws -> ()) throws {
         
-        var blockError: ErrorProtocol?
+        var blockError: Swift.Error?
         
         self.performAndWait {
             
@@ -46,7 +46,7 @@ public extension NSManagedObjectContext {
         
         // create predicate
         
-        fetchRequest.predicate = ComparisonPredicate(leftExpression: NSExpression(forKeyPath: identifierProperty), rightExpression: NSExpression(forConstantValue: resourceID), modifier: ComparisonPredicate.Modifier.direct, type: ComparisonPredicate.Operator.equalTo, options: ComparisonPredicate.Options.normalized)
+        fetchRequest.predicate = NSComparisonPredicate(leftExpression: NSExpression(forKeyPath: identifierProperty), rightExpression: NSExpression(forConstantValue: resourceID), modifier: NSComparisonPredicate.Modifier.direct, type: NSComparisonPredicate.Operator.equalTo, options: NSComparisonPredicate.Options.normalized)
         
         fetchRequest.returnsObjectsAsFaults = false
         
@@ -88,7 +88,7 @@ public extension NSManagedObjectContext {
         
         // create predicate
         
-        fetchRequest.predicate = ComparisonPredicate(leftExpression: NSExpression(forKeyPath: identifierProperty), rightExpression: NSExpression(forConstantValue: resourceID), modifier: ComparisonPredicate.Modifier.direct, type: ComparisonPredicate.Operator.equalTo, options: ComparisonPredicate.Options.normalized)
+        fetchRequest.predicate = NSComparisonPredicate(leftExpression: NSExpression(forKeyPath: identifierProperty), rightExpression: NSExpression(forConstantValue: resourceID), modifier: NSComparisonPredicate.Modifier.direct, type: NSComparisonPredicate.Operator.equalTo, options: NSComparisonPredicate.Options.normalized)
         
         fetchRequest.returnsObjectsAsFaults = false
         

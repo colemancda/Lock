@@ -23,7 +23,7 @@ final class LockInterfaceController: WKInterfaceController {
     
     // MARK: - Loading
     
-    override func awake(withContext context: AnyObject?) {
+    override func awake(withContext context: Any?) {
         super.awake(withContext: context)
         
         lock = (context as! LockContext).lock

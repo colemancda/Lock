@@ -26,7 +26,7 @@ final class KeysInterfaceController: WKInterfaceController {
     
     // MARK: - Loading
     
-    override func awake(withContext context: AnyObject?) {
+    override func awake(withContext context: Any?) {
         super.awake(withContext: context)
         
         locksObserver = SessionController.shared.locks.observe(locksUpdated)
@@ -110,7 +110,7 @@ final class KeysInterfaceController: WKInterfaceController {
     
     // MARK: - Segue
     
-    override func contextForSegue(withIdentifier segueIdentifier: String, in table: WKInterfaceTable, rowIndex: Int) -> AnyObject? {
+    override func contextForSegue(withIdentifier segueIdentifier: String, in table: WKInterfaceTable, rowIndex: Int) -> Any? {
         
         let lock = locks[rowIndex]
         

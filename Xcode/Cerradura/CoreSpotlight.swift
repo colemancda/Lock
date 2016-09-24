@@ -20,7 +20,7 @@ extension LockCache {
     
     func toSearchableItem() -> CSSearchableItem {
         
-        let attributeSet = CSSearchableItemAttributeSet(itemContentType: Self.itemContentType)
+        let attributeSet = CSSearchableItemAttributeSet(itemContentType: type(of: self).itemContentType)
         
         let permissionImage: UIImage
         
@@ -62,7 +62,7 @@ extension LockCache {
 }
 
 @available(iOS 9.0, *)
-func UpdateSpotlight(_ index: CSSearchableIndex = CSSearchableIndex.default(), completionHandler: ((NSError?) -> ())? = nil) {
+func UpdateSpotlight(_ index: CSSearchableIndex = CSSearchableIndex.default(), completionHandler: ((Error?) -> ())? = nil) {
     
     index.deleteAllSearchableItems { (deleteError) in
         
@@ -81,7 +81,7 @@ func UpdateSpotlight(_ index: CSSearchableIndex = CSSearchableIndex.default(), c
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: entity.name!)
         fetchRequest.includesSubentities = false
         fetchRequest.returnsObjectsAsFaults = false
-        fetchRequest.sortDescriptors = [SortDescriptor(key: LockCache.Property.identifier.rawValue, ascending: true)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: LockCache.Property.identifier.rawValue, ascending: true)]
         
         managedObjectContext.perform {
             
@@ -108,7 +108,7 @@ final class SpotlightController: NSObject, NSFetchedResultsControllerDelegate {
         
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: LockCache.entityName)
         
-        fetchRequest.sortDescriptors = [SortDescriptor(key: LockCache.Property.name.rawValue, ascending: true)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: LockCache.Property.name.rawValue, ascending: true)]
         
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: Store.shared.managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
         

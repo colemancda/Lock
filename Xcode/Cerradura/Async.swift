@@ -8,16 +8,16 @@
 
 import Foundation
 
-func mainQueue(_ block: () -> ()) {
+func mainQueue(_ block: @escaping () -> ()) {
     
-    OperationQueue.main().addOperation(block)
+    OperationQueue.main.addOperation(block)
 }
 
 /// Perform a task on the internal queue.
 @inline(__always)
-func async(_ block: () -> ()) {
+func async(_ block: @escaping () -> ()) {
     
     queue.async { block() }
 }
 
-private let queue = DispatchQueue(label: "Cerradura Queue", attributes: .serial)
+private let queue = DispatchQueue(label: "Cerradura Queue", attributes: [])

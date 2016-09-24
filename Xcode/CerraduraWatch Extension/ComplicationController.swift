@@ -13,24 +13,24 @@ final class ComplicationController: NSObject, CLKComplicationDataSource {
     override init() {
         super.init()
         
-        print("Initialized \(Self)")
+        print("Initialized \(type(of: self))")
     }
     
     let blueTintColor = UIColor(red: CGFloat(0.278), green: CGFloat(0.506), blue: CGFloat(0.976), alpha: CGFloat(1.000))
     
     // MARK: - Timeline Configuration
     
-    func getSupportedTimeTravelDirections(for complication: CLKComplication, withHandler handler: (CLKComplicationTimeTravelDirections) -> ()) {
+    func getSupportedTimeTravelDirections(for complication: CLKComplication, withHandler handler: @escaping (CLKComplicationTimeTravelDirections) -> ()) {
         
         handler([])
     }
     
-    func getPrivacyBehavior(for complication: CLKComplication, withHandler handler: (CLKComplicationPrivacyBehavior) -> ()) {
+    func getPrivacyBehavior(for complication: CLKComplication, withHandler handler: @escaping (CLKComplicationPrivacyBehavior) -> ()) {
         
         handler(.showOnLockScreen)
     }
     
-    func getCurrentTimelineEntry(for complication: CLKComplication, withHandler handler: (CLKComplicationTimelineEntry?) -> ()) {
+    func getCurrentTimelineEntry(for complication: CLKComplication, withHandler handler: @escaping (CLKComplicationTimelineEntry?) -> ()) {
         
         print("Providing current timeline entry for complication")
         
@@ -41,7 +41,7 @@ final class ComplicationController: NSObject, CLKComplicationDataSource {
         handler(entry)
     }
     
-    func getPlaceholderTemplate(for complication: CLKComplication, withHandler handler: (CLKComplicationTemplate?) -> ()) {
+    func getPlaceholderTemplate(for complication: CLKComplication, withHandler handler: @escaping (CLKComplicationTemplate?) -> ()) {
         // This method will be called once per supported complication, and the results will be cached
         
         print("Providing placeholder template for complication")

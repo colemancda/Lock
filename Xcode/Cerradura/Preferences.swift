@@ -8,11 +8,11 @@
 
 import Foundation
 
-class Preferences {
+final class Preferences {
     
     static let shared = Preferences()
     
-    let userDefaults: UserDefaults = UserDefaults.standard()
+    let userDefaults = UserDefaults.standard
     
     // MARK: 
     

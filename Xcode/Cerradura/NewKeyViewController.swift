@@ -68,9 +68,9 @@ extension NewKeyViewController {
                 
                 let newKeyData = newKeyInvitation.toJSON().toString()!.toUTF8Data()
                 
-                let filePath = try! FileManager.default().urlForDirectory(.cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("newKey-\(newKey.identifier).ekey").path!
+                let filePath = try! Foundation.FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("newKey-\(newKey.identifier).ekey").path
                 
-                guard FileManager.default().createFile(atPath: filePath, contents: newKeyData, attributes: nil)
+                guard FileManager.default.createFile(atPath: filePath, contents: newKeyData, attributes: nil)
                     else { fatalError("Could not write \(filePath) to disk") }
                 
                 // share new key
@@ -82,13 +82,17 @@ extension NewKeyViewController {
                     
                     let activityController = UIActivityViewController(activityItems: [URL(fileURLWithPath: filePath)], applicationActivities: nil)
                     
-                    activityController.excludedActivityTypes = [UIActivityTypePostToTwitter, UIActivityTypePostToFacebook,
-                                                                UIActivityTypePostToWeibo,
-                                                                /* UIActivityTypeMessage, UIActivityTypeMail, */
-                                                                UIActivityTypePrint, UIActivityTypeCopyToPasteboard,
-                                                                UIActivityTypeAssignToContact, UIActivityTypeSaveToCameraRoll,
-                                                                UIActivityTypeAddToReadingList, UIActivityTypePostToFlickr,
-                                                                UIActivityTypePostToVimeo, UIActivityTypePostToTencentWeibo]
+                    activityController.excludedActivityTypes = [.postToTwitter,
+                                                                .postToFacebook,
+                                                                .postToWeibo,
+                                                                .print,
+                                                                .copyToPasteboard,
+                                                                .assignToContact,
+                                                                .saveToCameraRoll,
+                                                                .addToReadingList,
+                                                                .postToFlickr,
+                                                                .postToVimeo,
+                                                                .postToTencentWeibo]
                     
                     activityController.completionWithItemsHandler = { (activityType, completed, items, error) in
                         
@@ -101,7 +105,7 @@ extension NewKeyViewController {
         }
     }
     
-    private func requestNewKeyName(_ completion: (String?) -> ()) {
+    private func requestNewKeyName(_ completion: @escaping (String?) -> ()) {
         
         let alert = UIAlertController(title: "New Key",
                                       message: "Type a user friendly name for the new key.",

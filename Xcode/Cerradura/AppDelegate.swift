@@ -16,7 +16,7 @@ import CoreLock
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate {
     
-    static let shared = UIApplication.shared().delegate as! AppDelegate
+    static var shared: AppDelegate { return UIApplication.shared.delegate as! AppDelegate }
 
     var window: UIWindow?
     
@@ -24,8 +24,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var firstLaunch = false
         
-    @objc(application:didFinishLaunchingWithOptions:)
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
         // print app info
@@ -92,7 +91,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         (self.window!.rootViewController as! UISplitViewController).preferredDisplayMode = .allVisible
         
         // handle url
-        if let url = launchOptions?[UIApplicationLaunchOptionsURLKey] as? URL {
+        if let url = launchOptions?[UIApplicationLaunchOptionsKey.url] as? URL {
             
             guard openURL(url)
                 else { return false }
@@ -140,7 +139,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         return openURL(url)
     }
     
-    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: ([AnyObject]?) -> ()) -> Bool {
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
         
         print("Continue activity \(userActivity.activityType)")
         

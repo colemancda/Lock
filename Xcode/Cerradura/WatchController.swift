@@ -28,7 +28,7 @@ final class WatchController: NSObject, WCSessionDelegate, NSFetchedResultsContro
         
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: LockCache.entityName)
         
-        fetchRequest.sortDescriptors = [SortDescriptor(key: LockCache.Property.name.rawValue, ascending: true)]
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: LockCache.Property.name.rawValue, ascending: true)]
         
         let controller = NSFetchedResultsController<NSManagedObject>(fetchRequest: fetchRequest, managedObjectContext: Store.shared.managedObjectContext, sectionNameKeyPath: nil, cacheName: nil)
         
@@ -76,8 +76,7 @@ final class WatchController: NSObject, WCSessionDelegate, NSFetchedResultsContro
     
     // MARK: - WCSessionDelegate
     
-    @objc(session:activationDidCompleteWithState:error:)
-    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: NSError?) {
+    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: Error?) {
         
         guard activationState == .activated
             && session.isReachable else {
@@ -90,8 +89,7 @@ final class WatchController: NSObject, WCSessionDelegate, NSFetchedResultsContro
         log?("Activation did complete")
     }
     
-    @objc(session:didReceiveMessage:replyHandler:)
-    func session(_ session: WCSession, didReceiveMessage message: [String : AnyObject], replyHandler: ([String : AnyObject]) -> ()) {
+    func session(_ session: WCSession, didReceiveMessage message: [String : Any], replyHandler: @escaping ([String : Any]) -> ()) {
         
         guard let identifierNumber = message[WatchMessageIdentifierKey] as? NSNumber,
             let identifier = WatchMessageType(rawValue: identifierNumber.uint8Value)
@@ -119,14 +117,14 @@ final class WatchController: NSObject, WCSessionDelegate, NSFetchedResultsContro
                 else { fatalError("Invalid message: \(message)") }
             
             // scan if not in range
-            if LockManager.shared.foundLocks.value.contains({ $0.identifier == unlockRequest.lock }) == false {
+            if LockManager.shared.foundLocks.value.contains(where: { $0.identifier == unlockRequest.lock }) == false {
                 
                 do { try LockManager.shared.scan() }
                 
                 catch { replyHandler(UnlockResponse(error: "Could not scan. (\(error))").toMessage()); return }
             }
             
-            guard LockManager.shared.foundLocks.value.contains({ $0.identifier == unlockRequest.lock })
+            guard LockManager.shared.foundLocks.value.contains(where: { $0.identifier == unlockRequest.lock })
                 else { replyHandler(UnlockResponse(error: "Lock not in range").toMessage()); return }
             
             guard let (lockCache, keyData) = Store.shared[unlockRequest.lock]

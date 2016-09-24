@@ -7,7 +7,7 @@
 //
 
 /// Cerrdaura errors
-enum Error: ErrorProtocol {
+enum AppError: Swift.Error {
     
     case bluetoothDisabled
     case lockNotInRange

@@ -79,11 +79,11 @@ public struct ManagedObjectObserverEvent<Decodable: CoreDataDecodable> {
             
             if newValue {
                 
-                NotificationCenter.default().addObserver(self, selector: #selector(PrivateEntityController.objectsDidChange(_:)), name: NSNotification.Name.NSManagedObjectContextObjectsDidChange, object: context)
+                NotificationCenter.default.addObserver(self, selector: #selector(PrivateEntityController.objectsDidChange(_:)), name: NSNotification.Name.NSManagedObjectContextObjectsDidChange, object: context)
             }
             else {
                 
-                NotificationCenter.default().removeObserver(self, name: NSNotification.Name.NSManagedObjectContextObjectsDidChange, object: self.context)
+                NotificationCenter.default.removeObserver(self, name: NSNotification.Name.NSManagedObjectContextObjectsDidChange, object: self.context)
             }
         }
     }
@@ -106,8 +106,8 @@ public struct ManagedObjectObserverEvent<Decodable: CoreDataDecodable> {
             
             for managedObject in updatedObjects {
                 
-                if managedObject.value(forKey: identifier.key) as? NSObject == identifier.value &&
-                    managedObject.entity.name == self.entityName {
+                if managedObject.value(forKey: identifier.key) as? String == identifier.value &&
+                    managedObject.entity.name! == self.entityName {
                         
                         self.delegate?.observer(self, managedObjectUpdated: managedObject)
                         
@@ -120,8 +120,8 @@ public struct ManagedObjectObserverEvent<Decodable: CoreDataDecodable> {
             
             for managedObject in deletedObjects {
                 
-                if managedObject.value(forKey: identifier.key) as? NSObject == identifier.value &&
-                    managedObject.entity.name == self.entityName {
+                if managedObject.value(forKey: identifier.key) as? String == identifier.value &&
+                    managedObject.entity.name! == self.entityName {
                         
                         self.delegate?.observer(self, managedObjectDeleted: managedObject)
                         
@@ -141,14 +141,14 @@ private protocol PrivateEntityControllerDelegate: class {
 
 extension EntityController: PrivateEntityControllerDelegate {
     
-    private func observer(_ observer: PrivateEntityController, managedObjectUpdated managedObject: NSManagedObject) {
+    fileprivate func observer(_ observer: PrivateEntityController, managedObjectUpdated managedObject: NSManagedObject) {
         
         let decodable = Decodable(managedObject: managedObject)
         
         self.event.updated(decodable)
     }
     
-    private func observer(_ observer: PrivateEntityController, managedObjectDeleted managedObject: NSManagedObject) {
+    fileprivate func observer(_ observer: PrivateEntityController, managedObjectDeleted managedObject: NSManagedObject) {
         
         self.event.deleted()
     }
