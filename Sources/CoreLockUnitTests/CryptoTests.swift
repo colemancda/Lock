@@ -61,7 +61,7 @@ final class CryptoTests: XCTestCase {
         
         let (encryptedData, iv) = encrypt(key: salt.data, data: key.data)
         
-        print("Encrypted key is \(encryptedData.bytes.count) bytes")
+        print("Encrypted key is \(encryptedData.count) bytes")
         
         let decryptedData = decrypt(key: salt.data, iv: iv, data: encryptedData)
         
@@ -76,7 +76,7 @@ final class CryptoTests: XCTestCase {
         
         let (encryptedData, iv) = encrypt(key: salt.data, data: keys)
         
-        print("Encrypted key list is \(encryptedData.bytes.count) bytes")
+        print("Encrypted key list is \(encryptedData.count) bytes")
         
         let decryptedData = decrypt(key: salt.data, iv: iv, data: encryptedData)
         

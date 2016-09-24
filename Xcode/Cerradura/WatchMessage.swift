@@ -117,14 +117,14 @@ struct LocksRequest {
     init?(message: [String: AnyObject]) {
         
         guard let identifier = message[WatchMessageIdentifierKey] as? NSNumber,
-            let messageType = WatchMessageType(rawValue: identifier.uint8Value)
-            where messageType == self.dynamicType.messageType
+            let messageType = WatchMessageType(rawValue: identifier.uint8Value),
+            messageType == Self.messageType
             else { return nil }
     }
     
     func toMessage() -> [String: AnyObject] {
         
-        return [WatchMessageIdentifierKey: NSNumber(value: self.dynamicType.messageType.rawValue)]
+        return [WatchMessageIdentifierKey: NSNumber(value: Self.messageType.rawValue)]
     }
 }
 
@@ -146,8 +146,8 @@ struct LocksUpdatedNotification: WatchMessage {
         guard let identifier = message[WatchMessageIdentifierKey] as? NSNumber,
             let messageType = WatchMessageType(rawValue: identifier.uint8Value),
             let locksMessage = message[Key.locks.rawValue] as? [[String: AnyObject]],
-            let locks = LockCache.from(message: locksMessage)
-            where messageType == self.dynamicType.messageType
+            let locks = LockCache.from(message: locksMessage),
+            messageType == Self.messageType
             else { return nil }
         
         self.locks = locks
@@ -155,7 +155,7 @@ struct LocksUpdatedNotification: WatchMessage {
     
     func toMessage() -> [String: AnyObject] {
         
-        return [WatchMessageIdentifierKey: NSNumber(value: self.dynamicType.messageType.rawValue),
+        return [WatchMessageIdentifierKey: NSNumber(value: Self.messageType.rawValue),
                 Key.locks.rawValue: locks.map({ $0.toMessage() })]
     }
 }
@@ -176,8 +176,8 @@ struct UnlockRequest: WatchMessage {
     init?(message: [String: AnyObject]) {
         
         guard let identifier = message[WatchMessageIdentifierKey] as? NSNumber,
-            let messageType = WatchMessageType(rawValue: identifier.uint8Value)
-            where messageType == self.dynamicType.messageType,
+            let messageType = WatchMessageType(rawValue: identifier.uint8Value),
+            messageType == Self.messageType,
             let lockString = message[Key.lock.rawValue] as? String,
             let lock = UUID(rawValue: lockString)
             else { return nil }
@@ -187,7 +187,7 @@ struct UnlockRequest: WatchMessage {
     
     func toMessage() -> [String: AnyObject] {
         
-        return [WatchMessageIdentifierKey: NSNumber(value: self.dynamicType.messageType.rawValue),
+        return [WatchMessageIdentifierKey: NSNumber(value: Self.messageType.rawValue),
                 Key.lock.rawValue: lock.rawValue]
     }
 }
@@ -208,8 +208,8 @@ struct UnlockResponse: WatchMessage {
     init?(message: [String: AnyObject]) {
         
         guard let identifier = message[WatchMessageIdentifierKey] as? NSNumber,
-            let messageType = WatchMessageType(rawValue: identifier.uint8Value)
-            where messageType == self.dynamicType.messageType
+            let messageType = WatchMessageType(rawValue: identifier.uint8Value),
+            messageType == Self.messageType
             else { return nil }
         
         /// optional value
@@ -221,7 +221,7 @@ struct UnlockResponse: WatchMessage {
     
     func toMessage() -> [String: AnyObject] {
         
-        var message: [String: AnyObject] = [WatchMessageIdentifierKey: NSNumber(value: self.dynamicType.messageType.rawValue)]
+        var message: [String: AnyObject] = [WatchMessageIdentifierKey: NSNumber(value: Self.messageType.rawValue)]
         
         message[Key.error.rawValue] = self.error
         

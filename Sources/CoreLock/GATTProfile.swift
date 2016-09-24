@@ -98,7 +98,8 @@ public struct LockService: GATTProfileService {
         
         public init?(bigEndian: Data) {
             
-            guard let byte = bigEndian.bytes.first where bigEndian.bytes.count == 1,
+            guard let byte = bigEndian.bytes.first,
+                bigEndian.bytes.count == 1,
                 let value = CoreLock.Model(rawValue: byte)
                 else { return nil }
             
@@ -114,7 +115,7 @@ public struct LockService: GATTProfileService {
     /// The lock software version. (64 bits / 8 byte) (read-only)
     public struct Version: GATTProfileCharacteristic {
         
-        public static let length = sizeof(Int64.self)
+        public static let length = MemoryLayout<Int64>.size
         
         public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "F28A0E1E-044C-11E6-9032-09AB70D5A8C7")!)
         
@@ -136,7 +137,7 @@ public struct LockService: GATTProfileService {
             
             var dataCopy = bigEndian
             
-            withUnsafeMutablePointer(&value) { let _ = memcpy($0, &dataCopy, length) }
+            withUnsafeMutablePointer(to: &value) { let _ = memcpy($0, &dataCopy, length) }
             
             self.value = value.bigEndian
         }
@@ -149,7 +150,7 @@ public struct LockService: GATTProfileService {
             
             var bytes = [UInt8](repeating: 0, count: length)
             
-            withUnsafePointer(&bigEndianValue) {let _ = memcpy(&bytes, $0, length) }
+            withUnsafePointer(to: &bigEndianValue) { let _ = memcpy(&bytes, $0, length) }
             
             return Data(bytes: bytes)
         }
@@ -169,7 +170,7 @@ public struct LockService: GATTProfileService {
         
         public init?(bigEndian: Data) {
             
-            guard let byte = bigEndian.bytes.first where bigEndian.bytes.count == 1,
+            guard let byte = bigEndian.bytes.first, bigEndian.bytes.count == 1,
                 let value = CoreLock.Status(rawValue: byte)
                 else { return nil }
             
@@ -211,9 +212,9 @@ public struct LockService: GATTProfileService {
         
         public init?(bigEndian: Data) {
             
-            let bytes = bigEndian.bytes
+            let bytes = bigEndian
             
-            guard bytes.count == self.dynamicType.length
+            guard bytes.count == type(of: self).length
                 else { return nil }
             
             self.identifier = SwiftFoundation.UUID(bigEndian: Data(bytes: Array(bytes[0 ..< 16])))!
@@ -230,7 +231,7 @@ public struct LockService: GATTProfileService {
             
             let decryptedData = decrypt(key: Setup.salt.data, iv: iv, data: Data(bytes: encryptedBytes))
             
-            assert(decryptedData.bytes.count == KeyData.length)
+            assert(decryptedData.count == KeyData.length)
             
             self.value = KeyData(data: decryptedData)!
             
@@ -245,11 +246,11 @@ public struct LockService: GATTProfileService {
             
             let (encryptedKey, iv) = encrypt(key: Setup.salt.data, data: value.data)
             
-            let bytes = identifier.toBigEndian().bytes + nonce.data.bytes + iv.data.bytes + encryptedKey.bytes + authentication.bytes
+            let bytes = identifier.toBigEndian() + nonce.data + iv.data + encryptedKey + authentication
             
             assert(bytes.count == Setup.length)
             
-            return Data(bytes: bytes)
+            return bytes
         }
         
         public func authenticatedWithSalt() -> Bool {
@@ -287,7 +288,7 @@ public struct LockService: GATTProfileService {
             
             let bytes = bigEndian.bytes
             
-            guard bytes.count == self.dynamicType.length
+            guard bytes.count == type(of: self).length
                 else { return nil }
             
             let identifier = SwiftFoundation.UUID(bigEndian: Data(bytes: Array(bytes[0 ..< 16])))!
@@ -361,7 +362,7 @@ public struct LockService: GATTProfileService {
         }
         
         public init?(bigEndian: Data) {
-            
+                        
             let bytes = bigEndian.bytes
             
             guard bytes.count >= NewKeyParent.length.min
@@ -411,7 +412,7 @@ public struct LockService: GATTProfileService {
             
             let decryptedData = CoreLock.decrypt(key: parentKey.data, iv: initializationVector, data: encryptedSharedSecret)
             
-            assert(decryptedData.bytes.count == KeyData.length)
+            assert(decryptedData.count == KeyData.length)
             
             guard let sharedSecret = KeyData(data: decryptedData)
                 else { return nil }
@@ -454,9 +455,9 @@ public struct LockService: GATTProfileService {
         
         public init?(bigEndian: Data) {
             
-            let bytes = bigEndian.bytes
+            let bytes = bigEndian
             
-            guard bytes.count == self.dynamicType.length
+            guard bytes.count == type(of: self).length
                 else { return nil }
             
             self.identifier = SwiftFoundation.UUID(bigEndian: Data(bytes: Array(bytes[0 ..< 16])))!
@@ -480,11 +481,11 @@ public struct LockService: GATTProfileService {
         
         public func toBigEndian() -> Data {
             
-            let bytes = identifier.toBigEndian().bytes + nonce.data.bytes + initializationVector.data.bytes + encryptedNewKey.bytes + authentication.bytes
+            let bytes = identifier.toBigEndian() + nonce.data + initializationVector.data + encryptedNewKey + authentication
             
-            assert(bytes.count == self.dynamicType.length)
+            assert(bytes.count == type(of: self).length)
             
-            return Data(bytes: bytes)
+            return bytes
         }
         
         public func decrypt(sharedSecret: KeyData) -> KeyData? {
@@ -495,7 +496,7 @@ public struct LockService: GATTProfileService {
             
             let decryptedData = CoreLock.decrypt(key: sharedSecret.data, iv: initializationVector, data: encryptedNewKey)
             
-            assert(decryptedData.bytes.count == KeyData.length)
+            assert(decryptedData.count == KeyData.length)
             
             return KeyData(data: decryptedData)!
         }
@@ -533,7 +534,7 @@ public struct LockService: GATTProfileService {
             
             let bytes = bigEndian.bytes
             
-            guard bytes.count == self.dynamicType.length
+            guard bytes.count == type(of: self).length
                 else { return nil }
             
             let UUIDLength = SwiftFoundation.UUID.length
@@ -558,7 +559,7 @@ public struct LockService: GATTProfileService {
             
             let data = identifier.toBigEndian() + nonce.data + authentication + BluetoothBool(enable).toData()
             
-            assert(data.count == self.dynamicType.length)
+            assert(data.count == type(of: self).length)
             
             return data
         }
@@ -593,7 +594,7 @@ public struct LockService: GATTProfileService {
             
             let bytes = bigEndian.bytes
             
-            guard bytes.count == self.dynamicType.length
+            guard bytes.count == type(of: self).length
                 else { return nil }
             
             let identifier = SwiftFoundation.UUID(bigEndian: Data(bytes: Array(bytes[0 ..< 16])))!
@@ -615,7 +616,7 @@ public struct LockService: GATTProfileService {
             
             let bytes = identifier.toBigEndian().bytes + nonce.data.bytes + authentication.bytes
             
-            assert(bytes.count == self.dynamicType.length)
+            assert(bytes.count == type(of: self).length)
             
             return Data(bytes: bytes)
         }
@@ -652,7 +653,7 @@ public struct LockService: GATTProfileService {
             
             let bytes = bigEndian.bytes
             
-            guard bytes.count == self.dynamicType.length
+            guard bytes.count == type(of: self).length
                 else { return nil }
             
             let identifier = SwiftFoundation.UUID(bigEndian: Data(bytes: Array(bytes[0 ..< 16])))!
@@ -674,7 +675,7 @@ public struct LockService: GATTProfileService {
             
             let bytes = identifier.toBigEndian().bytes + nonce.data.bytes + authentication.bytes
             
-            assert(bytes.count == self.dynamicType.length)
+            assert(bytes.count == type(of: self).length)
             
             return Data(bytes: bytes)
         }
@@ -787,8 +788,8 @@ public struct LockService: GATTProfileService {
             
             public init?(BSONValue: BSON.Value) {
                 
-                guard let array = BSONValue.documentValue?.arrayValue
-                    where array.count == DocumentIndex.count
+                guard let array = BSONValue.documentValue?.arrayValue,
+                    array.count == DocumentIndex.count
                     else { return nil }
                 
                 let identifierBSON = array[DocumentIndex.identifier.rawValue]

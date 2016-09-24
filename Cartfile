@@ -1,5 +1,5 @@
 github "PureSwift/GATT" "master"
-github "ColemanCDA/CryptoSwift" "swift3"
-github "ColemanCDA/KeychainAccess" "master"
+github "ColemanCDA/CryptoSwift" "master"
+github "kishikawakatsumi/KeychainAccess"
 github "JonasGessner/JGProgressHUD"
 github "ColemanCDA/BSON" "master"

@@ -20,7 +20,7 @@ extension LockCache {
     
     func toSearchableItem() -> CSSearchableItem {
         
-        let attributeSet = CSSearchableItemAttributeSet(itemContentType: self.dynamicType.itemContentType)
+        let attributeSet = CSSearchableItemAttributeSet(itemContentType: Self.itemContentType)
         
         let permissionImage: UIImage
         

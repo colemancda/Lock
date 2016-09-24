@@ -39,7 +39,7 @@ public enum Permission: Equatable {
         }
     }
     
-    public static let length = 1 + sizeof(Int64.self) + (2 * sizeof(UInt16.self)) + Schedule.Weekdays.length // 20
+    public static let length = 1 + MemoryLayout<Int64>.size + (2 * MemoryLayout<UInt16>.size) + Schedule.Weekdays.length // 20
     
     public func toBigEndian() -> Data {
         
@@ -49,9 +49,9 @@ public enum Permission: Equatable {
             
             var expiryBigEndianValue = Int64(schedule.expiry.timeIntervalSince1970).bigEndian
             
-            var expiryBytes = [UInt8](repeating: 0, count: sizeof(Int64.self))
+            var expiryBytes = [UInt8](repeating: 0, count: MemoryLayout<Int64>.size)
             
-            withUnsafePointer(&expiryBigEndianValue) { let _ = memcpy(&expiryBytes, $0, sizeof(Int64.self)) }
+            withUnsafePointer(to: &expiryBigEndianValue) { let _ = memcpy(&expiryBytes, $0, MemoryLayout<Int64>.size) }
             
             let startBytes = schedule.interval.rawValue.lowerBound.bigEndian.bytes
             
@@ -61,7 +61,7 @@ public enum Permission: Equatable {
             
             let bytes = [self.type.rawValue] + expiryBytes + [startBytes.0, startBytes.1, endBytes.0, endBytes.1] + weekdaysBytes
             
-            assert(bytes.count == self.dynamicType.length)
+            assert(bytes.count == type(of: self).length)
             
             return Data(bytes: bytes)
         
@@ -95,24 +95,24 @@ public enum Permission: Equatable {
         // scheduled
         case PermissionType.scheduled.rawValue:
             
-            var dateBytes = Array(byteValue[1 ..< 1 + sizeof(Int64.self)])
+            var dateBytes = Array(byteValue[1 ..< 1 + MemoryLayout<Int64>.size])
             
             var dateValue: Int64 = 0
             
-            withUnsafeMutablePointer(&dateValue) { let _ = memcpy($0, &dateBytes, sizeof(Int64.self)) }
+            withUnsafeMutablePointer(to: &dateValue) { let _ = memcpy($0, &dateBytes, MemoryLayout<Int64>.size) }
             
             dateValue = dateValue.bigEndian
             
-            let start = UInt16.init(bytes: (byteValue[sizeof(Int64.self) + 1], byteValue[sizeof(Int64.self) + 2])).bigEndian
+            let start = UInt16.init(bytes: (byteValue[MemoryLayout<Int64>.size + 1], byteValue[MemoryLayout<Int64>.size + 2])).bigEndian
             
-            let end = UInt16.init(bytes: (byteValue[sizeof(Int64.self) + 3], byteValue[sizeof(Int64.self) + 4])).bigEndian
+            let end = UInt16.init(bytes: (byteValue[MemoryLayout<Int64>.size + 3], byteValue[MemoryLayout<Int64>.size + 4])).bigEndian
             
             guard start <= end else { return nil }
             
             guard let interval = Schedule.Interval(rawValue: start ... end)
                 else { return nil }
             
-            let weekdaysBytes = Array(byteValue[sizeof(Int64.self) + 5 ..< sizeof(Int64.self) + 5 + Schedule.Weekdays.length])
+            let weekdaysBytes = Array(byteValue[MemoryLayout<Int64>.size + 5 ..< MemoryLayout<Int64>.size + 5 + Schedule.Weekdays.length])
             
             guard let weekdays = Schedule.Weekdays(data: Data(bytes: weekdaysBytes))
                 else { return nil }
@@ -296,7 +296,7 @@ public extension Permission.Schedule {
         
         public init?(data: Data) {
             
-            guard data.bytes.count == Weekdays.length
+            guard data.count == Weekdays.length
                 else { return nil }
             
             guard let sunday = BluetoothBool(rawValue: data.bytes[0])?.boolValue,

@@ -20,9 +20,10 @@ public func random(_ size: Int) -> Data {
 public let HMACSize = 64
 
 /// Performs HMAC with the specified key and message.
+@inline(__always)
 public func HMAC(key: KeyData, message: Nonce) -> Data {
     
-    let hmac = try! Authenticator.HMAC(key: key.data.bytes, variant: .sha512).authenticate(message.data.bytes)
+    let hmac = try! CryptoSwift.HMAC(key: key.data.bytes, variant: .sha512).authenticate(message.data.bytes)
     
     assert(hmac.count == HMACSize)
     
@@ -46,7 +47,7 @@ public func encrypt(key: Data, data: Data) -> (encrypted: Data, iv: Initializati
 /// Decrypt data
 public func decrypt(key: Data, iv: InitializationVector, data: Data) -> Data {
     
-    assert(iv.data.bytes.count == IVSize)
+    assert(iv.data.count == IVSize)
     
     let crypto = try! AES(key: key.bytes, iv: iv.data.bytes)
     

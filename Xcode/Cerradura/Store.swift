@@ -38,7 +38,7 @@ final class Store {
         
         self.managedObjectModel = LoadManagedObjectModel()
         self.managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
-        self.managedObjectContext.name = "\(self.dynamicType) Managed Object Context"
+        self.managedObjectContext.name = "\(Self) Managed Object Context"
         self.managedObjectContext.undoManager = nil
         self.managedObjectContext.persistentStoreCoordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
     }

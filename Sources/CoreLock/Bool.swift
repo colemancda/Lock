@@ -9,7 +9,7 @@
 import SwiftFoundation
 
 /// Boolean value that can be transmitted over Bluetooth GATT.
-public struct BluetoothBool: Boolean, BooleanLiteralConvertible {
+public struct BluetoothBool: ExpressibleByBooleanLiteral {
     
     public var boolValue: Bool
     
@@ -52,10 +52,10 @@ extension BluetoothBool: DataConvertible {
     
     public init?(data: Data) {
         
-        guard data.bytes.count == 1
+        guard data.count == 1
             else { return nil }
         
-        self.init(rawValue: data.bytes[0])
+        self.init(rawValue: data[0])
     }
     
     public func toData() -> Data {

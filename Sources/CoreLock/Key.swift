@@ -128,9 +128,9 @@ public extension Key {
         
         public init?(data: Data) {
             
-            guard let string = String(UTF8Data: data)
-                where string.isEmpty == false
-                && data.bytes.count <= Name.maxLength
+            guard let string = String(UTF8Data: data),
+                string.isEmpty == false,
+                data.count <= Name.maxLength
                 else { return nil }
             
             self.rawValue = string

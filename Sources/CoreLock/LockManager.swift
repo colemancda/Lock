@@ -14,9 +14,7 @@
     import CoreBluetooth
     
     public final class LockManager {
-        
-        public typealias Error = LockManagerError
-        
+                
         // MARK: - Initialization
         
         public static let shared: LockManager = LockManager()
@@ -109,7 +107,7 @@
                     else { continue }
                 
                 // found lock
-                if services.contains({ $0.UUID == LockService.UUID }) {
+                if services.contains(where: { $0.UUID == LockService.UUID }) {
                     
                     guard let foundLock = try? self.foundLock(peripheral: peripheral)
                         else { continue }
@@ -142,7 +140,7 @@
         public func setup(_ identifier: UUID) throws -> Key {
             
             guard let lock = self[identifier]
-                else { throw Error.NoLock }
+                else { throw LockManagerError.NoLock }
             
             return try lockAction(peripheral: lock.peripheral, characteristics: [LockService.Setup.UUID]) {
                 
@@ -175,7 +173,7 @@
         public func unlock(_ identifier: UUID, key: (UUID, KeyData)) throws {
             
             guard let lock = self[identifier]
-                else { throw Error.NoLock }
+                else { throw LockManagerError.NoLock }
             
             return try lockAction(peripheral: lock.peripheral, characteristics: [LockService.Unlock.UUID]) {
                 
@@ -192,7 +190,7 @@
             assert(childKey.1 != .owner, "Cannot create owner keys")
             
             guard let lock = self[identifier]
-                else { throw Error.NoLock }
+                else { throw LockManagerError.NoLock }
             
             return try lockAction(peripheral: lock.peripheral, characteristics: [LockService.NewKeyParent.UUID]) {
              
@@ -206,7 +204,7 @@
         public func recieveNewKey(_ identifier: UUID, sharedSecret: KeyData, newKey: (UUID, KeyData)) throws {
             
             guard let lock = self[identifier]
-                else { throw Error.NoLock }
+                else { throw LockManagerError.NoLock }
             
             return try lockAction(peripheral: lock.peripheral, characteristics: [LockService.NewKeyChild.UUID]) {
                 
@@ -220,7 +218,7 @@
         public func enableHomeKit(_ identifier: UUID, key: (UUID, KeyData), enable: Bool = true) throws {
             
             guard let lock = self[identifier]
-                else { throw Error.NoLock }
+                else { throw LockManagerError.NoLock }
             
             return try lockAction(peripheral: lock.peripheral, characteristics: [LockService.HomeKitEnable.UUID]) {
                 
@@ -236,7 +234,7 @@
         public func update(_ identifier: UUID, key: (UUID, KeyData)) throws {
             
             guard let lock = self[identifier]
-                else { throw Error.NoLock }
+                else { throw LockManagerError.NoLock }
             
             return try lockAction(peripheral: lock.peripheral, characteristics: [LockService.Update.UUID]) {
                 
@@ -261,8 +259,8 @@
             // discover lock service
             let services = try self.internalManager.discoverServices(for: peripheral)
             
-            guard services.contains({ $0.UUID == LockService.UUID })
-                else { throw Error.LockServiceNotFound }
+            guard services.contains(where: { $0.UUID == LockService.UUID })
+                else { throw LockManagerError.LockServiceNotFound }
             
             // read characteristic
             
@@ -270,8 +268,8 @@
             
             for requiredCharacteristic in characteristics {
                 
-                guard foundCharacteristics.contains({ $0.UUID == requiredCharacteristic })
-                    else { throw Error.CharacteristicNotFound(requiredCharacteristic) }
+                guard foundCharacteristics.contains(where: { $0.UUID == requiredCharacteristic })
+                    else { throw LockManagerError.CharacteristicNotFound(requiredCharacteristic) }
             }
             
             // perform action
@@ -286,51 +284,51 @@
             
             let characteristics = try internalManager.discoverCharacteristics(for: LockService.UUID, peripheral: peripheral)
             
-            guard characteristics.contains({ $0.UUID == LockService.Status.UUID })
-                else { throw Error.CharacteristicNotFound(LockService.Status.UUID) }
+            guard characteristics.contains(where: { $0.UUID == LockService.Status.UUID })
+                else { throw LockManagerError.CharacteristicNotFound(LockService.Status.UUID) }
             
             let statusValue = try internalManager.read(characteristic: LockService.Status.UUID, service: LockService.UUID, peripheral: peripheral)
             
             guard let status = LockService.Status.init(bigEndian: statusValue)
-                else { throw Error.InvalidCharacteristicValue(LockService.Status.UUID) }
+                else { throw LockManagerError.InvalidCharacteristicValue(LockService.Status.UUID) }
             
             // get lock UUID
             
-            guard characteristics.contains({ $0.UUID == LockService.Identifier.UUID })
-                else { throw Error.CharacteristicNotFound(LockService.Identifier.UUID) }
+            guard characteristics.contains(where: { $0.UUID == LockService.Identifier.UUID })
+                else { throw LockManagerError.CharacteristicNotFound(LockService.Identifier.UUID) }
             
             let identifierValue = try internalManager.read(characteristic: LockService.Identifier.UUID, service: LockService.UUID, peripheral: peripheral)
             
             guard let identifier = LockService.Identifier.init(bigEndian: identifierValue)
-                else { throw Error.InvalidCharacteristicValue(LockService.Identifier.UUID) }
+                else { throw LockManagerError.InvalidCharacteristicValue(LockService.Identifier.UUID) }
             
             // get model
             
             let modelValue = try internalManager.read(characteristic: LockService.Model.UUID, service: LockService.UUID, peripheral: peripheral)
             
             guard let model = LockService.Model.init(bigEndian: modelValue)
-                else { throw Error.InvalidCharacteristicValue(LockService.Model.UUID) }
+                else { throw LockManagerError.InvalidCharacteristicValue(LockService.Model.UUID) }
             
             // get version
             
             let versionValue = try internalManager.read(characteristic: LockService.Version.UUID, service: LockService.UUID, peripheral: peripheral)
             
             guard let version = LockService.Version.init(bigEndian: versionValue)
-                else { throw Error.InvalidCharacteristicValue(LockService.Version.UUID) }
+                else { throw LockManagerError.InvalidCharacteristicValue(LockService.Version.UUID) }
             
             // validate other characteristics
             
-            guard characteristics.contains({ $0.UUID == LockService.Setup.UUID })
-                else { throw Error.CharacteristicNotFound(LockService.Setup.UUID) }
+            guard characteristics.contains(where: { $0.UUID == LockService.Setup.UUID })
+                else { throw LockManagerError.CharacteristicNotFound(LockService.Setup.UUID) }
             
-            guard characteristics.contains({ $0.UUID == LockService.Unlock.UUID })
-                else { throw Error.CharacteristicNotFound(LockService.Unlock.UUID) }
+            guard characteristics.contains(where: { $0.UUID == LockService.Unlock.UUID })
+                else { throw LockManagerError.CharacteristicNotFound(LockService.Unlock.UUID) }
             
-            guard characteristics.contains({ $0.UUID == LockService.NewKeyParent.UUID })
-                else { throw Error.CharacteristicNotFound(LockService.NewKeyParent.UUID) }
+            guard characteristics.contains(where: { $0.UUID == LockService.NewKeyParent.UUID })
+                else { throw LockManagerError.CharacteristicNotFound(LockService.NewKeyParent.UUID) }
             
-            guard characteristics.contains({ $0.UUID == LockService.NewKeyChild.UUID })
-                else { throw Error.CharacteristicNotFound(LockService.NewKeyChild.UUID) }
+            guard characteristics.contains(where: { $0.UUID == LockService.NewKeyChild.UUID })
+                else { throw LockManagerError.CharacteristicNotFound(LockService.NewKeyChild.UUID) }
             
             log?("Lock \((peripheral, identifier.value, status.value, model.value, version.value))")
             
@@ -338,7 +336,7 @@
         }
     }
     
-    public enum LockManagerError: ErrorProtocol {
+    public enum LockManagerError: Error {
         
         case NoLock
         case InvalidStatus(Status)
@@ -358,7 +356,7 @@
             public let version: UInt64
             public var status: Status
             
-            private init(peripheral: Peripheral, identifier: SwiftFoundation.UUID, status: Status, model: Model, version: UInt64) {
+            fileprivate init(peripheral: Peripheral, identifier: SwiftFoundation.UUID, status: Status, model: Model, version: UInt64) {
                 
                 self.peripheral = peripheral
                 self.identifier = identifier

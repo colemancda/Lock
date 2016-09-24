@@ -461,8 +461,8 @@ final class LockController {
     @inline(__always)
     private func authenticate(key identifier: UUID, characteristic: AuthenticatedCharacteristic) -> Key? {
         
-        guard let key = store[key: identifier]
-            where characteristic.authenticated(with: key.data)
+        guard let key = store[key: identifier],
+            characteristic.authenticated(with: key.data)
             else { return nil }
         
         return key

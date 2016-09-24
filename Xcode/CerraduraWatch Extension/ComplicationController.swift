@@ -13,7 +13,7 @@ final class ComplicationController: NSObject, CLKComplicationDataSource {
     override init() {
         super.init()
         
-        print("Initialized \(self.dynamicType)")
+        print("Initialized \(Self)")
     }
     
     let blueTintColor = UIColor(red: CGFloat(0.278), green: CGFloat(0.506), blue: CGFloat(0.976), alpha: CGFloat(1.000))

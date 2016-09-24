@@ -24,7 +24,7 @@ extension Status: DataConvertible {
     
     public init?(data: Data) {
         
-        guard data.bytes.count == 1
+        guard data.count == 1
             else { return nil }
         
         self.init(rawValue: data.bytes[0])

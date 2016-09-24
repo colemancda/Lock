@@ -170,12 +170,12 @@ final class LockViewController: UIViewController {
     @objc private func contextObjectsDidChange(_ notification: Notification) {
         
         // check if deleted
-        guard let deletedObjects = notification.userInfo?[NSDeletedObjectsKey] as? [NSManagedObject]
-            where deletedObjects.contains({ LockCache(managedObject: $0).identifier == self.lockIdentifier })
+        guard let deletedObjects = notification.userInfo?[NSDeletedObjectsKey] as? [NSManagedObject],
+            deletedObjects.contains({ LockCache(managedObject: $0).identifier == self.lockIdentifier })
             else { return }
         
-        if let navigationIndex = navigationController?.viewControllers.index(of: self)
-            where navigationIndex > 0 {
+        if let navigationIndex = navigationController?.viewControllers.index(of: self),
+            navigationIndex > 0 {
             
             let previousVC = navigationController!.viewControllers[navigationIndex - 1]
             

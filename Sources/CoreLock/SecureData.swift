@@ -38,7 +38,7 @@ public struct KeyData: SecureData {
     
     public init?(data: Data) {
         
-        guard data.bytes.count == self.dynamicType.length
+        guard data.count == type(of: self).length
             else { return nil }
         
         self.data = data
@@ -47,7 +47,7 @@ public struct KeyData: SecureData {
     /// Initializes a `Key` with a random value.
     public init() {
         
-        self.data = random(self.dynamicType.length)
+        self.data = random(type(of: self).length)
     }
 }
 
@@ -60,7 +60,7 @@ public struct Nonce: SecureData {
     
     public init?(data: Data) {
         
-        guard data.bytes.count == self.dynamicType.length
+        guard data.count == type(of: self).length
             else { return nil }
         
         self.data = data
@@ -68,7 +68,7 @@ public struct Nonce: SecureData {
     
     public init() {
         
-        self.data = random(self.dynamicType.length)
+        self.data = random(type(of: self).length)
     }
 }
 
@@ -80,7 +80,7 @@ public struct InitializationVector: SecureData {
     
     public init?(data: Data) {
         
-        guard data.bytes.count == self.dynamicType.length
+        guard data.count == type(of: self).length
             else { return nil }
         
         self.data = data
@@ -88,6 +88,6 @@ public struct InitializationVector: SecureData {
     
     public init() {
         
-        self.data = random(self.dynamicType.length)
+        self.data = random(type(of: self).length)
     }
 }
