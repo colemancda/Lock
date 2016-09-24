@@ -30,12 +30,13 @@
 		6E3E4ED21D2772C8000D13DF /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3E4ED11D2772C8000D13DF /* Constants.swift */; };
 		6E4E3F0C1CCBDBBD00196E39 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4E3F0B1CCBDBBD00196E39 /* Store.swift */; };
 		6E59F2221D971CA5002EEF94 /* CerraduraWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 6E778D971CD5B70300AED11E /* CerraduraWatch.app */; };
+		6E59F2431D972E2A002EEF94 /* CryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E59F2401D972E2A002EEF94 /* CryptoTests.swift */; };
+		6E59F2441D972E2A002EEF94 /* GATTProfileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E59F2411D972E2A002EEF94 /* GATTProfileTests.swift */; };
+		6E59F2451D972E2A002EEF94 /* SerializationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E59F2421D972E2A002EEF94 /* SerializationTests.swift */; };
 		6E60B9E31CD5C70C002D788D /* AnimatedButtonController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E60B9E21CD5C70C002D788D /* AnimatedButtonController.swift */; };
 		6E6172271D0F629A006C1148 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6EE605B11CC21C1A008EF0EE /* Assets.xcassets */; };
 		6E646CF21CC449770029A4B3 /* LockController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E646CF11CC449770029A4B3 /* LockController.swift */; };
 		6E646CF41CC4A5730029A4B3 /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E646CF31CC4A5730029A4B3 /* Version.swift */; };
-		6E646CF61CC4A8780029A4B3 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E646CF51CC4A8780029A4B3 /* main.swift */; };
-		6E646CF81CC4AB580029A4B3 /* CryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E646CF71CC4AB580029A4B3 /* CryptoTests.swift */; };
 		6E688DF21D31BEA40000E5DA /* LockInterfaceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E688DF11D31BEA40000E5DA /* LockInterfaceController.swift */; };
 		6E688DF41D31C94B0000E5DA /* Context.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E688DF31D31C94B0000E5DA /* Context.swift */; };
 		6E68EEBE1CD5DFEE0068C7B4 /* WatchMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E68EEBC1CD5DE640068C7B4 /* WatchMessage.swift */; };
@@ -54,7 +55,6 @@
 		6E729C791CC3BC820018A848 /* GATT.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E729C671CC3BC330018A848 /* GATT.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6E729C7A1CC3BC820018A848 /* JSON.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E729C6B1CC3BC330018A848 /* JSON.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6E729C7B1CC3BC820018A848 /* SwiftFoundation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6E729C6D1CC3BC330018A848 /* SwiftFoundation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		6E729C7E1CC3C3FC0018A848 /* GATTProfileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E729C7D1CC3C3FC0018A848 /* GATTProfileTests.swift */; };
 		6E729C821CC3C6930018A848 /* Crypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E729C811CC3C6930018A848 /* Crypto.swift */; };
 		6E7504F01D0480BB00FC6A87 /* GPIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7504EF1D0480BB00FC6A87 /* GPIO.swift */; };
 		6E778D9D1CD5B70300AED11E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6E778D9C1CD5B70300AED11E /* Assets.xcassets */; };
@@ -118,7 +118,6 @@
 		6EE7F6111D33386100B110D4 /* NewKeyInvitation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE7F6101D33386100B110D4 /* NewKeyInvitation.swift */; };
 		6EE7F6121D33386100B110D4 /* NewKeyInvitation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE7F6101D33386100B110D4 /* NewKeyInvitation.swift */; };
 		6EE903051D0FC782009EDEEC /* WatchMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E68EEBC1CD5DE640068C7B4 /* WatchMessage.swift */; };
-		6EED259F1D29146F00638377 /* SerializationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EED259E1D29146F00638377 /* SerializationTests.swift */; };
 		6EED25A11D2923AF00638377 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EED25A01D2923AF00638377 /* Preferences.swift */; };
 		6EED25A21D292AC000638377 /* KeysViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E5269841CCC205500AB20A2 /* KeysViewController.swift */; };
 		6EED25A41D292EE300638377 /* NewKey.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6EED25A31D292EE300638377 /* NewKey.storyboard */; };
@@ -307,11 +306,12 @@
 		6E3E4ED11D2772C8000D13DF /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		6E4E3F0B1CCBDBBD00196E39 /* Store.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		6E5269841CCC205500AB20A2 /* KeysViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeysViewController.swift; sourceTree = "<group>"; };
+		6E59F2401D972E2A002EEF94 /* CryptoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CryptoTests.swift; path = ../../Tests/CoreLockUnitTests/CryptoTests.swift; sourceTree = "<group>"; };
+		6E59F2411D972E2A002EEF94 /* GATTProfileTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GATTProfileTests.swift; path = ../../Tests/CoreLockUnitTests/GATTProfileTests.swift; sourceTree = "<group>"; };
+		6E59F2421D972E2A002EEF94 /* SerializationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SerializationTests.swift; path = ../../Tests/CoreLockUnitTests/SerializationTests.swift; sourceTree = "<group>"; };
 		6E60B9E21CD5C70C002D788D /* AnimatedButtonController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimatedButtonController.swift; sourceTree = "<group>"; };
 		6E646CF11CC449770029A4B3 /* LockController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockController.swift; sourceTree = "<group>"; };
 		6E646CF31CC4A5730029A4B3 /* Version.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
-		6E646CF51CC4A8780029A4B3 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		6E646CF71CC4AB580029A4B3 /* CryptoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CryptoTests.swift; sourceTree = "<group>"; };
 		6E688DF11D31BEA40000E5DA /* LockInterfaceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockInterfaceController.swift; sourceTree = "<group>"; };
 		6E688DF31D31C94B0000E5DA /* Context.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Context.swift; sourceTree = "<group>"; };
 		6E68EEBC1CD5DE640068C7B4 /* WatchMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WatchMessage.swift; sourceTree = "<group>"; };
@@ -325,7 +325,6 @@
 		6E729C671CC3BC330018A848 /* GATT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GATT.framework; sourceTree = "<group>"; };
 		6E729C6B1CC3BC330018A848 /* JSON.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JSON.framework; sourceTree = "<group>"; };
 		6E729C6D1CC3BC330018A848 /* SwiftFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SwiftFoundation.framework; sourceTree = "<group>"; };
-		6E729C7D1CC3C3FC0018A848 /* GATTProfileTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GATTProfileTests.swift; sourceTree = "<group>"; };
 		6E729C811CC3C6930018A848 /* Crypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Crypto.swift; sourceTree = "<group>"; };
 		6E7504EF1D0480BB00FC6A87 /* GPIO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GPIO.swift; sourceTree = "<group>"; };
 		6E778D971CD5B70300AED11E /* CerraduraWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CerraduraWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -388,7 +387,6 @@
 		6EE7F60B1D32FFEE00B110D4 /* NewKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewKey.swift; sourceTree = "<group>"; };
 		6EE7F60E1D332D3200B110D4 /* NewKeyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewKeyViewController.swift; sourceTree = "<group>"; };
 		6EE7F6101D33386100B110D4 /* NewKeyInvitation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewKeyInvitation.swift; sourceTree = "<group>"; };
-		6EED259E1D29146F00638377 /* SerializationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerializationTests.swift; sourceTree = "<group>"; };
 		6EED25A01D2923AF00638377 /* Preferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
 		6EED25A31D292EE300638377 /* NewKey.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = NewKey.storyboard; sourceTree = "<group>"; };
 		6EED25A51D292EEF00638377 /* LockDetail.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LockDetail.storyboard; sourceTree = "<group>"; };
@@ -573,10 +571,9 @@
 		6E729C7C1CC3BD4A0018A848 /* UnitTests */ = {
 			isa = PBXGroup;
 			children = (
-				6E646CF51CC4A8780029A4B3 /* main.swift */,
-				6E646CF71CC4AB580029A4B3 /* CryptoTests.swift */,
-				6E729C7D1CC3C3FC0018A848 /* GATTProfileTests.swift */,
-				6EED259E1D29146F00638377 /* SerializationTests.swift */,
+				6E59F2401D972E2A002EEF94 /* CryptoTests.swift */,
+				6E59F2411D972E2A002EEF94 /* GATTProfileTests.swift */,
+				6E59F2421D972E2A002EEF94 /* SerializationTests.swift */,
 			);
 			name = UnitTests;
 			path = CoreLockUnitTests;
@@ -1011,6 +1008,7 @@
 					};
 					6E729C531CC3BC030018A848 = {
 						CreatedOnToolsVersion = 7.3;
+						LastSwiftMigration = 0800;
 					};
 					6E778D961CD5B70300AED11E = {
 						CreatedOnToolsVersion = 7.3;
@@ -1262,10 +1260,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6EED259F1D29146F00638377 /* SerializationTests.swift in Sources */,
-				6E729C7E1CC3C3FC0018A848 /* GATTProfileTests.swift in Sources */,
-				6E646CF81CC4AB580029A4B3 /* CryptoTests.swift in Sources */,
-				6E646CF61CC4A8780029A4B3 /* main.swift in Sources */,
+				6E59F2431D972E2A002EEF94 /* CryptoTests.swift in Sources */,
+				6E59F2451D972E2A002EEF94 /* SerializationTests.swift in Sources */,
+				6E59F2441D972E2A002EEF94 /* GATTProfileTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1502,6 +1499,7 @@
 		6E729C5D1CC3BC030018A848 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = $SRCROOT/../Carthage/Build/Mac;
@@ -1511,12 +1509,15 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.colemancda.CoreLockTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
 		6E729C5E1CC3BC030018A848 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = $SRCROOT/../Carthage/Build/Mac;
@@ -1526,6 +1527,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.colemancda.CoreLockTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
