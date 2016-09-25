@@ -143,9 +143,13 @@ final class LockController {
         
         let update = Characteristic(UUID: LockService.Update.UUID, permissions: [.Write], properties: [.Write])
         
+        let listKeysCommand = Characteristic(UUID: LockService.ListKeysCommand.UUID, permissions: [.Write], properties: [.Write])
+        
+        let listKeysValue = Characteristic(UUID: LockService.ListKeysValue.UUID, permissions: [.Read], properties: [.Read])
+        
         let removeKey = Characteristic(UUID: LockService.RemoveKey.UUID, permissions: [.Write], properties: [.Write])
         
-        let lockService = Service(UUID: LockService.UUID, primary: true, characteristics: [identifier, model, version, packageVersion, status, setup, unlock, newKeyParent, newKeyChild, homeKitEnable, update])
+        let lockService = Service(UUID: LockService.UUID, primary: true, characteristics: [identifier, model, version, packageVersion, status, setup, unlock, newKeyParent, newKeyChild, homeKitEnable, update, listKeysCommand, listKeysValue, removeKey])
         
         let _ = try! peripheral.add(service: lockService)
     }
