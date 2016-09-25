@@ -16,6 +16,8 @@ final class KeysInterfaceController: WKInterfaceController {
     
     @IBOutlet weak var tableView: WKInterfaceTable!
     
+    @IBOutlet weak var loadingImageView: WKInterfaceImage!
+    
     // MARK: - Properties
     
     private(set) var locks = [LockCache]()
@@ -31,6 +33,10 @@ final class KeysInterfaceController: WKInterfaceController {
         
         locksObserver = SessionController.shared.locks.observe(locksUpdated)
         activationObserver = SessionController.shared.activationState.observe(activationStateChanged)
+        
+        // setup activity indicator
+        loadingImageView.setImageNamed("Activity")
+        loadingImageView.startAnimatingWithImages(in: NSRange(location: 0, length: 30), duration: 1.0, repeatCount: 0)
     }
     
     override func willActivate() {
@@ -52,6 +58,11 @@ final class KeysInterfaceController: WKInterfaceController {
     
     private func reloadData() {
         
+        // configure activity indicator
+        loadingImageView.setHidden(false)
+        loadingImageView.startAnimating()
+        tableView.setHidden(true)
+        
         async {
             
             // request current locks
@@ -66,6 +77,10 @@ final class KeysInterfaceController: WKInterfaceController {
     private func locksUpdated(_ locks: [LockCache]) {
         
         mainQueue {
+            
+            self.tableView.setHidden(false)
+            self.loadingImageView.setHidden(true)
+            self.loadingImageView.stopAnimating()
             
             self.locks = SessionController.shared.locks.value
             
