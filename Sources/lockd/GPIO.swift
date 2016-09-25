@@ -57,7 +57,7 @@ let AppLED: GPIO = {
 
 let ResetSwitch: GPIO = {
     
-    let gpio = GPIO(sunXi: SunXiGPIO(letter: .A, pin: 0))
+    let gpio = GPIO(sunXi: SunXiGPIO(letter: .G, pin: 7))
     
     gpio.direction = .IN
     
