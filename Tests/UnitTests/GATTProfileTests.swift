@@ -105,7 +105,7 @@ final class GATTProfileTests: XCTestCase {
     
     func testUnlock() {
         
-        // lock setup
+        // unlock command
         
         let requestType = LockService.Unlock.self
         
@@ -275,5 +275,31 @@ final class GATTProfileTests: XCTestCase {
         XCTAssert(deserializedValue.authenticated(with: key))
         XCTAssert(deserializedValue.authenticated(with: KeyData()) == false)
         XCTAssert(decryptedKeys == keys, "\(decryptedKeys) == \(keys)")
+    }
+    
+    func testRemoveKey() {
+        
+        // lock setup
+        
+        let key = KeyData()
+        
+        let nonce = Nonce()
+        
+        let identifier = UUID()
+        
+        let removedKey = UUID()
+        
+        let request = LockService.RemoveKey.init(identifier: identifier, nonce: nonce, key: key, removedKey: removedKey)
+        
+        let requestData = request.toBigEndian()
+        
+        guard let deserialized = LockService.RemoveKey.init(bigEndian: requestData)
+            else { XCTFail(); return }
+        
+        XCTAssert(deserialized.identifier == identifier)
+        XCTAssert(deserialized.nonce == nonce)
+        XCTAssert(deserialized.authenticated(with: key))
+        XCTAssert(deserialized.authenticated(with: KeyData()) == false)
+        XCTAssert(deserialized.removedKey == removedKey)
     }
 }

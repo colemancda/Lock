@@ -868,9 +868,67 @@ public struct LockService: GATTProfileService {
         }
     }
     
-    public struct RemoveKey {
+    /// Used to delete a key.
+    ///
+    /// Key UUID + nonce + HMAC(key, nonce) + deleted key UUID (16 + 16 + 64 + 16 bytes) (write-only)
+    public struct RemoveKey: AuthenticatedCharacteristic {
         
+        public static let length = SwiftFoundation.UUID.length + Nonce.length + HMACSize + SwiftFoundation.UUID.length
         
+        public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "A8A1EF29-28E8-43E3-8A23-DD9A1FDC25F7")!)
+        
+        public let identifier: SwiftFoundation.UUID
+        
+        public let nonce: Nonce
+        
+        /// HMAC of key and nonce
+        public let authentication: Data
+        
+        public let removedKey: SwiftFoundation.UUID
+        
+        public init(identifier: SwiftFoundation.UUID, nonce: Nonce = Nonce(), key: KeyData, removedKey: SwiftFoundation.UUID) {
+            
+            self.identifier = identifier
+            self.nonce = nonce
+            self.authentication = HMAC(key: key, message: nonce)
+            self.removedKey = removedKey
+            
+            assert(authentication.bytes.count == HMACSize)
+        }
+        
+        public init?(bigEndian: Data) {
+            
+            let bytes = bigEndian.bytes
+            
+            guard bytes.count == type(of: self).length
+                else { return nil }
+            
+            let identifier = SwiftFoundation.UUID(bigEndian: Data(bytes: Array(bytes[0 ..< 16])))!
+            
+            let nonceBytes = Array(bytes[16 ..< 16 + Nonce.length])
+            
+            assert(nonceBytes.count == Nonce.length)
+            
+            let hmac = Array(bytes[16 + Nonce.length ..< 16 + Nonce.length + HMACSize])
+            
+            assert(hmac.count == HMACSize)
+            
+            let bigEndianRemovedKeyBytes = Array(bytes[16 + Nonce.length + HMACSize ..< 16 + Nonce.length + HMACSize + SwiftFoundation.UUID.length])
+            
+            let removedKeyBytes = isBigEndian ? bigEndianRemovedKeyBytes : bigEndianRemovedKeyBytes.reversed()
+            
+            let removedKey = SwiftFoundation.UUID(data: Data(bytes: removedKeyBytes))!
+            
+            self.identifier = identifier
+            self.nonce = Nonce(data: Data(bytes: nonceBytes))!
+            self.authentication =  Data(bytes: hmac)
+            self.removedKey = removedKey
+        }
+        
+        public func toBigEndian() -> Data {
+                        
+            return identifier.toBigEndian() + nonce.data + authentication + removedKey.toBigEndian()
+        }
     }
 }
 

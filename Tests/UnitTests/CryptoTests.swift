@@ -78,7 +78,7 @@ final class CryptoTests: XCTestCase {
         
         print("Encrypted key list is \(encryptedData.count) bytes")
         
-        let decryptedData = decrypt(key: salt.data, iv: iv, data: encryptedData)
+        let _ = decrypt(key: salt.data, iv: iv, data: encryptedData)
         
         //XCTAssert(decryptedData == key.data)
     }

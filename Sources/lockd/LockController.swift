@@ -137,11 +137,13 @@ final class LockController {
         
         let newKeyParent = Characteristic(UUID: LockService.NewKeyParent.UUID, permissions: [.Write], properties: [.Write])
         
-        let newKeyChild = Characteristic(UUID: LockService.NewKeyChild.UUID, value: Data(), permissions: [.Write], properties: [.Write])
+        let newKeyChild = Characteristic(UUID: LockService.NewKeyChild.UUID, permissions: [.Write], properties: [.Write])
         
-        let homeKitEnable = Characteristic(UUID: LockService.HomeKitEnable.UUID, value: Data(), permissions: [.Write], properties: [.Write])
+        let homeKitEnable = Characteristic(UUID: LockService.HomeKitEnable.UUID, permissions: [.Write], properties: [.Write])
         
-         let update = Characteristic(UUID: LockService.Update.UUID, value: Data(), permissions: [.Write], properties: [.Write])
+        let update = Characteristic(UUID: LockService.Update.UUID,, permissions: [.Write], properties: [.Write])
+        
+        let removeKey = Characteristic(UUID: LockService.RemoveKey.UUID, permissions: [.Write], properties: [.Write])
         
         let lockService = Service(UUID: LockService.UUID, primary: true, characteristics: [identifier, model, version, packageVersion, status, setup, unlock, newKeyParent, newKeyChild, homeKitEnable, update])
         
