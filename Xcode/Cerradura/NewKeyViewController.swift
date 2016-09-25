@@ -10,15 +10,12 @@ import Foundation
 import UIKit
 import SwiftFoundation
 import CoreLock
-import JGProgressHUD
 
-protocol NewKeyViewController: class {
+protocol NewKeyViewController: class, ActivityIndicatorViewController {
     
     var lockIdentifier: UUID! { get }
     
     var view: UIView! { get }
-    
-    var progressHUD: JGProgressHUD { get }
     
     func present(_ viewControllerToPresent: UIViewController, animated: Bool, completion: (() -> ())?)
     
@@ -134,19 +131,5 @@ extension NewKeyViewController {
     private func newKeyError(_ error: String) {
         
         self.showErrorAlert(error, okHandler: { self.dismiss(animated: true, completion: nil) }, retryHandler: nil)
-    }
-    
-    func showProgressHUD() {
-        
-        self.view.isUserInteractionEnabled = false
-        
-        progressHUD.show(in: self.view)
-    }
-    
-    func dismissProgressHUD(_ animated: Bool = true) {
-        
-        self.view.isUserInteractionEnabled = true
-        
-        progressHUD.dismiss(animated: animated)
     }
 }

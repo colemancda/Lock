@@ -11,4 +11,7 @@ enum AppError: Swift.Error {
     
     case bluetoothDisabled
     case lockNotInRange
+    
+    /// The lock was deleted from the users local database.
+    case lockDeleted
 }

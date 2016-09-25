@@ -175,7 +175,7 @@
             guard let lock = self[identifier]
                 else { throw LockManagerError.NoLock }
             
-            return try lockAction(peripheral: lock.peripheral, characteristics: [LockService.Unlock.UUID]) {
+            try lockAction(peripheral: lock.peripheral, characteristics: [LockService.Unlock.UUID]) {
                 
                 // unlock
                 
@@ -192,7 +192,7 @@
             guard let lock = self[identifier]
                 else { throw LockManagerError.NoLock }
             
-            return try lockAction(peripheral: lock.peripheral, characteristics: [LockService.NewKeyParent.UUID]) {
+            try lockAction(peripheral: lock.peripheral, characteristics: [LockService.NewKeyParent.UUID]) {
              
                 // create new parent key
                 let parentNewKey = LockService.NewKeyParent.init(sharedSecret: sharedSecret, parentKey: parentKey, childKey: childKey)
@@ -206,7 +206,7 @@
             guard let lock = self[identifier]
                 else { throw LockManagerError.NoLock }
             
-            return try lockAction(peripheral: lock.peripheral, characteristics: [LockService.NewKeyChild.UUID]) {
+            try lockAction(peripheral: lock.peripheral, characteristics: [LockService.NewKeyChild.UUID]) {
                 
                 let newKeyChild = LockService.NewKeyChild.init(sharedSecret: sharedSecret, newKey: newKey)
                 
@@ -220,7 +220,7 @@
             guard let lock = self[identifier]
                 else { throw LockManagerError.NoLock }
             
-            return try lockAction(peripheral: lock.peripheral, characteristics: [LockService.HomeKitEnable.UUID]) {
+            try lockAction(peripheral: lock.peripheral, characteristics: [LockService.HomeKitEnable.UUID]) {
                 
                 // enable Homekit
                 
@@ -236,13 +236,55 @@
             guard let lock = self[identifier]
                 else { throw LockManagerError.NoLock }
             
-            return try lockAction(peripheral: lock.peripheral, characteristics: [LockService.Update.UUID]) {
+            try lockAction(peripheral: lock.peripheral, characteristics: [LockService.Update.UUID]) {
                 
                 // unlock
                 
                 let unlock = LockService.Update.init(identifier: key.0, key: key.1)
                 
                 try self.internalManager.write(data: unlock.toBigEndian(), response: true, characteristic: LockService.Update.UUID, service: LockService.UUID, peripheral: lock.peripheral)
+            }
+        }
+        
+        /// Fetch list of keys.
+        public func listKeys(_ identifier: UUID, key: (UUID, KeyData)) throws -> [LockService.ListKeysValue.KeyEntry] {
+            
+            guard let lock = self[identifier]
+                else { throw LockManagerError.NoLock }
+            
+            return try lockAction(peripheral: lock.peripheral, characteristics: [LockService.ListKeysCommand.UUID, LockService.ListKeysValue.UUID]) {
+                
+                // encrypt keys
+                
+                let command = LockService.ListKeysCommand.init(identifier: key.0, key: key.1)
+                
+                try self.internalManager.write(data: command.toBigEndian(), response: true, characteristic: LockService.ListKeysCommand.UUID, service: LockService.UUID, peripheral: lock.peripheral)
+                
+                // fetch list of keys
+                
+                let data = try self.internalManager.read(characteristic: LockService.ListKeysValue.UUID, service: LockService.UUID, peripheral: lock.peripheral)
+                
+                guard let keyList = LockService.ListKeysValue.init(bigEndian: data),
+                    let keys = keyList.decrypt(key: key.1)
+                    else { throw LockManagerError.InvalidCharacteristicValue(LockService.ListKeysValue.UUID) }
+                
+                return keys
+            }
+        }
+        
+        /// Delete a key. 
+        public func removeKey(_ identifier: UUID, key: (UUID, KeyData), removedKey: UUID) throws {
+            
+            guard let lock = self[identifier]
+                else { throw LockManagerError.NoLock }
+            
+            try lockAction(peripheral: lock.peripheral, characteristics: [LockService.RemoveKey.UUID]) {
+                
+                // remove key
+                
+                let removeKey = LockService.RemoveKey.init(identifier: key.0, key: key.1, removedKey: removedKey)
+                
+                try self.internalManager.write(data: removeKey.toBigEndian(), response: true, characteristic: LockService.RemoveKey.UUID, service: LockService.UUID, peripheral: lock.peripheral)
             }
         }
         

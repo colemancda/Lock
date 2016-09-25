@@ -57,6 +57,9 @@
 		6E778DAB1CD5B70300AED11E /* ExtensionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E778DAA1CD5B70300AED11E /* ExtensionDelegate.swift */; };
 		6E778DAD1CD5B70300AED11E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6E778DAC1CD5B70300AED11E /* Assets.xcassets */; };
 		6E7E65DD1D0D3619009E00C4 /* Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7E65DC1D0D3619009E00C4 /* Async.swift */; };
+		6E814D791D98433A004CAF69 /* LockPermissionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E814D781D98433A004CAF69 /* LockPermissionsViewController.swift */; };
+		6E814D7C1D984C5D004CAF69 /* ActivityIndicatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E814D7B1D984C5D004CAF69 /* ActivityIndicatorViewController.swift */; };
+		6E814D7F1D985877004CAF69 /* LockPermissions.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E814D7E1D985877004CAF69 /* LockPermissions.storyboard */; };
 		6E825E011D26ED2C003D728B /* LockViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E825E001D26ED2C003D728B /* LockViewController.swift */; };
 		6E825E031D26FB65003D728B /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E825E021D26FB65003D728B /* Error.swift */; };
 		6E825E061D26FD79003D728B /* LockTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E825E051D26FD79003D728B /* LockTableViewCell.swift */; };
@@ -314,6 +317,9 @@
 		6E778DAE1CD5B70300AED11E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6E778DBA1CD5BD0900AED11E /* WatchController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WatchController.swift; sourceTree = "<group>"; };
 		6E7E65DC1D0D3619009E00C4 /* Async.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Async.swift; sourceTree = "<group>"; };
+		6E814D781D98433A004CAF69 /* LockPermissionsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockPermissionsViewController.swift; sourceTree = "<group>"; };
+		6E814D7B1D984C5D004CAF69 /* ActivityIndicatorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityIndicatorViewController.swift; sourceTree = "<group>"; };
+		6E814D7E1D985877004CAF69 /* LockPermissions.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LockPermissions.storyboard; sourceTree = "<group>"; };
 		6E825E001D26ED2C003D728B /* LockViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockViewController.swift; sourceTree = "<group>"; };
 		6E825E021D26FB65003D728B /* Error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 		6E825E051D26FD79003D728B /* LockTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockTableViewCell.swift; sourceTree = "<group>"; };
@@ -459,14 +465,16 @@
 		6E1F605B1CCB1DE8001914E7 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				6E814D7D1D984D2E004CAF69 /* Extensions */,
+				6E814D7A1D984C12004CAF69 /* Protocols */,
 				6ED338671CC7C39200DF1461 /* NearLockViewController.swift */,
 				6E5269841CCC205500AB20A2 /* KeysViewController.swift */,
 				6E825E001D26ED2C003D728B /* LockViewController.swift */,
-				6EE7F60E1D332D3200B110D4 /* NewKeyViewController.swift */,
 				6E3065381CD049FB007424E0 /* NewKeySelectPermissionViewController.swift */,
 				6E30653C1CD04AD3007424E0 /* NewKeyParentViewController.swift */,
 				6E30653A1CD04A2A007424E0 /* NewKeyScheduleViewController.swift */,
 				6EC1CEF91D3379E7001D31F3 /* NewKeyRecieveViewController.swift */,
+				6E814D781D98433A004CAF69 /* LockPermissionsViewController.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -572,6 +580,23 @@
 			path = "CerraduraWatch Extension";
 			sourceTree = "<group>";
 		};
+		6E814D7A1D984C12004CAF69 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				6EE7F60E1D332D3200B110D4 /* NewKeyViewController.swift */,
+				6E814D7B1D984C5D004CAF69 /* ActivityIndicatorViewController.swift */,
+			);
+			name = Protocols;
+			sourceTree = "<group>";
+		};
+		6E814D7D1D984D2E004CAF69 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				6ED338691CC7C7CB00DF1461 /* ErrorAlert.swift */,
+			);
+			name = Extensions;
+			sourceTree = "<group>";
+		};
 		6E825E041D26FD5B003D728B /* View */ = {
 			isa = PBXGroup;
 			children = (
@@ -660,6 +685,7 @@
 				6EE605B61CC21C1A008EF0EE /* Info.plist */,
 				6EE605AE1CC21C1A008EF0EE /* Main.storyboard */,
 				6EED25A51D292EEF00638377 /* LockDetail.storyboard */,
+				6E814D7E1D985877004CAF69 /* LockPermissions.storyboard */,
 				6EED25A31D292EE300638377 /* NewKey.storyboard */,
 				6EC1CEF71D337373001D31F3 /* NewKeyInvitation.storyboard */,
 				6EC1CEF51D337159001D31F3 /* eKeyDocument.pdf */,
@@ -667,7 +693,6 @@
 				6EE605B31CC21C1A008EF0EE /* LaunchScreen.storyboard */,
 				6EE605AA1CC21C1A008EF0EE /* AppDelegate.swift */,
 				6E3E4ED11D2772C8000D13DF /* Constants.swift */,
-				6ED338691CC7C7CB00DF1461 /* ErrorAlert.swift */,
 				6E7E65DC1D0D3619009E00C4 /* Async.swift */,
 				6E825E021D26FB65003D728B /* Error.swift */,
 				6EED25A01D2923AF00638377 /* Preferences.swift */,
@@ -1070,6 +1095,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6E814D7F1D985877004CAF69 /* LockPermissions.storyboard in Resources */,
 				6EE605B51CC21C1A008EF0EE /* LaunchScreen.storyboard in Resources */,
 				6EED25A41D292EE300638377 /* NewKey.storyboard in Resources */,
 				6E825E0B1D2702BA003D728B /* EmptyTableView.xib in Resources */,
@@ -1237,6 +1263,7 @@
 			files = (
 				6E1F604C1CCB00DB001914E7 /* Store.swift in Sources */,
 				6EC1CEFA1D3379E7001D31F3 /* NewKeyRecieveViewController.swift in Sources */,
+				6E814D791D98433A004CAF69 /* LockPermissionsViewController.swift in Sources */,
 				6EE903051D0FC782009EDEEC /* WatchMessage.swift in Sources */,
 				6E1F60671CCB3885001914E7 /* CoreDataExtensions.swift in Sources */,
 				6ED338681CC7C39200DF1461 /* NearLockViewController.swift in Sources */,
@@ -1249,6 +1276,7 @@
 				6E1F60611CCB2C0C001914E7 /* CoreDataDecodable.swift in Sources */,
 				6E3065391CD049FB007424E0 /* NewKeySelectPermissionViewController.swift in Sources */,
 				6EF232331D2F3FEB004B4855 /* WatchController.swift in Sources */,
+				6E814D7C1D984C5D004CAF69 /* ActivityIndicatorViewController.swift in Sources */,
 				6E30653B1CD04A2A007424E0 /* NewKeyScheduleViewController.swift in Sources */,
 				6EED25A11D2923AF00638377 /* Preferences.swift in Sources */,
 				6E825E011D26ED2C003D728B /* LockViewController.swift in Sources */,

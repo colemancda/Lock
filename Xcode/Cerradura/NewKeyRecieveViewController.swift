@@ -11,7 +11,7 @@ import UIKit
 import CoreLock
 import JGProgressHUD
 
-final class NewKeyRecieveViewController: UITableViewController {
+final class NewKeyRecieveViewController: UITableViewController, ActivityIndicatorViewController {
     
     // MARK: - IB Outlets
     
@@ -27,7 +27,7 @@ final class NewKeyRecieveViewController: UITableViewController {
     
     // MARK: - Private Properties
     
-    private let progressHUD = JGProgressHUD(style: .dark)!
+    let progressHUD = JGProgressHUD(style: .dark)!
     
     // MARK: - Loading
     
@@ -152,19 +152,5 @@ final class NewKeyRecieveViewController: UITableViewController {
         self.permissionImageView.image = permissionImage
         
         self.permissionLabel.text = permissionText
-    }
-    
-    private func showProgressHUD() {
-        
-        self.view.isUserInteractionEnabled = false
-        
-        progressHUD.show(in: self.view)
-    }
-    
-    private func dismissProgressHUD(_ animated: Bool = true) {
-        
-        self.view.isUserInteractionEnabled = true
-        
-        progressHUD.dismiss(animated: animated)
     }
 }

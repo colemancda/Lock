@@ -56,6 +56,7 @@ struct LockActivityItem {
 enum LockActivity: String {
     
     case newKey = "com.colemancda.cerradura.activity.newKey"
+    case manageKeys = "com.colemancda.cerradura.activity.manageKeys"
     case delete = "com.colemancda.cerradura.activity.delete"
     case rename = "com.colemancda.cerradura.activity.rename"
     case update = "com.colemancda.cerradura.activity.update"
@@ -114,6 +115,62 @@ final class NewKeyActivity: UIActivity {
         let navigationController = UIStoryboard(name: "NewKey", bundle: nil).instantiateInitialViewController() as! UINavigationController
         
         let destinationViewController = navigationController.viewControllers.first! as! NewKeySelectPermissionViewController
+        
+        destinationViewController.lockIdentifier = item.identifier
+        
+        destinationViewController.completion = { self.activityDidFinish($0) }
+        
+        return navigationController
+    }
+}
+
+/// Activity for managing keys of a lock.
+final class ManageKeysActivity: UIActivity {
+    
+    override class var activityCategory: UIActivityCategory { return .action }
+    
+    private var item: LockActivityItem!
+    
+    override var activityType: UIActivityType? {
+        
+        return LockActivity.manageKeys.activityType
+    }
+    
+    override var activityTitle: String? {
+        
+        return "Manage"
+    }
+    
+    override var activityImage: UIImage? {
+        
+        return #imageLiteral(resourceName: "activityManageKeys")
+    }
+    
+    override func canPerform(withActivityItems activityItems: [Any]) -> Bool {
+        
+        guard let lockItem = activityItems.first as? LockActivityItem,
+            let lockCache = Store.shared[cache: lockItem.identifier],
+            let _ = LockManager.shared[lockItem.identifier] // Lock must be reachable
+            else { return false }
+        
+        switch lockCache.permission {
+            
+        case .owner, .admin: return true
+            
+        default: return false
+        }
+    }
+    
+    override func prepare(withActivityItems activityItems: [Any]) {
+        
+        self.item = activityItems.first as! LockActivityItem
+    }
+    
+    override var activityViewController: UIViewController? {
+        
+        let navigationController = UIStoryboard(name: "LockPermissions", bundle: nil).instantiateInitialViewController() as! UINavigationController
+        
+        let destinationViewController = navigationController.viewControllers.first! as! LockPermissionsViewController
         
         destinationViewController.lockIdentifier = item.identifier
         
