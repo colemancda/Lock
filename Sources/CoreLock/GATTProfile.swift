@@ -809,9 +809,9 @@ public struct LockService: GATTProfileService {
             
             private enum DocumentIndex: Int {
                 
-                static let count = 4
+                static let count = 5
                 
-                case identifier, name, date, permission
+                case identifier, name, date, permission, pending
             }
             
             public let identifier: UUID
@@ -822,12 +822,16 @@ public struct LockService: GATTProfileService {
             
             public let permission: Permission
             
-            public init(identifier: UUID, name: Key.Name, date: Date, permission: Permission) {
+            /// Whether the key is pending.
+            public let pending: Bool
+            
+            public init(identifier: UUID, name: Key.Name, date: Date, permission: Permission, pending: Bool = false) {
                 
                 self.identifier = identifier
                 self.name = name
                 self.date = date
                 self.permission = permission
+                self.pending = pending
             }
             
             public init?(BSONValue: BSON.Value) {
@@ -840,6 +844,7 @@ public struct LockService: GATTProfileService {
                 let nameBSON = array[DocumentIndex.name.rawValue]
                 let dateBSON = array[DocumentIndex.date.rawValue]
                 let permissionBSON = array[DocumentIndex.permission.rawValue]
+                let pendingBSON = array[DocumentIndex.pending.rawValue]
                 
                 guard case let .binary(.generic, uuidData) = identifierBSON,
                     let identifier = SwiftFoundation.UUID(bigEndian: Data(bytes: uuidData)),
@@ -847,13 +852,15 @@ public struct LockService: GATTProfileService {
                     let name = Key.Name(rawValue: nameString),
                     let dateDouble = dateBSON.doubleValue,
                     case let .binary(.generic, permissionData) = permissionBSON,
-                    let permission = Permission(bigEndian: Data(bytes: permissionData))
+                    let permission = Permission(bigEndian: Data(bytes: permissionData)),
+                    let pending = pendingBSON.boolValue
                     else { return nil }
                 
                 self.identifier = identifier
                 self.name = name
                 self.date = Date(timeIntervalSince1970: dateDouble)
                 self.permission = permission
+                self.pending = pending
             }
             
             public func toBSON() -> BSON.Value {
@@ -861,7 +868,8 @@ public struct LockService: GATTProfileService {
                 let bsonArray = [BSON.Value.binary(subtype: .generic, data: identifier.toBigEndian().bytes),
                                  BSON.Value.string(name.rawValue),
                                  BSON.Value.double(date.timeIntervalSince1970),
-                                 BSON.Value.binary(subtype: .generic, data: permission.toBigEndian().bytes)]
+                                 BSON.Value.binary(subtype: .generic, data: permission.toBigEndian().bytes),
+                                 BSON.Value.boolean(pending)]
                 
                 return .array(BSON.Document(array: bsonArray))
             }
@@ -940,6 +948,7 @@ public func == (lhs: LockService.ListKeysValue.KeyEntry, rhs: LockService.ListKe
         && lhs.name == rhs.name
         && lhs.date == rhs.date
         && lhs.permission == rhs.permission
+        && lhs.pending == rhs.pending
 }
 
 // MARK: - Extension

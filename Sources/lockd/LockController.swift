@@ -318,6 +318,56 @@ final class LockController {
             
             print("Software update command by central \(central.identifier)")
             
+        case LockService.ListKeysCommand.UUID:
+            
+            guard status == .unlock
+                else { return ATT.Error.WriteNotPermitted }
+            
+            // deserialize
+            guard let command = LockService.ListKeysCommand.init(bigEndian: newValue)
+                else { return ATT.Error.InvalidAttributeValueLength }
+            
+            // authenticate
+            guard let authenticatedKey = authenticate(key: command.identifier, characteristic: command)
+                else { return ATT.Error.WriteNotPermitted }
+            
+            // verify permission (only owner or admin and see keys)
+            guard authenticatedKey.permission == .owner || authenticatedKey.permission == .admin
+                else { return ATT.Error.WriteNotPermitted }
+            
+        case LockService.RemoveKey.UUID:
+            
+            guard status == .unlock
+                else { return ATT.Error.WriteNotPermitted }
+            
+            // deserialize
+            guard let removeCommand = LockService.RemoveKey.init(bigEndian: newValue)
+                else { return ATT.Error.InvalidAttributeValueLength }
+            
+            // authenticate
+            guard let authenticatedKey = authenticate(key: removeCommand.identifier, characteristic: removeCommand)
+                else { return ATT.Error.WriteNotPermitted }
+            
+            // verify permission (only owner or admin can remove keys)
+            guard authenticatedKey.permission == .owner || authenticatedKey.permission == .admin
+                else { return ATT.Error.WriteNotPermitted }
+            
+            if store.keys.contains(where: { $0.identifier == removeCommand.identifier }) {
+                
+                store.remove(key: removeCommand.removedKey)
+                
+            } else if store.newKeys.contains(where: { $0.identifier == removeCommand.identifier }) {
+                
+                store.remove(newKey: removeCommand.removedKey)
+                
+            } else {
+                
+                // key not in store
+                return ATT.Error.WriteNotPermitted
+            }
+            
+            print("Central \(central.identifier) removed key \(removeCommand.removedKey)")
+            
         default: fatalError("Writing to unknown characteristic \(UUID)")
         }
         
@@ -355,6 +405,31 @@ final class LockController {
         case LockService.HomeKitEnable.UUID: assert(status != .setup)
             
         case LockService.Update.UUID: assert(status != .setup)
+            
+        case LockService.ListKeysCommand.UUID:
+            
+            typealias KeyEntry = LockService.ListKeysValue.KeyEntry
+            
+            assert(status != .setup)
+            
+            let command = LockService.ListKeysCommand.init(bigEndian: newValue)!
+            
+            let authenticatedKey = authenticate(key: command.identifier, characteristic: command)!
+        
+            let keys = self.store.keys.filter({ $0.permission != .owner }).map { KeyEntry(identifier: $0.identifier, name: $0.name!, date: $0.date, permission: $0.permission) }
+            
+            let pendingKeys = self.store.newKeys.map { KeyEntry(identifier: $0.identifier, name: $0.name, date: $0.date, permission: $0.permission, pending: true) }
+            
+            let keyList = keys + pendingKeys
+            
+            // encrypt key list with authenticated keys
+            let encryptedKeys = LockService.ListKeysValue.init(keys: keyList, key: authenticatedKey.data)
+            
+            print("Listing \(keyList.count) keys for central \(central.identifier)")
+            
+            peripheral[characteristic: LockService.ListKeysValue.UUID] = encryptedKeys.toBigEndian()
+            
+        case LockService.RemoveKey.UUID: assert(status != .setup)
             
         default: fatalError("Writing to characteristic \(UUID)")
         }

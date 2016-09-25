@@ -174,7 +174,7 @@ final class ManageKeysActivity: UIActivity {
         
         destinationViewController.lockIdentifier = item.identifier
         
-        destinationViewController.completion = { self.activityDidFinish($0) }
+        destinationViewController.completion = { self.activityDidFinish(true) }
         
         return navigationController
     }

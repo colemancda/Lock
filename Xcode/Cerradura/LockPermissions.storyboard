@@ -9,7 +9,7 @@
         <!--Navigation Controller-->
         <scene sceneID="rKE-Hp-ECG">
             <objects>
-                <navigationController id="Pwc-gC-gHl" sceneMemberID="viewController">
+                <navigationController modalPresentationStyle="formSheet" id="Pwc-gC-gHl" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="Vjf-NJ-v74">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -36,6 +36,11 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Lock Permissions" id="e7U-3E-g04">
+                        <barButtonItem key="leftBarButtonItem" systemItem="done" id="32P-O2-WoI">
+                            <connections>
+                                <action selector="done:" destination="r38-r5-7YI" id="aR0-N0-0Be"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="RVM-qW-R6g">
                             <connections>
                                 <action selector="newKey:" destination="r38-r5-7YI" id="JUj-Zn-cF7"/>

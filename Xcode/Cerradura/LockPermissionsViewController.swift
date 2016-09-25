@@ -17,6 +17,8 @@ final class LockPermissionsViewController: UITableViewController, ActivityIndica
     
     var lockIdentifier: UUID!
     
+    var completion: (() -> ())?
+    
     private(set) var state: State = .fetching {
         
         didSet { updateUI() }
@@ -73,9 +75,16 @@ final class LockPermissionsViewController: UITableViewController, ActivityIndica
         self.present(navigationController, animated: true, completion: nil)
     }
     
+    @IBAction func done(_ sender: AnyObject? = nil) {
+        
+        self.dismiss(animated: true, completion: completion)
+    }
+    
     // MARK: - Private Methods
     
     private func updateUI() {
+        
+        refreshControl?.endRefreshing()
         
         switch self.state {
             

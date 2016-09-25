@@ -27,20 +27,12 @@ extension ActivityIndicatorViewController {
     
     func showProgressHUD() {
         
-        let barButtonItems = (self.navigationItem.leftBarButtonItems ?? []) + (self.navigationItem.rightBarButtonItems ?? [])
-        
-        barButtonItems.forEach { $0.isEnabled = false }
-        
         self.view.isUserInteractionEnabled = false
         
         progressHUD.show(in: self.view)
     }
     
     func dismissProgressHUD(_ animated: Bool = true) {
-        
-        let barButtonItems = (self.navigationItem.leftBarButtonItems ?? []) + (self.navigationItem.rightBarButtonItems ?? [])
-        
-        barButtonItems.forEach { $0.isEnabled = true }
         
         self.view.isUserInteractionEnabled = true
         
