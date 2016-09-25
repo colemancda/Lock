@@ -8,6 +8,7 @@
 
 #if os(Linux)
 import Glibc
+import SwiftShims
 #endif
 
 import XCTest

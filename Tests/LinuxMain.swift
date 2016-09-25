@@ -8,6 +8,7 @@
 
 import XCTest
 @testable import CoreLock
+@testable import UnitTests
 
 #if os(OSX) || os(iOS) || os(watchOS)
     func XCTMain(_ testCases: [XCTestCaseEntry]) { fatalError("Not Implemented. Linux only") }
