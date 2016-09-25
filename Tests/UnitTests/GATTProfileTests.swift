@@ -13,7 +13,7 @@ import SwiftShims
 
 import XCTest
 import SwiftFoundation
-import CoreLock
+@testable import CoreLock
 
 final class GATTProfileTests: XCTestCase {
     
