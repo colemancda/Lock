@@ -87,12 +87,16 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
     
     @IBAction func scan(_ sender: AnyObject? = nil) {
         
-        // dont scan if already scanning
-        guard LockManager.shared.scanning.value == false
-            && LockManager.shared.state.value == .poweredOn
-            else { return }
+        // update UI
+        switch state {
+        case .scanning: break
+        default: state = .scanning
+        }
         
-        state = .scanning
+        // dont scan if already scanning
+        guard LockManager.shared.scanning.value == false,
+            LockManager.shared.state.value == .poweredOn
+            else { return }
         
         async { [weak self] in
             

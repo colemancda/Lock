@@ -33,6 +33,7 @@
                         </table>
                     </items>
                     <connections>
+                        <outlet property="loadingImageView" destination="0nR-E6-xny" id="XrN-wn-JQa"/>
                         <outlet property="tableView" destination="uJp-2T-A2L" id="OpF-l3-im9"/>
                     </connections>
                 </controller>

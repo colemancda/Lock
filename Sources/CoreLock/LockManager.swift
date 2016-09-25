@@ -284,6 +284,8 @@
             
             let characteristics = try internalManager.discoverCharacteristics(for: LockService.UUID, peripheral: peripheral)
             
+            assert(characteristics.count == 10, "Invalid number of characteristics on lock: \(characteristics.count)")
+            
             guard characteristics.contains(where: { $0.UUID == LockService.Status.UUID })
                 else { throw LockManagerError.CharacteristicNotFound(LockService.Status.UUID) }
             
@@ -304,6 +306,9 @@
             
             // get model
             
+            guard characteristics.contains(where: { $0.UUID == LockService.Model.UUID })
+                else { throw LockManagerError.CharacteristicNotFound(LockService.Model.UUID) }
+            
             let modelValue = try internalManager.read(characteristic: LockService.Model.UUID, service: LockService.UUID, peripheral: peripheral)
             
             guard let model = LockService.Model.init(bigEndian: modelValue)
@@ -311,12 +316,18 @@
             
             // get version
             
+            guard characteristics.contains(where: { $0.UUID == LockService.Version.UUID })
+                else { throw LockManagerError.CharacteristicNotFound(LockService.Version.UUID) }
+            
             let versionValue = try internalManager.read(characteristic: LockService.Version.UUID, service: LockService.UUID, peripheral: peripheral)
             
             guard let version = LockService.Version.init(bigEndian: versionValue)
                 else { throw LockManagerError.InvalidCharacteristicValue(LockService.Version.UUID) }
             
             // get package version
+            
+            guard characteristics.contains(where: { $0.UUID == LockService.PackageVersion.UUID })
+                else { throw LockManagerError.CharacteristicNotFound(LockService.PackageVersion.UUID) }
             
             let packageVersionValue = try internalManager.read(characteristic: LockService.PackageVersion.UUID, service: LockService.UUID, peripheral: peripheral)
             
