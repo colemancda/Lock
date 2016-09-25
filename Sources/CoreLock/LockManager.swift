@@ -284,7 +284,7 @@
             
             let characteristics = try internalManager.discoverCharacteristics(for: LockService.UUID, peripheral: peripheral)
             
-            assert(characteristics.count == 10, "Invalid number of characteristics on lock: \(characteristics.count)")
+            assert(characteristics.count == 11, "Invalid number of characteristics on lock: \(characteristics.count)")
             
             guard characteristics.contains(where: { $0.UUID == LockService.Status.UUID })
                 else { throw LockManagerError.CharacteristicNotFound(LockService.Status.UUID) }
