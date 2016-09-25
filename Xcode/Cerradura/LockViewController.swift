@@ -168,7 +168,7 @@ final class LockViewController: UIViewController {
     @objc private func contextObjectsDidChange(_ notification: Notification) {
         
         // check if deleted
-        guard let deletedObjects = notification.userInfo?[NSDeletedObjectsKey] as? [NSManagedObject],
+        guard let deletedObjects = notification.userInfo?[NSDeletedObjectsKey] as? Set<NSManagedObject>,
             deletedObjects.contains(where: { LockCache(managedObject: $0).identifier == self.lockIdentifier })
             else { return }
         
@@ -178,7 +178,7 @@ final class LockViewController: UIViewController {
             
         } else {
             
-            let emptyVC = UIStoryboard(name: "main", bundle: nil).instantiateViewController(withIdentifier: "EmptyViewController")
+            let emptyVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "EmptyViewController")
             
             navigationController?.viewControllers = [emptyVC]
         }
