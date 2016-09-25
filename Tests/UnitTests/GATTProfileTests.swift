@@ -6,13 +6,17 @@
 //  Copyright © 2016 ColemanCDA. All rights reserved.
 //
 
+#if os(Linux)
+import Glibc
+#endif
+
 import XCTest
 import SwiftFoundation
 import CoreLock
 
 final class GATTProfileTests: XCTestCase {
     
-    static let allTests: [(String, (GATTProfileTests) -> () throws -> Void)] = [("testLockIdentifier", testLockIdentifier), ("testVersion", testVersion), ("testPackageVersion", testPackageVersion), ("testLockSetup", testLockSetup), ("testUnlock", testUnlock), ("testNewChildKey", testNewChildKey), ("testHomeKitEnable", testHomeKitEnable), ]
+    static let allTests: [(String, (GATTProfileTests) -> () throws -> Void)] = [("testLockIdentifier", testLockIdentifier), ("testVersion", testVersion), ("testPackageVersion", testPackageVersion), ("testLockSetup", testLockSetup), ("testUnlock", testUnlock), ("testNewChildKey", testNewChildKey), ("testHomeKitEnable", testHomeKitEnable), ("testUpdate", testUpdate), ("testListKeys", testListKeys), ("testRemoveKey", testRemoveKey)]
     
     func testLockIdentifier() {
         
@@ -51,7 +55,13 @@ final class GATTProfileTests: XCTestCase {
     
     func testVersion() {
         
-        let version = UInt64(arc4random())
+        #if os(macOS) || os(iOS)
+        let random = arc4random()
+        #elseif os(Linux)
+        let random = _swift_stdlib_cxx11_mt19937()
+        #endif
+        
+        let version = UInt64(random)
         
         let characteristic = LockService.Version.init(value: version)
         

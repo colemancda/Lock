@@ -141,7 +141,7 @@ final class LockController {
         
         let homeKitEnable = Characteristic(UUID: LockService.HomeKitEnable.UUID, permissions: [.Write], properties: [.Write])
         
-        let update = Characteristic(UUID: LockService.Update.UUID,, permissions: [.Write], properties: [.Write])
+        let update = Characteristic(UUID: LockService.Update.UUID, permissions: [.Write], properties: [.Write])
         
         let removeKey = Characteristic(UUID: LockService.RemoveKey.UUID, permissions: [.Write], properties: [.Write])
         
