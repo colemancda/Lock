@@ -115,7 +115,7 @@ public struct LockService: GATTProfileService {
     /// The lock software version. (64 bits / 8 byte) (read-only)
     public struct Version: GATTProfileCharacteristic {
         
-        public static let length = MemoryLayout<Int64>.size
+        public static let length = MemoryLayout<UInt64>.size
         
         public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "F28A0E1E-044C-11E6-9032-09AB70D5A8C7")!)
         
@@ -130,14 +130,14 @@ public struct LockService: GATTProfileService {
             
             let length = Version.length
             
-            guard bigEndian.bytes.count == length
+            guard bigEndian.count == length
                 else { return nil }
             
             var value: UInt64 = 0
             
             var dataCopy = bigEndian
             
-            withUnsafeMutablePointer(to: &value) { let _ = memcpy($0, &dataCopy, length) }
+            withUnsafeMutablePointer(to: &value) { let _ = memcpy($0, &dataCopy.bytes, length) }
             
             self.value = value.bigEndian
         }
@@ -147,6 +147,50 @@ public struct LockService: GATTProfileService {
             let length = Version.length
             
             var bigEndianValue = value.bigEndian
+            
+            var bytes = [UInt8](repeating: 0, count: length)
+            
+            withUnsafePointer(to: &bigEndianValue) { let _ = memcpy(&bytes, $0, length) }
+            
+            return Data(bytes: bytes)
+        }
+    }
+    
+    /// The Debian package software version. (6 bytes) (read-only)
+    public struct PackageVersion: GATTProfileCharacteristic {
+        
+        public static let length = MemoryLayout<(UInt16, UInt16, UInt16)>.size
+        
+        public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "A834DD35-F7E1-4BE0-B28D-A3BD6F7BE9D0")!)
+        
+        public var value: (UInt16, UInt16, UInt16)
+        
+        public init(value: (UInt16, UInt16, UInt16)) {
+            
+            self.value = value
+        }
+        
+        public init?(bigEndian: Data) {
+            
+            let length = Version.length
+            
+            guard bigEndian.count == length
+                else { return nil }
+            
+            var value: (UInt16, UInt16, UInt16) = (0,0,0)
+            
+            var dataCopy = bigEndian
+            
+            withUnsafeMutablePointer(to: &value) { let _ = memcpy($0, &dataCopy.bytes, length) }
+            
+            self.value = (value.0.bigEndian, value.1.bigEndian, value.2.bigEndian)
+        }
+        
+        public func toBigEndian() -> Data {
+            
+            let length = Version.length
+            
+            var bigEndianValue = (value.0.bigEndian, value.1.bigEndian, value.2.bigEndian)
             
             var bytes = [UInt8](repeating: 0, count: length)
             

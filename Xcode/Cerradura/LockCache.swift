@@ -21,6 +21,8 @@ struct LockCache: CoreDataEncodable, CoreDataDecodable {
     
     let version: UInt64
     
+    let packageVersion: (UInt16, UInt16, UInt16)?
+    
     let permission: Permission
     
     let keyIdentifier: UUID
@@ -34,7 +36,7 @@ extension LockCache {
     
     enum Property: String {
         
-        case identifier, name, model, version, permission, keyIdentifier
+        case identifier, name, model, version, packageVersion, permission, keyIdentifier
     }
     
     func save(context: NSManagedObjectContext) throws -> NSManagedObject {
@@ -44,10 +46,23 @@ extension LockCache {
         let managedObject = try context.findOrCreate(entity: entity, resourceID: self.identifier.rawValue, identifierProperty: Property.identifier.rawValue)
         
         managedObject.setValue(name, forKey: Property.name.rawValue)
-        managedObject.setValue(NSNumber(value: Int16(model.rawValue)), forKey: Property.model.rawValue)
+        managedObject.setValue(NSNumber(value: model.rawValue), forKey: Property.model.rawValue)
         managedObject.setValue(NSNumber(value: version), forKey: Property.version.rawValue)
         managedObject.setValue(permission.toBigEndian(), forKey: Property.permission.rawValue)
         managedObject.setValue(keyIdentifier.rawValue, forKey: Property.keyIdentifier.rawValue)
+        
+        let packageVersionData: Data?
+        
+        if let packageVersion = self.packageVersion {
+            
+            packageVersionData = LockService.PackageVersion(value: packageVersion).toBigEndian()
+            
+        } else {
+            
+            packageVersionData = nil
+        }
+        
+        managedObject.setValue(packageVersionData, forKey: Property.packageVersion.rawValue)
         
         try context.save()
         
@@ -67,6 +82,15 @@ extension LockCache {
         self.model = Model(rawValue: modelValue.uint8Value)!
         
         self.version = (managedObject.value(forKey: Property.version.rawValue) as! NSNumber).uint64Value
+        
+        if let packageVersionData = managedObject.value(forKey: Property.packageVersion.rawValue) as? Data {
+            
+            self.packageVersion = LockService.PackageVersion(bigEndian: packageVersionData)!.value
+            
+        } else {
+            
+            self.packageVersion = nil
+        }
         
         let permissionData = managedObject.value(forKey: Property.permission.rawValue) as! Data
         self.permission = Permission(bigEndian: permissionData)!

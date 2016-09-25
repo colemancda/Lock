@@ -97,7 +97,7 @@ final class NewKeyRecieveViewController: UITableViewController {
                 
                 // save to cache
                 
-                let lockCache = LockCache(identifier: newKeyInvitation.lock, name: newKeyInvitation.key.name.rawValue, model: foundLock.model, version: foundLock.version, permission: newKeyInvitation.key.permission, keyIdentifier: newKeyInvitation.key.identifier)
+                let lockCache = LockCache(identifier: newKeyInvitation.lock, name: newKeyInvitation.key.name.rawValue, model: foundLock.model, version: foundLock.version, packageVersion: nil, permission: newKeyInvitation.key.permission, keyIdentifier: newKeyInvitation.key.identifier)
                 
                 Store.shared[newKeyInvitation.lock] = (lockCache, keyData)
                 

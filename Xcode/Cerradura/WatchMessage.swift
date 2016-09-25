@@ -95,6 +95,10 @@ extension LockCache {
         self.version = version
         self.permission = permission
         self.keyIdentifier = keyIdentifier
+        
+        #if os(iOS)
+        self.packageVersion = nil
+        #endif
     }
     
     func toMessage() -> [String: Any] {

@@ -123,6 +123,10 @@ final class LockController {
         
         let version = Characteristic(UUID: LockService.Version.UUID, value: versionValue, permissions: [.Read], properties: [.Read])
         
+        let packageVersionValue = LockService.PackageVersion(value: LinuxPackageVersion).toBigEndian()
+        
+        let packageVersion = Characteristic(UUID: LockService.PackageVersion.UUID, value: packageVersionValue, permissions: [.Read], properties: [.Read])
+        
         let statusValue = LockService.Status(value: self.status).toBigEndian()
         
         let status = Characteristic(UUID: LockService.Status.UUID, value: statusValue, permissions: [.Read], properties: [.Read])
@@ -139,7 +143,7 @@ final class LockController {
         
          let update = Characteristic(UUID: LockService.Update.UUID, value: Data(), permissions: [.Write], properties: [.Write])
         
-        let lockService = Service(UUID: LockService.UUID, primary: true, characteristics: [identifier, model, version, status, setup, unlock, newKeyParent, newKeyChild, homeKitEnable, update])
+        let lockService = Service(UUID: LockService.UUID, primary: true, characteristics: [identifier, model, version, packageVersion, status, setup, unlock, newKeyParent, newKeyChild, homeKitEnable, update])
         
         let _ = try! peripheral.add(service: lockService)
     }

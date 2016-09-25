@@ -12,7 +12,7 @@ import CoreLock
 
 final class GATTProfileTests: XCTestCase {
     
-    static let allTests: [(String, (GATTProfileTests) -> () throws -> Void)] = [("testLockIdentifier", testLockIdentifier), ("testLockSetup", testLockSetup), ("testUnlock", testUnlock), ("testNewChildKey", testNewChildKey), ("testHomeKitEnable", testHomeKitEnable), ]
+    static let allTests: [(String, (GATTProfileTests) -> () throws -> Void)] = [("testLockIdentifier", testLockIdentifier), ("testVersion", testVersion), ("testPackageVersion", testPackageVersion), ("testLockSetup", testLockSetup), ("testUnlock", testUnlock), ("testNewChildKey", testNewChildKey), ("testHomeKitEnable", testHomeKitEnable), ]
     
     func testLockIdentifier() {
         
@@ -47,6 +47,34 @@ final class GATTProfileTests: XCTestCase {
             
             XCTAssert(LockService.Identifier.init(bigEndian: correctedData)?.value == UUID)
         }
+    }
+    
+    func testVersion() {
+        
+        let version = UInt64(arc4random())
+        
+        let characteristic = LockService.Version.init(value: version)
+        
+        let data = characteristic.toBigEndian()
+        
+        guard let deserialized = LockService.Version.init(bigEndian: data)
+            else { XCTFail(); return }
+        
+        XCTAssert(version == deserialized.value, "\(version) == \(deserialized.value)")
+    }
+    
+    func testPackageVersion() {
+        
+        let version: (UInt16, UInt16, UInt16) = (1, 0, 0)
+        
+        let characteristic = LockService.PackageVersion.init(value: version)
+        
+        let data = characteristic.toBigEndian()
+        
+        guard let deserialized = LockService.PackageVersion.init(bigEndian: data)
+            else { XCTFail(); return }
+        
+        XCTAssert(version == deserialized.value, "\(version) == \(deserialized.value)")
     }
     
     func testLockSetup() {

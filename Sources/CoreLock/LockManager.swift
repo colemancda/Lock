@@ -316,6 +316,13 @@
             guard let version = LockService.Version.init(bigEndian: versionValue)
                 else { throw LockManagerError.InvalidCharacteristicValue(LockService.Version.UUID) }
             
+            // get package version
+            
+            let packageVersionValue = try internalManager.read(characteristic: LockService.PackageVersion.UUID, service: LockService.UUID, peripheral: peripheral)
+            
+            guard let packageVersion = LockService.PackageVersion.init(bigEndian: packageVersionValue)
+                else { throw LockManagerError.InvalidCharacteristicValue(LockService.PackageVersion.UUID) }
+            
             // validate other characteristics
             
             guard characteristics.contains(where: { $0.UUID == LockService.Setup.UUID })
@@ -332,7 +339,7 @@
             
             log?("Lock \((peripheral, identifier.value, status.value, model.value, version.value))")
             
-            return Lock(peripheral: peripheral, identifier: identifier.value, status: status.value, model: model.value, version: version.value)
+            return Lock(peripheral: peripheral, identifier: identifier.value, status: status.value, model: model.value, version: version.value, packageVersion: packageVersion.value)
         }
     }
     
@@ -354,15 +361,17 @@
             public let identifier: UUID
             public let model: Model
             public let version: UInt64
+            public let packageVersion: (UInt16, UInt16, UInt16)
             public var status: Status
             
-            fileprivate init(peripheral: Peripheral, identifier: SwiftFoundation.UUID, status: Status, model: Model, version: UInt64) {
+            fileprivate init(peripheral: Peripheral, identifier: SwiftFoundation.UUID, status: Status, model: Model, version: UInt64, packageVersion: (UInt16, UInt16, UInt16)) {
                 
                 self.peripheral = peripheral
                 self.identifier = identifier
                 self.status = status
                 self.model = model
                 self.version = version
+                self.packageVersion = packageVersion
             }
         }
     }

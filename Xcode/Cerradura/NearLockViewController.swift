@@ -291,7 +291,7 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
                         mainQueue {
                             
                             // save in Store
-                            let cache = LockCache(identifier: lock.identifier, name: name, model: lock.model, version: lock.version, permission: key.permission, keyIdentifier: key.identifier)
+                            let cache = LockCache(identifier: lock.identifier, name: name, model: lock.model, version: lock.version, packageVersion: lock.packageVersion, permission: key.permission, keyIdentifier: key.identifier)
                             
                             Store.shared[lock.identifier] = (cache, key.data)
                             

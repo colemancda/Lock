@@ -43,7 +43,6 @@ final class LockViewController: UIViewController {
         // observe context
         NotificationCenter.default.addObserver(self, selector: #selector(contextObjectsDidChange), name: Notification.Name.NSManagedObjectContextObjectsDidChange, object: Store.shared.managedObjectContext)
         
-        
         self.updateUI()
     }
     
@@ -162,7 +161,6 @@ final class LockViewController: UIViewController {
             
             self.unlockButton.isEnabled = schedule.valid()
         }
-        
     }
     
     // MARK: Notifications
@@ -174,12 +172,9 @@ final class LockViewController: UIViewController {
             deletedObjects.contains(where: { LockCache(managedObject: $0).identifier == self.lockIdentifier })
             else { return }
         
-        if let navigationIndex = navigationController?.viewControllers.index(of: self),
-            navigationIndex > 0 {
+        if navigationController?.viewControllers.count ?? 0 > 1 {
             
-            let previousVC = navigationController!.viewControllers[navigationIndex - 1]
-            
-            let _ = navigationController?.popToViewController(previousVC, animated: true)
+            let _ = navigationController?.popToRootViewController(animated: true)
             
         } else {
             
