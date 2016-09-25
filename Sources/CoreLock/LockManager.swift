@@ -326,10 +326,15 @@
             
             let characteristics = try internalManager.discoverCharacteristics(for: LockService.UUID, peripheral: peripheral)
             
-            assert(characteristics.count == 11, "Invalid number of characteristics on lock: \(characteristics.count)")
+            assert(characteristics.count == 14, "Invalid number of characteristics on lock: \(characteristics.count)")
             
-            guard characteristics.contains(where: { $0.UUID == LockService.Status.UUID })
-                else { throw LockManagerError.CharacteristicNotFound(LockService.Status.UUID) }
+            func validate(_ characteristic: BluetoothUUID) throws {
+                
+                guard characteristics.contains(where: { $0.UUID == characteristic })
+                    else { throw LockManagerError.CharacteristicNotFound(characteristic) }
+            }
+            
+            try validate(LockService.Status.UUID)
             
             let statusValue = try internalManager.read(characteristic: LockService.Status.UUID, service: LockService.UUID, peripheral: peripheral)
             
@@ -338,8 +343,7 @@
             
             // get lock UUID
             
-            guard characteristics.contains(where: { $0.UUID == LockService.Identifier.UUID })
-                else { throw LockManagerError.CharacteristicNotFound(LockService.Identifier.UUID) }
+            try validate(LockService.Identifier.UUID)
             
             let identifierValue = try internalManager.read(characteristic: LockService.Identifier.UUID, service: LockService.UUID, peripheral: peripheral)
             
@@ -348,8 +352,7 @@
             
             // get model
             
-            guard characteristics.contains(where: { $0.UUID == LockService.Model.UUID })
-                else { throw LockManagerError.CharacteristicNotFound(LockService.Model.UUID) }
+            try validate(LockService.Model.UUID)
             
             let modelValue = try internalManager.read(characteristic: LockService.Model.UUID, service: LockService.UUID, peripheral: peripheral)
             
@@ -358,8 +361,7 @@
             
             // get version
             
-            guard characteristics.contains(where: { $0.UUID == LockService.Version.UUID })
-                else { throw LockManagerError.CharacteristicNotFound(LockService.Version.UUID) }
+            try validate(LockService.Version.UUID)
             
             let versionValue = try internalManager.read(characteristic: LockService.Version.UUID, service: LockService.UUID, peripheral: peripheral)
             
@@ -368,8 +370,7 @@
             
             // get package version
             
-            guard characteristics.contains(where: { $0.UUID == LockService.PackageVersion.UUID })
-                else { throw LockManagerError.CharacteristicNotFound(LockService.PackageVersion.UUID) }
+            try validate(LockService.PackageVersion.UUID)
             
             let packageVersionValue = try internalManager.read(characteristic: LockService.PackageVersion.UUID, service: LockService.UUID, peripheral: peripheral)
             
@@ -378,17 +379,12 @@
             
             // validate other characteristics
             
-            guard characteristics.contains(where: { $0.UUID == LockService.Setup.UUID })
-                else { throw LockManagerError.CharacteristicNotFound(LockService.Setup.UUID) }
-            
-            guard characteristics.contains(where: { $0.UUID == LockService.Unlock.UUID })
-                else { throw LockManagerError.CharacteristicNotFound(LockService.Unlock.UUID) }
-            
-            guard characteristics.contains(where: { $0.UUID == LockService.NewKeyParent.UUID })
-                else { throw LockManagerError.CharacteristicNotFound(LockService.NewKeyParent.UUID) }
-            
-            guard characteristics.contains(where: { $0.UUID == LockService.NewKeyChild.UUID })
-                else { throw LockManagerError.CharacteristicNotFound(LockService.NewKeyChild.UUID) }
+            try validate(LockService.Setup.UUID)
+            try validate(LockService.Unlock.UUID)
+            try validate(LockService.NewKeyParent.UUID)
+            try validate(LockService.NewKeyChild.UUID)
+            try validate(LockService.ListKeysCommand.UUID)
+            try validate(LockService.RemoveKey.UUID)
             
             log?("Lock \((peripheral, identifier.value, status.value, model.value, version.value))")
             

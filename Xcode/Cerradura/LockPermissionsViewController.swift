@@ -52,13 +52,17 @@ final class LockPermissionsViewController: UITableViewController, ActivityIndica
         
         async {
             
-            var keys: [KeyEntry]!
+            var allKeys: [KeyEntry]!
             
-            do { keys = try LockManager.shared.listKeys(lockCache.identifier, key: (lockCache.keyIdentifier, lockKeyData)) }
+            do { allKeys = try LockManager.shared.listKeys(lockCache.identifier, key: (lockCache.keyIdentifier, lockKeyData)) }
             
             catch { mainQueue { self.state = .error(error) }; return }
             
-            mainQueue { self.state = .keys(keys) }
+            let keys = allKeys.filter { $0.pending == false }
+            
+            let pending = allKeys.filter { $0.pending }
+            
+            mainQueue { self.state = .keys(keys, pending) }
         }
     }
     
@@ -110,9 +114,7 @@ final class LockPermissionsViewController: UITableViewController, ActivityIndica
     
     private func configure(cell: LockTableViewCell, at indexPath: IndexPath) {
         
-        guard case let .keys(keys) = self.state else { fatalError("Cannot display keys in state: \(self.state)") }
-        
-        let key = keys[indexPath.row]
+        let key = self[indexPath]
         
         let permissionImage: UIImage
         
@@ -152,18 +154,43 @@ final class LockPermissionsViewController: UITableViewController, ActivityIndica
         cell.lockImageView.image = permissionImage
     }
     
+    // MARK: - Suscripting
+    
+    private subscript (section: Section) -> [KeyEntry] {
+        
+        guard case let .keys(nonpending, pending) = self.state else { fatalError("Invalid state: \(self.state)") }
+        
+        switch section {
+        case .keys: return nonpending
+        case .pending: return pending
+        }
+    }
+    
+    private subscript (indexPath: IndexPath) -> KeyEntry {
+        
+        let section = Section(rawValue: indexPath.section)!
+        
+        let keys = self[section]
+        
+        let key = keys[indexPath.row]
+        
+        return key
+    }
+    
     // MARK: - UITableViewDataSource
     
     override func numberOfSections(in tableView: UITableView) -> Int {
         
-        return 1
+        guard case .keys = self.state else { return 0 }
+        
+        return Section.count
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        guard case let .keys(keys) = self.state else { return 0 }
+        let section = Section(rawValue: section)!
         
-        return keys.count
+        return self[section].count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -177,15 +204,25 @@ final class LockPermissionsViewController: UITableViewController, ActivityIndica
     
     // MARK: - UITableViewDelegate
     
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        
+        let section = Section(rawValue: section)!
+        
+        switch section {
+            
+        case .keys: return nil
+            
+        case .pending: return self[section].isEmpty ? nil : "Pending Keys"
+        }
+    }
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         tableView.deselectRow(at: indexPath, animated: true)
         
         // show key info
         
-        guard case let .keys(keys) = self.state else { fatalError("Cannot select key in state: \(self.state)") }
-        
-        let key = keys[indexPath.row]
+        let key = self[indexPath]
         
         // present key detail VC
     }
@@ -198,10 +235,8 @@ final class LockPermissionsViewController: UITableViewController, ActivityIndica
         
         guard let (lockCache, lockKeyData) = Store.shared[lockIdentifier]
             else { return nil }
-        
-        guard case let .keys(keys) = self.state else { fatalError("Cannot edit key in state: \(self.state)") }
-        
-        let keyEntry = keys[indexPath.row]
+                
+        let keyEntry = self[indexPath]
         
         let delete = UITableViewRowAction(style: .destructive, title: "Delete") {
             
@@ -218,19 +253,18 @@ final class LockPermissionsViewController: UITableViewController, ActivityIndica
             
             alert.addAction(UIAlertAction(title: NSLocalizedString("Delete", comment: "Delete"), style: .destructive, handler: { (UIAlertAction) in
                 
-                alert.dismiss(animated: true) {
+                alert.dismiss(animated: true) { }
+                
+                self.showProgressHUD()
+                
+                async {
                     
-                    self.showProgressHUD()
+                    do { try LockManager.shared.removeKey(lockCache.identifier, key: (lockCache.keyIdentifier, lockKeyData), removedKey: keyEntry.identifier) }
+                        
+                    catch { mainQueue { self.state = .error(error) }; return }
                     
-                    async {
-                        
-                        do { try LockManager.shared.removeKey(lockCache.identifier, key: (lockCache.keyIdentifier, lockKeyData), removedKey: keyEntry.identifier) }
-                            
-                        catch { mainQueue { self.state = .error(error) }; return }
-                        
-                        mainQueue { self.reloadData() }
-                    }
-                }
+                    mainQueue { self.reloadData() }
+                }                
             }))
             
             self.present(alert, animated: true, completion: nil)
@@ -251,7 +285,14 @@ extension LockPermissionsViewController {
     enum State {
         
         case fetching
-        case keys([KeyEntry])
+        case keys([KeyEntry], [KeyEntry])
         case error(Error)
+    }
+    
+    enum Section: Int {
+        
+        static let count = 2
+        
+        case keys, pending
     }
 }

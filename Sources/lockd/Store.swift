@@ -90,6 +90,11 @@ final class Store {
             else { return false }
         
         keys.remove(at: index)
+        
+        do { try save() }
+            
+        catch { fatalError("Could not save key: \(key)") }
+        
         return true
     }
     
@@ -100,6 +105,11 @@ final class Store {
             else { return false }
         
         newKeys.remove(at: index)
+        
+        do { try save() }
+            
+        catch { fatalError("Could not save key: \(key)") }
+        
         return true
     }
     
