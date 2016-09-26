@@ -235,7 +235,7 @@ final class LockPermissionsViewController: UITableViewController, ActivityIndica
         
         guard let (lockCache, lockKeyData) = Store.shared[lockIdentifier]
             else { return nil }
-                
+        
         let keyEntry = self[indexPath]
         
         let delete = UITableViewRowAction(style: .destructive, title: "Delete") {

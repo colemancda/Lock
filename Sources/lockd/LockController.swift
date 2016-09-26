@@ -356,11 +356,11 @@ final class LockController {
             guard authenticatedKey.permission == .owner || authenticatedKey.permission == .admin
                 else { return ATT.Error.WriteNotPermitted }
             
-            if store.keys.contains(where: { $0.identifier == removeCommand.identifier }) {
+            if store.keys.contains(where: { $0.identifier == removeCommand.removedKey }) {
                 
                 store.remove(key: removeCommand.removedKey)
                 
-            } else if store.newKeys.contains(where: { $0.identifier == removeCommand.identifier }) {
+            } else if store.newKeys.contains(where: { $0.identifier == removeCommand.removedKey }) {
                 
                 store.remove(newKey: removeCommand.removedKey)
                 
