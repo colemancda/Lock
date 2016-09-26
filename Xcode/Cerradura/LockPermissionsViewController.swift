@@ -35,8 +35,12 @@ final class LockPermissionsViewController: UITableViewController, ActivityIndica
         
         // setup table view
         tableView.register(LockTableViewCell.nib, forCellReuseIdentifier: LockTableViewCell.reuseIdentifier)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
-        reloadData()
+        self.reloadData()
     }
     
     // MARK: - Actions
