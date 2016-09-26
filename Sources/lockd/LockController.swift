@@ -378,7 +378,7 @@ final class LockController {
         return nil
     }
     
-    private func didWrite(central: Central, UUID: BluetoothUUID, value: SwiftFoundation.Data, newValue: SwiftFoundation.Data){
+    private func didWrite(central: Central, UUID: BluetoothUUID, value: SwiftFoundation.Data, newValue: SwiftFoundation.Data) {
         
         switch UUID {
             

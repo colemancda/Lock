@@ -93,7 +93,7 @@ final class Store {
         
         do { try save() }
             
-        catch { fatalError("Could not save key: \(key)") }
+        catch { fatalError("Could not save key: \(identifier)") }
         
         return true
     }
@@ -108,7 +108,7 @@ final class Store {
         
         do { try save() }
             
-        catch { fatalError("Could not save key: \(key)") }
+        catch { fatalError("Could not save key: \(identifier)") }
         
         return true
     }
