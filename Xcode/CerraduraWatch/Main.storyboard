@@ -11,7 +11,7 @@
             <objects>
                 <controller title="Keys" id="ZlZ-8J-V8o" customClass="KeysInterfaceController" customModule="CerraduraWatch_Extension">
                     <items>
-                        <imageView width="1" height="1" alignment="left" hidden="YES" id="0nR-E6-xny"/>
+                        <imageView width="1" height="1" alignment="left" hidden="YES" contentMode="center" id="0nR-E6-xny"/>
                         <table alignment="left" id="uJp-2T-A2L">
                             <items>
                                 <tableRow identifier="Lock" id="MWe-bd-tWx" customClass="LockRowController" customModule="CerraduraWatch_Extension">
@@ -40,10 +40,10 @@
             </objects>
             <point key="canvasLocation" x="51" y="18"/>
         </scene>
-        <!--Lock Interface Controller-->
+        <!--Lock Name-->
         <scene sceneID="0oW-Fi-cfs">
             <objects>
-                <controller id="THD-pU-r9U" customClass="LockInterfaceController" customModule="CerraduraWatch_Extension">
+                <controller title="Lock Name" id="THD-pU-r9U" customClass="LockInterfaceController" customModule="CerraduraWatch_Extension">
                     <items>
                         <button alignment="left" id="VDJ-YA-Zqp">
                             <group key="contentGroup" width="1" height="1" alignment="left" id="3Tv-Hr-S99">
