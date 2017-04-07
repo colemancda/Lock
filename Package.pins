@@ -1,0 +1,48 @@
+{
+  "autoPin": true,
+  "pins": [
+    {
+      "package": "Bluetooth",
+      "reason": null,
+      "repositoryURL": "https://github.com/PureSwift/Bluetooth.git",
+      "version": "1.2.2"
+    },
+    {
+      "package": "BluetoothLinux",
+      "reason": null,
+      "repositoryURL": "https://github.com/PureSwift/BluetoothLinux.git",
+      "version": "2.4.2"
+    },
+    {
+      "package": "BSON",
+      "reason": null,
+      "repositoryURL": "https://github.com/OpenKitten/BSON",
+      "version": "3.8.7"
+    },
+    {
+      "package": "CryptoSwift",
+      "reason": null,
+      "repositoryURL": "https://github.com/krzyzanowskim/CryptoSwift",
+      "version": "0.6.8"
+    },
+    {
+      "package": "CSwiftBluetoothLinux",
+      "reason": null,
+      "repositoryURL": "https://github.com/PureSwift/CSwiftBluetoothLinux.git",
+      "version": "1.1.0"
+    },
+    {
+      "package": "GATT",
+      "reason": null,
+      "repositoryURL": "https://github.com/PureSwift/GATT",
+      "version": "1.3.2"
+    },
+    {
+      "package": "JSON",
+      "reason": null,
+      "repositoryURL": "https://github.com/PureSwift/JSON",
+      "version": "1.0.0"
+    }
+  ],
+  "version": 1
+}

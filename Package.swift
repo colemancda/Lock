@@ -13,9 +13,9 @@ let package = Package(
     ],
     dependencies: [
         .Package(url: "https://github.com/PureSwift/GATT", majorVersion: 1),
-        .Package(url: "https://github.com/krzyzanowskim/JSON", majorVersion: 1)
+        .Package(url: "https://github.com/PureSwift/JSON", majorVersion: 1),
         .Package(url: "https://github.com/krzyzanowskim/CryptoSwift", majorVersion: 0),
-        .Package(url: "https://github.com/OpenKitten/BSON", majorVersion: 3)
+        .Package(url: "https://github.com/OpenKitten/BSON", majorVersion: 4)
     ],
     exclude: ["Xcode", "Android"]
 )
