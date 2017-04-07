@@ -7,10 +7,10 @@
 //
 
 #if os(Linux)
-    import Glibc
+import Glibc
 #endif
 
-import SwiftFoundation
+import Foundation
 
 /// A Key's permission level.
 public enum Permission: Equatable {
@@ -57,7 +57,7 @@ public enum Permission: Equatable {
             
             let endBytes = schedule.interval.rawValue.upperBound.bigEndian.bytes
             
-            let weekdaysBytes = schedule.weekdays.toData().bytes
+            let weekdaysBytes = Array(schedule.weekdays.toData())
             
             let bytes = [self.type.rawValue] + expiryBytes + [startBytes.0, startBytes.1, endBytes.0, endBytes.1] + weekdaysBytes
             
@@ -77,10 +77,10 @@ public enum Permission: Equatable {
     
     public init?(bigEndian: Data) {
         
-        guard bigEndian.bytes.count == Permission.length
+        guard bigEndian.count == Permission.length
             else { return nil }
         
-        let byteValue = bigEndian.bytes
+        let byteValue = Array(bigEndian)
         
         let permissionTypeByte = byteValue[0]
         
@@ -230,7 +230,7 @@ public extension Permission.Schedule {
 
 public extension Permission.Schedule {
     
-    public struct Weekdays: DataConvertible, Equatable {
+    public struct Weekdays: Equatable {
         
         public static let length = 7
         
@@ -299,13 +299,13 @@ public extension Permission.Schedule {
             guard data.count == Weekdays.length
                 else { return nil }
             
-            guard let sunday = BluetoothBool(rawValue: data.bytes[0])?.boolValue,
-                let monday = BluetoothBool(rawValue: data.bytes[1])?.boolValue,
-                let tuesday = BluetoothBool(rawValue: data.bytes[2])?.boolValue,
-                let wednesday = BluetoothBool(rawValue: data.bytes[3])?.boolValue,
-                let thursday = BluetoothBool(rawValue: data.bytes[4])?.boolValue,
-                let friday = BluetoothBool(rawValue: data.bytes[5])?.boolValue,
-                let saturday = BluetoothBool(rawValue: data.bytes[6])?.boolValue
+            guard let sunday = BluetoothBool(rawValue: data[0])?.boolValue,
+                let monday = BluetoothBool(rawValue: data[1])?.boolValue,
+                let tuesday = BluetoothBool(rawValue: data[2])?.boolValue,
+                let wednesday = BluetoothBool(rawValue: data[3])?.boolValue,
+                let thursday = BluetoothBool(rawValue: data[4])?.boolValue,
+                let friday = BluetoothBool(rawValue: data[5])?.boolValue,
+                let saturday = BluetoothBool(rawValue: data[6])?.boolValue
                 else { return nil }
             
             self.sunday = sunday

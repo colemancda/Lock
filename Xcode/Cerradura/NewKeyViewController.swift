@@ -8,7 +8,7 @@
 
 import Foundation
 import UIKit
-import SwiftFoundation
+import Foundation
 import CoreLock
 
 protocol NewKeyViewController: class, ActivityIndicatorViewController {
@@ -63,7 +63,7 @@ extension NewKeyViewController {
                 
                 let newKeyInvitation = NewKeyInvitation(lock: lockIdentifier, key: newKey)
                 
-                let newKeyData = newKeyInvitation.toJSON().toString()!.toUTF8Data()
+                let newKeyData = try! newKeyInvitation.toJSON().toData()
                 
                 let filePath = try! Foundation.FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true).appendingPathComponent("newKey-\(newKey.identifier).ekey").path
                 
@@ -112,7 +112,9 @@ extension NewKeyViewController {
         
         alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "OK"), style: .`default`, handler: { (UIAlertAction) in
             
-            completion((name: alert.textFields![0].text ?? ""))
+            let name = alert.textFields![0].text ?? ""
+            
+            completion(name)
             
             alert.dismiss(animated: true) {  }
             

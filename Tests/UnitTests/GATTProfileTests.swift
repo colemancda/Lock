@@ -12,7 +12,7 @@ import SwiftShims
 #endif
 
 import XCTest
-import SwiftFoundation
+import Foundation
 @testable import CoreLock
 
 final class GATTProfileTests: XCTestCase {
@@ -21,7 +21,7 @@ final class GATTProfileTests: XCTestCase {
     
     func testLockIdentifier() {
         
-        let UUID = SwiftFoundation.UUID()
+        let UUID = Foundation.UUID()
         
         let characteristic = LockService.Identifier.init(value: UUID)
         

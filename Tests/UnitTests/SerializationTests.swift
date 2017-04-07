@@ -7,7 +7,7 @@
 //
 
 import XCTest
-import SwiftFoundation
+import Foundation
 @testable import CoreLock
 
 final class SerializationTests: XCTestCase {

@@ -6,6 +6,6 @@
 //  Copyright © 2016 ColemanCDA. All rights reserved.
 //
 
-import SwiftFoundation
+import Foundation
 
 public let LockBeaconUUID = UUID(rawValue: "5109BE6D-3918-43FE-A629-CB2E0707EA5F")!

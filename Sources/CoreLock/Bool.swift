@@ -6,7 +6,7 @@
 //  Copyright © 2016 ColemanCDA. All rights reserved.
 //
 
-import SwiftFoundation
+import Foundation
 
 /// Boolean value that can be transmitted over Bluetooth GATT.
 public struct BluetoothBool: ExpressibleByBooleanLiteral {
@@ -48,7 +48,7 @@ extension BluetoothBool: RawRepresentable {
     }
 }
 
-extension BluetoothBool: DataConvertible {
+extension BluetoothBool {
     
     public init?(data: Data) {
         

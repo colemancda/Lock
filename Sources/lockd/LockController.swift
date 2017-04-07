@@ -8,11 +8,11 @@
 
 #if os(Linux)
     import Glibc
-#elseif os(OSX)
+#elseif os(macOS)
     import Darwin.C
 #endif
 
-import SwiftFoundation
+import Foundation
 import Bluetooth
 import GATT
 import CoreLock
@@ -64,7 +64,7 @@ final class LockController {
         
         #if os(Linux)
         peripheral = PeripheralManager()
-        #elseif os(OSX)
+        #elseif os(macOS)
         peripheral = PeripheralManager(localName: "Test Lock")
         #endif
         
@@ -94,7 +94,7 @@ final class LockController {
         #if os(Linux)
         do { try peripheral.start(beacon: beacon) }
         catch { fatalError("Could not start peripheral: \(error)") }
-        #elseif os(OSX)
+        #elseif os(macOS)
         do { try peripheral.start() }
         catch { fatalError("Could not start peripheral: \(error)") }
         #endif
@@ -378,7 +378,7 @@ final class LockController {
         return nil
     }
     
-    private func didWrite(central: Central, UUID: BluetoothUUID, value: SwiftFoundation.Data, newValue: SwiftFoundation.Data) {
+    private func didWrite(central: Central, UUID: BluetoothUUID, value: Foundation.Data, newValue: Foundation.Data) {
         
         switch UUID {
             
@@ -528,7 +528,7 @@ final class LockController {
         
         updating = true
         
-        let _ = try! SwiftFoundation.Thread {
+        let _ = try! Thread(block: {
             
             #if os(Linux)
                 system(Command.updatePackageList)
@@ -538,7 +538,7 @@ final class LockController {
                 
                 system(Command.reboot)
             #endif
-        }
+        })
     }
     
     // MARK: Utility

@@ -6,7 +6,8 @@
 //  Copyright © 2016 ColemanCDA. All rights reserved.
 //
 
-import SwiftFoundation
+import Foundation
+import JSON
 
 /// Temporary new key. (non-owner)
 public struct NewKey: Equatable, JSONEncodable, JSONDecodable {

@@ -6,7 +6,7 @@
 //  Copyright © 2016 ColemanCDA. All rights reserved.
 //
 
-import SwiftFoundation
+import Foundation
 import CryptoSwift
 
 /// Generate random data with the specified size.

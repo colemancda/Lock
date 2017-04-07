@@ -20,4 +20,4 @@ func async(_ block: @escaping () -> ()) {
     queue.async { block() }
 }
 
-private let queue = DispatchQueue(label: "Cerradura Queue", attributes: [])
+let queue = DispatchQueue(label: "Cerradura Queue", attributes: [])

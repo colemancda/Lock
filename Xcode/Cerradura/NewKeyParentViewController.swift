@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 import CoreBluetooth
-import SwiftFoundation
+import Foundation
 import GATT
 import CoreLock
 

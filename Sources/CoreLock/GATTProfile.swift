@@ -12,7 +12,7 @@
     import Foundation
 #endif
 
-import SwiftFoundation
+import Foundation
 import Bluetooth
 import BSON
 
@@ -55,11 +55,11 @@ public struct LockService: GATTProfileService {
     /// The UUID lock identifier (16 bytes) (read-only)
     public struct Identifier: GATTProfileCharacteristic {
         
-        public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "EB1BA354-044C-11E6-BDFD-09AB70D5A8C7")!)
+        public static let UUID = BluetoothUUID.bit128(Foundation.UUID(rawValue: "EB1BA354-044C-11E6-BDFD-09AB70D5A8C7")!)
         
-        public var value: SwiftFoundation.UUID
+        public var value: Foundation.UUID
         
-        public init(value: SwiftFoundation.UUID) {
+        public init(value: Foundation.UUID) {
             
             self.value = value
         }
@@ -68,7 +68,7 @@ public struct LockService: GATTProfileService {
             
             let byteValue = isBigEndian ? bigEndian.bytes : bigEndian.bytes.reversed()
             
-            guard let value = SwiftFoundation.UUID(data: Data(bytes: byteValue))
+            guard let value = Foundation.UUID(data: Data(bytes: byteValue))
                 else { return nil }
             
             self.value = value
@@ -87,7 +87,7 @@ public struct LockService: GATTProfileService {
         
         public static let length = 1
         
-        public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "AD96F330-0497-11E6-9EB3-E72D62A5198D")!)
+        public static let UUID = BluetoothUUID.bit128(Foundation.UUID(rawValue: "AD96F330-0497-11E6-9EB3-E72D62A5198D")!)
         
         public var value: CoreLock.Model
         
@@ -117,7 +117,7 @@ public struct LockService: GATTProfileService {
         
         public static let length = MemoryLayout<UInt64>.size
         
-        public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "F28A0E1E-044C-11E6-9032-09AB70D5A8C7")!)
+        public static let UUID = BluetoothUUID.bit128(Foundation.UUID(rawValue: "F28A0E1E-044C-11E6-9032-09AB70D5A8C7")!)
         
         public var value: UInt64
         
@@ -135,9 +135,9 @@ public struct LockService: GATTProfileService {
             
             var value: UInt64 = 0
             
-            var dataCopy = bigEndian
+            var dataCopy = Array(bigEndian)
             
-            withUnsafeMutablePointer(to: &value) { let _ = memcpy($0, &dataCopy.bytes, length) }
+            withUnsafeMutablePointer(to: &value) { let _ = memcpy($0, &dataCopy, length) }
             
             self.value = value.bigEndian
         }
@@ -161,7 +161,7 @@ public struct LockService: GATTProfileService {
         
         public static let length = MemoryLayout<(UInt16, UInt16, UInt16)>.size
         
-        public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "A834DD35-F7E1-4BE0-B28D-A3BD6F7BE9D0")!)
+        public static let UUID = BluetoothUUID.bit128(Foundation.UUID(rawValue: "A834DD35-F7E1-4BE0-B28D-A3BD6F7BE9D0")!)
         
         public var value: (UInt16, UInt16, UInt16)
         
@@ -179,9 +179,9 @@ public struct LockService: GATTProfileService {
             
             var value: (UInt16, UInt16, UInt16) = (0,0,0)
             
-            var dataCopy = bigEndian
+            var dataCopy = Array(bigEndian)
             
-            withUnsafeMutablePointer(to: &value) { let _ = memcpy($0, &dataCopy.bytes, length) }
+            withUnsafeMutablePointer(to: &value) { let _ = memcpy($0, &dataCopy, length) }
             
             self.value = (value.0.bigEndian, value.1.bigEndian, value.2.bigEndian)
         }
@@ -203,7 +203,7 @@ public struct LockService: GATTProfileService {
     /// The lock's current status (1 byte) (read-only)
     public struct Status: GATTProfileCharacteristic {
         
-        public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "F868B290-044C-11E6-BD3B-09AB70D5A8C7")!)
+        public static let UUID = BluetoothUUID.bit128(Foundation.UUID(rawValue: "F868B290-044C-11E6-BD3B-09AB70D5A8C7")!)
         
         public var value: CoreLock.Status
         
@@ -230,14 +230,14 @@ public struct LockService: GATTProfileService {
     /// Key UUID + nonce + IV + encrypt(salt, iv, newKey) + HMAC(salt, nonce) (write-only)
     public struct Setup: AuthenticatedCharacteristic {
         
-        public static let length = SwiftFoundation.UUID.length + Nonce.length + IVSize + 48 + HMACSize
+        public static let length = Foundation.UUID.length + Nonce.length + IVSize + 48 + HMACSize
         
         /// The private key used to encrypt and decrypt new keys.
         private static let salt = KeyData(data: "p3R1pf9AmQxYlVAixSh6Yr0DRGSc4xST".toUTF8Data())!
         
-        public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "129E401C-044D-11E6-8FA9-09AB70D5A8C7")!)
+        public static let UUID = BluetoothUUID.bit128(Foundation.UUID(rawValue: "129E401C-044D-11E6-8FA9-09AB70D5A8C7")!)
         
-        public let identifier: SwiftFoundation.UUID
+        public let identifier: Foundation.UUID
         
         public let value: KeyData
         
@@ -246,7 +246,7 @@ public struct LockService: GATTProfileService {
         /// HMAC of key and nonce
         public let authentication: Data
         
-        public init(identifier: SwiftFoundation.UUID, value: KeyData, nonce: Nonce = Nonce()) {
+        public init(identifier: Foundation.UUID, value: KeyData, nonce: Nonce = Nonce()) {
             
             self.identifier = identifier
             self.value = value
@@ -261,7 +261,7 @@ public struct LockService: GATTProfileService {
             guard bytes.count == type(of: self).length
                 else { return nil }
             
-            self.identifier = SwiftFoundation.UUID(bigEndian: Data(bytes: Array(bytes[0 ..< 16])))!
+            self.identifier = Foundation.UUID(bigEndian: Data(bytes: Array(bytes[0 ..< 16])))!
             
             let nonceBytes = Array(bytes[16 ..< 16 + Nonce.length])
             
@@ -308,18 +308,18 @@ public struct LockService: GATTProfileService {
     /// Key UUID + nonce + HMAC(key, nonce) (16 + 16 + 64 bytes) (write-only)
     public struct Unlock: AuthenticatedCharacteristic {
         
-        public static let length = SwiftFoundation.UUID.length + Nonce.length + HMACSize
+        public static let length = Foundation.UUID.length + Nonce.length + HMACSize
         
-        public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "265B3EC0-044D-11E6-90F2-09AB70D5A8C7")!)
+        public static let UUID = BluetoothUUID.bit128(Foundation.UUID(rawValue: "265B3EC0-044D-11E6-90F2-09AB70D5A8C7")!)
         
-        public let identifier: SwiftFoundation.UUID
+        public let identifier: Foundation.UUID
         
         public let nonce: Nonce
         
         /// HMAC of key and nonce
         public let authentication: Data
         
-        public init(identifier: SwiftFoundation.UUID, nonce: Nonce = Nonce(), key: KeyData) {
+        public init(identifier: Foundation.UUID, nonce: Nonce = Nonce(), key: KeyData) {
             
             self.identifier = identifier
             self.nonce = nonce
@@ -335,7 +335,7 @@ public struct LockService: GATTProfileService {
             guard bytes.count == type(of: self).length
                 else { return nil }
             
-            let identifier = SwiftFoundation.UUID(bigEndian: Data(bytes: Array(bytes[0 ..< 16])))!
+            let identifier = Foundation.UUID(bigEndian: Data(bytes: Array(bytes[0 ..< 16])))!
             
             let nonceBytes = Array(bytes[16 ..< 16 + Nonce.length])
             
@@ -361,15 +361,15 @@ public struct LockService: GATTProfileService {
     /// parent key UUID + nonce + IV + encrypt(parentKey, iv, sharedSecret) + HMAC(parentKey, nonce) + permission + child key UUID + name
     public struct NewKeyParent: AuthenticatedCharacteristic {
         
-        public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "3A9EE5A8-044D-11E6-90F2-09AB70D5A8C7")!)
+        public static let UUID = BluetoothUUID.bit128(Foundation.UUID(rawValue: "3A9EE5A8-044D-11E6-90F2-09AB70D5A8C7")!)
         
-        public static let length = (min: SwiftFoundation.UUID.length + Nonce.length + IVSize + 48 + HMACSize + Permission.length + SwiftFoundation.UUID.length + 1, max: SwiftFoundation.UUID.length + Nonce.length + IVSize + 48 + HMACSize + Permission.length + SwiftFoundation.UUID.length + Key.Name.maxLength)
+        public static let length = (min: Foundation.UUID.length + Nonce.length + IVSize + 48 + HMACSize + Permission.length + Foundation.UUID.length + 1, max: Foundation.UUID.length + Nonce.length + IVSize + 48 + HMACSize + Permission.length + Foundation.UUID.length + Key.Name.maxLength)
         
         /// The parent key identifier.
-        public let parent: SwiftFoundation.UUID
+        public let parent: Foundation.UUID
         
         /// The child key identifier.
-        public let child: SwiftFoundation.UUID
+        public let child: Foundation.UUID
         
         /// The name of the new key.
         public let name: Key.Name
@@ -389,8 +389,8 @@ public struct LockService: GATTProfileService {
         
         public init(nonce: Nonce = Nonce(),
                     sharedSecret: KeyData = KeyData(),
-                    parentKey: (identifier: SwiftFoundation.UUID, data: KeyData),
-                    childKey: (identifier: SwiftFoundation.UUID, permission: Permission, name: Key.Name)) {
+                    parentKey: (identifier: Foundation.UUID, data: KeyData),
+                    childKey: (identifier: Foundation.UUID, permission: Permission, name: Key.Name)) {
             
             self.parent = parentKey.identifier
             self.child = childKey.identifier
@@ -413,7 +413,7 @@ public struct LockService: GATTProfileService {
                 && bytes.count <= NewKeyParent.length.max
                 else { return nil }
             
-            self.parent = SwiftFoundation.UUID(bigEndian: Data(bytes: Array(bytes[0 ..< 16])))!
+            self.parent = Foundation.UUID(bigEndian: Data(bytes: Array(bytes[0 ..< 16])))!
             
             let nonceBytes = Array(bytes[16 ..< 16 + Nonce.length])
             
@@ -438,9 +438,9 @@ public struct LockService: GATTProfileService {
             
             self.permission = permission
             
-            self.child = SwiftFoundation.UUID(bigEndian: Data(bytes: Array(bytes[16 + Nonce.length + IVSize + 48 + HMACSize + Permission.length ..< 16 + Nonce.length + IVSize + 48 + HMACSize + Permission.length + 16])))!
+            self.child = Foundation.UUID(bigEndian: Data(bytes: Array(bytes[16 + Nonce.length + IVSize + 48 + HMACSize + Permission.length ..< 16 + Nonce.length + IVSize + 48 + HMACSize + Permission.length + 16])))!
             
-            self.name = Key.Name(data: Data(bytes: bytes.suffix(from: SwiftFoundation.UUID.length + Nonce.length + IVSize + 48 + HMACSize + Permission.length + SwiftFoundation.UUID.length)))!
+            self.name = Key.Name(data: Data(bytes: bytes.suffix(from: Foundation.UUID.length + Nonce.length + IVSize + 48 + HMACSize + Permission.length + Foundation.UUID.length)))!
         }
         
         public func toBigEndian() -> Data {
@@ -470,11 +470,11 @@ public struct LockService: GATTProfileService {
     /// new key UUID + nonce + IV + encrypt(sharedSecret, iv, childKey) + HMAC(sharedSecret, nonce)
     public struct NewKeyChild: AuthenticatedCharacteristic {
         
-        public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "4CC3B5BA-044D-11E6-A956-09AB70D5A8C7")!)
+        public static let UUID = BluetoothUUID.bit128(Foundation.UUID(rawValue: "4CC3B5BA-044D-11E6-A956-09AB70D5A8C7")!)
         
-        public static let length = SwiftFoundation.UUID.length + Nonce.length + IVSize + 48 + HMACSize
+        public static let length = Foundation.UUID.length + Nonce.length + IVSize + 48 + HMACSize
         
-        public let identifier: SwiftFoundation.UUID
+        public let identifier: Foundation.UUID
         
         public let nonce: Nonce
         
@@ -485,7 +485,7 @@ public struct LockService: GATTProfileService {
         
         public let initializationVector: InitializationVector
         
-        public init(nonce: Nonce = Nonce(), sharedSecret: KeyData, newKey: (identifier: SwiftFoundation.UUID, data: KeyData)) {
+        public init(nonce: Nonce = Nonce(), sharedSecret: KeyData, newKey: (identifier: Foundation.UUID, data: KeyData)) {
             
             self.identifier = newKey.identifier
             self.nonce = nonce
@@ -504,7 +504,7 @@ public struct LockService: GATTProfileService {
             guard bytes.count == type(of: self).length
                 else { return nil }
             
-            self.identifier = SwiftFoundation.UUID(bigEndian: Data(bytes: Array(bytes[0 ..< 16])))!
+            self.identifier = Foundation.UUID(bigEndian: Data(bytes: Array(bytes[0 ..< 16])))!
             
             let nonceBytes = Array(bytes[16 ..< 16 + Nonce.length])
             
@@ -551,11 +551,11 @@ public struct LockService: GATTProfileService {
     /// Key UUID + nonce + HMAC(key, nonce) + enable (16 + 16 + 64 + 1 bytes) (write-only)
     public struct HomeKitEnable: AuthenticatedCharacteristic {
         
-        public static let length = SwiftFoundation.UUID.length + Nonce.length + HMACSize + 1
+        public static let length = Foundation.UUID.length + Nonce.length + HMACSize + 1
         
-        public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "A187317C-6DE5-4842-800A-0D7C7529B4E7")!)
+        public static let UUID = BluetoothUUID.bit128(Foundation.UUID(rawValue: "A187317C-6DE5-4842-800A-0D7C7529B4E7")!)
         
-        public let identifier: SwiftFoundation.UUID
+        public let identifier: Foundation.UUID
         
         public let nonce: Nonce
         
@@ -564,7 +564,7 @@ public struct LockService: GATTProfileService {
         
         public let enable: Bool
         
-        public init(identifier: SwiftFoundation.UUID, nonce: Nonce = Nonce(), key: KeyData, enable: Bool = true) {
+        public init(identifier: Foundation.UUID, nonce: Nonce = Nonce(), key: KeyData, enable: Bool = true) {
             
             self.identifier = identifier
             self.nonce = nonce
@@ -581,9 +581,9 @@ public struct LockService: GATTProfileService {
             guard bytes.count == type(of: self).length
                 else { return nil }
             
-            let UUIDLength = SwiftFoundation.UUID.length
+            let UUIDLength = Foundation.UUID.length
             
-            let identifier = SwiftFoundation.UUID(bigEndian: Data(bytes: Array(bytes[0 ..< UUIDLength])))!
+            let identifier = Foundation.UUID(bigEndian: Data(bytes: Array(bytes[0 ..< UUIDLength])))!
             
             let nonceBytes = Array(bytes[UUIDLength ..< UUIDLength + Nonce.length])
             
@@ -614,18 +614,18 @@ public struct LockService: GATTProfileService {
     /// Key UUID + nonce + HMAC(key, nonce) (16 + 16 + 64 bytes) (write-only)
     public struct Update: AuthenticatedCharacteristic {
         
-        public static let length = SwiftFoundation.UUID.length + Nonce.length + HMACSize
+        public static let length = Foundation.UUID.length + Nonce.length + HMACSize
         
-        public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "17CA5159-1DAF-431A-8CF0-A9CAD500BD96")!)
+        public static let UUID = BluetoothUUID.bit128(Foundation.UUID(rawValue: "17CA5159-1DAF-431A-8CF0-A9CAD500BD96")!)
         
-        public let identifier: SwiftFoundation.UUID
+        public let identifier: Foundation.UUID
         
         public let nonce: Nonce
         
         /// HMAC of key and nonce
         public let authentication: Data
         
-        public init(identifier: SwiftFoundation.UUID, nonce: Nonce = Nonce(), key: KeyData) {
+        public init(identifier: Foundation.UUID, nonce: Nonce = Nonce(), key: KeyData) {
             
             self.identifier = identifier
             self.nonce = nonce
@@ -641,7 +641,7 @@ public struct LockService: GATTProfileService {
             guard bytes.count == type(of: self).length
                 else { return nil }
             
-            let identifier = SwiftFoundation.UUID(bigEndian: Data(bytes: Array(bytes[0 ..< 16])))!
+            let identifier = Foundation.UUID(bigEndian: Data(bytes: Array(bytes[0 ..< 16])))!
             
             let nonceBytes = Array(bytes[16 ..< 16 + Nonce.length])
             
@@ -673,18 +673,18 @@ public struct LockService: GATTProfileService {
     /// Key UUID + nonce + HMAC(key, nonce) (16 + 16 + 64 bytes) (write-only)
     public struct ListKeysCommand: AuthenticatedCharacteristic {
         
-        public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "CF1F3211-8D4E-4717-B31A-2A100ABEF700")!)
+        public static let UUID = BluetoothUUID.bit128(Foundation.UUID(rawValue: "CF1F3211-8D4E-4717-B31A-2A100ABEF700")!)
         
-        public static let length = SwiftFoundation.UUID.length + Nonce.length + HMACSize
+        public static let length = Foundation.UUID.length + Nonce.length + HMACSize
         
-        public let identifier: SwiftFoundation.UUID
+        public let identifier: Foundation.UUID
         
         public let nonce: Nonce
         
         /// HMAC of key and nonce
         public let authentication: Data
         
-        public init(identifier: SwiftFoundation.UUID, nonce: Nonce = Nonce(), key: KeyData) {
+        public init(identifier: Foundation.UUID, nonce: Nonce = Nonce(), key: KeyData) {
             
             self.identifier = identifier
             self.nonce = nonce
@@ -700,7 +700,7 @@ public struct LockService: GATTProfileService {
             guard bytes.count == type(of: self).length
                 else { return nil }
             
-            let identifier = SwiftFoundation.UUID(bigEndian: Data(bytes: Array(bytes[0 ..< 16])))!
+            let identifier = Foundation.UUID(bigEndian: Data(bytes: Array(bytes[0 ..< 16])))!
             
             let nonceBytes = Array(bytes[16 ..< 16 + Nonce.length])
             
@@ -730,7 +730,7 @@ public struct LockService: GATTProfileService {
     /// nonce + IV + HMAC(sharedSecret, nonce) + encrypt(sharedSecret, iv, childKey)
     public struct ListKeysValue: AuthenticatedCharacteristic {
         
-        public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "D2F5F81C-C3DF-4626-9207-212029EA2F6F")!)
+        public static let UUID = BluetoothUUID.bit128(Foundation.UUID(rawValue: "D2F5F81C-C3DF-4626-9207-212029EA2F6F")!)
         
         public static let minimumLength = Nonce.length + IVSize + HMACSize + 1
         
@@ -847,7 +847,7 @@ public struct LockService: GATTProfileService {
                 let pendingBSON = array[DocumentIndex.pending.rawValue]
                 
                 guard case let .binary(.generic, uuidData) = identifierBSON,
-                    let identifier = SwiftFoundation.UUID(bigEndian: Data(bytes: uuidData)),
+                    let identifier = Foundation.UUID(bigEndian: Data(bytes: uuidData)),
                     let nameString = nameBSON.stringValue,
                     let name = Key.Name(rawValue: nameString),
                     let dateDouble = dateBSON.doubleValue,
@@ -881,20 +881,20 @@ public struct LockService: GATTProfileService {
     /// Key UUID + nonce + HMAC(key, nonce) + deleted key UUID (16 + 16 + 64 + 16 bytes) (write-only)
     public struct RemoveKey: AuthenticatedCharacteristic {
         
-        public static let length = SwiftFoundation.UUID.length + Nonce.length + HMACSize + SwiftFoundation.UUID.length
+        public static let length = Foundation.UUID.length + Nonce.length + HMACSize + Foundation.UUID.length
         
-        public static let UUID = BluetoothUUID.bit128(SwiftFoundation.UUID(rawValue: "A8A1EF29-28E8-43E3-8A23-DD9A1FDC25F7")!)
+        public static let UUID = BluetoothUUID.bit128(Foundation.UUID(rawValue: "A8A1EF29-28E8-43E3-8A23-DD9A1FDC25F7")!)
         
-        public let identifier: SwiftFoundation.UUID
+        public let identifier: Foundation.UUID
         
         public let nonce: Nonce
         
         /// HMAC of key and nonce
         public let authentication: Data
         
-        public let removedKey: SwiftFoundation.UUID
+        public let removedKey: Foundation.UUID
         
-        public init(identifier: SwiftFoundation.UUID, nonce: Nonce = Nonce(), key: KeyData, removedKey: SwiftFoundation.UUID) {
+        public init(identifier: Foundation.UUID, nonce: Nonce = Nonce(), key: KeyData, removedKey: Foundation.UUID) {
             
             self.identifier = identifier
             self.nonce = nonce
@@ -911,7 +911,7 @@ public struct LockService: GATTProfileService {
             guard bytes.count == type(of: self).length
                 else { return nil }
             
-            let identifier = SwiftFoundation.UUID(bigEndian: Data(bytes: Array(bytes[0 ..< 16])))!
+            let identifier = Foundation.UUID(bigEndian: Data(bytes: Array(bytes[0 ..< 16])))!
             
             let nonceBytes = Array(bytes[16 ..< 16 + Nonce.length])
             
@@ -921,11 +921,11 @@ public struct LockService: GATTProfileService {
             
             assert(hmac.count == HMACSize)
             
-            let bigEndianRemovedKeyBytes = Array(bytes[16 + Nonce.length + HMACSize ..< 16 + Nonce.length + HMACSize + SwiftFoundation.UUID.length])
+            let bigEndianRemovedKeyBytes = Array(bytes[16 + Nonce.length + HMACSize ..< 16 + Nonce.length + HMACSize + Foundation.UUID.length])
             
             let removedKeyBytes = isBigEndian ? bigEndianRemovedKeyBytes : bigEndianRemovedKeyBytes.reversed()
             
-            let removedKey = SwiftFoundation.UUID(data: Data(bytes: removedKeyBytes))!
+            let removedKey = Foundation.UUID(data: Data(bytes: removedKeyBytes))!
             
             self.identifier = identifier
             self.nonce = Nonce(data: Data(bytes: nonceBytes))!
@@ -953,7 +953,7 @@ public func == (lhs: LockService.ListKeysValue.KeyEntry, rhs: LockService.ListKe
 
 // MARK: - Extension
 
-public extension SwiftFoundation.UUID {
+public extension Foundation.UUID {
     
     static var length: Int { return 16 }
     
@@ -961,7 +961,7 @@ public extension SwiftFoundation.UUID {
         
         var bytes = bigEndian.bytes
         
-        guard bytes.count == SwiftFoundation.UUID.length
+        guard bytes.count == Foundation.UUID.length
             else { return nil }
         
         if isBigEndian == false {

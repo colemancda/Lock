@@ -10,8 +10,8 @@ import Foundation
 import UIKit
 import WatchConnectivity
 import CoreSpotlight
-import SwiftFoundation
 import CoreLock
+import JSON
 
 @UIApplicationMain
 final class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -205,7 +205,7 @@ private extension AppDelegate {
             // parse eKey file
             guard let data = try? Data(contentsOf: url),
                 let jsonString = String(UTF8Data: data),
-                let json = JSON.Value(string: jsonString),
+                let json = try? JSON.Value(string: jsonString),
                 let newKey = NewKeyInvitation(JSONValue: json)
                 else { return false }
             

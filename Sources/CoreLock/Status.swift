@@ -6,7 +6,7 @@
 //  Copyright © 2016 ColemanCDA. All rights reserved.
 //
 
-import SwiftFoundation
+import Foundation
 
 /// Lock status
 public enum Status: UInt8 {
@@ -20,7 +20,7 @@ public enum Status: UInt8 {
 
 // MARK: - DataConvertible
 
-extension Status: DataConvertible {
+public extension Status {
     
     public init?(data: Data) {
         

@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 import CoreLock
-import SwiftFoundation
+import Foundation
 import JGProgressHUD
 
 final class NewKeySelectPermissionViewController: UITableViewController, NewKeyViewController {

@@ -8,7 +8,7 @@
 
 #if os(Linux)
     import Glibc
-#elseif os(OSX)
+#elseif os(macOS)
     import Darwin.C
 #endif
 

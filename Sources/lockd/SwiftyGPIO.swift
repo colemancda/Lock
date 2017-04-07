@@ -4,7 +4,7 @@
     import Darwin.C
 #endif
 
-import SwiftFoundation
+import Foundation
 
 internal let GPIOBASEPATH="/sys/class/gpio/"
 internal let SPIBASEPATH="/dev/spidev"
@@ -841,6 +841,6 @@ public enum ByteOrder{
 
 // MARK: - Darwin / Xcode Support
 
-#if os(OSX)
+#if os(macOS)
     private var O_SYNC: CInt { fatalError("Linux only") }
 #endif

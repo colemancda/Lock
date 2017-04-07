@@ -6,7 +6,8 @@
 //  Copyright © 2016 ColemanCDA. All rights reserved.
 //
 
-import SwiftFoundation
+import Foundation
+import JSON
 
 public struct Key: Equatable, JSONEncodable, JSONDecodable {
     
@@ -111,7 +112,7 @@ public extension Key {
 public extension Key {
     
     /// 64 byte String name.
-    public struct Name: Equatable, RawRepresentable, DataConvertible, CustomStringConvertible {
+    public struct Name: Equatable, RawRepresentable, CustomStringConvertible {
         
         public static let maxLength = 64
         

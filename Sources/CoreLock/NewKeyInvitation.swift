@@ -6,7 +6,8 @@
 //  Copyright © 2016 ColemanCDA. All rights reserved.
 //
 
-import SwiftFoundation
+import Foundation
+import JSON
 
 /// Exportable new key invitation.
 public struct NewKeyInvitation: Equatable, JSONEncodable, JSONDecodable {

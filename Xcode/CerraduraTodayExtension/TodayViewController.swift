@@ -9,7 +9,7 @@
 import UIKit
 import NotificationCenter
 import CoreBluetooth
-import SwiftFoundation
+import Foundation
 import CoreLock
 import KeychainAccess
 

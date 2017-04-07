@@ -8,7 +8,7 @@
 
 import Foundation
 import WatchConnectivity
-import SwiftFoundation
+import Foundation
 import CoreLock
 import GATT
 import CoreData

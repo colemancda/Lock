@@ -6,9 +6,9 @@
 //  Copyright © 2016 ColemanCDA. All rights reserved.
 //
 
-#if os(OSX) || os(iOS)
+#if os(macOS) || os(iOS)
     
-    import SwiftFoundation
+    import Foundation
     import Bluetooth
     import GATT
     import CoreBluetooth
@@ -34,7 +34,7 @@
         
         public let foundLocks: Observable<[Lock]> = Observable([])
         
-        public lazy var state: Observable<CBCentralManagerState> = unsafeBitCast(Observable(self.internalManager.state), to: Observable<CBCentralManagerState>.self)
+        public lazy var state: Observable<CBManagerState> = Observable(self.internalManager.state)
         
         // MARK: - Private Properties
         
@@ -413,7 +413,7 @@
             public let packageVersion: (UInt16, UInt16, UInt16)
             public var status: Status
             
-            fileprivate init(peripheral: Peripheral, identifier: SwiftFoundation.UUID, status: Status, model: Model, version: UInt64, packageVersion: (UInt16, UInt16, UInt16)) {
+            fileprivate init(peripheral: Peripheral, identifier: Foundation.UUID, status: Status, model: Model, version: UInt64, packageVersion: (UInt16, UInt16, UInt16)) {
                 
                 self.peripheral = peripheral
                 self.identifier = identifier
