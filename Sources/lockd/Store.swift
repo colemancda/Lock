@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreLock
+import JSON
 
 // Secure data store.
 final class Store {
@@ -33,16 +34,19 @@ final class Store {
         
         // try load existing data...
         
-        guard FileManager.fileExists(at: filename) else {
+        let fileManager = FileManager.default
+        
+        guard fileManager.fileExists(atPath: filename) else {
             
             // no prevous data
-            try! FileManager.createFile(at: filename)
+            guard fileManager.createFile(atPath: filename, contents: nil)
+                else { fatalError("Could not create Store at \(filename)") }
             return
         }
         
-        guard let fileData = try? FileManager.contents(at: filename),
+        guard let fileData = fileManager.contents(atPath: filename),
             let jsonString = String(UTF8Data: fileData),
-            let json = JSON.Value(string: jsonString),
+            let json = try? JSON.Value(string: jsonString),
             let jsonObject = json.objectValue,
             let keysJSON = jsonObject[JSONKey.keys.rawValue]?.arrayValue,
             let newKeysJSON = jsonObject[JSONKey.newKeys.rawValue]?.arrayValue,
@@ -62,7 +66,7 @@ final class Store {
         newKeys = []
         
         // delete file
-        try! FileManager.removeItem(path: filename)
+        try! FileManager.default.removeItem(atPath: filename)
     }
     
     func add(key: Key) {
@@ -137,11 +141,11 @@ final class Store {
         
         let json = JSON.Value.object([JSONKey.keys.rawValue: keys.toJSON(), JSONKey.newKeys.rawValue: newKeys.toJSON()])
         
-        guard let jsonString = json.toString()
+        guard let jsonString = try? json.toString()
             else { fatalError("Could no encode to JSON string") }
         
         let data = jsonString.toUTF8Data()
         
-        try FileManager.set(contents: data, at: filename)
+        try data.write(to: URL(fileURLWithPath: filename))
     }
 }

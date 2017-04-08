@@ -503,7 +503,7 @@ final class LockController {
             
             var pid = pid_t()
             guard posix_spawn(&pid, launchPath, nil, nil, argv, nil) == 0
-                else { fatalError("Could not start HomeKit Daemon: \(POSIXError.fromErrno!)") }
+                else { fatalError("Could not start HomeKit Daemon: \(errno)") }
             
             self.homeKitDeamon = pid
             
@@ -516,7 +516,7 @@ final class LockController {
             
             self.homeKitDeamon = nil
             
-            do { try FileManager.removeItem(path: File.homeKitData) } catch { } // ignore error
+            do { try FileManager.default.removeItem(atPath: File.homeKitData) } catch { } // ignore error
         }
     }
     
@@ -528,7 +528,7 @@ final class LockController {
         
         updating = true
         
-        let _ = try! Thread(block: {
+        let _ = Thread(block: {
             
             #if os(Linux)
                 system(Command.updatePackageList)

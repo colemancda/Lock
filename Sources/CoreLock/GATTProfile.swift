@@ -796,7 +796,8 @@ public struct LockService: GATTProfileService {
             
             for bsonValue in bson.arrayValue {
                 
-                guard let key = KeyEntry(BSONValue: bsonValue)
+                guard let document = bsonValue.documentValue,
+                    let key = KeyEntry(bsonValue: document)
                     else { return nil }
                 
                 keys.append(key)
@@ -834,10 +835,11 @@ public struct LockService: GATTProfileService {
                 self.pending = pending
             }
             
-            public init?(BSONValue: BSON.Value) {
+            public init?(bsonValue document: BSON.Document) {
                 
-                guard let array = BSONValue.documentValue?.arrayValue,
-                    array.count == DocumentIndex.count
+                let array = document.arrayValue
+                
+                guard array.count == DocumentIndex.count
                     else { return nil }
                 
                 let identifierBSON = array[DocumentIndex.identifier.rawValue]
@@ -846,13 +848,13 @@ public struct LockService: GATTProfileService {
                 let permissionBSON = array[DocumentIndex.permission.rawValue]
                 let pendingBSON = array[DocumentIndex.pending.rawValue]
                 
-                guard case let .binary(.generic, uuidData) = identifierBSON,
-                    let identifier = Foundation.UUID(bigEndian: Data(bytes: uuidData)),
+                guard let uuidData = identifierBSON as? BSON.Binary,
+                    let identifier = Foundation.UUID(bigEndian: uuidData.data),
                     let nameString = nameBSON.stringValue,
                     let name = Key.Name(rawValue: nameString),
                     let dateDouble = dateBSON.doubleValue,
-                    case let .binary(.generic, permissionData) = permissionBSON,
-                    let permission = Permission(bigEndian: Data(bytes: permissionData)),
+                    let permissionData = permissionBSON as? BSON.Binary,
+                    let permission = Permission(bigEndian: permissionData.data),
                     let pending = pendingBSON.boolValue
                     else { return nil }
                 
@@ -863,15 +865,13 @@ public struct LockService: GATTProfileService {
                 self.pending = pending
             }
             
-            public func toBSON() -> BSON.Value {
+            public func toBSON() -> BSON.Document {
                 
-                let bsonArray = [BSON.Value.binary(subtype: .generic, data: identifier.toBigEndian().bytes),
-                                 BSON.Value.string(name.rawValue),
-                                 BSON.Value.double(date.timeIntervalSince1970),
-                                 BSON.Value.binary(subtype: .generic, data: permission.toBigEndian().bytes),
-                                 BSON.Value.boolean(pending)]
-                
-                return .array(BSON.Document(array: bsonArray))
+                return [BSON.Binary(data: identifier.toBigEndian(), withSubtype: .generic),
+                        name.rawValue,
+                        Double(date.timeIntervalSince1970),
+                        BSON.Binary(data: permission.toBigEndian(), withSubtype: .generic),
+                        pending]
             }
         }
     }
@@ -959,7 +959,7 @@ public extension Foundation.UUID {
     
     init?(bigEndian: Data) {
         
-        var bytes = bigEndian.bytes
+        var bytes = Array(bigEndian)
         
         guard bytes.count == Foundation.UUID.length
             else { return nil }
@@ -974,7 +974,7 @@ public extension Foundation.UUID {
     
     func toBigEndian() -> Data {
         
-        let bigEndianUUIDBytes = isBigEndian ? self.toData().bytes : self.toData().bytes.reversed()
+        let bigEndianUUIDBytes = isBigEndian ? Array(self.toData()) : Array(self.toData().reversed())
         
         return Data(bytes: bigEndianUUIDBytes)
     }

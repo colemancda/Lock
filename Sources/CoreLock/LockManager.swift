@@ -34,7 +34,11 @@
         
         public let foundLocks: Observable<[Lock]> = Observable([])
         
-        public lazy var state: Observable<CBManagerState> = Observable(self.internalManager.state)
+        #if os(macOS)
+        public lazy var state: Observable<CBCentralManagerState> = Observable(self.internalManager.state)
+        #elseif os(iOS)
+        public lazy var state: Observable<CBCentralManagerState> = Observable(self.internalManager.state)
+        #endif
         
         // MARK: - Private Properties
         

@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreLock
+import JSON
 
 struct Configuration: JSONEncodable, JSONDecodable {
     
@@ -55,12 +56,14 @@ extension Configuration {
         
     init?(filename: String) {
         
-        // load existing
-        guard FileManager.fileExists(at: filename) else { return nil }
+        let fileManager = FileManager.default
         
-        guard let jsonData = try? FileManager.contents(at: filename),
+        // load existing
+        guard fileManager.fileExists(atPath: filename) else { return nil }
+        
+        guard let jsonData = fileManager.contents(atPath: filename),
             let jsonString = String(UTF8Data: jsonData),
-            let jsonValue = JSON.Value(string: jsonString),
+            let jsonValue = try? JSON.Value(string: jsonString),
             let configuration = Configuration(JSONValue: jsonValue)
             else { return nil }
         
@@ -69,18 +72,18 @@ extension Configuration {
     
     func save(_ filename: String) throws {
         
-        let data = self.toJSON().toString(options: [JSON.WritingOption.pretty])!.toUTF8Data()
+        let data = try! self.toJSON().toString(options: .prettyPrint).toUTF8Data()
+        
+        let fileManager = FileManager.default
         
         // create file if not created
-        if FileManager.fileExists(at: filename) == false {
+        if fileManager.fileExists(atPath: filename) == false {
             
-            try FileManager.createFile(at: filename)
+            fileManager.createFile(atPath: filename, contents: nil)
         }
         
-        try FileManager.set(contents: data, at: filename)
+        try data.write(to: URL(fileURLWithPath: filename))
     }
-    
-    
     
     static func load(_ filename: String) throws -> Configuration {
         

@@ -50,7 +50,7 @@ final class KeysViewController: UIViewController, UITableViewDataSource, UITable
     
     // MARK: - Methods
     
-    private func stateChanged(_ state: CBManagerState) {
+    private func stateChanged(_ state: CBCentralManagerState) {
         
         mainQueue {
             

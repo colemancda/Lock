@@ -8,6 +8,7 @@
 
 import XCTest
 import Foundation
+import CryptoSwift
 @testable import CoreLock
 
 final class CryptoTests: XCTestCase {

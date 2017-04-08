@@ -8,10 +8,11 @@
 
 #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
     import Darwin.C
-    import Foundation
 #elseif os(Linux)
     import Glibc
 #endif
+
+import Foundation
 
 public struct DateComponents {
     

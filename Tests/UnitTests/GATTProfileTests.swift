@@ -13,7 +13,11 @@ import SwiftShims
 
 import XCTest
 import Foundation
+import CryptoSwift
+import Bluetooth
 @testable import CoreLock
+
+public let isBigEndian = 10.bigEndian == 10
 
 final class GATTProfileTests: XCTestCase {
     

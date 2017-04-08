@@ -331,7 +331,7 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
     
     // MARK: Lock Manager Notifications
     
-    private func stateChanged(managerState: CBManagerState) {
+    private func stateChanged(managerState: CBCentralManagerState) {
         
         mainQueue {
             
