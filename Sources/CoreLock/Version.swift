@@ -10,4 +10,4 @@
 public let CoreLockVersion: UInt64 = 1
 
 /// Version of the linux Debian Package
-public let LinuxPackageVersion: (UInt16, UInt16, UInt16) = (1, 0, 2)
+public let LinuxPackageVersion: (UInt16, UInt16, UInt16) = (1, 0, 3)

@@ -11,7 +11,7 @@ import GATT
 import CoreLock
 import Foundation
 
-print("Starting Lock Daemon...")
+print("Starting Lock Daemon \(LinuxPackageVersion)...")
 
 let _ = LockController.shared
 
