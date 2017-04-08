@@ -60,7 +60,7 @@ final class LockViewController: UIViewController {
         
         func show() {
             
-            let activities = [NewKeyActivity(), ManageKeysActivity(), HomeKitEnableActivity(), RenameActivity(), UpdateActivity(), DeleteLockActivity()]
+            let activities = [NewKeyActivity(), ManageKeysActivity(), RenameActivity(), UpdateActivity(), DeleteLockActivity()]
             
             let lockItem = LockActivityItem(identifier: lockIdentifier)
             

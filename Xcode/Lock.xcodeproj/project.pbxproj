@@ -28,6 +28,7 @@
 		6E31EAF51E986A4200710EA5 /* GPIOPresets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E31EAF21E986A4200710EA5 /* GPIOPresets.swift */; };
 		6E31EAF61E986A4200710EA5 /* SunXi.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E31EAF31E986A4200710EA5 /* SunXi.swift */; };
 		6E31EAF71E986A4200710EA5 /* SwiftyGPIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E31EAF41E986A4200710EA5 /* SwiftyGPIO.swift */; };
+		6E31EAF91E98CA4600710EA5 /* PresentPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E31EAF81E98CA4600710EA5 /* PresentPopover.swift */; };
 		6E3E4ED21D2772C8000D13DF /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3E4ED11D2772C8000D13DF /* Constants.swift */; };
 		6E4E3F0C1CCBDBBD00196E39 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E4E3F0B1CCBDBBD00196E39 /* Store.swift */; };
 		6E59F2221D971CA5002EEF94 /* CerraduraWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 6E778D971CD5B70300AED11E /* CerraduraWatch.app */; };
@@ -266,6 +267,7 @@
 		6E31EAF21E986A4200710EA5 /* GPIOPresets.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GPIOPresets.swift; sourceTree = "<group>"; };
 		6E31EAF31E986A4200710EA5 /* SunXi.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SunXi.swift; sourceTree = "<group>"; };
 		6E31EAF41E986A4200710EA5 /* SwiftyGPIO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftyGPIO.swift; sourceTree = "<group>"; };
+		6E31EAF81E98CA4600710EA5 /* PresentPopover.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PresentPopover.swift; sourceTree = "<group>"; };
 		6E3E4ED11D2772C8000D13DF /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		6E4E3F0B1CCBDBBD00196E39 /* Store.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		6E5269841CCC205500AB20A2 /* KeysViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeysViewController.swift; sourceTree = "<group>"; };
@@ -537,6 +539,7 @@
 		6E814D7D1D984D2E004CAF69 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				6E31EAF81E98CA4600710EA5 /* PresentPopover.swift */,
 				6ED338691CC7C7CB00DF1461 /* ErrorAlert.swift */,
 			);
 			name = Extensions;
@@ -1208,6 +1211,7 @@
 				6E814D791D98433A004CAF69 /* LockPermissionsViewController.swift in Sources */,
 				6EE903051D0FC782009EDEEC /* WatchMessage.swift in Sources */,
 				6E1F60671CCB3885001914E7 /* CoreDataExtensions.swift in Sources */,
+				6E31EAF91E98CA4600710EA5 /* PresentPopover.swift in Sources */,
 				6ED338681CC7C39200DF1461 /* NearLockViewController.swift in Sources */,
 				6E7E65DD1D0D3619009E00C4 /* Async.swift in Sources */,
 				6EE7F60F1D332D3200B110D4 /* NewKeyViewController.swift in Sources */,

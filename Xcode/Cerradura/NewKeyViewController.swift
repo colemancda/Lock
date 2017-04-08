@@ -19,6 +19,8 @@ protocol NewKeyViewController: class, ActivityIndicatorViewController {
     
     func present(_ viewControllerToPresent: UIViewController, animated: Bool, completion: (() -> ())?)
     
+    func present(_ viewControllerToPresent: UIViewController, animated: Bool, completion: (() -> ())?, sender: PopoverPresentingView)
+    
     func dismiss(animated: Bool, completion: (() -> ())?)
     
     func showErrorAlert(_ localizedText: String, okHandler: (() -> ())?, retryHandler: (()-> ())?)
@@ -26,7 +28,7 @@ protocol NewKeyViewController: class, ActivityIndicatorViewController {
 
 extension NewKeyViewController {
     
-    func newKey(permission: Permission) {
+    func newKey(permission: Permission, sender: PopoverPresentingView) {
         
         let lockIdentifier = self.lockIdentifier!
         
@@ -96,7 +98,7 @@ extension NewKeyViewController {
                         self.dismiss(animated: true, completion: nil)
                     }
                     
-                    self.present(activityController, animated: true, completion: nil)
+                    self.present(activityController, animated: true, completion: nil, sender: sender)
                 }
             }
         }

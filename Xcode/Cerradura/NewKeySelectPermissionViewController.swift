@@ -120,30 +120,19 @@ final class NewKeySelectPermissionViewController: UITableViewController, NewKeyV
         
         tableView.deselectRow(at: indexPath, animated: true)
         
+        let cell = tableView.cellForRow(at: indexPath) as! PermissionTypeTableViewCell
+        
         let selectedType = permissionTypes[indexPath.row]
         
+        let permission: Permission
+        
         switch selectedType {
-            
-        case .admin, .anytime:
-            
-            let permission: Permission
-            
-            switch selectedType {
             case .admin: permission = .admin
             case .anytime: permission = .anytime
             default: fatalError()
-            }
-            
-            newKey(permission: permission)
-            
-        case .scheduled:
-            
-            //let viewController = UIStoryboard.init(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "newKeyScheduled") as! NewKeyScheduleViewController
-            
-            fatalError()
-            
-        case .owner: fatalError("Cannot create owner key")
         }
+        
+        newKey(permission: permission, sender: .view(cell.permissionImageView))
     }
 }
 
