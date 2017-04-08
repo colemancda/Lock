@@ -528,7 +528,7 @@ final class LockController {
         
         updating = true
         
-        let _ = Thread(block: {
+        let commandThread = Thread(block: {
             
             #if os(Linux)
                 system(Command.updatePackageList)
@@ -539,6 +539,8 @@ final class LockController {
                 system(Command.reboot)
             #endif
         })
+        
+        commandThread.start()
     }
     
     // MARK: Utility
