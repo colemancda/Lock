@@ -152,7 +152,12 @@ func LoadPersistentStore() throws {
     
     // load SQLite store
     
-    PersistentStore = try Store.shared.managedObjectContext.persistentStoreCoordinator!.addPersistentStore(ofType:NSSQLiteStoreType, configurationName: nil, at: url, options: nil)
+    PersistentStore = try Store.shared.managedObjectContext
+        .persistentStoreCoordinator!
+        .addPersistentStore(ofType:NSSQLiteStoreType,
+                            configurationName: nil,
+                            at: url,
+                            options: nil)
 }
 
 func RemovePersistentStore() throws {

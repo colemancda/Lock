@@ -295,7 +295,13 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
                         mainQueue {
                             
                             // save in Store
-                            let cache = LockCache(identifier: lock.identifier, name: name, model: lock.model, version: lock.version, packageVersion: lock.packageVersion, permission: key.permission, keyIdentifier: key.identifier)
+                            let cache = LockCache(identifier: lock.identifier,
+                                                  name: name,
+                                                  model: lock.model,
+                                                  permission: key.permission,
+                                                  keyIdentifier: key.identifier,
+                                                  version: lock.version,
+                                                  packageVersion: lock.packageVersion)
                             
                             Store.shared[lock.identifier] = (cache, key.data)
                             
@@ -360,6 +366,20 @@ final class NearLockViewController: UITableViewController, EmptyTableViewControl
     private func foundLocks(locks: [LockManager.Lock]) {
         
         mainQueue {
+            
+            // Update values of existing locks
+            for lock in locks {
+                
+                if var cachedLock = Store.shared[cache: lock.identifier] {
+                    
+                    cachedLock.packageVersion = lock.packageVersion
+                    cachedLock.version = lock.version
+                    
+                    try! cachedLock.save(context: Store.shared.managedObjectContext)
+                }
+            }
+            
+            // update UI
             
             /// no locks were found
             guard locks.isEmpty == false else {

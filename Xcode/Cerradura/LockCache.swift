@@ -19,13 +19,13 @@ struct LockCache: CoreDataEncodable, CoreDataDecodable {
     
     let model: Model
     
-    let version: UInt64
-    
-    let packageVersion: (UInt16, UInt16, UInt16)?
-    
     let permission: Permission
     
     let keyIdentifier: UUID
+    
+    var version: UInt64
+    
+    var packageVersion: (UInt16, UInt16, UInt16)?
 }
 
 // MARK: - CoreData
@@ -39,6 +39,7 @@ extension LockCache {
         case identifier, name, model, version, packageVersion, permission, keyIdentifier
     }
     
+    @discardableResult
     func save(context: NSManagedObjectContext) throws -> NSManagedObject {
         
         let entity = context.persistentStoreCoordinator!.managedObjectModel.entitiesByName[LockCache.entityName]!
