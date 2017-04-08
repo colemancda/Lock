@@ -11,3 +11,13 @@ public enum Model: UInt8 {
     
     case orangePiOne = 1
 }
+
+public extension Model {
+    
+    var name: String {
+        
+        switch self {
+        case .orangePiOne: return "Classic"
+        }
+    }
+}

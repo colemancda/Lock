@@ -11,11 +11,21 @@ import JGProgressHUD
 import CoreLock
 import CoreData
 
-final class LockViewController: UIViewController {
+final class LockViewController: UITableViewController {
     
     // MARK: - IB Outlets
     
-    @IBOutlet weak var unlockButton: UIButton!
+    @IBOutlet private(set) weak var unlockButton: UIButton!
+    
+    @IBOutlet private(set) weak var lockIdentifierLabel: UILabel!
+    
+    @IBOutlet private(set) weak var keyIdentifierLabel: UILabel!
+    
+    @IBOutlet private(set) weak var permissionLabel: UILabel!
+    
+    @IBOutlet private(set) weak var versionLabel: UILabel!
+    
+    @IBOutlet private(set) weak var modelLabel: UILabel!
     
     // MARK: - Properties
     
@@ -39,6 +49,10 @@ final class LockViewController: UIViewController {
         super.viewDidLoad()
         
         guard lockIdentifier != nil else { fatalError("Lock identifer not set") }
+        
+        self.tableView.rowHeight = UITableViewAutomaticDimension
+        self.tableView.estimatedRowHeight = 44
+        self.tableView.tableFooterView = UIView()
         
         // observe context
         NotificationCenter.default.addObserver(self, selector: #selector(contextObjectsDidChange), name: Notification.Name.NSManagedObjectContextObjectsDidChange, object: Store.shared.managedObjectContext)
@@ -114,6 +128,9 @@ final class LockViewController: UIViewController {
         guard let (lockCache, keyData) = Store.shared[lockIdentifier]
             else { fatalError("No stored key for lock") } // FRC should prevent this
         
+        guard let foundLock = LockManager.shared[lockIdentifier]
+            else { showErrorAlert("Lock not in area. Please rescan for nearby locks."); return }
+        
         sender.isEnabled = false
         
         async { [weak self] in
@@ -161,6 +178,52 @@ final class LockViewController: UIViewController {
             
             self.unlockButton.isEnabled = schedule.valid()
         }
+        
+        self.lockIdentifierLabel.text = lockCache.identifier.rawValue
+        self.keyIdentifierLabel.text = lockCache.keyIdentifier.rawValue
+        self.modelLabel.text = lockCache.model.name
+        
+        if let version = lockCache.packageVersion {
+            
+            self.versionLabel.text = "\(version.0).\(version.1).\(version.2)"
+            
+        } else {
+            
+            self.versionLabel.text = "1.0.0"
+        }
+        
+        let permissionImage: UIImage
+        
+        let permissionText: String
+        
+        switch lockCache.permission {
+            
+        case .owner:
+            
+            permissionImage = #imageLiteral(resourceName: "permissionBadgeOwner")
+            
+            permissionText = "Owner"
+            
+        case .admin:
+            
+            permissionImage = #imageLiteral(resourceName: "permissionBadgeAdmin")
+            
+            permissionText = "Admin"
+            
+        case .anytime:
+            
+            permissionImage = #imageLiteral(resourceName: "permissionBadgeAnytime")
+            
+            permissionText = "Anytime"
+            
+        case .scheduled:
+            
+            permissionImage = #imageLiteral(resourceName: "permissionBadgeScheduled")
+            
+            permissionText = "Scheduled" // FIXME: Localized Schedule text
+        }
+        
+        self.permissionLabel.text = permissionText
     }
     
     // MARK: Notifications
