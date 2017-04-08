@@ -34,6 +34,12 @@ final class NewKeySelectPermissionViewController: UITableViewController, NewKeyV
         self.tableView.rowHeight = UITableViewAutomaticDimension
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        view.bringSubview(toFront: progressHUD)
+    }
+    
     // MARK: - Actions
     
     @IBAction func cancel(_ sender: AnyObject?) {

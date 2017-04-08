@@ -41,6 +41,12 @@ final class NewKeyRecieveViewController: UITableViewController, ActivityIndicato
         updateUI()
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        view.bringSubview(toFront: progressHUD)
+    }
+    
     // MARK: - Actions
     
     @IBAction func cancel(_ sender: UIBarItem) {

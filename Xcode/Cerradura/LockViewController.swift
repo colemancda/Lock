@@ -60,6 +60,12 @@ final class LockViewController: UITableViewController {
         self.updateUI()
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        view.bringSubview(toFront: progressHUD)
+    }
+    
     // MARK: - Actions
     
     @IBAction func showActionMenu(_ sender: UIBarButtonItem) {

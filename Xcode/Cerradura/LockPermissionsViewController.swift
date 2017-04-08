@@ -26,6 +26,16 @@ final class LockPermissionsViewController: UITableViewController, ActivityIndica
     
     let progressHUD = JGProgressHUD(style: .dark)!
     
+    private lazy var dateFormatter: DateFormatter = {
+        
+        let dateFormatter = DateFormatter()
+        
+        dateFormatter.dateStyle = .short
+        dateFormatter.timeStyle = .short
+        
+        return dateFormatter
+    }()
+    
     // MARK: - Loading
     
     override func viewDidLoad() {
@@ -34,6 +44,8 @@ final class LockPermissionsViewController: UITableViewController, ActivityIndica
         assert(lockIdentifier != nil, "No lock set")
         
         // setup table view
+        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.estimatedRowHeight = 60
         tableView.register(LockTableViewCell.nib, forCellReuseIdentifier: LockTableViewCell.reuseIdentifier)
     }
     
@@ -41,6 +53,12 @@ final class LockPermissionsViewController: UITableViewController, ActivityIndica
         super.viewWillAppear(animated)
         
         self.reloadData()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        view.bringSubview(toFront: progressHUD)
     }
     
     // MARK: - Actions
@@ -66,7 +84,7 @@ final class LockPermissionsViewController: UITableViewController, ActivityIndica
             
             let pending = allKeys.filter { $0.pending }
             
-            mainQueue { self.state = .keys(keys, pending) }
+            mainQueue { self.state = .keys(keys, pending: pending) }
         }
     }
     
@@ -153,9 +171,13 @@ final class LockPermissionsViewController: UITableViewController, ActivityIndica
         
         cell.lockTitleLabel.text = key.name.rawValue
         
-        cell.lockDetailLabel.text = permissionText
-        
         cell.lockImageView.image = permissionImage
+        
+        //let dateText = dateFormatter.string(from: key.date)
+        
+        //let detailText = permissionText + "\n" + dateText + "\n" + key.identifier.rawValue
+        
+        cell.lockDetailLabel.text = permissionText
     }
     
     // MARK: - Suscripting
@@ -226,7 +248,7 @@ final class LockPermissionsViewController: UITableViewController, ActivityIndica
         
         // show key info
         
-        let key = self[indexPath]
+        //let key = self[indexPath]
         
         // present key detail VC
     }
@@ -289,7 +311,7 @@ extension LockPermissionsViewController {
     enum State {
         
         case fetching
-        case keys([KeyEntry], [KeyEntry])
+        case keys([KeyEntry], pending: [KeyEntry])
         case error(Error)
     }
     
