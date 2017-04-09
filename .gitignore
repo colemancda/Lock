@@ -9,3 +9,14 @@ Android/com.colemancda.Cerradura/obj
 
 .DS_Store
 ._
+*.db
+
+*.gz
+
+debianpackage/lockd/usr/bin/lockd
+
+debianpackage/repo/dists/jessie/Release
+
+debianpackage/repo/dists/jessie/main/binary-armhf/Release
+
+debianpackage/repo/db/version

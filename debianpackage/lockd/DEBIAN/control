@@ -1,0 +1,10 @@
+Package: lockd
+Version: 1.0.4
+Architecture: armhf
+Essential: no
+Section: dev
+Priority: required
+Depends: uuid-dev,bluez
+Maintainer: Alsey Coleman Miller
+Installed-Size: 900000
+Description: Lock Deamon
