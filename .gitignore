@@ -20,3 +20,5 @@ debianpackage/repo/dists/jessie/Release
 debianpackage/repo/dists/jessie/main/binary-armhf/Release
 
 debianpackage/repo/db/version
+
+Sources/CoreLock/Secrets.swift

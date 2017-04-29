@@ -233,7 +233,7 @@ public struct LockService: GATTProfileService {
         public static let length = Foundation.UUID.length + Nonce.length + IVSize + 48 + HMACSize
         
         /// The private key used to encrypt and decrypt new keys.
-        private static let salt = KeyData(data: "p3R1pf9AmQxYlVAixSh6Yr0DRGSc4xST".toUTF8Data())!
+        private static let salt = SetupSalt
         
         public static let UUID = BluetoothUUID.bit128(Foundation.UUID(rawValue: "129E401C-044D-11E6-8FA9-09AB70D5A8C7")!)
         
