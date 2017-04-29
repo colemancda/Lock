@@ -1118,7 +1118,6 @@
 			files = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/../Carthage/Build/iOS/SwiftFoundation.framework",
 				"$(SRCROOT)/../Carthage/Build/iOS/Bluetooth.framework",
 				"$(SRCROOT)/../Carthage/Build/iOS/JSON.framework",
 				"$(SRCROOT)/../Carthage/Build/iOS/CryptoSwift.framework",
