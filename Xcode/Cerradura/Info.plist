@@ -92,5 +92,7 @@
 			</dict>
 		</dict>
 	</array>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>This app uses Bluetooth to communicate with nearby smart locks.</string>
 </dict>
 </plist>
