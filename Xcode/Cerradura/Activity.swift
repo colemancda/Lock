@@ -321,7 +321,11 @@ final class HomeKitEnableActivity: UIActivity {
             lockCache.permission == .owner
             else { return false }
         
+        #if DEBUG
         return true
+        #else
+        return false
+        #endif
     }
     
     override func prepare(withActivityItems activityItems: [Any]) {
