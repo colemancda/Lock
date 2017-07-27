@@ -4,7 +4,7 @@ Architecture: armhf
 Essential: no
 Section: dev
 Priority: required
-Depends: uuid-dev,bluez
+Depends: uuid-dev,bluez,avahi-daemon,avahi-discover,libnss-mdns,libavahi-compat-libdnssd-dev
 Maintainer: Alsey Coleman Miller
 Installed-Size: 900000
 Description: Lock Deamon
